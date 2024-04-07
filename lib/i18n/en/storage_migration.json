@@ -1,0 +1,30 @@
+{
+  "masterPasswordDialog": {
+    "title": "Master password",
+    "message": "Please enter your master password to continue."
+  },
+  "success": "Success !",
+  "error(map)": {
+    "saltError": "\"Salt\" error while migrating your data. Please try again later.",
+    "currentStoragePasswordMismatch": "Invalid master password entered.",
+    "encryptionKeyChangeFailed": "An error occurred while encrypting your data. Please try again later.",
+    "genericError": "An error occurred while migrating your data. Please try again later."
+  },
+  "newStoragePasswordMismatchDialog": {
+    "title": "Storage master password",
+    "defaultMessage": "The remote storage has been encrypted using another master password. Please enter it below in order to continue.\nNote that this will define your new master password. You can still change it at any time.",
+    "errorMessage": "The remote storage has been encrypted using another master password. You've entered a wrong one, please try again.\nNote that this will define your new master password. You can still change it at any time."
+  },
+  "deletedTotpPolicyPickerDialog": {
+    "title": "Migrate TOTPs",
+    "message": "Some TOTPs have been deleted on this device, but not on the remote storage. What do you want to do with them ?",
+    "delete": {
+      "title": "Delete them",
+      "subtitle": "Delete the conflicting TOTPs. This cannot be undone."
+    },
+    "restore": {
+      "title": "Keep them",
+      "subtitle": "Undo the deletion, and keep all TOTPs."
+    }
+  }
+}

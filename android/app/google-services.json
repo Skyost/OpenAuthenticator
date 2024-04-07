@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "15794778256",
+    "project_id": "open-authenticator-by-skyost",
+    "storage_bucket": "open-authenticator-by-skyost.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15794778256:android:c50397a0acd377de016815",
+        "android_client_info": {
+          "package_name": "app.openauthenticator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYeNY6kvsvlcSeNV2S7bk4dy_Ci7MhKc4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

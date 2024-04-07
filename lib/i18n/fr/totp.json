@@ -1,0 +1,60 @@
+{
+  "actions": {
+    "decrypt": "Déchiffrer",
+    "mobileDialog": {
+      "title": "Actions sur le TOTP",
+      "edit": "Éditer le TOTP",
+      "delete": "Supprimier le TOTP"
+    },
+    "desktopButtons": {
+      "copy": "Copier code",
+      "edit": "Éditer",
+      "delete": "Supprimer"
+    },
+    "copyConfirmation": "Copié dans le presse-papier.",
+    "deleteConfirmationDialog": {
+      "title": "Supprimer ce TOTP",
+      "message": "Voulez-vous vraiment supprimer ce TOTP ?",
+      "error": "Impossible de supprimer ce TOTP."
+    }
+  },
+  "decryptDialog": {
+    "title": "Déchiffrement du TOTP",
+    "message": "Ce TOTP a été chiffré en utilisant un mot de passe maître différent. Veuillez l'entrer ci-dessous pour le déchiffrer.",
+    "success": "Succès !",
+    "error": "Mot de passe invalide."
+  },
+  "page": {
+    "title": {
+      "edit": "Éditer le TOTP",
+      "add": "Ajouter un TOTP"
+    },
+    "label": {
+      "text": "Étiquette",
+      "hint": "me@exemple.com"
+    },
+    "secret": {
+      "text": "Clé secrète",
+      "hint": "JBSWY3DPEHPK3PXP"
+    },
+    "issuer": {
+      "text": "Émetteur",
+      "hint": "exemple.com"
+    },
+    "algorithm": "Algorithme",
+    "digits": "Nombre de chiffres",
+    "validity": "Validité (en secondes)",
+    "advancedOptions": "Options avancées",
+    "showQrCode": "Afficher le QR code",
+    "save": "Enregistrer",
+    "success": "Succès !",
+    "error": {
+      "save": "Une erreur est survenue lors de la sauvegarde de votre TOTP.",
+      "qrCode": "Veuillez remplir les champs \"clé secrète\", \"étiquette\" et \"émetteur\" pour pouvoir générer un QR code.",
+      "emptySecret": "Le secret doit être spécifié",
+      "invalidSecret": "Clé secrète invalide",
+      "emptyLabel": "L'étiquette doit être spécifiée",
+      "emptyIssuer": "L'émetteur doit être spécifié"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "waitingDialog": {
+    "defaultMessage": "Veuillez patienter...",
+    "defaultTimeoutMessage": "Délai d'attente dépassé. Veuillez réessayer plus tard.",
+    "countdown(rich)": "Temps restant : $countdown."
+  }
+}

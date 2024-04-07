@@ -1,0 +1,61 @@
+{
+  "emailDialog": {
+    "title": "Your email",
+    "message": "Please enter your email, we will send you a login link."
+  },
+  "logIn": {
+    "waitingDialogMessage": "Please login yourself in the opened window. Do not close the application.",
+    "error": {
+      "generic": "Something went wrong. Please try again later.",
+      "timeout": "Timed out while logging in using the selected provider. Please try again.",
+      "accountExistsWithDifferentCredentialsDialog": {
+        "title": "An account already exists",
+        "message": "An account with the same email address exists in our database, but the selected authentication provider has not yet been linked to it.\nPlease try to log in using an already linked authentication provider."
+      },
+      "invalidCredential": "Invalid credentials provided.",
+      "operationNotAllowed": "Operation not allowed. This should not happen, please report this error.",
+      "userDisabled": "Your account has been disabled.",
+      "firebaseException": "An error occurred while trying to authenticate your account (exception : $exception). Please try again later.",
+      "exception": "An error occurred (exception : $exception). Please try again later."
+    },
+    "success": "Logged in with success !",
+    "successNeedConfirmation": "Success ! You will receive a confirmation email soon. Please click on the link on this device in order to log in."
+  },
+  "linkErrorTimeout": "Timed out while trying to link your account to this authentication provider. Please try again.",
+  "unlink": {
+    "error": {
+      "timeout": "Timed out while trying to unlink your account from this authentication provider. Please try again."
+    },
+    "confirmationDialog": {
+      "title": "Unlink provider",
+      "message": "Are you sure you want to unlink this authentication provider from your account ?"
+    }
+  },
+  "providerPickerDialog": {
+    "title": "Pick a login method",
+    "email": {
+      "title": "Email",
+      "subtitle": "Use your email to login. No password required, a confirmation link will be sent."
+    },
+    "google": {
+      "title": "Google",
+      "subtitle": "Sign in with your Google account."
+    },
+    "apple": {
+      "title": "Apple",
+      "subtitle": "Sign in with your Apple account."
+    },
+    "microsoft": {
+      "title": "Microsoft",
+      "subtitle": "Sign in with your Microsoft account."
+    },
+    "twitter": {
+      "title": "X",
+      "subtitle": "Sign in with your X account."
+    },
+    "github": {
+      "title": "Github",
+      "subtitle": "Sign in with your Github account."
+    }
+  }
+}

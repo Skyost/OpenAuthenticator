@@ -1,0 +1,10 @@
+{
+  "error": {
+    "noUri": "Failed to read this QR code. Please ensure it is a valid TOTP QR code.",
+    "accessDeniedDialog": {
+      "title": "Access denied",
+      "message": "Failed to access your camera (access denied : $exception). Do you want to retry ?"
+    },
+    "scanError": "An error occurred (exception : $exception). Please try again later."
+  }
+}

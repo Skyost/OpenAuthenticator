@@ -1,0 +1,17 @@
+{
+  "success": "Validation réussie. Vous pouvez fermer cet onglet.",
+  "error": {
+    "incorrectPath": "Une erreur est survenue (le chemin est '$path'). Veuillez reporter cette erreur.",
+    "generic": "Impossible de valider votre requête (erreur : $exception). Veuillez réessayer plus tard."
+  },
+  "oauth2": {
+    "title": "Connexion avec $name",
+    "loading": "Chargement... Cliquez <a href=\"$link\">ici</a> si vous n'êtes pas redirigé.",
+    "error": "Impossible de se connecter avec $name. Veuillez réessayer plus tard."
+  },
+  "githubCodeDialog": {
+    "title": "Code",
+    "message": "Veuillez entrer le code ci-dessous dans l'onglet qui vient de s'ouvrir pour vous connecter :",
+    "countdown(rich)": "Temps restant : $countdown."
+  }
+}

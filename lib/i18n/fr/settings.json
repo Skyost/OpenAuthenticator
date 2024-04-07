@@ -1,0 +1,165 @@
+{
+  "title": "Paramètres",
+  "application": {
+    "title": "Application",
+    "contributorPlan": {
+      "title": "Abonnement Contributeur",
+      "subtitle": {
+        "loading": "Vérification de l'état de votre abonnement...",
+        "active": "Vous avez souscrit à l'Abonnement Contributeur. Merci beaucoup !",
+        "inactive": "Vous n'avez pas encore souscrit à l'Abonnement Contributeur. Nous devons afficher des annonces pour contribuer au coût des serveurs."
+      },
+      "subscribe": {
+        "waitingDialog": {
+          "message": "En attente de votre paiement...",
+          "timedOut": "Délai d'attente de la souscription à l'Abonnement Contributeur dépassé. Veuillez réessayer."
+        },
+        "success": "Vous avez souscrit à l'Abonnement Contributeur avec succès. Merci beaucoup !",
+        "error": "Une erreur est survenue pendant votre souscription à l'Abonnement Contributeur. Veuillez réessayer plus tard."
+      },
+      "billingPickerDialog": {
+        "title": "Choisissez votre souscription",
+        "priceSubtitle(rich)": "$subtitle\n$price / $interval.",
+        "empty": "Vous ne pouvez pas souscrire à l'Abonnement Contributeur actuellement.",
+        "error": "Erreur : $error.",
+        "packageTypeName(map)": {
+          "annual": "Annuelle",
+          "monthly": "Mensuelle"
+        },
+        "packageTypeInterval(map)": {
+          "annual": "An",
+          "monthly": "Mois"
+        },
+        "packageTypeSubtitle(map)": {
+          "annual": "Une facturation par an.",
+          "monthly": "Une facturation par mois."
+        },
+        "restorePurchases": {
+          "button": "Restaurer les achats",
+          "success": "Vos achats ont été restauré avec succès !",
+          "error": "Une erreur est survenue. Veuillez réessayer plus tard."
+        }
+      }
+    },
+    "cacheTotpPictures": {
+      "title": "Cacher les images des TOTPs",
+      "subtitle": "S'assure que les images de vos TOTPs soient toujours disponibles en les cachant sur votre appareil."
+    },
+    "theme": {
+      "title": "Thème",
+      "values(map)": {
+        "system": "Système",
+        "light": "Lumineux",
+        "dark": "Sombre"
+      }
+    }
+  },
+  "security": {
+    "title": "Sécurité",
+    "enableLocalAuth": {
+      "title": "Activer l'authentification locale",
+      "subtitle": "Permet d'ajouter un niveau de sécurité en demandant un déverrouillage à chaque fois que vous ouvrez l'application."
+    },
+    "saveDerivedKey": {
+      "title": "Enregistrer la clé de chiffrement / déchiffrement",
+      "subtitle": "Enregistre votre clé de chiffrement / déchiffrement pour ne pas avoir à entrer votre mot de passe maître à chaque fois que vous démarrez l'application."
+    },
+    "changeMasterPassword": {
+      "title": "Changer le mot de passe maître",
+      "subtitle(rich)": "Vous pouvez changer votre mot de passe maître quand vous le souhaitez.\n${italic(Veuillez noter que vous devrez le réentrer dans toutes les instances d'Open Authenticator qui sont synchronisées ensemble.)}",
+      "dialog": {
+        "title": "Changer votre mot de passe maître",
+        "current": {
+          "label": "Mot de passe maître actuel",
+          "hint": "Entrer votre mot de passe maître actuel"
+        },
+        "newLabel": "Votre nouveau mot de passe maître",
+        "errorIncorrectPassword": "Mot de passe incorrect"
+      }
+    }
+  },
+  "synchronization": {
+    "title": "Synchronisation",
+    "accountLink": {
+      "title": "Relier d'autres fournisseurs",
+      "subtitle": {
+        "text": "Relier d'autres fournisseurs d'authentification à votre compte afin que vous puissiez les utiliser pour vous connecter.",
+        "providers": "\nCompte actuellement relié à : $providers."
+      }
+    },
+    "accountLogin": {
+      "logIn": {
+        "title": "Connexion",
+        "subtitle": "Connectez vous pour synchroniser vos TOTPs entre vos appareils."
+      },
+      "confirmEmail": {
+        "title": "Confirmer votre adresse mail",
+        "subtitle(rich)": "Un email de confirmation a été envoyé à votre adresse mail : $email.\nVeuillez cliquer sur le lien pour poursuivre la connexion. Vous pouvez également taper ici pour l'entrer manuellement.",
+        "waitingDialogMessage": "Veuillez patienter pendant que nous confirmons votre adresse mail... Ne fermez pas l'application.",
+        "error": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
+        "success": "Adresse mail confirmée avec succès.",
+        "linkDialog": {
+          "title": "Lien de confirmation",
+          "message": "Visitez le lien de confirmation avec cet appareil ou collez-le ci-dessous pour confirmer votre adresse mail."
+        }
+      },
+      "logOut": {
+        "title": "Déconnexion",
+        "subtitle(rich)": "Se déconnecter pour arrêter la synchronisation des TOTPs avec cet appareil.\nActuellement connecté en tant que : $email."
+      }
+    },
+    "synchronizeTotps": {
+      "title": "Synchroniser vos TOTPs",
+      "subtitle": "Synchroniser vos TOTPs avec tous les appareils connectés."
+    }
+  },
+  "backups": {
+    "title": "Sauvegardes",
+    "backupNow": {
+      "title": "Sauvegarder maintenant",
+      "subtitle": "Créer une sauvegarde de vos TOTPs.",
+      "passwordDialog": {
+        "title": "Mot de passe de la sauvegarde",
+        "message": "Veuillez entrer un mot de passe pour la sauvegarde. Veuillez noter que nous ne pouvons sauvegarder que les TOTPs déchiffrés (ceux qui affichent un code)."
+      },
+      "error": "Une erreur est survenue pendant la sauvegarde de vos données.",
+      "success": "Succès !"
+    },
+    "manageBackups": {
+      "title": "Gestion des sauvegardes",
+      "subtitle": {
+        "zero": "Vous n'avez aucune sauvegarde.",
+        "one": "Vous avez actuellement $n sauvegarde.",
+        "other": "Vous avez actuellement $n sauvegardes."
+      },
+      "backupsDialog": {
+        "title": "Gestion des sauvegardes",
+        "errorLoadingBackups": "Impossible de charger la liste des sauvegardes. Veuillez réessayer plus tard."
+      },
+      "restoreBackup": {
+        "passwordDialog": {
+          "title": "Mot de passe de la sauvegarde",
+          "message": "Veuillez entrer un mot de passe pour la sauvegarde."
+        },
+        "success": "Succès !",
+        "error": "Impossible de restaurer la sauvegarde. Assurez-vous d'avoir entré le bon mot de passe."
+      },
+      "deleteBackup": {
+        "confirmationDialog": {
+          "title": "Supprimer la sauvegarde",
+          "message": "Voulez-vous vraiment supprimer cette sauvegarde ?"
+        },
+        "success": "Succès !",
+        "error": "Impossible de supprimer cette sauvegarde. Veuillez réessayer plus tard."
+      }
+    }
+  },
+  "about": {
+    "title": "À propos",
+    "aboutApp": {
+      "title": "$appName",
+      "subtitle(rich)": "$appName v$appVersion, par $appAuthor.",
+      "dialogLegalese": "$appName est une application open-source, créée par $appAuthor."
+    }
+  }
+}

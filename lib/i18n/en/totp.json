@@ -1,0 +1,60 @@
+{
+  "actions": {
+    "decrypt": "Decrypt",
+    "mobileDialog": {
+      "title": "TOTP actions",
+      "edit": "Edit TOTP",
+      "delete": "Delete TOTP"
+    },
+    "desktopButtons": {
+      "copy": "Copy code",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "copyConfirmation": "Copied to clipboard.",
+    "deleteConfirmationDialog": {
+      "title": "Delete this TOTP",
+      "message": "Do you really want to delete this TOTP ?",
+      "error": "Failed to delete TOTP."
+    }
+  },
+  "decryptDialog": {
+    "title": "Decrypt TOTP",
+    "message": "This TOTP has been encrypted using a different a master password. Please enter it below in order to decrypt it.",
+    "success": "Success !",
+    "error": "Invalid password entered."
+  },
+  "page": {
+    "title": {
+      "edit": "Edit TOTP",
+      "add": "Add a TOTP"
+    },
+    "label": {
+      "text": "Label",
+      "hint": "me@example.com"
+    },
+    "secret": {
+      "text": "Secret key",
+      "hint": "JBSWY3DPEHPK3PXP"
+    },
+    "issuer": {
+      "text": "Issuer",
+      "hint": "example.com"
+    },
+    "algorithm": "Algorithm",
+    "digits": "Digit count",
+    "validity": "Validity (in seconds)",
+    "advancedOptions": "Advanced options",
+    "showQrCode": "Show QR code",
+    "save": "Save",
+    "success": "Success !",
+    "error": {
+      "save": "Error while saving your TOTP.",
+      "qrCode": "Please fill the \"secret\", \"label\" and \"issuer\" fields in order to generate a QR code.",
+      "emptySecret": "Secret should not be empty",
+      "invalidSecret": "Invalid secret provided",
+      "emptyLabel": "Label should not be empty",
+      "emptyIssuer": "Issuer should not be empty"
+    }
+  }
+}

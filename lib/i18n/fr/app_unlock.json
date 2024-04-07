@@ -1,0 +1,15 @@
+{
+  "widget": {
+    "text": "$app est verrouillée.",
+    "button": "Déverrouiller"
+  },
+  "localAuthentication(map)": {
+    "openApp": "Authentifiez-vous pour accéder à l'application.",
+    "enable": "Authentifiez-vous pour activer l'authentification locale.",
+    "disable":  "Authentifiez-vous pour désactiver l'authentification locale."
+  },
+  "masterPasswordDialog": {
+    "title": "Mot de passe maître",
+    "message": "Veuillez entrer votre mot de passe maître pour déverrouiller l'application."
+  }
+}

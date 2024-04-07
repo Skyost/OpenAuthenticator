@@ -1,0 +1,30 @@
+{
+  "masterPasswordDialog": {
+    "title": "Mot de passe maître",
+    "message": "Veuillez entrer votre mot de passe maître pour continuer."
+  },
+  "success": "Succès !",
+  "error(map)": {
+    "saltError": "Erreur de \"Sel\" pendant la migration de vos données. Veuillez réessayer plus tard.",
+    "currentStoragePasswordMismatch": "Mot de passe maître invalide.",
+    "encryptionKeyChangeFailed": "Une erreur est survenue pendant le chiffrement de vos données. Veuillez réessayer plus tard.",
+    "genericError": "Une erreur est survenue pendant la migration de vos données. Veuillez réessayer plus tard."
+  },
+  "newStoragePasswordMismatchDialog": {
+    "title": "Mot de passe maître du stockage",
+    "defaultMessage": "Le stockage distant a été chiffré avec un mot de passe maître différent du vôtre. Veuillez l'entrer ci-dessous pour continuer.\nNotez que cela va définir votre nouveau mot de passe maître. Vous pourrez tout de même le changer à n'importe quel moment.",
+    "errorMessage": "Le stockage distant a été chiffré avec un mot de passe maître différent du vôtre. Vous en avez entré un mauvais, veuillez réessayer.\nNotez que cela va définir votre nouveau mot de passe maître. Vous pourrez tout de même le changer à n'importe quel moment."
+  },
+  "deletedTotpPolicyPickerDialog": {
+    "title": "Migrer les TOTPs",
+    "message": "Certains TOTPs ont été supprimés sur votre appareil, mais pas sur le stockage distant. Que voulez-vous faire ?",
+    "delete": {
+      "title": "Les supprimer",
+      "subtitle": "Supprimer les TOTPs conflictuels. Cette action est irréversible."
+    },
+    "restore": {
+      "title": "Les garder",
+      "subtitle": "Annule la suppression et garde tous vos TOTPs."
+    }
+  }
+}
