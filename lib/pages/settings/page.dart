@@ -91,5 +91,5 @@ mixin RequiresAuthenticationProvider on ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => shouldDisplayEmptyWidget ? const SizedBox.shrink() : buildWidgetWithAuthenticationProviders(context, ref);
 
   /// Builds the widget when authentication providers are available.
-  Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) => const SizedBox.shrink();
+  Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref);
 }

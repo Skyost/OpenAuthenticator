@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
@@ -47,7 +49,7 @@ class LocalStorage extends _$LocalStorage with Storage {
   static const _kDbFileName = 'totps';
 
   /// Creates a new Drift storage instance.
-  LocalStorage() : super(SqliteUtils.openConnection(_kDbFileName));
+  LocalStorage(AutoDisposeAsyncNotifierProviderRef ref) : super(SqliteUtils.openConnection(_kDbFileName));
 
   @override
   int get schemaVersion => 1;
@@ -121,6 +123,17 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
+  Future<bool> canDecryptAll(CryptoStore cryptoStore) async {
+    List<Totp> list = await (select(totps)).get();
+    for (Totp totp in list) {
+      if (!await cryptoStore.canDecrypt(totp.secret)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
   Future<Uint8List?> readSecretsSalt() => StoredCryptoStore.readSaltFromLocalStorage();
 
   @override
@@ -132,7 +145,19 @@ class LocalStorage extends _$LocalStorage with Storage {
   @override
   Future<void> onStorageTypeChanged() async {
     await super.onStorageTypeChanged();
-    (await SqliteUtils.getDatabaseFilePath(_kDbFileName)).delete();
+    try {
+      (await SqliteUtils.getDatabaseFilePath(_kDbFileName)).deleteSync();
+    } catch (ex, stacktrace) {
+      if (kDebugMode) {
+        print(ex);
+        print(stacktrace);
+      }
+      transaction(() async {
+        for (TableInfo table in allTables) {
+          await delete(table).go();
+        }
+      });
+    }
   }
 }
 

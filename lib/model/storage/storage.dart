@@ -19,7 +19,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
   @override
   FutureOr<Storage> build() async {
     StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
-    Storage storage = storageType.create();
+    Storage storage = storageType.create(ref);
     ref.onDispose(storage.close);
     return storage;
   }
@@ -53,7 +53,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       return StorageMigrationResult.genericError;
     }
 
-    Storage newStorage = newType.create();
+    Storage newStorage = newType.create(ref);
     DeletedTotpsDatabase deletedTotpsDatabase = ref.read(deletedTotpsProvider);
     Future<void> close() async {
       await newStorage.close();
@@ -79,16 +79,6 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
     }
 
     Uint8List? salt = await newStorage.readSecretsSalt();
-    Future<StorageMigrationResult?> canDecryptAllFromNewStorage(CryptoStore newCryptoStore) async {
-      List<Totp> newTotps = await newStorage.listTotps();
-      for (Totp totp in newTotps) {
-        if (!await newCryptoStore.canDecrypt(totp.secret)) {
-          return StorageMigrationResult.newStoragePasswordMismatch;
-        }
-      }
-      return null;
-    }
-
     List<Totp> totps = await currentStorage.listTotps();
     List<Totp> toAdd = [];
     if (salt == null) {
@@ -97,10 +87,10 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
         return StorageMigrationResult.saltError;
       }
 
-      StorageMigrationResult? checkResult = await canDecryptAllFromNewStorage(currentCryptoStore);
-      if (checkResult != null) {
+      bool canDecryptAll = await newStorage.canDecryptAll(currentCryptoStore);
+      if (!canDecryptAll) {
         await close();
-        return checkResult;
+        return StorageMigrationResult.newStoragePasswordMismatch;
       }
 
       toAdd.addAll(totps.where((totp) => totp.isDecrypted));
@@ -111,10 +101,10 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
         return StorageMigrationResult.genericError;
       }
 
-      StorageMigrationResult? checkResult = await canDecryptAllFromNewStorage(newCryptoStore);
-      if (checkResult != null) {
+      bool canDecryptAll = await newStorage.canDecryptAll(currentCryptoStore);
+      if (!canDecryptAll) {
         await close();
-        return checkResult;
+        return StorageMigrationResult.newStoragePasswordMismatch;
       }
 
       for (Totp totp in totps) {
@@ -128,7 +118,10 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       await ref.read(cryptoStoreProvider.notifier).saveAndUse(newCryptoStore);
     }
 
-    await newStorage.addTotps(toAdd);
+    if (!await newStorage.addTotps(toAdd)) {
+      await close();
+      return StorageMigrationResult.genericError;
+    }
     await newStorage.deleteTotps(toDelete);
     await close();
 
@@ -211,6 +204,9 @@ mixin Storage {
 
   /// Lists all TOTPs.
   Future<List<Totp>> listTotps();
+
+  /// Whether the given [cryptoStore] is able to decrypt all stored TOTPs.
+  Future<bool> canDecryptAll(CryptoStore cryptoStore);
 
   /// Loads the salt that allows to encrypt secrets.
   Future<Uint8List?> readSecretsSalt();

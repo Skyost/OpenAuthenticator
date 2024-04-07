@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/storage/local.dart';
 import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
@@ -11,14 +12,10 @@ enum StorageType {
   online(create: OnlineStorage.new);
 
   /// Creates a storage instance associated to the current type.
-  final Storage Function() create;
-
-  /// The migration quota, if any.
-  final Duration? migrationQuota;
+  final Storage Function(AutoDisposeAsyncNotifierProviderRef) create;
 
   /// Creates a new storage type instance.
   const StorageType({
     required this.create,
-    this.migrationQuota,
   });
 }

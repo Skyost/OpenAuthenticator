@@ -39,7 +39,7 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
                   if (!context.mounted) {
                     return;
                   }
-                  bool result = await showWaitingDialog(
+                  bool result = await showWaitingOverlay(
                     context,
                     future: ref.read(contributorPlanStateProvider.notifier).purchase(() async {
                       if (context.mounted) {
@@ -127,7 +127,7 @@ class _ContributorPlanBillingPickerDialogState extends ConsumerState<_Contributo
               if (!context.mounted) {
                 return;
               }
-              bool result = await showWaitingDialog(context, future: contributorPlan.restoreState());
+              bool result = await showWaitingOverlay(context, future: contributorPlan.restoreState());
               if (!context.mounted) {
                 return;
               }

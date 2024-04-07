@@ -3,7 +3,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/widgets/countdown.dart';
 
 /// Shows a waiting dialog.
-Future<T> showWaitingDialog<T>(
+Future<T> showWaitingOverlay<T>(
   BuildContext context, {
   Future<T>? future,
   String? message,
@@ -11,22 +11,26 @@ Future<T> showWaitingDialog<T>(
   String? timeoutMessage,
   bool Function()? onCancel,
 }) async {
-  GlobalKey dialogKey = GlobalKey();
-  showAdaptiveDialog(
-    context: context,
-    builder: (context) => _WaitingDialog(
-      key: dialogKey,
-      message: message,
-      timeout: timeout,
-      timeoutMessage: timeoutMessage,
-      onCancel: onCancel,
+  OverlayEntry entry = OverlayEntry(
+    builder: (context) => Stack(
+      children: [
+        const ModalBarrier(
+          dismissible: false,
+          color: Colors.black54,
+        ),
+        _WaitingDialog(
+          message: message,
+          timeout: timeout,
+          timeoutMessage: timeoutMessage,
+          onCancel: onCancel,
+        ),
+      ],
     ),
   );
+  Overlay.of(context).insert(entry);
   if (future != null) {
     T result = await future;
-    if (dialogKey.currentContext?.mounted ?? false) {
-      Navigator.pop(dialogKey.currentContext!);
-    }
+    entry.remove();
     return result;
   }
   return null as T;

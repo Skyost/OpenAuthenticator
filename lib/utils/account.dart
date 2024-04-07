@@ -64,7 +64,7 @@ class AccountUtils {
   }) async {
     FirebaseAuthenticationResult result;
     try {
-      result = await showWaitingDialog(
+      result = await showWaitingOverlay(
         context,
         future: action(context, provider),
         message: waitingDialogMessage,

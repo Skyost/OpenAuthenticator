@@ -30,7 +30,7 @@ class BackupNowSettingsEntryWidget extends ConsumerWidget {
         if (password == null || !context.mounted) {
           return;
         }
-        Backup? result = await showWaitingDialog(
+        Backup? result = await showWaitingOverlay(
           context,
           future: backupStore.doBackup(password),
         );

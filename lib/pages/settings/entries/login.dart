@@ -84,7 +84,7 @@ class _ConfirmEmailListTile extends ConsumerWidget {
           if (emailLink == null || !context.mounted) {
             return;
           }
-          bool result = await showWaitingDialog(
+          bool result = await showWaitingOverlay(
             context,
             future: ref.read(firebaseAuthenticationProvider.notifier).tryConfirm(emailLink),
             message: translations.settings.synchronization.accountLogin.confirmEmail.waitingDialogMessage,

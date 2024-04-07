@@ -17,22 +17,23 @@ class StorageMigrationUtils {
     WidgetRef ref,
     StorageType newType, {
     bool logout = false,
+    String? currentStorageMasterPassword,
     String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
-    String? password = await TextInputDialog.prompt(
+    currentStorageMasterPassword ??= await TextInputDialog.prompt(
       context,
       title: translations.storageMigration.masterPasswordDialog.title,
       message: translations.storageMigration.masterPasswordDialog.message,
       password: true,
     );
-    if (password == null || !context.mounted) {
+    if (currentStorageMasterPassword == null || !context.mounted) {
       return;
     }
-    StorageMigrationResult result = await showWaitingDialog(
+    StorageMigrationResult result = await showWaitingOverlay(
       context,
       future: ref.read(storageProvider.notifier).changeStorageType(
-            password,
+            currentStorageMasterPassword,
             newType,
             newStorageMasterPassword: newStorageMasterPassword,
             storageMigrationDeletedTotpPolicy: storageMigrationDeletedTotpPolicy,
@@ -41,7 +42,16 @@ class StorageMigrationUtils {
     if (!context.mounted) {
       return;
     }
-    await _handleResult(result, context, ref, newType, logout, newStorageMasterPassword, storageMigrationDeletedTotpPolicy);
+    await _handleResult(
+      result,
+      context,
+      ref,
+      newType,
+      logout,
+      currentStorageMasterPassword,
+      newStorageMasterPassword,
+      storageMigrationDeletedTotpPolicy,
+    );
   }
 
   /// Handles the [result] by returning a message if there is an error.
@@ -51,13 +61,14 @@ class StorageMigrationUtils {
     WidgetRef ref,
     StorageType newType,
     bool logout,
+    String? currentStorageMasterPassword,
     String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy,
   ) async {
     switch (result) {
       case StorageMigrationResult.success:
         if (logout) {
-          await showWaitingDialog(
+          await showWaitingOverlay(
             context,
             future: ref.read(firebaseAuthenticationProvider.notifier).logout(),
           );
@@ -76,6 +87,7 @@ class StorageMigrationUtils {
           ref,
           newType,
           logout: logout,
+          currentStorageMasterPassword: currentStorageMasterPassword,
           newStorageMasterPassword: newStorageMasterPassword,
           storageMigrationDeletedTotpPolicy: enteredStorageMigrationDeletedTotpPolicy,
         );
@@ -84,7 +96,9 @@ class StorageMigrationUtils {
         String? enteredNewStorageMasterPassword = await TextInputDialog.prompt(
           context,
           title: translations.storageMigration.newStoragePasswordMismatchDialog.title,
-          message: newStorageMasterPassword == null ? translations.storageMigration.newStoragePasswordMismatchDialog.defaultMessage : translations.storageMigration.newStoragePasswordMismatchDialog.errorMessage,
+          message: newStorageMasterPassword == null
+              ? translations.storageMigration.newStoragePasswordMismatchDialog.defaultMessage
+              : translations.storageMigration.newStoragePasswordMismatchDialog.errorMessage,
           password: true,
           initialValue: newStorageMasterPassword,
         );
@@ -96,6 +110,7 @@ class StorageMigrationUtils {
           ref,
           newType,
           logout: logout,
+          currentStorageMasterPassword: currentStorageMasterPassword,
           newStorageMasterPassword: enteredNewStorageMasterPassword,
           storageMigrationDeletedTotpPolicy: storageMigrationDeletedTotpPolicy,
         );

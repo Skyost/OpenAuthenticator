@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
@@ -19,8 +21,11 @@ class OnlineStorage with Storage {
   /// The salt document.
   static const String _kSaltKey = 'salt';
 
+  /// The ref instance.
+  final AutoDisposeAsyncNotifierProviderRef _ref;
+
   /// Creates a new online storage instance.
-  OnlineStorage();
+  OnlineStorage(this._ref);
 
   @override
   StorageType get type => StorageType.online;
@@ -31,13 +36,11 @@ class OnlineStorage with Storage {
     if (collection == null) {
       return false;
     }
-    await collection
-        .withConverter(
-          fromFirestore: _fromFirestore,
-          toFirestore: (totp, options) => totp.toJson(),
-        )
-        .doc(totp.uuid)
-        .set(totp);
+    Map<String, dynamic>? data = await _toFirestore(totp);
+    if (data == null) {
+      return false;
+    }
+    await collection.doc(totp.uuid).set(data);
     return true;
   }
 
@@ -49,15 +52,11 @@ class OnlineStorage with Storage {
     }
     WriteBatch batch = FirebaseFirestore.instance.batch();
     for (Totp totp in totps) {
-      batch.set(
-        collection
-            .withConverter(
-              fromFirestore: _fromFirestore,
-              toFirestore: (totp, options) => totp.toJson(),
-            )
-            .doc(totp.uuid),
-        totp,
-      );
+      Map<String, dynamic>? data = await _toFirestore(totp);
+      if (data == null) {
+        return false;
+      }
+      batch.set(collection.doc(totp.uuid), data);
     }
     await batch.commit();
     return true;
@@ -133,14 +132,11 @@ class OnlineStorage with Storage {
     if (collection == null) {
       return null;
     }
-    DocumentSnapshot<Totp> result = await collection
-        .withConverter(
-          fromFirestore: _fromFirestore,
-          toFirestore: (totp, options) => totp.toJson(),
-        )
-        .doc(uuid)
-        .get();
-    return result.data();
+    DocumentSnapshot result = await collection.doc(uuid).get();
+    if (!result.exists) {
+      return null;
+    }
+    return await _fromFirestore(result);
   }
 
   @override
@@ -149,13 +145,34 @@ class OnlineStorage with Storage {
     if (collection == null) {
       return [];
     }
-    QuerySnapshot<Totp> result = await collection
-        .withConverter(
-          fromFirestore: _fromFirestore,
-          toFirestore: (totp, options) => totp.toJson(),
-        )
-        .get();
-    return result.docs.map((result) => result.data()).toList();
+    QuerySnapshot result = await collection.get();
+    List<Totp> totps = [];
+    for (QueryDocumentSnapshot doc in result.docs) {
+      Totp? totp = await _fromFirestore(doc);
+      if (totp != null) {
+        totps.add(totp);
+      }
+    }
+    return totps;
+  }
+
+  @override
+  Future<bool> canDecryptAll(CryptoStore cryptoStore) async {
+    CollectionReference? collection = _totpsCollection;
+    if (collection == null) {
+      return false;
+    }
+    QuerySnapshot result = await collection.get();
+    for (QueryDocumentSnapshot doc in result.docs) {
+      Totp? totp = await _fromFirestore(doc, cryptoStore: cryptoStore);
+      if (totp == null) {
+        return false;
+      }
+      if (!await cryptoStore.canDecrypt(totp.secret)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @override
@@ -195,11 +212,85 @@ class OnlineStorage with Storage {
   CollectionReference? get _totpsCollection => _userDocument?.collection(_kTotpsCollection);
 
   /// Creates a new TOTP from the specified JSON data.
-  static Totp _fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> snapshot,
-    SnapshotOptions? options,
-  ) {
-    Map<String, dynamic> data = snapshot.data()!;
-    return JsonTotp.fromJson(data);
+  Future<Totp?> _fromFirestore(DocumentSnapshot snapshot, {CryptoStore? cryptoStore}) async {
+    if (snapshot.data() is! Map<String, Object?>) {
+      return null;
+    }
+    Map<String, Object?> data = snapshot.data() as Map<String, Object?>;
+    Map<String, dynamic>? decryptedData = await _transform<List, dynamic>(
+      data,
+      (cryptoStore, key, input) async {
+        String? decrypted = await cryptoStore.decrypt(Uint8List.fromList(input.cast<int>()));
+        if (decrypted == null) {
+          return decrypted;
+        }
+        if (key == Totp.kDigitsKey || key == Totp.kValidityKey) {
+          return int.tryParse(decrypted);
+        }
+        if (key == Totp.kAlgorithmKey) {
+          return Algorithm.fromString(decrypted);
+        }
+        return decrypted;
+      },
+      cryptoStore: cryptoStore,
+    );
+    return decryptedData == null ? null : JsonTotp.fromJson(decryptedData);
+  }
+
+  /// Converts the [totp] to an encrypted Firestore map.
+  Future<Map<String, dynamic>?> _toFirestore(Totp totp) async => await _transform<dynamic, List>(
+        totp.toJson(),
+        (cryptoStore, key, input) async => input == null ? null : (await cryptoStore.encrypt(input.toString())),
+      );
+
+  /// Transforms the [totpData] using the [transformer].
+  Future<Map<String, dynamic>?> _transform<I, O>(
+    Map<String, dynamic> totpData,
+    Future<O?> Function(CryptoStore, String, I) transformer, {
+    CryptoStore? cryptoStore,
+  }) async {
+    cryptoStore ??= await _ref.read(cryptoStoreProvider.future);
+    if (cryptoStore == null) {
+      return null;
+    }
+    return {
+      Totp.kSecretKey: totpData[Totp.kSecretKey],
+      Totp.kUuidKey: totpData[Totp.kUuidKey],
+      Totp.kLabelKey: await transformer(
+        cryptoStore,
+        Totp.kLabelKey,
+        totpData[Totp.kLabelKey],
+      ),
+      if (totpData.containsKey(Totp.kIssuerKey))
+        Totp.kIssuerKey: await transformer(
+          cryptoStore,
+          Totp.kIssuerKey,
+          totpData[Totp.kIssuerKey],
+        ),
+      if (totpData.containsKey(Totp.kAlgorithmKey))
+        Totp.kAlgorithmKey: await transformer(
+          cryptoStore,
+          Totp.kAlgorithmKey,
+          totpData[Totp.kIssuerKey],
+        ),
+      if (totpData.containsKey(Totp.kDigitsKey))
+        Totp.kDigitsKey: await transformer(
+          cryptoStore,
+          Totp.kDigitsKey,
+          totpData[Totp.kDigitsKey],
+        ),
+      if (totpData.containsKey(Totp.kValidityKey))
+        Totp.kValidityKey: await transformer(
+          cryptoStore,
+          Totp.kValidityKey,
+          totpData[Totp.kValidityKey],
+        ),
+      if (totpData.containsKey(Totp.kImageUrlKey))
+        Totp.kImageUrlKey: await transformer(
+          cryptoStore,
+          Totp.kImageUrlKey,
+          totpData[Totp.kImageUrlKey],
+        ),
+    };
   }
 }

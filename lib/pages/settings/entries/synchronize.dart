@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
+import 'package:open_authenticator/model/authentication/provider.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/pages/settings/entries/bool_entry.dart';
-import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 
 /// Allows the user to choose its storage type.
-class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<StorageTypeSettingsEntry, StorageType> with RequiresAuthenticationProvider {
+class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<StorageTypeSettingsEntry, StorageType> {
   /// Creates a new synchronize settings entry widget instance.
   SynchronizeSettingsEntryWidget({
     super.key,
@@ -33,7 +33,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     FirebaseAuthenticationState? state = ref.watch(firebaseAuthenticationProvider).valueOrNull;
-    if (shouldDisplayEmptyWidget || state is! FirebaseAuthenticationStateLoggedIn) {
+    if (FirebaseAuthenticationProvider.availableProviders.isEmpty || state is! FirebaseAuthenticationStateLoggedIn) {
       return const SizedBox.shrink();
     }
     return super.build(context, ref);

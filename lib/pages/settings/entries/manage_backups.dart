@@ -113,7 +113,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
           if (password == null || !mounted) {
             return;
           }
-          bool result = await showWaitingDialog(
+          bool result = await showWaitingOverlay(
             context,
             future: backup.restore(password),
           );
