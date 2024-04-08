@@ -12,7 +12,7 @@ sealed class FirebaseAuthenticationState {
     }
 
     for (FirebaseAuthenticationProvider provider in FirebaseAuthenticationProvider.availableProviders) {
-      if (provider.isAvailable && await provider.isWaitingForConfirmation(ref)) {
+      if (provider.isAvailable && provider is ConfirmationProvider && await provider.isWaitingForConfirmation(ref)) {
         FirebaseAuthenticationStateWaitingForConfirmation? state = await provider.createWaitingForAuthenticationState(ref);
         if (state != null) {
           return state;

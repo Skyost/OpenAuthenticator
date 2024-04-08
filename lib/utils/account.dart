@@ -31,7 +31,7 @@ class AccountUtils {
 
   /// Prompts the user to choose an authentication provider, and use it to link or unlink its current account.
   static Future<void> tryToggleLink(BuildContext context, WidgetRef ref) async {
-    FirebaseAuthenticationProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context, link: true);
+    LinkProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context, link: true) as LinkProvider?;
     if (provider == null || !context.mounted) {
       return;
     }
@@ -54,23 +54,27 @@ class AccountUtils {
   }
 
   /// Tries to do the specified [action].
-  static Future<void> _tryTo(
+  static Future<void> _tryTo<T extends FirebaseAuthenticationProvider>(
     BuildContext context,
     WidgetRef ref,
-    FirebaseAuthenticationProvider provider, {
-    required Future<FirebaseAuthenticationResult> Function(BuildContext, FirebaseAuthenticationProvider) action,
+    T provider, {
+    required Future<FirebaseAuthenticationResult> Function(BuildContext, T) action,
     String? waitingDialogMessage,
     String? timeoutMessage,
   }) async {
     FirebaseAuthenticationResult result;
     try {
-      result = await showWaitingOverlay(
-        context,
-        future: action(context, provider),
-        message: waitingDialogMessage,
-        timeout: provider is OAuth2AuthenticationProvider && provider.shouldFallback ? provider.fallbackTimeout : null,
-        timeoutMessage: timeoutMessage,
-      );
+      if (provider.showLoadingDialog) {
+        result = await showWaitingOverlay(
+          context,
+          future: action(context, provider),
+          message: waitingDialogMessage,
+          timeout: provider is OAuth2AuthenticationProvider && provider.shouldFallback ? provider.fallbackTimeout : null,
+          timeoutMessage: timeoutMessage,
+        );
+      } else {
+        result = await action(context, provider);
+      }
     } catch (ex, stacktrace) {
       result = FirebaseAuthenticationResultError(ex is Exception ? ex : null);
       if (kDebugMode) {

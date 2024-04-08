@@ -144,6 +144,7 @@ class LocalStorage extends _$LocalStorage with Storage {
 
   @override
   Future<void> onStorageTypeChanged() async {
+    await clearTotps();
     await super.onStorageTypeChanged();
     try {
       (await SqliteUtils.getDatabaseFilePath(_kDbFileName)).deleteSync();
@@ -152,11 +153,6 @@ class LocalStorage extends _$LocalStorage with Storage {
         print(ex);
         print(stacktrace);
       }
-      transaction(() async {
-        for (TableInfo table in allTables) {
-          await delete(table).go();
-        }
-      });
     }
   }
 }

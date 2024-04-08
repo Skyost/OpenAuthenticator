@@ -98,6 +98,23 @@
         "waitingDialogMessage": "Please wait while we are confirming your account... Do not close the application.",
         "error": "Something went wrong. Please try again later.",
         "success": "Email confirmed with success.",
+        "confirmActionPickerDialog": {
+          "title": "What do you want to do ?",
+          "confirm": {
+            "title": "Confirm your account",
+            "subtitle": "Paste the link you received by email to confirm your account."
+          },
+          "cancelConfirmation": {
+            "title": "Cancel account confirmation",
+            "subtitle": "Cancel your account confirmation.",
+            "validationDialog": {
+              "title": "Confirmation",
+              "message": "Are you sure ?"
+            },
+            "success": "Success !",
+            "error": "An error occurred. Please try again later."
+          }
+        },
         "linkDialog": {
           "title": "Confirmation link",
           "message": "Either visit the link with this device or paste it below to confirm your email address."

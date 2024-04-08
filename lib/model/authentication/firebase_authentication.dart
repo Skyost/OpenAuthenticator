@@ -33,18 +33,18 @@ class FirebaseAuthentication extends AsyncNotifier<FirebaseAuthenticationState> 
       );
 
   /// Tries to link the given [provider].
-  Future<FirebaseAuthenticationResult> tryLink(BuildContext context, FirebaseAuthenticationProvider provider) => _tryTo(
-    context,
-    provider,
-    action: provider.tryLink,
-  );
+  Future<FirebaseAuthenticationResult> tryLink(BuildContext context, LinkProvider provider) => _tryTo(
+        context,
+        provider,
+        action: provider.tryLink,
+      );
 
   /// Tries to unlink the given [provider].
-  Future<FirebaseAuthenticationResult> tryUnlink(BuildContext context, FirebaseAuthenticationProvider provider) => _tryTo(
-    context,
-    provider,
-    action: provider.tryUnlink,
-  );
+  Future<FirebaseAuthenticationResult> tryUnlink(BuildContext context, LinkProvider provider) => _tryTo(
+        context,
+        provider,
+        action: provider.tryUnlink,
+      );
 
   /// Tries to do the specified [action].
   Future<FirebaseAuthenticationResult> _tryTo(
@@ -74,11 +74,10 @@ class FirebaseAuthentication extends AsyncNotifier<FirebaseAuthenticationState> 
   }
 
   /// Tries to confirm the log in.
-  Future<bool> tryConfirm(String? code, {FirebaseAuthenticationProvider? provider}) async {
-    List<FirebaseAuthenticationProvider> providers = provider == null ? FirebaseAuthenticationProvider.availableProviders : [provider];
+  Future<bool> tryConfirm<C, T extends ConfirmationProvider<C>>(C? code) async {
     try {
-      for (FirebaseAuthenticationProvider provider in providers) {
-        if (!provider.isAvailable || !(await provider.isWaitingForConfirmation(ref))) {
+      for (FirebaseAuthenticationProvider provider in FirebaseAuthenticationProvider.availableProviders) {
+        if (!provider.isAvailable || provider is! T || !(await provider.isWaitingForConfirmation(ref))) {
           continue;
         }
         FirebaseAuthenticationState? authenticationState = await provider.confirm(ref, code);
@@ -87,6 +86,27 @@ class FirebaseAuthentication extends AsyncNotifier<FirebaseAuthenticationState> 
           return true;
         }
         return false;
+      }
+    } catch (ex, stacktrace) {
+      if (kDebugMode) {
+        print(ex);
+        print(stacktrace);
+      }
+    }
+    return false;
+  }
+
+  /// Tries to cancel the confirmation.
+  Future<bool> tryCancelConfirmation<T extends ConfirmationProvider>() async {
+    try {
+      for (FirebaseAuthenticationProvider provider in FirebaseAuthenticationProvider.availableProviders) {
+        if (!provider.isAvailable || provider is! T || !(await provider.isWaitingForConfirmation(ref))) {
+          continue;
+        }
+        if (await provider.cancelConfirmation(ref)) {
+          ref.invalidateSelf();
+          return true;
+        }
       }
     } catch (ex, stacktrace) {
       if (kDebugMode) {

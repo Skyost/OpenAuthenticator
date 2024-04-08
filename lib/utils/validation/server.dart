@@ -76,9 +76,9 @@ abstract class AbstractValidationServer<T> {
   }
 
   /// Cancels the validation.
-  void cancel() {
+  Future<void> cancel() async {
     onValidationCancelled();
-    close();
+    await close();
   }
 
   /// Closes the validation server.
@@ -90,7 +90,7 @@ abstract class AbstractValidationServer<T> {
   }
 
   /// Builds the URL to launch.
-  FutureOr<Uri?> buildUrl();
+  FutureOr<Uri?> buildUrl() => null;
 
   /// Validates the [request].
   FutureOr<ValidationObject<T>> validate(HttpRequest request);
@@ -102,7 +102,39 @@ abstract class AbstractValidationServer<T> {
   void onValidationFailed(ValidationException exception);
 
   /// Triggered when the validation has been cancelled.
-  void onValidationCancelled();
+  void onValidationCancelled() {}
+}
+
+/// An [AbstractValidationServer] based on a completer.
+abstract class CompleterAbstractValidationServer<T> extends AbstractValidationServer<T> {
+  /// The Future completer.
+  @protected
+  Completer<T?>? completer;
+
+  /// Creates a new completer abstract validation server instance.
+  CompleterAbstractValidationServer({
+    super.port,
+    required super.path,
+    super.timeout,
+  });
+
+  @override
+  @mustCallSuper
+  Future<void> start() async {
+    await super.start();
+    completer = Completer();
+  }
+
+  @override
+  @protected
+  void onValidationCompleted(T result) => completer?.complete(result);
+
+  @override
+  void onValidationFailed(ValidationException exception) => completer?.completeError(exception);
+
+  @override
+  @protected
+  void onValidationCancelled() => completer?.complete(null);
 }
 
 /// Allows to instantiate [AbstractValidationServer].

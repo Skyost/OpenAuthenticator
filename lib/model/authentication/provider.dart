@@ -8,11 +8,14 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/validation/server.dart';
+import 'package:open_authenticator/utils/validation/sign_in/email_link.dart';
 import 'package:open_authenticator/utils/validation/sign_in/github.dart';
 import 'package:open_authenticator/utils/validation/sign_in/google.dart';
 import 'package:open_authenticator/utils/validation/sign_in/microsoft.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
+import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -81,55 +84,14 @@ sealed class FirebaseAuthenticationProvider {
   String get providerId;
 
   /// Tries to log in.
-  Future<FirebaseAuthenticationState?> trySignIn(BuildContext context, AsyncNotifierProviderRef ref) => _tryTo(
-        context,
-        ref,
-        credentialAction: FirebaseAuth.instance.signInWithCredential,
-        providerAction: FirebaseAuth.instance.signInWithProvider,
-      );
+  Future<FirebaseAuthenticationState?> trySignIn(BuildContext context, AsyncNotifierProviderRef ref);
 
-  /// Tries to link the current provider.
-  Future<FirebaseAuthenticationState?> tryLink(BuildContext context, AsyncNotifierProviderRef ref) => _tryTo(
-        context,
-        ref,
-        credentialAction: FirebaseAuth.instance.currentUser!.linkWithCredential,
-        providerAction: FirebaseAuth.instance.currentUser!.linkWithProvider,
-      );
-
-  /// Tries to unlink the current provider.
-  Future<FirebaseAuthenticationState?> tryUnlink(BuildContext context, AsyncNotifierProviderRef ref) async {
-    if (FirebaseAuth.instance.currentUser == null) {
-      return FirebaseAuthenticationStateLoggedOut();
-    }
-    await FirebaseAuth.instance.currentUser!.unlink(providerId);
-    return FirebaseAuth.instance.currentUser == null
-        ? FirebaseAuthenticationStateLoggedOut()
-        : FirebaseAuthenticationStateLoggedIn(
-            user: FirebaseAuth.instance.currentUser!,
-          );
-  }
-
-  /// Tries to do the specified [credentialAction] or [providerAction].
-  Future<FirebaseAuthenticationState?> _tryTo(
-    BuildContext context,
-    AsyncNotifierProviderRef ref, {
-    required Future<UserCredential> Function(AuthCredential) credentialAction,
-    required Future<UserCredential> Function(AuthProvider) providerAction,
-  });
-
-  /// Returns whether this provider is waiting for confirmation.
-  Future<bool> isWaitingForConfirmation(AsyncNotifierProviderRef ref) => Future.value(false);
-
-  /// Creates the [FirebaseAuthenticationStateWaitingForConfirmation] if [isWaitingForConfirmation] is true.
-  Future<FirebaseAuthenticationStateWaitingForConfirmation?> createWaitingForAuthenticationState(AsyncNotifierProviderRef ref) => Future.value(null);
-
-  /// Confirms the log in, with the given [code], if needed.
-  Future<FirebaseAuthenticationState?> confirm(AsyncNotifierProviderRef ref, String? code) =>
-      Future.value(FirebaseAuth.instance.currentUser == null ? null : FirebaseAuthenticationStateLoggedIn(user: FirebaseAuth.instance.currentUser!));
+  /// Whether to show the loading dialog.
+  bool get showLoadingDialog => true;
 }
 
 /// Allows to authenticate using an OAuth2 provider.
-mixin OAuth2AuthenticationProvider<T extends AuthProvider> on FirebaseAuthenticationProvider {
+mixin OAuth2AuthenticationProvider<T extends AuthProvider> on LinkProvider {
   /// Creates the Firebase [AuthProvider].
   T createAuthProvider();
 
@@ -177,27 +139,83 @@ mixin OAuth2AuthenticationProvider<T extends AuthProvider> on FirebaseAuthentica
   void addScope(T provider, String scope);
 }
 
-/// The email link authentication provider.
-class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider {
-  /// The preferences key where the email is temporally stored.
-  static const String _kFirebaseAuthenticationEmailKey = 'firebaseAuthenticationEmail';
+/// Allows to confirm a login.
+mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
+  /// Returns whether this provider is waiting for confirmation.
+  Future<bool> isWaitingForConfirmation(AsyncNotifierProviderRef ref) => Future.value(false);
 
-  /// Creates a new email link authentication provider instance.
-  const EmailLinkAuthenticationProvider._() : super._(
-          availablePlatforms: const [
-            Platform.android,
-            Platform.iOS,
-            Platform.macOS,
-          ],
-        );
+  /// Creates the [FirebaseAuthenticationStateWaitingForConfirmation] if [isWaitingForConfirmation] is true.
+  Future<FirebaseAuthenticationStateWaitingForConfirmation?> createWaitingForAuthenticationState(AsyncNotifierProviderRef ref) => Future.value(null);
 
-  @override
+  /// Confirms the log in, with the given [code], if needed.
+  Future<FirebaseAuthenticationState?> confirm(AsyncNotifierProviderRef ref, T? code) =>
+      Future.value(FirebaseAuth.instance.currentUser == null ? null : FirebaseAuthenticationStateLoggedIn(user: FirebaseAuth.instance.currentUser!));
+
+  /// Cancels the confirmation.
+  Future<bool> cancelConfirmation(AsyncNotifierProviderRef ref);
+}
+
+/// Allows to link an account.
+mixin LinkProvider on FirebaseAuthenticationProvider {
+  /// Tries to log in.
+  Future<FirebaseAuthenticationState?> trySignIn(BuildContext context, AsyncNotifierProviderRef ref) => _tryTo(
+        context,
+        ref,
+        credentialAction: FirebaseAuth.instance.signInWithCredential,
+        providerAction: FirebaseAuth.instance.signInWithProvider,
+      );
+
+  /// Tries to link the current provider.
+  Future<FirebaseAuthenticationState?> tryLink(BuildContext context, AsyncNotifierProviderRef ref) => _tryTo(
+        context,
+        ref,
+        credentialAction: FirebaseAuth.instance.currentUser!.linkWithCredential,
+        providerAction: FirebaseAuth.instance.currentUser!.linkWithProvider,
+      );
+
+  /// Tries to unlink the current provider.
+  Future<FirebaseAuthenticationState?> tryUnlink(BuildContext context, AsyncNotifierProviderRef ref) async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      return FirebaseAuthenticationStateLoggedOut();
+    }
+    await FirebaseAuth.instance.currentUser!.unlink(providerId);
+    return FirebaseAuth.instance.currentUser == null
+        ? FirebaseAuthenticationStateLoggedOut()
+        : FirebaseAuthenticationStateLoggedIn(
+            user: FirebaseAuth.instance.currentUser!,
+          );
+  }
+
+  /// Tries to do the specified [credentialAction] or [providerAction].
   Future<FirebaseAuthenticationState?> _tryTo(
     BuildContext context,
     AsyncNotifierProviderRef ref, {
     required Future<UserCredential> Function(AuthCredential) credentialAction,
     required Future<UserCredential> Function(AuthProvider) providerAction,
-  }) async {
+  });
+}
+
+/// The email link authentication provider.
+class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider with ConfirmationProvider<String> {
+  /// The preferences key where the email is temporally stored.
+  static const String _kFirebaseAuthenticationEmailKey = 'firebaseAuthenticationEmail';
+
+  /// Creates a new email link authentication provider instance.
+  const EmailLinkAuthenticationProvider._()
+      : super._(
+          availablePlatforms: const [
+            Platform.android,
+            Platform.iOS,
+            Platform.macOS,
+            Platform.windows,
+          ],
+        );
+
+  @override
+  bool get showLoadingDialog => currentPlatform != Platform.windows;
+
+  @override
+  Future<FirebaseAuthenticationState?> trySignIn(BuildContext context, AsyncNotifierProviderRef ref) async {
     String? email = await TextInputDialog.prompt(
       context,
       title: translations.authentication.emailDialog.title,
@@ -209,15 +227,38 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider {
       return null;
     }
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    await FirebaseAuth.instance.sendSignInLinkToEmail(
-      email: email,
-      actionCodeSettings: ActionCodeSettings(
-        url: App.firebaseLoginUrl,
-        handleCodeInApp: true,
-        androidPackageName: packageInfo.packageName,
-        iOSBundleId: packageInfo.packageName,
-      ),
+    ActionCodeSettings actionCodeSettings = ActionCodeSettings(
+      url: App.firebaseLoginUrl,
+      handleCodeInApp: true,
+      androidPackageName: packageInfo.packageName,
+      iOSBundleId: packageInfo.packageName,
     );
+    if (currentPlatform == Platform.windows) {
+      EmailLinkSignIn emailLinkSignIn = EmailLinkSignIn(email: email);
+      OAuth2Response? response;
+      if (context.mounted) {
+        response = await showWaitingOverlay(
+          context,
+          future: emailLinkSignIn.sendSignInLinkToEmail(actionCodeSettings),
+          message: translations.authentication.logIn.waitingDialogMessage,
+        );
+      } else {
+        response = await emailLinkSignIn.sendSignInLinkToEmail(actionCodeSettings);
+      }
+      if (response != null) {
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(
+          GoogleAuthProvider.credential(idToken: response.idToken),
+        );
+        if (userCredential.user != null) {
+          return FirebaseAuthenticationStateLoggedIn(user: userCredential.user!);
+        }
+      }
+    } else {
+      await FirebaseAuth.instance.sendSignInLinkToEmail(
+        email: email,
+        actionCodeSettings: actionCodeSettings,
+      );
+    }
     SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
     await preferences.setString(_kFirebaseAuthenticationEmailKey, email);
     return FirebaseAuthenticationStateWaitingForConfirmation(email: email);
@@ -227,6 +268,12 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider {
   Future<bool> isWaitingForConfirmation(AsyncNotifierProviderRef ref) async {
     SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
     return preferences.getString(_kFirebaseAuthenticationEmailKey) != null;
+  }
+
+  @override
+  Future<bool> cancelConfirmation(AsyncNotifierProviderRef ref) async {
+    SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
+    return await preferences.remove(_kFirebaseAuthenticationEmailKey);
   }
 
   @override
@@ -242,10 +289,22 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider {
     if (emailLink == null || !FirebaseAuth.instance.isSignInWithEmailLink(emailLink)) {
       return null;
     }
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailLink(
-      email: preferences.getString(_kFirebaseAuthenticationEmailKey)!,
-      emailLink: emailLink,
-    );
+    UserCredential userCredential;
+    String email = preferences.getString(_kFirebaseAuthenticationEmailKey)!;
+    if (currentPlatform == Platform.windows) {
+      ValidationObject<OAuth2Response> result = await EmailLinkSignIn(email: email).validateUrl(emailLink);
+      if (result is! ValidationSuccess || result.object?.idToken == null) {
+        return null;
+      }
+      userCredential = await FirebaseAuth.instance.signInWithCredential(
+        GoogleAuthProvider.credential(idToken: result.object!.idToken),
+      );
+    } else {
+      userCredential = await FirebaseAuth.instance.signInWithEmailLink(
+        email: email,
+        emailLink: emailLink,
+      );
+    }
     if (userCredential.user == null) {
       return null;
     }
@@ -258,7 +317,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider {
 }
 
 /// The Google authentication provider.
-class GoogleAuthenticationProvider extends FirebaseAuthenticationProvider with OAuth2AuthenticationProvider<GoogleAuthProvider> {
+class GoogleAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider, OAuth2AuthenticationProvider<GoogleAuthProvider> {
   /// Creates a new Google authentication provider instance.
   const GoogleAuthenticationProvider._()
       : super._(
@@ -294,7 +353,7 @@ class GoogleAuthenticationProvider extends FirebaseAuthenticationProvider with O
 }
 
 /// The Apple authentication provider.
-class AppleAuthenticationProvider extends FirebaseAuthenticationProvider {
+class AppleAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider {
   /// Creates a new Apple authentication provider instance.
   const AppleAuthenticationProvider._()
       : super._(
@@ -310,8 +369,8 @@ class AppleAuthenticationProvider extends FirebaseAuthenticationProvider {
   Future<FirebaseAuthenticationState?> _tryTo(
     BuildContext context,
     AsyncNotifierProviderRef ref, {
-    required Future<UserCredential> Function(AuthCredential p1) credentialAction,
-    required Future<UserCredential> Function(AuthProvider p1) providerAction,
+    required Future<UserCredential> Function(AuthCredential) credentialAction,
+    required Future<UserCredential> Function(AuthProvider) providerAction,
   }) async {
     AppleAuthProvider appleProvider = AppleAuthProvider();
     appleProvider.addScope('email');
@@ -330,7 +389,7 @@ class AppleAuthenticationProvider extends FirebaseAuthenticationProvider {
 }
 
 /// The Microsoft authentication provider.
-class MicrosoftAuthenticationProvider extends FirebaseAuthenticationProvider with OAuth2AuthenticationProvider<MicrosoftAuthProvider> {
+class MicrosoftAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider, OAuth2AuthenticationProvider<MicrosoftAuthProvider> {
   /// Creates a new Microsoft authentication provider instance.
   const MicrosoftAuthenticationProvider._()
       : super._(
@@ -368,7 +427,7 @@ class MicrosoftAuthenticationProvider extends FirebaseAuthenticationProvider wit
 }
 
 /// The Twitter authentication provider.
-class TwitterAuthenticationProvider extends FirebaseAuthenticationProvider {
+class TwitterAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider {
   /// Creates a new Twitter authentication provider instance.
   const TwitterAuthenticationProvider._()
       : super._(
@@ -403,7 +462,7 @@ class TwitterAuthenticationProvider extends FirebaseAuthenticationProvider {
 }
 
 /// The Github authentication provider.
-class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with OAuth2AuthenticationProvider<GithubAuthProvider> {
+class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider, OAuth2AuthenticationProvider<GithubAuthProvider> {
   /// Creates a new Github authentication provider instance.
   const GithubAuthenticationProvider._()
       : super._(

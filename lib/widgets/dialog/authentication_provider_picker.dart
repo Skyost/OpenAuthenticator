@@ -29,7 +29,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
         children: [
           for (FirebaseAuthenticationProvider provider in FirebaseAuthenticationProvider.availableProviders)
             if (link) ...[
-              if (provider is! EmailLinkAuthenticationProvider) _createListTile(provider, currentProviders),
+              if (provider is! LinkProvider) _createListTile(provider, currentProviders),
             ] else //
               ...[
               if (!currentProviders.contains(provider)) _createListTile(provider, currentProviders),
@@ -99,7 +99,6 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
   /// Opens the dialog.
   static Future<FirebaseAuthenticationProvider?> openDialog(
     BuildContext context, {
-    Iterable<FirebaseAuthenticationProvider> hiddenProviders = const {},
     bool link = false,
   }) =>
       showAdaptiveDialog<FirebaseAuthenticationProvider>(

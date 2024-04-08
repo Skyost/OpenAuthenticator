@@ -28,7 +28,7 @@ mixin OAuth2SignIn {
 }
 
 /// Allows to log in the user to various providers using a [ValidationServer].
-abstract class OAuth2SignInServer extends AbstractValidationServer<OAuth2Response> with OAuth2SignIn {
+abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAuth2Response> with OAuth2SignIn {
   /// The error code for when there is no token in a query parameters.
   static const String _kErrorNoToken = 'no_token_returned';
 
@@ -41,9 +41,6 @@ abstract class OAuth2SignInServer extends AbstractValidationServer<OAuth2Respons
   /// The state (used for validation).
   String? _state;
 
-  /// The Future completer.
-  Completer<OAuth2Response?>? _completer;
-
   /// Creates a new sign in validation instance.
   OAuth2SignInServer({
     required this.clientId,
@@ -55,10 +52,9 @@ abstract class OAuth2SignInServer extends AbstractValidationServer<OAuth2Respons
 
   @override
   Future<OAuth2Response?> signIn(BuildContext context) async {
-    _completer = Completer<OAuth2Response?>();
     _state = generateRandomString();
     await start();
-    return await _completer!.future;
+    return await completer!.future;
   }
 
   @override
@@ -81,17 +77,6 @@ abstract class OAuth2SignInServer extends AbstractValidationServer<OAuth2Respons
 
   /// Creates a new OAuth2Response instance from the given params.
   OAuth2Response createResponseFromParams(Map<String, String> params) => OAuth2Response.fromResponse(params);
-
-  @override
-  @protected
-  void onValidationCompleted(OAuth2Response result) => _completer?.complete(result);
-
-  @override
-  void onValidationFailed(ValidationException exception) => _completer?.completeError(exception);
-
-  @override
-  @protected
-  void onValidationCancelled() => _completer?.complete(null);
 
   @override
   Map<String, String> get loginUrlParameters => {
@@ -169,7 +154,7 @@ mixin OAuth2SignInVerifyFragment on OAuth2SignInServer {
       }
       if (toAppend.length > 1) {
         toAppend = toAppend.substr(0, toAppend.length - 1);
-        document.getElementById('message').innerHTML = '${translations.validation.oauth2.loading(link: ' + toAppend + ')}';
+        document.getElementById('message').innerHTML = '${translations.validation.oauth2.loading(link: '\$toAppend').replaceAll('\'', '\\\'').replaceAll('\$toAppend', ' + toAppend + ')}';
         window.location = noHashLocation + toAppend;
       }
     }
