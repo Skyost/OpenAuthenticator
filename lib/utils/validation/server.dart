@@ -41,7 +41,7 @@ abstract class AbstractValidationServer<T> {
       launchUrl(url);
     }
     if (timeout != null) {
-      _timeoutTimer = Timer(timeout!, cancel);
+      _timeoutTimer = Timer(timeout!, () => cancel(timedOut: true));
     }
   }
 
@@ -53,18 +53,20 @@ abstract class AbstractValidationServer<T> {
       await sendResponse(response, translations.validation.error.incorrectPath(path: request.uri.pathSegments.firstOrNull as Object));
       return;
     }
-    ValidationObject<T>? result = await validate(request);
-    switch (result) {
-      case ValidationSuccess(:final object):
+    ValidationResult<T>? object = await validate(request);
+    switch (object) {
+      case ValidationSuccess():
         await sendResponse(response, translations.validation.success);
-        onValidationCompleted(object);
         break;
       case ValidationError(:final exception):
         await sendResponse(response, translations.validation.error.generic(exception: exception));
-        onValidationFailed(exception);
+        break;
+      default:
         break;
     }
-    await close();
+    if (onValidate(object)) {
+      await close();
+    }
   }
 
   /// Sends a [message] to the given [response].
@@ -76,8 +78,8 @@ abstract class AbstractValidationServer<T> {
   }
 
   /// Cancels the validation.
-  Future<void> cancel() async {
-    onValidationCancelled();
+  Future<void> cancel({bool timedOut = false}) async {
+    onValidate(ValidationCancelled(timedOut: timedOut));
     await close();
   }
 
@@ -93,23 +95,17 @@ abstract class AbstractValidationServer<T> {
   FutureOr<Uri?> buildUrl() => null;
 
   /// Validates the [request].
-  FutureOr<ValidationObject<T>> validate(HttpRequest request);
+  FutureOr<ValidationResult<T>> validate(HttpRequest request);
 
-  /// Triggered when the validation has been completed.
-  void onValidationCompleted(T result);
-
-  /// Triggered when there has been an error validating the request.
-  void onValidationFailed(ValidationException exception);
-
-  /// Triggered when the validation has been cancelled.
-  void onValidationCancelled() {}
+  /// Triggered when a validation object has been received.
+  bool onValidate(ValidationResult<T> object);
 }
 
 /// An [AbstractValidationServer] based on a completer.
 abstract class CompleterAbstractValidationServer<T> extends AbstractValidationServer<T> {
   /// The Future completer.
   @protected
-  Completer<T?>? completer;
+  Completer<ValidationResult<T>>? completer;
 
   /// Creates a new completer abstract validation server instance.
   CompleterAbstractValidationServer({
@@ -126,21 +122,24 @@ abstract class CompleterAbstractValidationServer<T> extends AbstractValidationSe
   }
 
   @override
-  @protected
-  void onValidationCompleted(T result) => completer?.complete(result);
-
-  @override
-  void onValidationFailed(ValidationException exception) => completer?.completeError(exception);
-
-  @override
-  @protected
-  void onValidationCancelled() => completer?.complete(null);
+  bool onValidate(ValidationResult<T> object) {
+    switch (object) {
+      case ValidationSuccess<T>():
+      case ValidationCancelled<T>():
+        completer?.complete(object);
+        break;
+      case ValidationError<T>(:final exception):
+        completer?.completeError(exception);
+        break;
+    }
+    return true;
+  }
 }
 
 /// Allows to instantiate [AbstractValidationServer].
 class ValidationServer<T> extends AbstractValidationServer<T> {
   /// The validator.
-  final FutureOr<ValidationObject<T>> Function(HttpRequest) _validate;
+  final FutureOr<ValidationResult<T>> Function(HttpRequest) _validate;
 
   /// Builds the URL to launch for validation.
   final FutureOr<Uri?> Function(String)? _urlBuilder;
@@ -152,17 +151,17 @@ class ValidationServer<T> extends AbstractValidationServer<T> {
   final Function(ValidationException)? _onValidationFailed;
 
   /// Triggered when the validation has been cancelled.
-  final VoidCallback? _onValidationCancelled;
+  final Function(bool)? _onValidationCancelled;
 
   /// Creates a new validation server instance.
   ValidationServer({
     super.port,
     required super.path,
     FutureOr<Uri?> Function(String)? urlBuilder,
-    required FutureOr<ValidationObject<T>> Function(HttpRequest) validate,
+    required FutureOr<ValidationResult<T>> Function(HttpRequest) validate,
     Function(T)? onValidationCompleted,
     Function(ValidationException)? onValidationFailed,
-    VoidCallback? onValidationCancelled,
+    Function(bool)? onValidationCancelled,
     super.timeout,
   })  : _urlBuilder = urlBuilder,
         _validate = validate,
@@ -172,37 +171,42 @@ class ValidationServer<T> extends AbstractValidationServer<T> {
 
   @override
   @protected
-  FutureOr<Uri?> buildUrl() => _urlBuilder?.call(this.url);
+  FutureOr<Uri?> buildUrl() => _urlBuilder?.call(url);
 
   @override
   @protected
-  FutureOr<ValidationObject<T>> validate(HttpRequest request) => _validate(request);
+  FutureOr<ValidationResult<T>> validate(HttpRequest request) => _validate(request);
 
   @override
-  @protected
-  void onValidationCompleted(T result) => _onValidationCompleted?.call(result);
-
-  @override
-  void onValidationFailed(ValidationException exception) => _onValidationFailed?.call(exception);
-
-  @override
-  @protected
-  void onValidationCancelled() => _onValidationCancelled?.call();
+  bool onValidate(ValidationResult<T> result) {
+    switch (result) {
+      case ValidationSuccess<T>(:final object):
+        _onValidationCompleted?.call(object);
+        break;
+      case ValidationCancelled<T>(:final timedOut):
+        _onValidationCancelled?.call(timedOut);
+        break;
+      case ValidationError<T>(:final exception):
+        _onValidationFailed?.call(exception);
+        break;
+    }
+    return true;
+  }
 }
 
 /// An object returned from a [ValidationServer].
-sealed class ValidationObject<T> {
+sealed class ValidationResult<T> {
   /// The return object.
   final T? object;
 
   /// Creates a new validation object instance.
-  const ValidationObject({
+  const ValidationResult({
     this.object,
   });
 }
 
 /// Returned when the validation is a success.
-class ValidationSuccess<T> extends ValidationObject<T> {
+class ValidationSuccess<T> extends ValidationResult<T> {
   /// Creates a new validation success instance.
   const ValidationSuccess({
     required T super.object,
@@ -212,8 +216,19 @@ class ValidationSuccess<T> extends ValidationObject<T> {
   T get object => super.object as T;
 }
 
+/// Returned when the validation has been cancelled.
+class ValidationCancelled<T> extends ValidationResult<T> {
+  /// Whether this is the result of a timeout.
+  final bool timedOut;
+
+  /// Creates a new validation cancelled instance.
+  const ValidationCancelled({
+    this.timedOut = false,
+  });
+}
+
 /// Returned when there is an error.
-class ValidationError<T> extends ValidationObject<T> {
+class ValidationError<T> extends ValidationResult<T> {
   /// The exception instance.
   final ValidationException exception;
 

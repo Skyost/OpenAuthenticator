@@ -4,10 +4,14 @@
     "message": "Please enter your email, we will send you a login link."
   },
   "logIn": {
-    "waitingDialogMessage": "Please login yourself in the opened window. Do not close the application.",
+    "waitingLoginMessage": "Please login yourself in the opened window. Do not close the application.",
+    "waitingConfirmationMessage": "We have sent a confirmation link by email. Please click on it to continue. Do not close the application.",
     "error": {
       "generic": "Something went wrong. Please try again later.",
-      "timeout": "Timed out while logging in using the selected provider. Please try again.",
+      "timeoutDialog": {
+        "title": "Log in timed out",
+        "message": "Timed out while logging in using the selected provider. Please try again."
+      },
       "accountExistsWithDifferentCredentialsDialog": {
         "title": "An account already exists",
         "message": "An account with the same email address exists in our database, but the selected authentication provider has not yet been linked to it.\nPlease try to log in using an already linked authentication provider."

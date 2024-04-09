@@ -4,10 +4,14 @@
     "message": "Veuillez entrer votre adresse mail, nous vous enverrons un lien de connexion."
   },
   "logIn": {
-    "waitingDialogMessage": "Veuillez vous connecter dans la fenêtre qui vient de s'ouvrir. Ne fermez pas l'application.",
+    "waitingLoginMessage": "Veuillez vous connecter dans la fenêtre qui vient de s'ouvrir. Ne fermez pas l'application.",
+    "waitingConfirmationMessage": "Nous vous avons envoyé un lien de confirmation par email. Veuillez cliquer dessus pour continuer. Ne fermez pas l'application.",
     "error": {
       "generic": "Quelque-chose s'est mal passé. Veuillez réessayer plus tard.",
-      "timeout": "Délai d'attente dépassé pendant la connexion au fournisseur sélectionné. Veuillez réessayer.",
+      "timeoutDialog": {
+        "title": "Délai d'attente dépasse",
+        "message": "Délai d'attente dépassé pendant la connexion au fournisseur sélectionné. Veuillez réessayer."
+      },
       "accountExistsWithDifferentCredentialsDialog": {
         "title": "Un compte existe déjà",
         "message": "Un compte avec la même adresse mail existe dans notre base de données, mais le fournisseur d'authentification sélectionné n'y est pas relié.\nVeuillez vous connecter en utilisant un fournisseur d'authentification qui y est déjà relié."

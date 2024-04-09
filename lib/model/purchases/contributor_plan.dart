@@ -11,7 +11,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 /// The RevenueCat client provider.
 final revenueCatClientProvider = FutureProvider((ref) async {
-  FirebaseAuthenticationState authenticationState = await ref.watch(firebaseAuthenticationProvider.future);
+  FirebaseAuthenticationState authenticationState = await ref.watch(firebaseAuthenticationProvider);
   if (authenticationState is! FirebaseAuthenticationStateLoggedIn) {
     return null;
   }
@@ -71,11 +71,18 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
 
   /// Purchases the given item.
   Future<bool> purchase(PackageTypeAsker askPackageType) async {
-    RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
-    List<String>? entitlements = await revenueCatClient?.purchase(Purchasable.contributorPlan, askPackageType);
-    if (entitlements != null && entitlements.contains(_kEntitlementId)) {
-      state = const AsyncData(ContributorPlanState.active);
-      return true;
+    try {
+      RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
+      List<String>? entitlements = await revenueCatClient?.purchase(Purchasable.contributorPlan, askPackageType);
+      if (entitlements != null && entitlements.contains(_kEntitlementId)) {
+        state = const AsyncData(ContributorPlanState.active);
+        return true;
+      }
+    } catch (ex, stacktrace) {
+      if (kDebugMode) {
+        print(ex);
+        print(stacktrace);
+      }
     }
     return false;
   }

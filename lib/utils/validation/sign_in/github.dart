@@ -6,17 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 import 'package:open_authenticator/widgets/countdown.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 /// Allows to sign in using Github.
 class GithubSignIn with OAuth2SignIn {
+  /// Triggered when the response is invalid.
+  static const String _kErrorInvalidResponse = 'invalid_response';
+
   @override
   final String clientId;
 
   /// The login completer.
-  Completer<OAuth2Response?>? _completer;
+  Completer<ValidationResult<OAuth2Response>>? _completer;
 
   /// The retrieved device code.
   String? _deviceCode;
@@ -39,11 +43,11 @@ class GithubSignIn with OAuth2SignIn {
   String get name => 'Github';
 
   @override
-  Future<OAuth2Response?> signIn(BuildContext context) async {
+  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context) async {
     if (_completer != null) {
       return await _completer!.future;
     }
-    _completer = Completer<OAuth2Response?>();
+    _completer = Completer<ValidationResult<OAuth2Response>>();
     http.Response response = await http.post(
       Uri.https(
         'github.com',
@@ -54,16 +58,26 @@ class GithubSignIn with OAuth2SignIn {
         HttpHeaders.acceptHeader: 'application/json',
       },
     );
+    if (response.statusCode != 200) {
+      return ValidationError(
+        exception: ValidationException(code: _kErrorInvalidResponse),
+      );
+    }
     Map<String, dynamic> parsedResponse = jsonDecode(response.body);
     String? verificationUrl = parsedResponse['verification_uri'];
     String? userCode = parsedResponse['user_code'];
     if (verificationUrl == null || userCode == null || !(await canLaunchUrlString(verificationUrl))) {
-      return null;
+      return ValidationError(
+        exception: ValidationException(code: _kErrorInvalidResponse),
+      );
     }
     Duration timeout = parsedResponse.containsKey('expires_in') ? Duration(seconds: parsedResponse['expires_in']) : const Duration(minutes: 15);
     _timeoutTimer = Timer(
       timeout,
-      () => stop(context),
+      () => stop(
+        context,
+        result: const ValidationCancelled(timedOut: true),
+      ),
     );
     _deviceCode = parsedResponse['device_code'];
     if (context.mounted) {
@@ -149,7 +163,14 @@ class GithubSignIn with OAuth2SignIn {
     );
     Map<String, dynamic> parsedResponse = jsonDecode(response.body);
     if (parsedResponse.containsKey('access_token')) {
-      stop(context != null && context.mounted ? context : null, accessToken: parsedResponse['access_token']);
+      stop(
+        context != null && context.mounted ? context : null,
+        result: ValidationSuccess(
+          object: OAuth2Response(
+            accessToken: parsedResponse['access_token'],
+          ),
+        ),
+      );
       return;
     }
     if (parsedResponse['error'] == 'slow_down' && parsedResponse.containsKey('interval')) {
@@ -160,7 +181,7 @@ class GithubSignIn with OAuth2SignIn {
   }
 
   /// Stops the login.
-  Future<void> stop(BuildContext? context, {String? accessToken}) async {
+  Future<void> stop(BuildContext? context, {ValidationResult<OAuth2Response>? result}) async {
     if (context != null && context.mounted) {
       Navigator.pop(context);
     }
@@ -170,7 +191,7 @@ class GithubSignIn with OAuth2SignIn {
     _timeoutTimer = null;
     _deviceCode = null;
     _checkInterval = null;
-    _completer?.complete(accessToken == null ? null : OAuth2Response(accessToken: accessToken));
+    _completer?.complete(result ?? ValidationCancelled());
     _completer = null;
   }
 

@@ -92,37 +92,37 @@
         "title": "Connexion",
         "subtitle": "Connectez vous pour synchroniser vos TOTPs entre vos appareils."
       },
-      "confirmEmail": {
-        "title": "Confirmer votre adresse mail",
-        "subtitle(rich)": "Un email de confirmation a été envoyé à votre adresse mail : $email.\nVeuillez cliquer sur le lien pour poursuivre la connexion. Vous pouvez également taper ici pour l'entrer manuellement.",
-        "waitingDialogMessage": "Veuillez patienter pendant que nous confirmons votre adresse mail... Ne fermez pas l'application.",
-        "error": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
-        "success": "Adresse mail confirmée avec succès.",
-        "confirmActionPickerDialog": {
-          "title": "Que voulez-vous faire ?",
-          "confirm": {
-            "title": "Valider votre compte",
-            "subtitle": "Coller le lien reçu par email pour confirmer votre compte."
-          },
-          "cancelConfirmation": {
-            "title": "Annuler la confirmation du compte",
-            "subtitle": "Annuler la confirmation du compte.",
-            "validationDialog": {
-              "title": "Confirmation",
-              "message": "Êtes-vous sûr ?"
-            },
-            "success": "Succès !",
-            "error": "Une erreur est survenue. Veuillez réessayer plus tard."
-          }
-        },
-        "linkDialog": {
-          "title": "Lien de confirmation",
-          "message": "Visitez le lien de confirmation avec cet appareil ou collez-le ci-dessous pour confirmer votre adresse mail."
-        }
-      },
       "logOut": {
         "title": "Déconnexion",
         "subtitle(rich)": "Se déconnecter pour arrêter la synchronisation des TOTPs avec cet appareil.\nActuellement connecté en tant que : $email."
+      }
+    },
+    "confirmEmail": {
+      "title": "Confirmer votre adresse mail",
+      "subtitle(rich)": "Un email de confirmation a été envoyé à votre adresse mail : $email.\nVeuillez cliquer sur le lien pour poursuivre la connexion. Vous pouvez également taper ici pour l'entrer manuellement.",
+      "waitingDialogMessage": "Veuillez patienter pendant que nous confirmons votre adresse mail... Ne fermez pas l'application.",
+      "error": "Quelque-chose s'est mal passé. Veuillez réessayer plus tard.",
+      "success": "Adresse mail confirmée avec succès.",
+      "confirmActionPickerDialog": {
+        "title": "Que voulez-vous faire ?",
+        "confirm": {
+          "title": "Valider votre compte",
+          "subtitle": "Coller le lien reçu par email pour confirmer votre compte."
+        },
+        "cancelConfirmation": {
+          "title": "Annuler la confirmation du compte",
+          "subtitle": "Annuler la confirmation du compte.",
+          "validationDialog": {
+            "title": "Confirmation",
+            "message": "Êtes-vous sûr ?"
+          },
+          "success": "Succès !",
+          "error": "Une erreur est survenue. Veuillez réessayer plus tard."
+        }
+      },
+      "linkDialog": {
+        "title": "Lien de confirmation",
+        "message": "Visitez le lien de confirmation avec cet appareil ou collez-le ci-dessous pour confirmer votre adresse mail."
       }
     },
     "synchronizeTotps": {

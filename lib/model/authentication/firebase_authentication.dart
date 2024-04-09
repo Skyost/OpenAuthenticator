@@ -1,121 +1,23 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_authenticator/model/authentication/provider.dart';
-import 'package:open_authenticator/model/authentication/result.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 
 /// The Firebase authenticate state provider.
-final firebaseAuthenticationProvider = AsyncNotifierProvider<FirebaseAuthentication, FirebaseAuthenticationState>(FirebaseAuthentication.new);
+final firebaseAuthenticationProvider = NotifierProvider<FirebaseAuthentication, FirebaseAuthenticationState>(FirebaseAuthentication.new);
 
 /// Allows to get and set the Firebase authentication state.
-class FirebaseAuthentication extends AsyncNotifier<FirebaseAuthenticationState> {
+class FirebaseAuthentication extends Notifier<FirebaseAuthenticationState> {
   @override
-  FutureOr<FirebaseAuthenticationState> build() async {
-    StreamSubscription<User?> subscription = FirebaseAuth.instance.userChanges().listen(_reactToUserChanges);
+  FirebaseAuthenticationState build() {
+    StreamSubscription<User?> subscription = FirebaseAuth.instance.userChanges().listen((user) => state = _getState(user: FirebaseAuth.instance.currentUser));
     ref.onDispose(subscription.cancel);
-    return await FirebaseAuthenticationState.get(ref);
+    return _getState(user: FirebaseAuth.instance.currentUser);
   }
 
-  /// Reacts to user changes.
-  Future<void> _reactToUserChanges(User? user) async {
-    state = AsyncData(await FirebaseAuthenticationState.get(ref, user: user));
-  }
-
-  /// Tries to log in.
-  Future<FirebaseAuthenticationResult> trySignIn(BuildContext context, FirebaseAuthenticationProvider provider) => _tryTo(
-        context,
-        provider,
-        action: provider.trySignIn,
-      );
-
-  /// Tries to link the given [provider].
-  Future<FirebaseAuthenticationResult> tryLink(BuildContext context, LinkProvider provider) => _tryTo(
-        context,
-        provider,
-        action: provider.tryLink,
-      );
-
-  /// Tries to unlink the given [provider].
-  Future<FirebaseAuthenticationResult> tryUnlink(BuildContext context, LinkProvider provider) => _tryTo(
-        context,
-        provider,
-        action: provider.tryUnlink,
-      );
-
-  /// Tries to do the specified [action].
-  Future<FirebaseAuthenticationResult> _tryTo(
-    BuildContext context,
-    FirebaseAuthenticationProvider provider, {
-    required Future<FirebaseAuthenticationState?> Function(BuildContext, AsyncNotifierProviderRef) action,
-  }) async {
-    if (!provider.isAvailable) {
-      return FirebaseAuthenticationResultError(Exception('${provider.runtimeType} is not available on this platform.'));
-    }
-    try {
-      FirebaseAuthenticationState? authenticationState = await action(context, ref);
-      if (authenticationState != null) {
-        state = AsyncData(authenticationState);
-        return FirebaseAuthenticationResultSuccess();
-      }
-    } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
-      if (ex is Exception) {
-        return FirebaseAuthenticationResultError(ex);
-      }
-    }
-    return FirebaseAuthenticationResultError();
-  }
-
-  /// Tries to confirm the log in.
-  Future<bool> tryConfirm<C, T extends ConfirmationProvider<C>>(C? code) async {
-    try {
-      for (FirebaseAuthenticationProvider provider in FirebaseAuthenticationProvider.availableProviders) {
-        if (!provider.isAvailable || provider is! T || !(await provider.isWaitingForConfirmation(ref))) {
-          continue;
-        }
-        FirebaseAuthenticationState? authenticationState = await provider.confirm(ref, code);
-        if (authenticationState != null) {
-          state = AsyncData(authenticationState);
-          return true;
-        }
-        return false;
-      }
-    } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
-    }
-    return false;
-  }
-
-  /// Tries to cancel the confirmation.
-  Future<bool> tryCancelConfirmation<T extends ConfirmationProvider>() async {
-    try {
-      for (FirebaseAuthenticationProvider provider in FirebaseAuthenticationProvider.availableProviders) {
-        if (!provider.isAvailable || provider is! T || !(await provider.isWaitingForConfirmation(ref))) {
-          continue;
-        }
-        if (await provider.cancelConfirmation(ref)) {
-          ref.invalidateSelf();
-          return true;
-        }
-      }
-    } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
-    }
-    return false;
-  }
+  /// Returns the state that corresponds to the [user] instance.
+  FirebaseAuthenticationState _getState({User? user}) => user == null ? FirebaseAuthenticationStateLoggedOut() : FirebaseAuthenticationStateLoggedIn(user: user);
 
   /// Logouts the user.
   Future<void> logout() => FirebaseAuth.instance.signOut();

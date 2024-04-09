@@ -98,7 +98,7 @@ class RevenueCatRestClient extends RevenueCatClient {
       validate: _validateCheckout,
       onValidationCompleted: (token) async => completer.complete(await _registerReceipt(purchasable, packageType, token)),
       onValidationFailed: completer.completeError,
-      onValidationCancelled: () => completer.complete([]),
+      onValidationCancelled: (timedOut) => completer.complete([]),
       timeout: timeout,
     );
     await _validationServer!.start();
@@ -108,7 +108,7 @@ class RevenueCatRestClient extends RevenueCatClient {
   }
 
   /// Validates the checkout.
-  Future<ValidationObject<String>> _validateCheckout(HttpRequest request) async {
+  Future<ValidationResult<String>> _validateCheckout(HttpRequest request) async {
     String? token = request.uri.queryParametersAll['token']?.firstOrNull;
     return token == null
         ? ValidationError<String>(

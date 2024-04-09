@@ -11,7 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
+import 'package:open_authenticator/model/authentication/providers/email_link.dart';
+import 'package:open_authenticator/model/authentication/providers/result.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
 import 'package:open_authenticator/pages/home.dart';
@@ -19,10 +20,10 @@ import 'package:open_authenticator/pages/intro/page.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
+import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/route/unlock_challenge.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -58,6 +59,7 @@ Future<void> main() async {
     namespace: App.appPackageName,
   ));
   LocaleSettings.useDeviceLocale();
+  // TODO: https://pub.dev/packages/google_mobile_ads/install
   runApp(
     TranslationProvider(
       child: const ProviderScope(
@@ -207,8 +209,11 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
 
   /// Triggered when a dynamic link has been received.
   Future<void> dynamicLinkCallback(PendingDynamicLinkData link) async {
-    if (await ref.read(firebaseAuthenticationProvider.notifier).tryConfirm(link.link.toString()) && mounted) {
-      SnackBarIcon.showSuccessSnackBar(context, text: translations.authentication.logIn.success);
+    EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
+    FirebaseAuthenticationResult result = await emailAuthenticationProvider.confirm(link.link.toString());
+    if (!mounted) {
+      return;
     }
+    AccountUtils.handleAuthenticationResult(context, ref, emailAuthenticationProvider, result);
   }
 }

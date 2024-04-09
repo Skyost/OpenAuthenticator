@@ -15,7 +15,7 @@ mixin OAuth2SignIn {
   String get name;
 
   /// Tries to sign in the user.
-  Future<OAuth2Response?> signIn(BuildContext context);
+  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context);
 
   /// The scopes to request.
   List<String> get scopes => [];
@@ -51,7 +51,7 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
         );
 
   @override
-  Future<OAuth2Response?> signIn(BuildContext context) async {
+  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context) async {
     _state = generateRandomString();
     await start();
     return await completer!.future;
@@ -59,7 +59,7 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
 
   @override
   @protected
-  FutureOr<ValidationObject<OAuth2Response>> validate(HttpRequest request) {
+  FutureOr<ValidationResult<OAuth2Response>> validate(HttpRequest request) {
     Map<String, String> params = request.uri.queryParameters;
     if (params.containsKey('error')) {
       return ValidationError(
@@ -95,7 +95,7 @@ mixin OAuth2SignInNonce on OAuth2SignInServer {
   String? _nonce;
 
   @override
-  Future<OAuth2Response?> signIn(BuildContext context) {
+  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context) {
     _nonce = generateRandomString();
     return super.signIn(context);
   }

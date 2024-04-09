@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
-import 'package:open_authenticator/model/authentication/provider.dart';
+import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
@@ -32,8 +32,8 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    FirebaseAuthenticationState? state = ref.watch(firebaseAuthenticationProvider).valueOrNull;
-    if (FirebaseAuthenticationProvider.availableProviders.isEmpty || state is! FirebaseAuthenticationStateLoggedIn) {
+    FirebaseAuthenticationState? state = ref.watch(firebaseAuthenticationProvider);
+    if (state is! FirebaseAuthenticationStateLoggedIn || ref.watch(userAuthenticationProviders.notifier).availableProviders.isEmpty) {
       return const SizedBox.shrink();
     }
     return super.build(context, ref);

@@ -13,6 +13,9 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<OAuth2Response> 
   /// Triggered when the validation URL is invalid.
   static const String _kErrorInvalidUrl = 'invalid_url';
 
+  /// Triggered when the response is invalid.
+  static const String _kErrorInvalidResponse = 'invalid_response';
+
   /// The email to send the sign-in link to.
   final String email;
 
@@ -25,7 +28,7 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<OAuth2Response> 
   }) : super(path: 'email-link');
 
   /// Sends a sign-in link to the [email].
-  Future<OAuth2Response?> sendSignInLinkToEmail(ActionCodeSettings actionCodeSettings) async {
+  Future<ValidationResult<OAuth2Response>> sendSignInLinkToEmailAndWaitForConfirmation(ActionCodeSettings actionCodeSettings) async {
     _idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
     http.Response response = await http.post(
       Uri.https(
@@ -44,20 +47,22 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<OAuth2Response> 
         HttpHeaders.acceptHeader: 'application/json',
       },
     );
-    if (response.statusCode == 200) {
-      await start();
-      return await completer?.future;
+    if (response.statusCode != 200) {
+      return ValidationError(
+        exception: ValidationException(code: _kErrorInvalidResponse),
+      );
     }
-    throw Exception('Invalid response code : ${response.statusCode}.');
+    await start();
+    return await completer!.future;
   }
 
   @override
-  FutureOr<ValidationObject<OAuth2Response>> validate(HttpRequest request) async {
+  FutureOr<ValidationResult<OAuth2Response>> validate(HttpRequest request) async {
     return await validateUrl(request.uri.toString());
   }
 
   /// Validates the [url] as a sign-in link.
-  FutureOr<ValidationObject<OAuth2Response>> validateUrl(String url) async {
+  FutureOr<ValidationResult<OAuth2Response>> validateUrl(String url) async {
     Uri? uri = Uri.tryParse(url);
     if (uri == null) {
       return ValidationError(
