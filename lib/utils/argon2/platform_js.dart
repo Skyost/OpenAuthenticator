@@ -1,7 +1,7 @@
 import 'package:open_authenticator/utils/argon2/platform.dart';
 
 class Argon2PlatformJS extends Argon2Platform {
-  static final Argon2PlatformJS instance = Argon2PlatformJS();
+  static const Argon2PlatformJS instance = Argon2PlatformJS();
 
   const Argon2PlatformJS();
 

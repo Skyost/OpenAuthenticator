@@ -191,7 +191,7 @@ class GithubSignIn with OAuth2SignIn {
     _timeoutTimer = null;
     _deviceCode = null;
     _checkInterval = null;
-    _completer?.complete(result ?? ValidationCancelled());
+    _completer?.complete(result ?? const ValidationCancelled());
     _completer = null;
   }
 

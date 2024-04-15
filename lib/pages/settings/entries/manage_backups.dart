@@ -141,7 +141,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
       return;
     }
     result = await backup.delete();
-    if (!context.mounted) {
+    if (!mounted) {
       return;
     }
     if (result) {

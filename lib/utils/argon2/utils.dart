@@ -72,9 +72,9 @@ abstract class Pack {
 }
 
 abstract class Longs {
-  static const _MASK_32 = 0xFFFFFFFF;
+  static const _mask32 = 0xFFFFFFFF;
 
-  static const _MASK32_HI_BITS = <int>[
+  static const _mask32HiBits = <int>[
     0xFFFFFFFF,
     0x7FFFFFFF,
     0x3FFFFFFF,
@@ -131,15 +131,15 @@ abstract class Longs {
     }
 
     final distance32 = (32 - distance);
-    final m = _MASK32_HI_BITS[distance32];
+    final m = _mask32HiBits[distance32];
 
     final hi32cp = hi32;
 
     hi32 = hi32 >> distance;
-    hi32 |= (((lo32 & m) << distance32) & _MASK_32);
+    hi32 |= (((lo32 & m) << distance32) & _mask32);
 
     lo32 = lo32 >> distance;
-    lo32 |= (((hi32cp & m) << distance32) & _MASK_32);
+    lo32 |= (((hi32cp & m) << distance32) & _mask32);
 
     return (hi32 << 32) | lo32;
   }

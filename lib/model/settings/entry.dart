@@ -35,9 +35,11 @@ class SettingsEntry<T> extends AutoDisposeAsyncNotifier<T> {
 
   /// Changes the entry value.
   Future<void> changeValue(T value) async {
-    state = AsyncData(value);
-    SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
-    await saveToPreferences(preferences, value);
+    if (value != state.valueOrNull) {
+      state = AsyncData(value);
+      SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
+      await saveToPreferences(preferences, value);
+    }
   }
 
   /// Loads the value from preferences.

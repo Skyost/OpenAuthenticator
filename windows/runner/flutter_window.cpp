@@ -47,27 +47,29 @@ bool FlutterWindow::OnCreate() {
 
   method_channel = std::make_unique<flutter::MethodChannel<>>(flutter_controller_->engine()->messenger(), "app.openauthenticator", &flutter::StandardMethodCodec::GetInstance());
   method_channel->SetMethodCallHandler([this](const flutter::MethodCall<>& call, std::unique_ptr<flutter::MethodResult<>> result) {
-    if (call.method_name() == "auth.install") {
-      const auto* arguments = std::get_if<flutter::EncodableMap>(call.arguments());
-      const std::string appName = std::get<std::string>(arguments->find(flutter::EncodableValue("appName"))->second);
-      firebase::App* app = firebase::App::GetInstance(appName.c_str());
-      firebase::internal::FunctionRegistry* function_registry = app->function_registry();
-      function_registry->RegisterFunction(::firebase::internal::FnAuthAddAuthStateListener, AddListener);
-      function_registry->RegisterFunction(::firebase::internal::FnAuthRemoveAuthStateListener, RemoveListener);
-      function_registry->RegisterFunction(::firebase::internal::FnAuthGetTokenAsync, GetCurrentUserIdToken);
-      function_registry->RegisterFunction(::firebase::internal::FnAuthGetCurrentUserUid, GetCurrentUserUid);
-      result->Success(flutter::EncodableValue(true));
-    } else if (call.method_name() == "auth.userChanged") {
+    if (call.method_name() == "auth.install" || call.method_name() == "auth.userChanged") {
       const auto* arguments = std::get_if<flutter::EncodableMap>(call.arguments());
       auto userIdValue = arguments->find(flutter::EncodableValue("userUid"));
       if (userIdValue != arguments->end()) {
         user_uid = std::get<std::string>(userIdValue->second);
       }
-      for (const Entry& entry : callbacks) {
-        entry.first(entry.second);
+      if (call.method_name() == "auth.install") {
+        const std::string appName = std::get<std::string>(arguments->find(flutter::EncodableValue("appName"))->second);
+        firebase::App* app = firebase::App::GetInstance(appName.c_str());
+        firebase::internal::FunctionRegistry* function_registry = app->function_registry();
+        function_registry->RegisterFunction(::firebase::internal::FnAuthAddAuthStateListener, AddListener);
+        function_registry->RegisterFunction(::firebase::internal::FnAuthRemoveAuthStateListener, RemoveListener);
+        function_registry->RegisterFunction(::firebase::internal::FnAuthGetTokenAsync, GetCurrentUserIdToken);
+        function_registry->RegisterFunction(::firebase::internal::FnAuthGetCurrentUserUid, GetCurrentUserUid);
+        result->Success(flutter::EncodableValue(true));
+      } else {
+        for (const Entry& entry : callbacks) {
+          entry.first(entry.second);
+        }
+        result->Success(flutter::EncodableValue(true));
       }
-      result->Success(flutter::EncodableValue(true));
-    } else {
+    }
+    else {
       result->NotImplemented();
     }
   });

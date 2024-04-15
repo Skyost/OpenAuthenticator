@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
@@ -29,6 +30,9 @@ class OnlineStorage with Storage {
 
   @override
   StorageType get type => StorageType.online;
+
+  @override
+  List<NotifierProvider> get dependencies => [firebaseAuthenticationProvider];
 
   @override
   Future<bool> addTotp(Totp totp) async {

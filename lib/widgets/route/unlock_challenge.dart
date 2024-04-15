@@ -38,7 +38,7 @@ class _UnlockChallengeRouteWidgetState extends ConsumerState<UnlockChallengeRout
         onUnlockButtonClicked: tryUnlock,
         child: widget.child,
       ),
-      AsyncError(:final error) => widget.child,
+      AsyncError() => widget.child,
       _ => const CenteredCircularProgressIndicator(),
     };
   }

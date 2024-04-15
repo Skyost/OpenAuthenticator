@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
@@ -32,103 +31,110 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
     String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
-    if (!(await ref.read(cryptoStoreProvider.notifier).checkPasswordValidity(masterPassword))) {
-      return StorageMigrationResult.currentStoragePasswordMismatch;
-    }
-
-    newStorageMasterPassword ??= masterPassword;
-
-    Storage currentStorage = await future;
-    if (currentStorage.type == newType) {
-      return StorageMigrationResult.success;
-    }
-
-    Uint8List? oldSalt = await currentStorage.readSecretsSalt();
-    if (oldSalt == null) {
-      return StorageMigrationResult.saltError;
-    }
-
-    CryptoStore? currentCryptoStore = await CryptoStore.fromPassword(masterPassword, salt: oldSalt);
-    if (currentCryptoStore == null) {
-      return StorageMigrationResult.genericError;
-    }
-
-    Storage newStorage = newType.create(ref);
-    DeletedTotpsDatabase deletedTotpsDatabase = ref.read(deletedTotpsProvider);
-    Future<void> close() async {
-      await newStorage.close();
-      await deletedTotpsDatabase.close();
-    }
-
-    List<String> toDelete = [];
-    List<Totp> newStorageTotps = await newStorage.listTotps();
-    for (Totp totp in newStorageTotps) {
-      if (await deletedTotpsDatabase.isDeleted(totp.uuid)) {
-        switch (storageMigrationDeletedTotpPolicy) {
-          case StorageMigrationDeletedTotpPolicy.keep:
-            deletedTotpsDatabase.cancelDeletion(totp.uuid);
-            break;
-          case StorageMigrationDeletedTotpPolicy.delete:
-            toDelete.add(totp.uuid);
-            break;
-          case StorageMigrationDeletedTotpPolicy.ask:
-            await close();
-            return StorageMigrationResult.askForDifferentDeletedTotpPolicy;
-        }
+    try {
+      if (!(await ref.read(cryptoStoreProvider.notifier).checkPasswordValidity(masterPassword))) {
+        return StorageMigrationResult.currentStoragePasswordMismatch;
       }
-    }
 
-    Uint8List? salt = await newStorage.readSecretsSalt();
-    List<Totp> totps = await currentStorage.listTotps();
-    List<Totp> toAdd = [];
-    if (salt == null) {
-      if (!(await newStorage.saveSecretsSalt(oldSalt))) {
-        await close();
+      newStorageMasterPassword ??= masterPassword;
+
+      Storage currentStorage = await future;
+      if (currentStorage.type == newType) {
+        return StorageMigrationResult.success;
+      }
+
+      Uint8List? oldSalt = await currentStorage.readSecretsSalt();
+      if (oldSalt == null) {
         return StorageMigrationResult.saltError;
       }
 
-      bool canDecryptAll = await newStorage.canDecryptAll(currentCryptoStore);
-      if (!canDecryptAll) {
-        await close();
-        return StorageMigrationResult.newStoragePasswordMismatch;
-      }
-
-      toAdd.addAll(totps.where((totp) => totp.isDecrypted));
-    } else {
-      CryptoStore? newCryptoStore = await CryptoStore.fromPassword(newStorageMasterPassword, salt: salt);
-      if (newCryptoStore == null) {
-        await close();
+      CryptoStore? currentCryptoStore = await CryptoStore.fromPassword(masterPassword, salt: oldSalt);
+      if (currentCryptoStore == null) {
         return StorageMigrationResult.genericError;
       }
 
-      bool canDecryptAll = await newStorage.canDecryptAll(currentCryptoStore);
-      if (!canDecryptAll) {
-        await close();
-        return StorageMigrationResult.newStoragePasswordMismatch;
+      Storage newStorage = newType.create(ref);
+      DeletedTotpsDatabase deletedTotpsDatabase = ref.read(deletedTotpsProvider);
+      Future<void> close() async {
+        await newStorage.close();
+        await deletedTotpsDatabase.close();
       }
 
-      for (Totp totp in totps) {
-        DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newCryptoStore);
-        if (decryptedTotp == null) {
-          await close();
-          return StorageMigrationResult.encryptionKeyChangeFailed;
+      List<String> toDelete = [];
+      List<Totp> newStorageTotps = await newStorage.listTotps();
+      for (Totp totp in newStorageTotps) {
+        if (await deletedTotpsDatabase.isDeleted(totp.uuid)) {
+          switch (storageMigrationDeletedTotpPolicy) {
+            case StorageMigrationDeletedTotpPolicy.keep:
+              deletedTotpsDatabase.cancelDeletion(totp.uuid);
+              break;
+            case StorageMigrationDeletedTotpPolicy.delete:
+              toDelete.add(totp.uuid);
+              break;
+            case StorageMigrationDeletedTotpPolicy.ask:
+              await close();
+              return StorageMigrationResult.askForDifferentDeletedTotpPolicy;
+          }
         }
-        toAdd.add(decryptedTotp);
       }
-      await ref.read(cryptoStoreProvider.notifier).saveAndUse(newCryptoStore);
+
+      Uint8List? salt = await newStorage.readSecretsSalt();
+      List<Totp> totps = await currentStorage.listTotps();
+      List<Totp> toAdd = [];
+      if (salt == null) {
+        if (!(await newStorage.saveSecretsSalt(oldSalt))) {
+          await close();
+          return StorageMigrationResult.saltError;
+        }
+
+        bool canDecryptAll = await newStorage.canDecryptAll(currentCryptoStore);
+        if (!canDecryptAll) {
+          await close();
+          return StorageMigrationResult.newStoragePasswordMismatch;
+        }
+
+        toAdd.addAll(totps.where((totp) => totp.isDecrypted));
+      } else {
+        CryptoStore? newCryptoStore = await CryptoStore.fromPassword(newStorageMasterPassword, salt: salt);
+        if (newCryptoStore == null) {
+          await close();
+          return StorageMigrationResult.genericError;
+        }
+
+        bool canDecryptAll = await newStorage.canDecryptAll(currentCryptoStore);
+        if (!canDecryptAll) {
+          await close();
+          return StorageMigrationResult.newStoragePasswordMismatch;
+        }
+
+        for (Totp totp in totps) {
+          DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newCryptoStore);
+          if (decryptedTotp == null) {
+            await close();
+            return StorageMigrationResult.encryptionKeyChangeFailed;
+          }
+          toAdd.add(decryptedTotp);
+        }
+        await ref.read(cryptoStoreProvider.notifier).saveAndUse(newCryptoStore);
+      }
+
+      if (!await newStorage.addTotps(toAdd)) {
+        await close();
+        return StorageMigrationResult.genericError;
+      }
+      await newStorage.deleteTotps(toDelete);
+
+      await currentStorage.onStorageTypeChanged(close: false);
+      await ref.read(storageTypeSettingsEntryProvider.notifier).changeValue(newType);
+
+      return StorageMigrationResult.success;
+    } catch (ex, stacktrace) {
+      if (kDebugMode) {
+        print(ex);
+        print(stacktrace);
+      }
     }
-
-    if (!await newStorage.addTotps(toAdd)) {
-      await close();
-      return StorageMigrationResult.genericError;
-    }
-    await newStorage.deleteTotps(toDelete);
-    await close();
-
-    await ref.read(storageTypeSettingsEntryProvider.notifier).changeValue(newType);
-    await currentStorage.onStorageTypeChanged();
-
-    return StorageMigrationResult.success;
+    return StorageMigrationResult.genericError;
   }
 }
 
@@ -172,6 +178,9 @@ enum StorageMigrationDeletedTotpPolicy {
 mixin Storage {
   /// Returns the storage type.
   StorageType get type;
+
+  /// The storage dependencies.
+  List<NotifierProvider> get dependencies => [];
 
   /// Stores the given [totp].
   Future<bool> addTotp(Totp totp);
@@ -219,7 +228,9 @@ mixin Storage {
 
   /// Ran when the user choose another storage method.
   @mustCallSuper
-  Future<void> onStorageTypeChanged() async {
-    await close();
+  Future<void> onStorageTypeChanged({ bool close = true }) async {
+    if (close) {
+      await this.close();
+    }
   }
 }

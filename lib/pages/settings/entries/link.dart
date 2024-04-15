@@ -31,20 +31,22 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget with RequiresAuthent
                   ),
                   if (FirebaseAuth.instance.currentUser?.providers.isNotEmpty ?? false)
                     translations.settings.synchronization.accountLink.subtitle.linkedProviders(
-                      providers: TextSpan(children: [
-                        for (int i = 0; i < providers.length; i++)
-                          TextSpan(
-                            text: translations.settings.synchronization.accountLink.subtitle.providers[providers[i].providerId] ?? providers[i].providerId,
-                            children: [
-                              if (i < providers.length - 1)
-                                const TextSpan(
-                                  text: ', ',
-                                  style: TextStyle(fontStyle: FontStyle.normal),
-                                ),
-                            ],
-                            style: const TextStyle(fontStyle: FontStyle.italic),
-                          )
-                      ]),
+                      providers: TextSpan(
+                        children: [
+                          for (int i = 0; i < providers.length; i++)
+                            TextSpan(
+                              text: translations.settings.synchronization.accountLink.subtitle.providers[providers[i].providerId] ?? providers[i].providerId,
+                              children: [
+                                if (i < providers.length - 1)
+                                  const TextSpan(
+                                    text: ', ',
+                                    style: TextStyle(fontStyle: FontStyle.normal),
+                                  ),
+                              ],
+                              style: const TextStyle(fontStyle: FontStyle.italic),
+                            )
+                        ],
+                      ),
                     ),
                 ],
               ),

@@ -462,18 +462,18 @@ class _FillBlock {
   static void _roundFunction(_Block block, int v0, int v1, int v2, int v3, int v4, int v5, int v6, int v7, int v8, int v9, int v10, int v11, int v12, int v13, int v14, int v15) {
     final v = block._v;
 
-    _F(v, v0, v4, v8, v12);
-    _F(v, v1, v5, v9, v13);
-    _F(v, v2, v6, v10, v14);
-    _F(v, v3, v7, v11, v15);
+    _f(v, v0, v4, v8, v12);
+    _f(v, v1, v5, v9, v13);
+    _f(v, v2, v6, v10, v14);
+    _f(v, v3, v7, v11, v15);
 
-    _F(v, v0, v5, v10, v15);
-    _F(v, v1, v6, v11, v12);
-    _F(v, v2, v7, v8, v13);
-    _F(v, v3, v4, v9, v14);
+    _f(v, v0, v5, v10, v15);
+    _f(v, v1, v6, v11, v12);
+    _f(v, v2, v7, v8, v13);
+    _f(v, v3, v4, v9, v14);
   }
 
-  static void _F(Uint64List v, int a, int b, int c, int d) {
+  static void _f(Uint64List v, int a, int b, int c, int d) {
     _quarterRound(v, a, b, d, 32);
     _quarterRound(v, c, d, b, 24);
     _quarterRound(v, a, b, d, 16);

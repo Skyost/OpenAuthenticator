@@ -55,7 +55,7 @@ class TotpImageWidget extends StatefulWidget {
     if (label.isEmpty && (issuer == null || issuer!.isEmpty)) {
       return Colors.transparent;
     }
-    Random random = Random((label ?? '').hashCode + (issuer ?? '').hashCode);
+    Random random = Random(label.hashCode + (issuer ?? '').hashCode);
     return Colors.primaries[random.nextInt(Colors.primaries.length)];
   }
 

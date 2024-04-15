@@ -175,9 +175,6 @@ mixin LinkProvider on FirebaseAuthenticationProvider {
 
   /// Tries to unlink the current provider.
   Future<FirebaseAuthenticationResult> unlink(BuildContext context) async {
-    if (!FirebaseAuth.instance.isLoggedIn) {
-      return FirebaseAuthenticationError();
-    }
     SignInResult result = await FirebaseAuth.instance.unlinkFrom(providerId);
     return FirebaseAuthenticationSuccess(email: result.email);
   }

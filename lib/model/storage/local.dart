@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
@@ -66,7 +65,11 @@ class LocalStorage extends _$LocalStorage with Storage {
   @override
   Future<bool> addTotps(List<oa_totp.Totp> totps) async {
     await batch((batch) {
-      batch.insertAll(this.totps, totps.map((totp) => totp.asDriftTotp));
+      batch.insertAll(
+        this.totps,
+        totps.map((totp) => totp.asDriftTotp),
+        mode: InsertMode.insertOrReplace,
+      );
     });
     return true;
   }
@@ -112,7 +115,10 @@ class LocalStorage extends _$LocalStorage with Storage {
 
   @override
   Future<oa_totp.Totp?> getTotp(String uuid) async {
-    Totp? totp = await (select(totps)..where((totp) => totp.uuid.isValue(uuid))..limit(1)).getSingleOrNull();
+    Totp? totp = await (select(totps)
+          ..where((totp) => totp.uuid.isValue(uuid))
+          ..limit(1))
+        .getSingleOrNull();
     return totp?.asTotp;
   }
 
@@ -143,17 +149,9 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
-  Future<void> onStorageTypeChanged() async {
+  Future<void> onStorageTypeChanged({ bool close = false }) async {
     await clearTotps();
-    await super.onStorageTypeChanged();
-    try {
-      (await SqliteUtils.getDatabaseFilePath(_kDbFileName)).deleteSync();
-    } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
-    }
+    await super.onStorageTypeChanged(close: close);
   }
 }
 

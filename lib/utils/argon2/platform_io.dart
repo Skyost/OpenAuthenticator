@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:open_authenticator/utils/argon2/platform.dart';
 
 class Argon2PlatformIO extends Argon2Platform {
-  static final Argon2PlatformIO instance = Argon2PlatformIO();
+  static const Argon2PlatformIO instance = Argon2PlatformIO();
 
   const Argon2PlatformIO();
 

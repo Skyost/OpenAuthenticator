@@ -22,6 +22,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
   @override
   FutureOr<List<Totp>> build() async {
     Storage storage = await ref.watch(storageProvider.future);
+    storage.dependencies.forEach(ref.watch);
     AsyncValue<CryptoStore?> cryptoStore = ref.watch(cryptoStoreProvider);
     return _queryTotpsFromStorage(storage, cryptoStore.valueOrNull);
   }
