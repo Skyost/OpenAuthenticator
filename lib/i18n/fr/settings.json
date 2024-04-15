@@ -84,7 +84,11 @@
       "title": "Relier d'autres fournisseurs",
       "subtitle": {
         "text": "Relier d'autres fournisseurs d'authentification à votre compte afin que vous puissiez les utiliser pour vous connecter.",
-        "providers": "\nCompte actuellement relié à : $providers."
+        "linkedProviders(rich)": "\nCompte actuellement relié à : $providers.",
+        "providers(map)": {
+          "emailLink": "Adresse mail",
+          "password": "Adresse mail"
+        }
       }
     },
     "accountLogin": {

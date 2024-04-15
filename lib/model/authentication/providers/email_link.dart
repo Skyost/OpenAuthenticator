@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
@@ -7,10 +6,11 @@ import 'package:open_authenticator/model/authentication/providers/provider.dart'
 import 'package:open_authenticator/model/authentication/providers/result.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
+import 'package:open_authenticator/utils/firebase_auth/default.dart';
+import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:open_authenticator/utils/validation/sign_in/email_link.dart';
-import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -59,40 +59,39 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     );
     if (currentPlatform == Platform.windows) {
       EmailLinkSignIn emailLinkSignIn = EmailLinkSignIn(email: email);
-      ValidationResult<OAuth2Response> result;
+      ValidationResult<EmailLinkSignInResponse> result;
       if (context.mounted) {
         result = await showWaitingOverlay(
           context,
-          future: emailLinkSignIn.sendSignInLinkToEmailAndWaitForConfirmation(actionCodeSettings),
+          future: emailLinkSignIn.sendSignInLinkToEmailAndWaitForConfirmation(),
           message: translations.authentication.logIn.waitingConfirmationMessage,
           timeout: emailLinkSignIn.timeout,
         );
       } else {
-        result = await emailLinkSignIn.sendSignInLinkToEmailAndWaitForConfirmation(actionCodeSettings);
+        result = await emailLinkSignIn.sendSignInLinkToEmailAndWaitForConfirmation();
       }
-      switch(result) {
+      switch (result) {
         case ValidationSuccess(:final object):
-          UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(
-            GoogleAuthProvider.credential(idToken: object.idToken),
+          SignInResult result = await FirebaseAuth.instance.signInWith(
+            EmailLinkAuthMethod.rest(
+              email: object.email,
+              oobCode: object.oobCode,
+            ),
           );
-          if (userCredential.user != null) {
-            return FirebaseAuthenticationSuccess(email: userCredential.user!.email);
-          }
-          break;
+          return FirebaseAuthenticationSuccess(email: result.email);
         case ValidationCancelled(:final timedOut):
           return FirebaseAuthenticationCancelled(timedOut: timedOut);
         case ValidationError(:final exception):
           return FirebaseAuthenticationError(exception);
       }
     } else {
-      await FirebaseAuth.instance.sendSignInLinkToEmail(
-        email: email,
-        actionCodeSettings: actionCodeSettings,
-      );
+      EmailLinkAuthMethodDefault.sendSignInLink(email, actionCodeSettings);
     }
     SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
-    await preferences.setString(_kFirebaseAuthenticationEmailKey, email);
-    ref.invalidateSelf(); // TODO before return everywhere
+    bool result = await preferences.setString(_kFirebaseAuthenticationEmailKey, email);
+    if (result) {
+      ref.invalidateSelf();
+    }
     return FirebaseAuthenticationSuccess(email: email);
   }
 
@@ -108,25 +107,29 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   @override
   Future<bool> cancelConfirmation() async {
     SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
-    return await preferences.remove(_kFirebaseAuthenticationEmailKey);
+    bool result = await preferences.remove(_kFirebaseAuthenticationEmailKey);
+    if (result) {
+      ref.invalidateSelf();
+    }
+    return result;
   }
 
   @override
   Future<FirebaseAuthenticationResult> tryConfirm(String? emailLink) async {
     SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
-    if (emailLink == null || !FirebaseAuth.instance.isSignInWithEmailLink(emailLink)) {
+    if (emailLink == null) {
       return FirebaseAuthenticationError();
     }
-    UserCredential userCredential;
+    SignInResult signInResult;
     String email = preferences.getString(_kFirebaseAuthenticationEmailKey)!;
     if (currentPlatform == Platform.windows) {
-      ValidationResult<OAuth2Response> result = await EmailLinkSignIn(email: email).validateUrl(emailLink);
+      ValidationResult<EmailLinkSignInResponse> result = await EmailLinkSignIn(email: email).validateUrl(emailLink);
       switch (result) {
-        case ValidationSuccess():
-          userCredential = await FirebaseAuth.instance.signInWithCredential(
-            GoogleAuthProvider.credential(
-              idToken: result.object.idToken,
-              accessToken: result.object.idToken,
+        case ValidationSuccess(:final object):
+          signInResult = await FirebaseAuth.instance.signInWith(
+            EmailLinkAuthMethod.rest(
+              email: object.email,
+              oobCode: object.oobCode,
             ),
           );
           break;
@@ -136,18 +139,20 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
           return FirebaseAuthenticationError(exception);
       }
     } else {
-      userCredential = await FirebaseAuth.instance.signInWithEmailLink(
-        email: email,
-        emailLink: emailLink,
+      signInResult = await FirebaseAuth.instance.signInWith(
+        EmailLinkAuthMethod.defaultMethod(
+          email: email,
+          emailLink: emailLink,
+        ),
       );
     }
-    if (userCredential.user == null) {
-      return FirebaseAuthenticationError();
+    bool result = await preferences.remove(_kFirebaseAuthenticationEmailKey);
+    if (result) {
+      ref.invalidateSelf();
     }
-    await preferences.remove(_kFirebaseAuthenticationEmailKey);
-    return FirebaseAuthenticationSuccess(email: userCredential.user!.email);
+    return FirebaseAuthenticationSuccess(email: signInResult.email);
   }
 
   @override
-  String get providerId => EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD;
+  String get providerId => EmailLinkAuthMethod.providerId;
 }

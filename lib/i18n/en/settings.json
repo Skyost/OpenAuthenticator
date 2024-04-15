@@ -84,7 +84,11 @@
       "title": "Link other providers",
       "subtitle": {
         "text": "Link your account to other authentication providers so that you can use them to log in yourself.",
-        "providers": "\nAccount currently linked to : $providers."
+        "linkedProviders(rich)": "\nAccount currently linked to : $providers.",
+        "providers(map)": {
+          "emailLink": "Email address",
+          "password": "Email address"
+        }
       }
     },
     "accountLogin": {

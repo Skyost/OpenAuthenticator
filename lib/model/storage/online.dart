@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
@@ -9,6 +8,7 @@ import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/json.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 
 /// Stores TOTPs using Firebase Firestore.
 class OnlineStorage with Storage {
@@ -202,7 +202,7 @@ class OnlineStorage with Storage {
 
   /// Returns a reference to the current user document.
   DocumentReference<Map<String, dynamic>>? get _userDocument {
-    if (FirebaseAuth.instance.currentUser == null) {
+    if (!FirebaseAuth.instance.isLoggedIn) {
       return null;
     }
     return FirebaseFirestore.instance.collection(FirebaseAuth.instance.currentUser!.uid).doc(_kUserDataDocument);

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +11,7 @@ import 'package:open_authenticator/model/authentication/providers/microsoft.dart
 import 'package:open_authenticator/model/authentication/providers/result.dart';
 import 'package:open_authenticator/model/authentication/providers/twitter.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
+import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
@@ -23,15 +23,22 @@ final userAuthenticationProviders = NotifierProvider<UserAuthenticationProviders
 class UserAuthenticationProviders extends Notifier<List<FirebaseAuthenticationProvider>> {
   @override
   List<FirebaseAuthenticationProvider> build() {
-    List<FirebaseAuthenticationProvider> providers = [
-      ref.watch(emailLinkAuthenticationProvider.notifier),
-      ref.watch(googleAuthenticationProvider.notifier),
-      ref.watch(appleAuthenticationProvider.notifier),
-      ref.watch(microsoftAuthenticationProvider.notifier),
-      ref.watch(twitterAuthenticationProvider.notifier),
-      ref.watch(githubAuthenticationProvider.notifier),
+    List<NotifierProvider<FirebaseAuthenticationProvider, FirebaseAuthenticationState>> providers = [
+      emailLinkAuthenticationProvider,
+      googleAuthenticationProvider,
+      appleAuthenticationProvider,
+      microsoftAuthenticationProvider,
+      twitterAuthenticationProvider,
+      githubAuthenticationProvider,
     ];
-    return providers.where((provider) => provider.state is FirebaseAuthenticationStateLoggedIn).toList();
+    List<FirebaseAuthenticationProvider> result = [];
+    for (NotifierProvider<FirebaseAuthenticationProvider, FirebaseAuthenticationState> provider in providers) {
+      FirebaseAuthenticationState state = ref.watch(provider);
+      if (state is FirebaseAuthenticationStateLoggedIn) {
+        result.add(ref.read(provider.notifier));
+      }
+    }
+    return result;
   }
 
   /// Contains all available authentication providers.
@@ -57,7 +64,7 @@ abstract class FirebaseAuthenticationProvider extends Notifier<FirebaseAuthentic
 
   @override
   FirebaseAuthenticationState build() {
-    StreamSubscription subscription = FirebaseAuth.instance.userChanges().listen((user) => state = _getState(user));
+    StreamSubscription subscription = FirebaseAuth.instance.userChanges.listen((user) => state = _getState(user));
     ref.onDispose(subscription.cancel);
     return _getState();
   }
@@ -66,8 +73,8 @@ abstract class FirebaseAuthenticationProvider extends Notifier<FirebaseAuthentic
   FirebaseAuthenticationState _getState([User? user]) {
     user ??= FirebaseAuth.instance.currentUser;
     if (user != null) {
-      for (UserInfo userInfo in user.providerData) {
-        if (userInfo.providerId == providerId) {
+      for (String provider in user.providers) {
+        if (provider == providerId) {
           return FirebaseAuthenticationStateLoggedIn(user: user);
         }
       }
@@ -140,8 +147,7 @@ mixin LinkProvider on FirebaseAuthenticationProvider {
   @protected
   Future<FirebaseAuthenticationResult> trySignIn(BuildContext context) => tryTo(
         context,
-        credentialAction: FirebaseAuth.instance.signInWithCredential,
-        providerAction: FirebaseAuth.instance.signInWithProvider,
+        action: FirebaseAuth.instance.signInWith,
       );
 
   /// Links the current provider.
@@ -164,59 +170,65 @@ mixin LinkProvider on FirebaseAuthenticationProvider {
   @protected
   Future<FirebaseAuthenticationResult> tryLink(BuildContext context) => tryTo(
         context,
-        credentialAction: FirebaseAuth.instance.currentUser!.linkWithCredential,
-        providerAction: FirebaseAuth.instance.currentUser!.linkWithProvider,
+        action: FirebaseAuth.instance.linkTo,
       );
 
   /// Tries to unlink the current provider.
   Future<FirebaseAuthenticationResult> unlink(BuildContext context) async {
-    if (FirebaseAuth.instance.currentUser == null) {
+    if (!FirebaseAuth.instance.isLoggedIn) {
       return FirebaseAuthenticationError();
     }
-    User user = await FirebaseAuth.instance.currentUser!.unlink(providerId);
-    return FirebaseAuthenticationSuccess(email: user.email);
+    SignInResult result = await FirebaseAuth.instance.unlinkFrom(providerId);
+    return FirebaseAuthenticationSuccess(email: result.email);
   }
+
+  /// Creates the default auth method instance.
+  CanLinkTo createDefaultAuthMethod(BuildContext context);
 
   /// Tries to do the specified [credentialAction] or [providerAction].
   @protected
   Future<FirebaseAuthenticationResult> tryTo(
     BuildContext context, {
-    required Future<UserCredential> Function(AuthCredential) credentialAction,
-    required Future<UserCredential> Function(AuthProvider) providerAction,
-  });
+    required Future<SignInResult> Function(CanLinkTo) action,
+  }) async {
+    SignInResult result = await action(createDefaultAuthMethod(context));
+    return FirebaseAuthenticationSuccess(email: result.email);
+  }
 }
 
 /// Allows to authenticate using an OAuth2 provider.
-mixin OAuth2AuthenticationProvider<T extends AuthProvider> on LinkProvider {
-  /// Creates the Firebase [AuthProvider].
-  T createAuthProvider();
-
+mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
   /// Creates the fallback auth provider.
-  OAuth2SignIn createFallbackAuthProvider();
-
-  /// Creates the [AuthCredential] that corresponds to the [OAuth2Credentials].
-  AuthCredential createCredential(OAuth2Response response);
+  T createFallbackAuthProvider();
 
   /// The fallback provider timeout.
   Duration? get fallbackTimeout => T is OAuth2SignInServer ? const Duration(minutes: 5) : null;
 
-  /// Whether we should use an [OAuth2SignIn] instead of an [AuthCredential].
+  /// Whether we should use a [T] instead of directly calling `method.signIn`.
   bool get shouldFallback => currentPlatform == Platform.windows || currentPlatform == Platform.linux;
+
+  @override
+  CanLinkTo createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []});
+
+  /// Creates the auth method from the [response].
+  CanLinkTo createRestAuthMethod(BuildContext context, OAuth2Response response);
 
   @override
   @protected
   Future<FirebaseAuthenticationResult> tryTo(
     BuildContext context, {
-    required Future<UserCredential> Function(AuthCredential) credentialAction,
-    required Future<UserCredential> Function(AuthProvider) providerAction,
+    required Future<SignInResult> Function(CanLinkTo) action,
   }) async {
-    UserCredential userCredential;
+    SignInResult actionResult;
     OAuth2SignIn fallbackAuthProvider = createFallbackAuthProvider();
     if (shouldFallback) {
       ValidationResult<OAuth2Response> result = await fallbackAuthProvider.signIn(context);
-      switch(result) {
+      if (!context.mounted) {
+        return FirebaseAuthenticationCancelled();
+      }
+      switch (result) {
         case ValidationSuccess(:final object):
-          userCredential = await credentialAction(createCredential(object));
+          actionResult = await action(createRestAuthMethod(context, object));
           break;
         case ValidationCancelled(:final timedOut):
           return FirebaseAuthenticationCancelled(timedOut: timedOut);
@@ -224,18 +236,8 @@ mixin OAuth2AuthenticationProvider<T extends AuthProvider> on LinkProvider {
           return FirebaseAuthenticationError(exception);
       }
     } else {
-      T authProvider = createAuthProvider();
-      for (String scope in fallbackAuthProvider.scopes) {
-        addScope(authProvider, scope);
-      }
-      userCredential = await providerAction(authProvider);
+      actionResult = await action(createDefaultAuthMethod(context, scopes: fallbackAuthProvider.scopes));
     }
-    if (userCredential.user == null) {
-      return FirebaseAuthenticationError();
-    }
-    return FirebaseAuthenticationSuccess(email: userCredential.user!.email);
+    return FirebaseAuthenticationSuccess(email: actionResult.email);
   }
-
-  /// Calls [provider.addScope], if possible.
-  void addScope(T provider, String scope);
 }

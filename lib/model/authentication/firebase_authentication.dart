@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
+import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 
 /// The Firebase authenticate state provider.
 final firebaseAuthenticationProvider = NotifierProvider<FirebaseAuthentication, FirebaseAuthenticationState>(FirebaseAuthentication.new);
@@ -11,7 +11,7 @@ final firebaseAuthenticationProvider = NotifierProvider<FirebaseAuthentication, 
 class FirebaseAuthentication extends Notifier<FirebaseAuthenticationState> {
   @override
   FirebaseAuthenticationState build() {
-    StreamSubscription<User?> subscription = FirebaseAuth.instance.userChanges().listen((user) => state = _getState(user: FirebaseAuth.instance.currentUser));
+    StreamSubscription<User?> subscription = FirebaseAuth.instance.userChanges.listen((user) => state = _getState(user: FirebaseAuth.instance.currentUser));
     ref.onDispose(subscription.cancel);
     return _getState(user: FirebaseAuth.instance.currentUser);
   }

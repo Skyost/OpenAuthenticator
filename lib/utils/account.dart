@@ -67,7 +67,7 @@ class AccountUtils {
           context,
           future: action(context, provider),
           message: waitingDialogMessage,
-          timeout: provider is OAuth2AuthenticationProvider && provider.shouldFallback ? provider.fallbackTimeout : null,
+          timeout: provider is FallbackAuthenticationProvider && provider.shouldFallback ? provider.fallbackTimeout : null,
           timeoutMessage: timeoutMessage,
         );
       } else {

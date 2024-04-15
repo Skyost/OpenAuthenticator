@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-/// Contains some useful list methods.
-extension ListUtils<T> on List<T> {
+/// Contains some useful iterable methods.
+extension IterableUtils<T> on Iterable<T> {
   /// Returns the first element satisfying [test], or `null` if there are none.
   T? firstWhereOrNull(bool Function(T element) test) {
     for (var element in this) {

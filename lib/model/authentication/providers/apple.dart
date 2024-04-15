@@ -1,10 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
-import 'package:open_authenticator/model/authentication/providers/result.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
+import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
 
 /// The Apple authentication provider.
@@ -23,24 +22,13 @@ class AppleAuthenticationProvider extends FirebaseAuthenticationProvider with Li
         );
 
   @override
-  @protected
-  Future<FirebaseAuthenticationResult> tryTo(
-    BuildContext context, {
-    required Future<UserCredential> Function(AuthCredential) credentialAction,
-    required Future<UserCredential> Function(AuthProvider) providerAction,
-  }) async {
-    AppleAuthProvider appleProvider = AppleAuthProvider();
-    appleProvider.addScope('email');
-    appleProvider.setCustomParameters({
-      'locale': TranslationProvider.of(context).flutterLocale.languageCode,
-    });
-    UserCredential userCredential = await providerAction(appleProvider);
-    if (userCredential.user == null) {
-      return FirebaseAuthenticationError();
-    }
-    return FirebaseAuthenticationSuccess(email: userCredential.user!.email);
-  }
+  AppleAuthMethod createDefaultAuthMethod(BuildContext context) => AppleAuthMethod.defaultMethod(
+      scopes: ['email'],
+      customParameters: {
+        'locale': TranslationProvider.of(context).flutterLocale.languageCode,
+      },
+    );
 
   @override
-  String get providerId => AppleAuthProvider.PROVIDER_ID;
+  String get providerId => AppleAuthMethod.providerId;
 }

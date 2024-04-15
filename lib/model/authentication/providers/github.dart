@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
+import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/validation/sign_in/github.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
@@ -11,7 +12,7 @@ import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 final githubAuthenticationProvider = NotifierProvider<GithubAuthenticationProvider, FirebaseAuthenticationState>(GithubAuthenticationProvider.new);
 
 /// The provider that allows to sign-in using Github.
-class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider, OAuth2AuthenticationProvider<GithubAuthProvider> {
+class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider, FallbackAuthenticationProvider<GithubSignIn> {
   /// Creates a new Github authentication provider instance.
   GithubAuthenticationProvider()
       : super(
@@ -24,23 +25,20 @@ class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with L
         );
 
   @override
-  GithubAuthProvider createAuthProvider() => GithubAuthProvider();
+  String get providerId => GithubAuthMethod.providerId;
 
   @override
-  OAuth2SignIn createFallbackAuthProvider() => GithubSignIn(
+  GithubAuthMethod createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []}) => GithubAuthMethod.defaultMethod(
+        scopes: scopes,
+      );
+
+  @override
+  GithubAuthMethod createRestAuthMethod(BuildContext context, OAuth2Response response) => GithubAuthMethod.rest(
+        accessToken: response.accessToken,
+      );
+
+  @override
+  GithubSignIn createFallbackAuthProvider() => GithubSignIn(
         clientId: AppCredentials.githubSignInClientId,
       );
-
-  @override
-  AuthCredential createCredential(OAuth2Response response) => OAuthProvider(GithubAuthProvider.PROVIDER_ID).credential(
-        signInMethod: GithubAuthProvider.GITHUB_SIGN_IN_METHOD,
-        accessToken: response.accessToken,
-        idToken: '',
-      );
-
-  @override
-  void addScope(GithubAuthProvider provider, String scope) => provider.addScope(scope);
-
-  @override
-  String get providerId => GithubAuthProvider.PROVIDER_ID;
 }

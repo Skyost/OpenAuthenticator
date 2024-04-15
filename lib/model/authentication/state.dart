@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 
 /// The authentication state (logged out / logged in).
 sealed class FirebaseAuthenticationState {}
