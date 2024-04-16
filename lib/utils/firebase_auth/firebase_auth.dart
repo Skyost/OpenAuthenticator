@@ -222,6 +222,14 @@ abstract class TwitterAuthMethod with FirebaseAuthMethod, CanLinkTo {
         customParameters: customParameters,
       );
 
+  /// Creates a new REST Microsoft auth method instance.
+  factory TwitterAuthMethod.rest({
+    String? accessToken,
+  }) =>
+      TwitterAuthMethodRest(
+        accessToken: accessToken,
+      );
+
   /// Creates a new Twitter auth method instance.
   const TwitterAuthMethod();
 }

@@ -32,8 +32,7 @@ class DeletedTotpsDatabase extends _$DeletedTotpsDatabase {
 
   /// Marks the given [totp] as deleted.
   Future<void> markDeleted(String uuid) async {
-    // TODO check if there is no doublon
-    await into(deletedTotps).insert(DeletedTotp(uuid: uuid));
+    await into(deletedTotps).insert(DeletedTotp(uuid: uuid), mode: InsertMode.insertOrIgnore);
   }
 
   /// Marks the given [totp] as not deleted.

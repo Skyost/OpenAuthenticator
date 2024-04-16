@@ -57,7 +57,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       DeletedTotpsDatabase deletedTotpsDatabase = ref.read(deletedTotpsProvider);
       Future<void> close() async {
         await newStorage.close();
-        await deletedTotpsDatabase.close();
+        // await deletedTotpsDatabase.close();
       }
 
       List<String> toDelete = [];
@@ -123,6 +123,8 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
         return StorageMigrationResult.genericError;
       }
       await newStorage.deleteTotps(toDelete);
+
+      await close();
 
       await currentStorage.onStorageTypeChanged(close: false);
       await ref.read(storageTypeSettingsEntryProvider.notifier).changeValue(newType);

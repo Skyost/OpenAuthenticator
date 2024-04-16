@@ -29,9 +29,6 @@ mixin OAuth2SignIn {
 
 /// Allows to log in the user to various providers using a [ValidationServer].
 abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAuth2Response> with OAuth2SignIn {
-  /// The error code for when there is no token in a query parameters.
-  static const String _kErrorNoToken = 'no_token_returned';
-
   @override
   final String clientId;
 
@@ -66,10 +63,15 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
         exception: ValidationException(code: params['error']),
       );
     }
+    return validateResponse(params);
+  }
+
+  /// Validates the response using the [params].
+  ValidationResult<OAuth2Response> validateResponse(Map<String, String> params) {
     OAuth2Response response = createResponseFromParams(params);
-    if (response.accessToken == null || response.idToken == null) {
+    if (response.accessToken == null && response.idToken == null) {
       return ValidationError(
-        exception: ValidationException(code: _kErrorNoToken),
+        exception: ValidationException(code: ValidationException.kErrorNoToken),
       );
     }
     return ValidationSuccess<OAuth2Response>(object: response);
@@ -141,7 +143,7 @@ mixin OAuth2SignInVerifyFragment on OAuth2SignInServer {
     function init() {
       const noHashLocation = window.location.href.substr(0, window.location.href.indexOf('#'));
       if (noHashLocation.length === 0) {
-        window.location = window.location + '?error=${OAuth2SignInServer._kErrorNoToken}';
+        window.location = window.location + '?error=${ValidationException.kErrorNoToken}';
         return;
       }
     

@@ -41,4 +41,7 @@ class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with L
   GithubSignIn createFallbackAuthProvider() => GithubSignIn(
         clientId: AppCredentials.githubSignInClientId,
       );
+
+  @override
+  bool get showLoadingDialog => false;
 }

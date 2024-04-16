@@ -35,7 +35,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
         children: [
           for (FirebaseAuthenticationProvider provider in ref.read(userAuthenticationProviders.notifier).availableProviders)
             if (link) ...[
-              if (provider is! LinkProvider)
+              if (provider is LinkProvider)
                 _createListTile(
                   provider,
                   currentProviders,

@@ -373,6 +373,9 @@ mixin _RestIdpAuthMethod on FirebaseAuthMethod, CanLinkTo {
   /// The access token, if any.
   String? get accessToken => null;
 
+  /// The auth nonce parameter.
+  String? get nonce => null;
+
   /// The provider id.
   String? get providerId;
 
@@ -384,6 +387,9 @@ mixin _RestIdpAuthMethod on FirebaseAuthMethod, CanLinkTo {
     }
     if (accessToken != null) {
       postBody += '&access_token=$accessToken';
+    }
+    if (nonce != null) {
+      postBody += '&nonce=$nonce';
     }
     return postBody;
   }
@@ -473,7 +479,7 @@ class MicrosoftAuthMethodRest extends MicrosoftAuthMethod with _RestIdpAuthMetho
   @override
   final String? idToken;
 
-  /// The auth nonce parameter.
+  @override
   final String? nonce;
 
   /// Creates a new Microsoft auth method REST instance.
@@ -485,4 +491,18 @@ class MicrosoftAuthMethodRest extends MicrosoftAuthMethod with _RestIdpAuthMetho
 
   @override
   String? get providerId => MicrosoftAuthMethod.providerId;
+}
+
+/// Authenticates using Twitter with an HTTP client.
+class TwitterAuthMethodRest extends TwitterAuthMethod with _RestIdpAuthMethod {
+  @override
+  final String? accessToken;
+
+  /// Creates a new Microsoft auth method REST instance.
+  const TwitterAuthMethodRest({
+    this.accessToken,
+  });
+
+  @override
+  String? get providerId => TwitterAuthMethod.providerId;
 }

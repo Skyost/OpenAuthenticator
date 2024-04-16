@@ -13,9 +13,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 /// Allows to sign in using Github.
 class GithubSignIn with OAuth2SignIn {
-  /// Triggered when the response is invalid.
-  static const String _kErrorInvalidResponse = 'invalid_response';
-
   @override
   final String clientId;
 
@@ -60,7 +57,7 @@ class GithubSignIn with OAuth2SignIn {
     );
     if (response.statusCode != 200) {
       return ValidationError(
-        exception: ValidationException(code: _kErrorInvalidResponse),
+        exception: ValidationException(code: ValidationException.kErrorInvalidResponse),
       );
     }
     Map<String, dynamic> parsedResponse = jsonDecode(response.body);
@@ -68,7 +65,7 @@ class GithubSignIn with OAuth2SignIn {
     String? userCode = parsedResponse['user_code'];
     if (verificationUrl == null || userCode == null || !(await canLaunchUrlString(verificationUrl))) {
       return ValidationError(
-        exception: ValidationException(code: _kErrorInvalidResponse),
+        exception: ValidationException(code: ValidationException.kErrorInvalidResponse),
       );
     }
     Duration timeout = parsedResponse.containsKey('expires_in') ? Duration(seconds: parsedResponse['expires_in']) : const Duration(minutes: 15);

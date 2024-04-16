@@ -241,6 +241,15 @@ class ValidationError<T> extends ValidationResult<T> {
 
 /// An exception triggered when validating.
 class ValidationException implements Exception {
+  /// The error code for when there is no token in a query parameters.
+  static const String kErrorNoToken = 'no_token_returned';
+
+  /// Triggered when the response is invalid.
+  static const String kErrorInvalidResponse = 'invalid_response';
+
+  /// Triggered when a generic error occurs.
+  static const String kErrorGeneric = 'generic';
+
   /// The error code.
   final String? code;
 
