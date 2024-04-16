@@ -16,6 +16,8 @@ void main() {
   String githubSignInClientId = stdin.readLineSync() ?? '';
   stdout.writeln('What is your Apple AppStore app ID ? (See : https://appstoreconnect.apple.com/apps)');
   String appleSignInClientId = stdin.readLineSync() ?? '';
+  stdout.writeln('What is your Twitter OAuth 2.0 client ID ? (See : https://developer.twitter.com/en/portal/projects-and-apps)');
+  String twitterSignInClientId = stdin.readLineSync() ?? '';
   stdout.writeln('What is your RevenueCat Android public key ? (See : https://app.revenuecat.com/overview)');
   String revenueCatPublicKeyAndroid = stdin.readLineSync() ?? '';
   stdout.writeln('What is your RevenueCat Darwin (iOS / macOS) public key ? (See : https://app.revenuecat.com/overview)');
@@ -76,6 +78,9 @@ class AppCredentials {
 
   /// The Github sign in client id.
   static const String githubSignInClientId = '$githubSignInClientId';
+
+  /// The Twitter sign in client id.
+  static const String twitterSignInClientId = '$twitterSignInClientId';
 
   /// The Apple sign in client id.
   static const String appleSignInClientId = '$appleSignInClientId';

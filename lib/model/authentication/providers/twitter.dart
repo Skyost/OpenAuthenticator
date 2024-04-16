@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
@@ -41,7 +42,7 @@ class TwitterAuthenticationProvider extends FirebaseAuthenticationProvider with 
 
   @override
   TwitterSignIn createFallbackAuthProvider() => TwitterSignIn(
-    clientId: 'SF9uMmlmZy1UZVlqWFBKUnRxR2g6MTpjaQ',
+    clientId: AppCredentials.twitterSignInClientId,
     timeout: fallbackTimeout,
   );
 }
