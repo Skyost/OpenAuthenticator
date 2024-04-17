@@ -78,7 +78,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
       );
     }
     if (provider is AppleAuthenticationProvider) {
-      _ProviderTile(
+      return _ProviderTile(
         provider: provider,
         unlinkIcon: unlinkIcon,
         name: translations.authentication.providerPickerDialog.apple.title,

@@ -14,8 +14,10 @@ void main() {
   String azureSignInClientId = stdin.readLineSync() ?? '';
   stdout.writeln('What is your Github OAuth app client ID ? (See : https://github.com/settings/developers)');
   String githubSignInClientId = stdin.readLineSync() ?? '';
-  stdout.writeln('What is your Apple AppStore app ID ? (See : https://appstoreconnect.apple.com/apps)');
+  stdout.writeln('What is your Apple AppStore app ID ? (See : https://developer.apple.com/account/resources/identifiers/list/serviceId)');
   String appleSignInClientId = stdin.readLineSync() ?? '';
+  stdout.writeln('What is your Apple Sign-In return URL ?');
+  String appleSignInReturnUrl = stdin.readLineSync() ?? '';
   stdout.writeln('What is your Twitter OAuth 2.0 client ID ? (See : https://developer.twitter.com/en/portal/projects-and-apps)');
   String twitterSignInClientId = stdin.readLineSync() ?? '';
   stdout.writeln('What is your RevenueCat Android public key ? (See : https://app.revenuecat.com/overview)');
@@ -66,6 +68,9 @@ class App {
 
   /// The Firebase login URL.
   static const String firebaseLoginUrl = 'https://login.openauthenticator.app/do';
+  
+  /// The Apple sign in return URL.
+  static const String appleSignInReturnUrl = '$appleSignInReturnUrl';
 }
 
 /// Contains some credentials, required to use with some services.

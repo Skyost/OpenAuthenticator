@@ -10,9 +10,6 @@ import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 
 /// Allows to sign in using Twitter.
 class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
-  /// The error code for when the returned state is invalid.
-  static const String _kErrorInvalidState = 'invalid_state';
-
   /// The current PKCE pair.
   PkcePair? pkcePair;
 
@@ -60,13 +57,13 @@ class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
   @override
   FutureOr<ValidationResult<OAuth2Response>> validate(HttpRequest request) async {
     Map<String, List<String>> parameters = request.requestedUri.queryParametersAll;
-    if (!validateState(parameters)) {
-      return ValidationError(
-        exception: ValidationException(code: _kErrorInvalidState),
-      );
-    }
     if (!parameters.containsKey('code') || !parameters.containsKey('state')) {
       return await super.validate(request);
+    }
+    if (!validateState(parameters)) {
+      return ValidationError(
+        exception: ValidationException(code: ValidationException.kErrorInvalidState),
+      );
     }
     http.Response response = await http.post(
       Uri.https(

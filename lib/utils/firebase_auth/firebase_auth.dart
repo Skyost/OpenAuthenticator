@@ -89,6 +89,17 @@ abstract class AppleAuthMethod with FirebaseAuthMethod, CanLinkTo {
         customParameters: customParameters,
       );
 
+
+  /// Creates a new REST Apple auth method instance.
+  factory AppleAuthMethod.rest({
+    String? idToken,
+    String? nonce,
+  }) =>
+      AppleAuthMethodRest(
+        idToken: idToken,
+        nonce: nonce,
+      );
+
   /// Creates a new Apple auth method instance.
   const AppleAuthMethod();
 }

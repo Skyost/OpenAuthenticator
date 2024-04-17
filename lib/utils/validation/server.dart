@@ -247,6 +247,9 @@ class ValidationException implements Exception {
   /// Triggered when the response is invalid.
   static const String kErrorInvalidResponse = 'invalid_response';
 
+  /// The error code for when the returned state is invalid.
+  static const String kErrorInvalidState = 'invalid_state';
+
   /// Triggered when a generic error occurs.
   static const String kErrorGeneric = 'generic';
 

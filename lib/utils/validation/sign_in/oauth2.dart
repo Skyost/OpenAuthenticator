@@ -94,24 +94,34 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
 /// Gives a nonce parameter to sign-in requests.
 mixin OAuth2SignInNonce on OAuth2SignInServer {
   /// The nonce parameter.
-  String? _nonce;
+  String? nonce;
+
+  /// Generates the [nonce].
+  FutureOr<void> generateNonce() => nonce = generateRandomString();
 
   @override
-  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context) {
-    _nonce = generateRandomString();
-    return super.signIn(context);
+  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context) async {
+    await generateNonce();
+    if (context.mounted) {
+      return await super.signIn(context);
+    }
+    return ValidationError(
+      exception: ValidationException(
+        code: ValidationException.kErrorGeneric,
+      ),
+    );
   }
 
   @override
   OAuth2Response createResponseFromParams(Map<String, String> params) => OAuth2Response.fromResponse(
         params,
-        nonce: _nonce,
+        nonce: nonce,
       );
 
   @override
   Map<String, String> get loginUrlParameters => {
         ...super.loginUrlParameters,
-        if (_nonce != null) 'nonce': _nonce!,
+        if (nonce != null) 'nonce': nonce!,
       };
 }
 

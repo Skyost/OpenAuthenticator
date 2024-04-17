@@ -353,6 +353,14 @@ mixin _RestIdpAuthMethod on FirebaseAuthMethod, CanLinkTo {
         'returnIdpCredential': true,
       }),
     );
+    print({
+      ...additionalParameters,
+      'postBody': _postBody,
+      'requestUri': 'http://localhost',
+      'returnSecureToken': true,
+      'returnIdpCredential': true,
+    });
+    print(_postBody);
     if (response.statusCode != 200) {
       throw Exception(_invalidResponseErrorMessage(response));
     }
@@ -393,6 +401,24 @@ mixin _RestIdpAuthMethod on FirebaseAuthMethod, CanLinkTo {
     }
     return postBody;
   }
+}
+
+/// Authenticates using Apple with an HTTP client.
+class AppleAuthMethodRest extends AppleAuthMethod with _RestIdpAuthMethod {
+  @override
+  final String? idToken;
+
+  @override
+  final String? nonce;
+
+  @override
+  String? get providerId => AppleAuthMethod.providerId;
+
+  /// Creates a new Apple auth method REST instance.
+  const AppleAuthMethodRest({
+    this.idToken,
+    this.nonce,
+  });
 }
 
 /// Authenticates using an email link with an HTTP client.
