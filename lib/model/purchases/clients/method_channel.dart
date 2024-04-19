@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
-import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
@@ -28,43 +27,38 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
   }
 
   @override
-  Future<List<String>> purchase(Purchasable purchasable, PackageTypeAsker askPackageType) async {
+  Future<PaywallResult> presentPaywall(Purchasable purchasable) async {
     Offerings offerings = await Purchases.getOfferings();
     Offering? offering = offerings.getOffering(purchasable.offeringId);
     if (offering == null) {
-      return [];
+      return PaywallResult.error;
     }
 
-    PaywallResult result = PaywallResult.error;
     try {
-      result = await RevenueCatUI.presentPaywall(offering: offering);
+      return await RevenueCatUI.presentPaywall(offering: offering);
     } catch (ex, stacktrace) {
       if (kDebugMode) {
         print(ex);
         print(stacktrace);
       }
     }
+    return PaywallResult.error;
+  }
 
-    switch (result) {
-      case PaywallResult.notPresented:
-      case PaywallResult.cancelled:
-        return [];
-      case PaywallResult.error:
-        PackageType? packageType = await askPackageType();
-        if (packageType == null) {
-          return [];
-        }
-        Package? package = offering.availablePackages.firstWhereOrNull((package) => package.packageType == packageType);
-        if (package != null) {
-          CustomerInfo customerInfo = await Purchases.purchasePackage(package);
-          return List.of(customerInfo.entitlements.active.keys).cast<String>();
-        }
-        return [];
-      case PaywallResult.purchased:
-      case PaywallResult.restored:
-        CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-        return customerInfo.entitlements.active.keys.toList();
+  @override
+  Future<List<String>> purchaseManually(Purchasable purchasable, PackageType packageType) async {
+    Offerings offerings = await Purchases.getOfferings();
+    Offering? offering = offerings.getOffering(purchasable.offeringId);
+    if (offering == null) {
+      return [];
     }
+
+    Package? package = offering.availablePackages.firstWhereOrNull((package) => package.packageType == packageType);
+    if (package != null) {
+      CustomerInfo customerInfo = await Purchases.purchasePackage(package);
+      return List.of(customerInfo.entitlements.active.keys).cast<String>();
+    }
+    return [];
   }
 
   @override

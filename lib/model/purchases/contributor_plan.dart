@@ -8,6 +8,7 @@ import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 /// The RevenueCat client provider.
 final revenueCatClientProvider = FutureProvider((ref) async {
@@ -33,9 +34,6 @@ final revenueCatClientProvider = FutureProvider((ref) async {
 /// The Contributor Plan provider.
 final contributorPlanStateProvider = AsyncNotifierProvider<ContributorPlan, ContributorPlanState>(ContributorPlan.new);
 
-/// Allows to ask for a [PackageType].
-typedef PackageTypeAsker = Future<PackageType?> Function();
-
 /// Allows to read and change the Contributor Plan state.
 class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
   /// The Contributor Plan entitlement id.
@@ -48,6 +46,15 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
       return ContributorPlanState.impossible;
     }
     return await client.hasEntitlement(_kEntitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive;
+  }
+
+  /// Returns the purchase timeout.
+  Future<Duration?> getPurchaseTimeout() async {
+    RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
+    if (revenueCatClient == null) {
+      return null;
+    }
+    return revenueCatClient.purchaseTimeout;
   }
 
   /// Returns the prices of the contributor plan.
@@ -69,11 +76,29 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
     return true;
   }
 
-  /// Purchases the given item.
-  Future<bool> purchase(PackageTypeAsker askPackageType) async {
+  /// Presents the paywall.
+  Future<PaywallResult> presentPaywall() async {
     try {
       RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
-      List<String>? entitlements = await revenueCatClient?.purchase(Purchasable.contributorPlan, askPackageType);
+      PaywallResult paywallResult = await revenueCatClient!.presentPaywall(Purchasable.contributorPlan);
+      if ((paywallResult == PaywallResult.purchased || paywallResult == PaywallResult.restored) && await revenueCatClient.hasEntitlement(_kEntitlementId)) {
+        state = const AsyncData(ContributorPlanState.active);
+        return paywallResult;
+      }
+    } catch (ex, stacktrace) {
+      if (kDebugMode) {
+        print(ex);
+        print(stacktrace);
+      }
+    }
+    return PaywallResult.error;
+  }
+
+  /// Purchases the given item.
+  Future<bool> purchaseManually(PackageType packageType) async {
+    try {
+      RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
+      List<String>? entitlements = await revenueCatClient?.purchaseManually(Purchasable.contributorPlan, packageType);
       if (entitlements != null && entitlements.contains(_kEntitlementId)) {
         state = const AsyncData(ContributorPlanState.active);
         return true;

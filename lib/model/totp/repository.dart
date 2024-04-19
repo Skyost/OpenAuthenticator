@@ -3,9 +3,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/crypto.dart';
+import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
+import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
+import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/deleted_totps.dart';
@@ -229,5 +233,44 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
     }
     await storedCryptoStore.saveAndUse(newCryptoStore);
     return true;
+  }
+}
+
+
+/// The TOTP limit reached provider.
+final totpLimitReachedProvider = AsyncNotifierProvider.autoDispose<TotpLimitReachedNotifier, bool>(TotpLimitReachedNotifier.new);
+
+/// The TOTP limit reached notifier.
+class TotpLimitReachedNotifier extends AutoDisposeAsyncNotifier<bool> {
+  @override
+  Future<bool> build() async {
+    StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
+    ContributorPlanState contributorPlanState = await ref.watch(contributorPlanStateProvider.future);
+    List<Totp> totps = await ref.watch(totpRepositoryProvider.future);
+    return willExceedIAddMore(
+      count: 0,
+      storageType: storageType,
+      contributorPlanState: contributorPlanState,
+      totps: totps,
+    );
+  }
+
+  /// Returns whether the limit will be exceeded if one more TOTP is added.
+  Future<bool> willExceedIAddMore({
+    int count = 1,
+    StorageType? storageType,
+    ContributorPlanState? contributorPlanState,
+    List<Totp>? totps,
+  }) async {
+    storageType ??= await ref.read(storageTypeSettingsEntryProvider.future);
+    if (storageType == StorageType.local) {
+      return false;
+    }
+    contributorPlanState ??= await ref.read(contributorPlanStateProvider.future);
+    if (contributorPlanState == ContributorPlanState.active) {
+      return false;
+    }
+    totps ??= await ref.read(totpRepositoryProvider.future);
+    return totps!.length + count >= App.freeTotpsLimit;
   }
 }

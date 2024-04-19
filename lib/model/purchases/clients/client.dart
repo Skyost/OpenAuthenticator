@@ -1,19 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:open_authenticator/model/purchases/clients/method_channel.dart';
 import 'package:open_authenticator/model/purchases/clients/rest.dart';
-import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:purchases_flutter/models/package_wrapper.dart';
 import 'package:purchases_flutter/models/purchases_configuration.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 /// A RevenueCat client.
 abstract class RevenueCatClient {
   /// The RevenueCat's purchases configuration.
   final PurchasesConfiguration purchasesConfiguration;
 
+  /// The purchase timeout.
+  final Duration? purchaseTimeout;
+
   /// Creates a new RevenueCat client instance.
   RevenueCatClient({
     required this.purchasesConfiguration,
+    this.purchaseTimeout = Duration.zero,
   }) : assert(purchasesConfiguration.appUserID != null);
 
   /// Creates a new RevenueCat client instance that corresponds to the given [platform].
@@ -42,8 +46,11 @@ abstract class RevenueCatClient {
   /// Returns whether the user has the given [entitlementId].
   Future<bool> hasEntitlement(String entitlementId);
 
+  /// Presents the paywall corresponding to the [purchasable].
+  Future<PaywallResult> presentPaywall(Purchasable purchasable);
+
   /// Purchases the given item.
-  Future<List<String>> purchase(Purchasable purchasable, PackageTypeAsker askPackageType);
+  Future<List<String>> purchaseManually(Purchasable purchasable, PackageType packageType);
 
   /// Returns the prices of the [purchasable].
   Future<Map<PackageType, String>> getPrices(Purchasable purchasable);

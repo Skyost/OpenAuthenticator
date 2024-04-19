@@ -8,37 +8,6 @@
         "loading": "Checking your subscription status...",
         "active": "You have subscribed to the Contributor Plan. Thanks a lot !",
         "inactive": "You currently have not subscribed to the Contributor Plan. We have to display some ads in order to contribute to the servers costs."
-      },
-      "subscribe": {
-        "waitingDialog": {
-          "message": "Waiting for your purchase...",
-          "timedOut": "Timed out while waiting for your Contributor Plan subscription purchase. Please try again."
-        },
-        "success": "You have successfully subscribed to the Contributor Plan. Thanks a lot !",
-        "error": "An error occurred while trying to subscribe to the Contributor Plan. Please try again later."
-      },
-      "billingPickerDialog": {
-        "title": "Choose your billing",
-        "priceSubtitle(rich)": "$subtitle\n$price / $interval.",
-        "empty": "There isn't any option for you to subscribe to the Contributor Plan.",
-        "error": "Error : $error.",
-        "packageTypeName(map)": {
-          "annual": "Annual",
-          "monthly": "Monthly"
-        },
-        "packageTypeInterval(map)": {
-          "annual": "Year",
-          "monthly": "Month"
-        },
-        "packageTypeSubtitle(map)": {
-          "annual": "Get billed every year.",
-          "monthly": "Get billed every month."
-        },
-        "restorePurchases": {
-          "button": "Restore purchases",
-          "success": "Your purchases have been restored with success !",
-          "error": "An error occurred. Please try again later."
-        }
       }
     },
     "cacheTotpPictures": {
@@ -131,7 +100,14 @@
     },
     "synchronizeTotps": {
       "title": "Synchronize TOTPs",
-      "subtitle": "Synchronize your TOTPs with all your logged in devices."
+      "subtitle": {
+        "description": "Synchronize your TOTPs with all your logged in devices.",
+        "totpLimit": {
+          "limit(rich)": "You can synchronize up to $limit TOTPs. You currently have $count TOTPs.",
+          "notEnabled": "Subscribe to the Contributor Plan or delete some TOTPs to enable this option.",
+          "enabled": "Subscribe to the Contributor Plan to synchronize more !"
+        }
+      }
     }
   },
   "backups": {

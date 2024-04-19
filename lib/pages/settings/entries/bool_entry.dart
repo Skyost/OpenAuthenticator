@@ -61,7 +61,7 @@ abstract class CheckboxSettingsEntryWidget<T extends SettingsEntry<U>, U> extend
   Widget createListTile(BuildContext context, WidgetRef ref, {U? value, bool enabled = true}) => ListTile(
         leading: icon == null ? null : Icon(icon),
         title: Text(title),
-        subtitle: subtitle == null ? null : Text(subtitle!),
+        subtitle: buildSubtitle(context, ref, value),
         enabled: enabled,
         contentPadding: contentPadding,
         onTap: () => changeValue(context, ref, !isEnabled(value)),
@@ -79,6 +79,9 @@ abstract class CheckboxSettingsEntryWidget<T extends SettingsEntry<U>, U> extend
 
   /// Whether the checkbox is enabled.
   bool isEnabled(U? value);
+
+  /// Builds the subtitle widget.
+  Widget? buildSubtitle(BuildContext context, WidgetRef ref, U? value) => subtitle == null ? null : Text(subtitle!);
 
   /// Changes the value.
   void changeValue(BuildContext context, WidgetRef ref, bool newValue);

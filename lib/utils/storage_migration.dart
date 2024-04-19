@@ -12,7 +12,7 @@ import 'package:open_authenticator/widgets/snackbar_icon.dart';
 class StorageMigrationUtils {
   /// Changes the storage type.
   /// Gives some feedback to the user thanks to the [context].
-  static Future<void> changeStorageType(
+  static Future<bool> changeStorageType(
     BuildContext context,
     WidgetRef ref,
     StorageType newType, {
@@ -28,7 +28,7 @@ class StorageMigrationUtils {
       password: true,
     );
     if (currentStorageMasterPassword == null || !context.mounted) {
-      return;
+      return false;
     }
     StorageMigrationResult result = await showWaitingOverlay(
       context,
@@ -40,9 +40,9 @@ class StorageMigrationUtils {
           ),
     );
     if (!context.mounted) {
-      return;
+      return false;
     }
-    await _handleResult(
+    return await _handleResult(
       result,
       context,
       ref,
@@ -55,7 +55,7 @@ class StorageMigrationUtils {
   }
 
   /// Handles the [result] by returning a message if there is an error.
-  static Future<void> _handleResult(
+  static Future<bool> _handleResult(
     StorageMigrationResult result,
     BuildContext context,
     WidgetRef ref,
@@ -76,13 +76,13 @@ class StorageMigrationUtils {
         if (context.mounted) {
           SnackBarIcon.showSuccessSnackBar(context, text: translations.storageMigration.success);
         }
-        break;
+        return true;
       case StorageMigrationResult.askForDifferentDeletedTotpPolicy:
         StorageMigrationDeletedTotpPolicy? enteredStorageMigrationDeletedTotpPolicy = await _StorageMigrationDeletedTotpPolicyPickerDialog.openDialog(context);
         if (enteredStorageMigrationDeletedTotpPolicy == null || !context.mounted) {
-          return;
+          return false;
         }
-        await changeStorageType(
+        return await changeStorageType(
           context,
           ref,
           newType,
@@ -91,7 +91,6 @@ class StorageMigrationUtils {
           newStorageMasterPassword: newStorageMasterPassword,
           storageMigrationDeletedTotpPolicy: enteredStorageMigrationDeletedTotpPolicy,
         );
-        break;
       case StorageMigrationResult.newStoragePasswordMismatch:
         String? enteredNewStorageMasterPassword = await TextInputDialog.prompt(
           context,
@@ -103,9 +102,9 @@ class StorageMigrationUtils {
           initialValue: newStorageMasterPassword,
         );
         if (enteredNewStorageMasterPassword == null || !context.mounted) {
-          return;
+          return false;
         }
-        await changeStorageType(
+        return await changeStorageType(
           context,
           ref,
           newType,
@@ -114,14 +113,13 @@ class StorageMigrationUtils {
           newStorageMasterPassword: enteredNewStorageMasterPassword,
           storageMigrationDeletedTotpPolicy: storageMigrationDeletedTotpPolicy,
         );
-        break;
       case StorageMigrationResult.saltError:
       case StorageMigrationResult.currentStoragePasswordMismatch:
       case StorageMigrationResult.encryptionKeyChangeFailed:
       case StorageMigrationResult.genericError:
       default:
         SnackBarIcon.showErrorSnackBar(context, text: translations.storageMigration.error[result.name] ?? 'An error occurred.');
-        break;
+        return false;
     }
   }
 }

@@ -2,13 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/purchases/clients/client.dart';
-import 'package:open_authenticator/model/purchases/clients/rest.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
-import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
-import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:open_authenticator/utils/contributor_plan.dart';
 
 /// Allows the user to subscribe to the Contributor Plan.
 class ContributorPlanEntryWidget extends ConsumerWidget {
@@ -31,35 +26,7 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
           subtitle: Text(
             value == ContributorPlanState.active ? translations.settings.application.contributorPlan.subtitle.active : translations.settings.application.contributorPlan.subtitle.inactive,
           ),
-          onTap: value == ContributorPlanState.active && (!kDebugMode)
-              ? null
-              : () async {
-                  RevenueCatClient? client = await ref.read(revenueCatClientProvider.future);
-                  Duration? timeout = client is RevenueCatRestClient ? client.timeout : null;
-                  if (!context.mounted) {
-                    return;
-                  }
-                  bool result = await showWaitingOverlay(
-                    context,
-                    future: ref.read(contributorPlanStateProvider.notifier).purchase(() async {
-                      if (context.mounted) {
-                        return await _ContributorPlanBillingPickerDialog.ask(context);
-                      }
-                      return null;
-                    }),
-                    message: translations.settings.application.contributorPlan.subscribe.waitingDialog.message,
-                    timeout: timeout,
-                    timeoutMessage: translations.settings.application.contributorPlan.subscribe.waitingDialog.timedOut,
-                  );
-                  if (!context.mounted) {
-                    return;
-                  }
-                  if (result) {
-                    SnackBarIcon.showSuccessSnackBar(context, text: translations.settings.application.contributorPlan.subscribe.success);
-                  } else {
-                    SnackBarIcon.showErrorSnackBar(context, text: translations.settings.application.contributorPlan.subscribe.error);
-                  }
-                },
+          onTap: value == ContributorPlanState.active && (!kDebugMode) ? null : () => ContributorPlanUtils.purchase(context, ref),
         );
       case AsyncLoading():
         return ListTile(
@@ -71,111 +38,5 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
       default:
         return const SizedBox.shrink();
     }
-  }
-}
-
-/// Allows to pick for a billing plan (annual / monthly).
-class _ContributorPlanBillingPickerDialog extends ConsumerStatefulWidget {
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ContributorPlanBillingPickerDialogState();
-
-  /// Asks the user to pick a package type.
-  static Future<PackageType?> ask(BuildContext context) => showAdaptiveDialog<PackageType>(
-        context: context,
-        builder: (context) => _ContributorPlanBillingPickerDialog(),
-      );
-}
-
-/// The contributor plan billing picker dialog state.
-class _ContributorPlanBillingPickerDialogState extends ConsumerState<_ContributorPlanBillingPickerDialog> {
-  @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
-        title: Text(translations.settings.application.contributorPlan.billingPickerDialog.title),
-        scrollable: true,
-        content: FutureBuilder(
-          future: ref.watch(contributorPlanStateProvider.notifier).getPrices(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(translations.settings.application.contributorPlan.billingPickerDialog.error(error: snapshot.error!)),
-              );
-            }
-            if (snapshot.hasData) {
-              if (snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text(translations.settings.application.contributorPlan.billingPickerDialog.empty),
-                );
-              }
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (MapEntry<PackageType, String> entry in snapshot.data!.entries)
-                    _createListTile(
-                      entry.key,
-                      entry.value,
-                    ),
-                ],
-              );
-            }
-            return const CenteredCircularProgressIndicator();
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              ContributorPlan contributorPlan = ref.read(contributorPlanStateProvider.notifier);
-              if (!context.mounted) {
-                return;
-              }
-              bool result = await showWaitingOverlay(context, future: contributorPlan.restoreState());
-              if (!context.mounted) {
-                return;
-              }
-              if (result) {
-                SnackBarIcon.showSuccessSnackBar(
-                  context,
-                  text: translations.settings.application.contributorPlan.billingPickerDialog.restorePurchases.success,
-                );
-              } else {
-                SnackBarIcon.showErrorSnackBar(
-                  context,
-                  text: translations.settings.application.contributorPlan.billingPickerDialog.restorePurchases.error,
-                );
-              }
-            },
-            child: Text(translations.settings.application.contributorPlan.billingPickerDialog.restorePurchases.button),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-      );
-
-  /// Creates the list tile for the given [packageType].
-  Widget _createListTile(PackageType packageType, String price) {
-    String? name = translations.settings.application.contributorPlan.billingPickerDialog.packageTypeName[packageType.name];
-    String? interval = translations.settings.application.contributorPlan.billingPickerDialog.packageTypeInterval[packageType.name];
-    String? subtitle = translations.settings.application.contributorPlan.billingPickerDialog.packageTypeSubtitle[packageType.name];
-    if (name == null || interval == null || subtitle == null) {
-      return const SizedBox.shrink();
-    }
-    return ListTile(
-      title: Text(name),
-      subtitle: Text.rich(
-        translations.settings.application.contributorPlan.billingPickerDialog.priceSubtitle(
-          subtitle: TextSpan(text: subtitle),
-          price: TextSpan(
-            text: price,
-            style: const TextStyle(fontStyle: FontStyle.italic),
-          ),
-          interval: TextSpan(
-            text: interval.toLowerCase(),
-            style: const TextStyle(fontStyle: FontStyle.italic),
-          ),
-        ),
-      ),
-      onTap: () => Navigator.pop(context, packageType),
-    );
   }
 }

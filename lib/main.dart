@@ -15,13 +15,17 @@ import 'package:open_authenticator/model/authentication/providers/email_link.dar
 import 'package:open_authenticator/model/authentication/providers/result.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
+import 'package:open_authenticator/model/storage/type.dart';
+import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/home.dart';
 import 'package:open_authenticator/pages/intro/page.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/account.dart';
+import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/route/unlock_challenge.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
@@ -59,7 +63,6 @@ Future<void> main() async {
     namespace: App.appPackageName,
   ));
   LocaleSettings.useDeviceLocale();
-  // TODO: https://pub.dev/packages/google_mobile_ads/install
   runApp(
     TranslationProvider(
       child: const ProviderScope(
@@ -137,8 +140,14 @@ class OpenAuthenticatorApp extends ConsumerWidget {
             ),
           ),
           routes: {
-            IntroPage.name: (_) => const _RouteWidget(child: IntroPage()),
-            HomePage.name: (_) => const _RouteWidget(child: HomePage()),
+            IntroPage.name: (_) => const _RouteWidget(
+                  listen: true,
+                  child: IntroPage(),
+                ),
+            HomePage.name: (_) => const _RouteWidget(
+                  listen: true,
+                  child: HomePage(),
+                ),
             ScanPage.name: (_) => const _RouteWidget(child: ScanPage()),
             SettingsPage.name: (_) => const _RouteWidget(child: SettingsPage()),
             TotpPage.name: (context) {
@@ -159,14 +168,22 @@ class OpenAuthenticatorApp extends ConsumerWidget {
   }
 }
 
-/// A simple route widget, using [MasterPasswordLockedRouteWidget] and [LocalAuthLockedRouteWidget].
+/// A route that allows to listen to dynamic links and [totpLimitReachedProvider].
 class _RouteWidget extends ConsumerStatefulWidget {
   /// The route widget.
   final Widget child;
 
+  /// Listen to dynamic links and [totpLimitReachedProvider].
+  final bool? listen;
+
+  /// Whether to provide an [UnlockChallengeRouteWidget].
+  final bool unlock;
+
   /// Creates a route widget instance.
   const _RouteWidget({
     required this.child,
+    this.listen,
+    this.unlock = true,
   });
 
   @override
@@ -181,15 +198,53 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
   @override
   void initState() {
     super.initState();
-    if (currentPlatform.isMobile) {
+    if (widget.listen ?? currentPlatform.isMobile) {
       WidgetsBinding.instance.addPostFrameCallback((_) => listenDynamicLinks());
+      ref.listenManual(totpLimitReachedProvider, (previous, next) {
+        if (next.valueOrNull != true) {
+          return;
+        }
+        showAdaptiveDialog(
+          context: context,
+          builder: (context) => AlertDialog.adaptive(
+            title: Text(translations.totpLimit.autoDialog.title),
+            scrollable: true,
+            content: Text(
+              translations.totpLimit.autoDialog.message(
+                count: App.freeTotpsLimit.toString(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  if (await StorageMigrationUtils.changeStorageType(context, ref, StorageType.local) && context.mounted) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (await ContributorPlanUtils.purchase(context, ref) && context.mounted) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text(translations.totpLimit.autoDialog.actions.subscribe),
+              ),
+            ],
+          ),
+          barrierDismissible: false,
+        );
+      });
     }
   }
 
   @override
-  Widget build(BuildContext context) => UnlockChallengeRouteWidget(
-        child: widget.child,
-      );
+  Widget build(BuildContext context) => widget.unlock
+      ? UnlockChallengeRouteWidget(
+          child: widget.child,
+        )
+      : widget.child;
 
   @override
   void dispose() {

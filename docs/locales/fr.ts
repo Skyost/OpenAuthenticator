@@ -66,7 +66,7 @@ en <strong>faisant un don</strong> ou tout simplement en lui <strong>attribuant 
     lastUpdated: 'Dernière mise à jour le 01 avril 2024',
     intro: `Cette politique de confidentialité s'applique à l'application Open Authenticator
 (ci-après dénommée <q>Application</q>) pour appareils mobiles, développée par Skyost
-(ci-après dénommée <q>Fournisseur de services</q>) en tant que service pris en charge par la publicité.
+(ci-après dénommée <q>Fournisseur de services</q>) en tant que service pris en charge par abonnement.
 Ce service est fourni <q>TEL QUEL</q>.`,
     userProvidedInfo: {
       title: 'Informations fournies par l\'utilisateur',
@@ -83,8 +83,7 @@ fournir des informations importantes, des avis nécessaires et des promotions ma
 mais sans s'y limiter, le type d'appareil mobile que vous utilisez, l'identifiant unique de votre appareil
 mobile, l'adresse IP de votre appareil mobile, votre système d'exploitation mobile, le type de navigateurs
 Internet mobiles que vous utilisez, et des informations sur la manière dont vous utilisez l'Application.
-Cette collecte de données est nécessaire pour afficher des publicités personnalisées et pour mieux comprendre
-les journaux d'erreurs.`
+Cette collecte de données est nécessaire pour mieux comprendre les journaux d'erreurs.`
     },
     locationInfo: {
       title: 'L\'Application collecte-t-elle des informations sur la localisation en temps réel précise de l\'appareil ?',
@@ -103,7 +102,6 @@ déclaration de confidentialité.`
       content: 'Veuillez noter que l\'Application utilise des services tiers qui ont leur propre politique de confidentialité concernant la gestion des données. Vous trouverez ci-dessous les liens vers la politique de confidentialité des fournisseurs de services tiers utilisés par l\'Application :',
       list: {
         googlePlayServices: '<a href="https://www.google.com/policies/privacy/" target="_blank">Services Google Play</a>',
-        adMob: '<a href="https://support.google.com/admob/answer/6128543?hl=fr" target="_blank">AdMob</a>',
         firebase: '<a href="https://firebase.google.com/support/privacy/" target="_blank">Firebase (y compris, mais sans s\'y limiter, Crashlytics, Cloud Firestore, ...)</a>',
         revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>'
       }
@@ -179,7 +177,7 @@ l'Application, ou si vous avez des questions sur les pratiques, veuillez <a href
     lastUpdated: 'Dernière mise à jour le 01 avril 2024',
     intro: `Ces conditions générales s'appliquent à l'application Open Authenticator (ci-après dénommée <q>Application</q>)
 pour appareils mobiles créée par Skyost (ci-après dénommée <q>Fournisseur de services</q>) en tant que
-service pris en charge par la publicité.`,
+service pris en charge par un abonnement.`,
     agreement: `En téléchargeant ou en utilisant l'Application, vous acceptez automatiquement les conditions suivantes
 et la <nuxt-link to="/privacy-policy">Politique de confidentialité</nuxt-link>.
 Il est fortement recommandé de lire et de comprendre ces conditions avant d'utiliser l'Application.
@@ -201,7 +199,6 @@ compromettre les fonctionnalités de sécurité de votre téléphone et entraîn
 Ci-dessous sont les liens vers les conditions générales des fournisseurs de services tiers utilisés par l'Application :`,
     thirdPartyTermsList: {
       googlePlayServices: '<a href="https://www.google.com/policies/privacy/" target="_blank">Services Google Play</a>',
-      adMob: '<a href="https://support.google.com/admob/answer/6128543?hl=fr" target="_blank">AdMob</a>',
       firebase: '<a href="https://firebase.google.com/support/privacy/" target="_blank">Firebase (y compris, mais sans s\'y limiter, Crashlytics, Cloud Firestore, ...)</a>',
       revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>'
     },

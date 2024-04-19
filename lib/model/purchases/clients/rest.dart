@@ -7,10 +7,10 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
-import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Allows to communicate with RevenueCat thanks to its REST api.
@@ -24,10 +24,10 @@ class RevenueCatRestClient extends RevenueCatClient {
   /// Creates a new RevenueCat REST client instance.
   RevenueCatRestClient({
     required super.purchasesConfiguration,
-  }) : _client = http.Client();
-
-  /// The validation timeout.
-  Duration get timeout => const Duration(minutes: 10);
+  })  : _client = http.Client(),
+        super(
+          purchaseTimeout: const Duration(minutes: 10),
+        );
 
   @override
   Future<bool> hasEntitlement(String entitlementId) async {
@@ -82,11 +82,10 @@ class RevenueCatRestClient extends RevenueCatClient {
   }
 
   @override
-  Future<List<String>> purchase(Purchasable purchasable, PackageTypeAsker askPackageType) async {
-    PackageType? packageType = await askPackageType();
-    if (packageType == null) {
-      return [];
-    }
+  Future<PaywallResult> presentPaywall(Purchasable purchasable) => Future.value(PaywallResult.error);
+
+  @override
+  Future<List<String>> purchaseManually(Purchasable purchasable, PackageType packageType) async {
     Uri? stripeBuyUrl = purchasable.getStripeBuyUrl(packageType);
     if (stripeBuyUrl == null || !(await canLaunchUrl(stripeBuyUrl)) || _validationServer != null) {
       return [];
@@ -99,7 +98,7 @@ class RevenueCatRestClient extends RevenueCatClient {
       onValidationCompleted: (token) async => completer.complete(await _registerReceipt(purchasable, packageType, token)),
       onValidationFailed: completer.completeError,
       onValidationCancelled: (timedOut) => completer.complete([]),
-      timeout: timeout,
+      timeout: purchaseTimeout,
     );
     await _validationServer!.start();
     List<String> entitlements = await completer.future;

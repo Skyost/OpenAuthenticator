@@ -29,7 +29,6 @@
       <p v-html="$t('privacyPolicy.thirdPartyProviders.content')" />
       <ul>
         <li v-html="$t('privacyPolicy.thirdPartyProviders.list.googlePlayServices')" />
-        <li v-html="$t('privacyPolicy.thirdPartyProviders.list.adMob')" />
         <li v-html="$t('privacyPolicy.thirdPartyProviders.list.firebase')" />
         <li v-html="$t('privacyPolicy.thirdPartyProviders.list.revenueCat')" />
       </ul>

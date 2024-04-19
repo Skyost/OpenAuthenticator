@@ -81,7 +81,6 @@ Use the links below to do so :
 * [Configure RevenueCat](https://www.revenuecat.com/docs/getting-started/entitlements).
 * [Configure Stripe with RevenueCat](https://www.revenuecat.com/docs/getting-started/entitlements/stripe-products).
 * [Configure Stripe payment links](https://docs.stripe.com/payment-links)
-* [Configure AdMob](https://developers.google.com/admob/flutter/banner).
 
 ### Website
 

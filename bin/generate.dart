@@ -66,9 +66,12 @@ class App {
   /// The app package name.
   static const String appPackageName = 'app.openauthenticator';
 
+  /// How much TOTPs can be saved without subscribing to the Contributor Plan.
+  static const int freeTotpsLimit = 6;
+
   /// The Firebase login URL.
   static const String firebaseLoginUrl = 'https://login.openauthenticator.app/do';
-  
+
   /// The Apple sign in return URL.
   static const String appleSignInReturnUrl = '$appleSignInReturnUrl';
 }

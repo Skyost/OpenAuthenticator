@@ -64,7 +64,7 @@ by <strong>donating</strong> or just by <strong>starring it</strong> on Github !
   privacyPolicy: {
     title: 'Privacy policy',
     lastUpdated: 'Last updated April 01, 2024',
-    intro: 'This privacy policy is applicable to the Open Authenticator app (hereinafter referred to as <q>Application</q>) for mobile devices, which was developed by Skyost (hereinafter referred to as <q>Service Provider</q>) as an Ad Supported service. This service is provided <q>AS IS</q>.',
+    intro: 'This privacy policy is applicable to the Open Authenticator app (hereinafter referred to as <q>Application</q>) for mobile devices, which was developed by Skyost (hereinafter referred to as <q>Service Provider</q>) as a subscription supported service. This service is provided <q>AS IS</q>.',
     userProvidedInfo: {
       title: 'User Provided Information',
       content: `The Application acquires the information you supply when you download and register the
@@ -80,7 +80,7 @@ and marketing promotions.`
 but not limited to, the type of mobile device you use, your mobile device\`s unique device ID, the IP address
 of your mobile device, your mobile operating system, the type of mobile Internet browsers you use,
 and information about the way you use the Application.
-This data collection is needed to display personalized ads and to better understand crash logs.`
+This data collection is needed in order to better understand crash logs.`
     },
     locationInfo: {
       title: 'Does the Application collect precise real-time location information of the device ?',
@@ -99,7 +99,6 @@ Privacy Policy about handling data. Below are the links to the Privacy Policy of
 third-party service providers used by the Application :`,
       list: {
         googlePlayServices: '<a href="https://www.google.com/policies/privacy/" target="_blank">Google Play Services</a>',
-        adMob: '<a href="https://support.google.com/admob/answer/6128543?hl=en" target="_blank">AdMob</a>',
         firebase: '<a href="https://firebase.google.com/support/privacy/" target="_blank">Firebase (including but not limited to Crashlytics, Cloud Firestore, ...)</a>',
         revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>'
       }
@@ -168,8 +167,7 @@ have questions about the practices, please <a href="/contact">contact</a> the Se
     title: 'Terms & Conditions',
     lastUpdated: 'Last updated April 01, 2024',
     intro: `These terms and conditions applies to the Open Authenticator app (hereby referred to as <q>Application</q>)
-for mobile devices that was created by Skyost (hereby referred to as <q>Service Provider</q>) as an
-Ad Supported service.`,
+for mobile devices that was created by Skyost (hereby referred to as <q>Service Provider</q>) as a subscription supported service.`,
     agreement: `Upon downloading or utilizing the Application, you are automatically agreeing to the following terms
 and to the <nuxt-link to="/privacy-policy">Privacy policy</nuxt-link>.
 It is strongly advised that you thoroughly read and understand these terms prior to using the Application.
@@ -194,7 +192,6 @@ Below are the links to the Terms and Conditions of the third-party service provi
 Application :`,
     thirdPartyTermsList: {
       googlePlayServices: '<a href="https://www.google.com/policies/privacy/" target="_blank">Google Play Services</a>',
-      adMob: '<a href="https://support.google.com/admob/answer/6128543?hl=en" target="_blank">AdMob</a>',
       firebase: '<a href="https://firebase.google.com/support/privacy/" target="_blank">Firebase (including but not limited to Crashlytics, Cloud Firestore, ...)</a>',
       revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>'
     },

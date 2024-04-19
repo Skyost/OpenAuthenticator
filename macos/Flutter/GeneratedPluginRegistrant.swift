@@ -13,7 +13,6 @@ import firebase_crashlytics
 import package_info_plus
 import path_provider_foundation
 import purchases_flutter
-import purchases_ui_flutter
 import screen_retriever
 import shared_preferences_foundation
 import simple_secure_storage_darwin
@@ -31,7 +30,6 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FPPPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FPPPackageInfoPlusPlugin"))
   PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))
   PurchasesFlutterPlugin.register(with: registry.registrar(forPlugin: "PurchasesFlutterPlugin"))
-  PurchasesUiFlutterPlugin.register(with: registry.registrar(forPlugin: "PurchasesUiFlutterPlugin"))
   ScreenRetrieverPlugin.register(with: registry.registrar(forPlugin: "ScreenRetrieverPlugin"))
   SharedPreferencesPlugin.register(with: registry.registrar(forPlugin: "SharedPreferencesPlugin"))
   SimpleSecureStoragePlugin.register(with: registry.registrar(forPlugin: "SimpleSecureStoragePlugin"))

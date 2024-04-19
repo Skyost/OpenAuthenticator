@@ -13,7 +13,6 @@
       <p v-html="$t('termsOfService.thirdPartyTerms')" />
       <ul>
         <li v-html="$t('termsOfService.thirdPartyTermsList.googlePlayServices')" />
-        <li v-html="$t('termsOfService.thirdPartyTermsList.adMob')" />
         <li v-html="$t('termsOfService.thirdPartyTermsList.firebase')" />
         <li v-html="$t('termsOfService.thirdPartyTermsList.revenueCat')" />
       </ul>

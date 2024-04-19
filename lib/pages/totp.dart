@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
+import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/form_label.dart';
+import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/logo_search/dialog.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
@@ -187,50 +191,24 @@ class _TotpPageState extends ConsumerState<TotpPage> {
           ),
           onPressed: isValidTotp && enabled
               ? () async {
-                  bool result = formKey.currentState!.validate();
-                  if (!result) {
+                  bool validateResult = formKey.currentState!.validate();
+                  if (!validateResult) {
                     return;
                   }
                   setState(() => enabled = false);
-                  bool cacheTotpImage = await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
-                  if (widget.add) {
-                    AsyncValue<CryptoStore?> cryptoStore = ref.read(cryptoStoreProvider);
-                    DecryptedTotp? totp = await DecryptedTotp.create(
-                      cryptoStore: cryptoStore.value,
-                      decryptedSecret: decryptedSecret,
-                      label: label,
-                      issuer: issuer,
-                      algorithm: algorithm,
-                      digits: digits,
-                      validity: validity,
-                      imageUrl: imageUrl,
-                    );
-                    if (totp == null) {
-                      result = false;
-                    } else {
-                      result = await ref.read(totpRepositoryProvider.notifier).addTotp(totp, cacheTotpImage: cacheTotpImage);
-                    }
-                  } else {
-                    result = await ref.read(totpRepositoryProvider.notifier).updateTotp(
-                          widget.totp!.uuid,
-                          label: label,
-                          issuer: issuer,
-                          algorithm: algorithm,
-                          digits: digits,
-                          validity: validity,
-                          imageUrl: imageUrl,
-                          cacheTotpImage: cacheTotpImage && imageUrl != widget.totp!.imageUrl,
-                        );
-                  }
+                  _TotpEditResult editResult = await (widget.add ? addTotp() : updateTotp());
                   if (!context.mounted) {
                     return;
                   }
                   setState(() => enabled = true);
-                  if (result) {
-                    SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.page.success);
-                    Navigator.pop(context);
-                  } else {
-                    SnackBarIcon.showErrorSnackBar(context, text: translations.totp.page.error.save);
+                  switch (editResult) {
+                    case _TotpEditResult.success:
+                      SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.page.success);
+                      Navigator.pop(context);
+                    case _TotpEditResult.error:
+                      SnackBarIcon.showErrorSnackBar(context, text: translations.totp.page.error.save);
+                    case _TotpEditResult.cancelled:
+                      return;
                   }
                 }
               : null,
@@ -366,4 +344,103 @@ class _TotpPageState extends ConsumerState<TotpPage> {
     }
     return null;
   }
+
+  /// Adds the TOTP to the repository.
+  Future<_TotpEditResult> addTotp() async {
+    bool willExceed = await ref.read(totpLimitReachedProvider.notifier).willExceedIAddMore(count: 1);
+    bool canProceed = false;
+    if (willExceed) {
+      if (mounted) {
+        showAdaptiveDialog(
+          context: context,
+          builder: (context) => AlertDialog.adaptive(
+            title: Text(translations.totpLimit.addDialog.title),
+            scrollable: true,
+            content: Text(
+              translations.totpLimit.addDialog.message(
+                count: App.freeTotpsLimit.toString(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  if (await StorageMigrationUtils.changeStorageType(context, ref, StorageType.local)) {
+                    canProceed = true;
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (await ContributorPlanUtils.purchase(context, ref)) {
+                    canProceed = true;
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                child: Text(translations.totpLimit.autoDialog.actions.subscribe),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(translations.totpLimit.addDialog.actions.cancel),
+              ),
+            ],
+          ),
+          barrierDismissible: false,
+        );
+      }
+    }
+    if (!canProceed) {
+      return _TotpEditResult.cancelled;
+    }
+    AsyncValue<CryptoStore?> cryptoStore = ref.read(cryptoStoreProvider);
+    DecryptedTotp? totp = await DecryptedTotp.create(
+      cryptoStore: cryptoStore.value,
+      decryptedSecret: decryptedSecret,
+      label: label,
+      issuer: issuer,
+      algorithm: algorithm,
+      digits: digits,
+      validity: validity,
+      imageUrl: imageUrl,
+    );
+    if (totp == null) {
+      return _TotpEditResult.error;
+    }
+    bool cacheTotpImage = await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
+    bool result = await ref.read(totpRepositoryProvider.notifier).addTotp(totp, cacheTotpImage: cacheTotpImage);
+    return result ? _TotpEditResult.success : _TotpEditResult.error;
+  }
+
+  /// Updates the TOTP in the repository.
+  Future<_TotpEditResult> updateTotp() async {
+    bool cacheTotpImage = await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
+    bool result = await ref.read(totpRepositoryProvider.notifier).updateTotp(
+          widget.totp!.uuid,
+          label: label,
+          issuer: issuer,
+          algorithm: algorithm,
+          digits: digits,
+          validity: validity,
+          imageUrl: imageUrl,
+          cacheTotpImage: cacheTotpImage && imageUrl != widget.totp!.imageUrl,
+        );
+    return result ? _TotpEditResult.success : _TotpEditResult.error;
+  }
+}
+
+/// The TOTP edit result.
+enum _TotpEditResult {
+  /// When the edit is a success.
+  success,
+
+  /// When there is an error editing the TOTP.
+  error,
+
+  /// When the edit has been cancelled.
+  cancelled;
 }
