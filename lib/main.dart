@@ -140,16 +140,20 @@ class OpenAuthenticatorApp extends ConsumerWidget {
             ),
           ),
           routes: {
-            IntroPage.name: (_) => const _RouteWidget(
-                  listen: true,
-                  child: IntroPage(),
+            IntroPage.name: (_) => _RouteWidget(
+                  listen: currentPlatform.isMobile,
+                  child: const IntroPage(),
                 ),
-            HomePage.name: (_) => const _RouteWidget(
-                  listen: true,
-                  child: HomePage(),
+            HomePage.name: (_) => _RouteWidget(
+                  listen: currentPlatform.isMobile,
+                  child: const HomePage(),
                 ),
-            ScanPage.name: (_) => const _RouteWidget(child: ScanPage()),
-            SettingsPage.name: (_) => const _RouteWidget(child: SettingsPage()),
+            ScanPage.name: (_) => const _RouteWidget(
+                  child: ScanPage(),
+                ),
+            SettingsPage.name: (_) => const _RouteWidget(
+                  child: SettingsPage(),
+                ),
             TotpPage.name: (context) {
               Map<String, dynamic>? arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
               return _RouteWidget(
@@ -174,7 +178,7 @@ class _RouteWidget extends ConsumerStatefulWidget {
   final Widget child;
 
   /// Listen to dynamic links and [totpLimitReachedProvider].
-  final bool? listen;
+  final bool listen;
 
   /// Whether to provide an [UnlockChallengeRouteWidget].
   final bool unlock;
@@ -182,7 +186,7 @@ class _RouteWidget extends ConsumerStatefulWidget {
   /// Creates a route widget instance.
   const _RouteWidget({
     required this.child,
-    this.listen,
+    this.listen = false,
     this.unlock = true,
   });
 
@@ -198,7 +202,7 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.listen ?? currentPlatform.isMobile) {
+    if (widget.listen) {
       WidgetsBinding.instance.addPostFrameCallback((_) => listenDynamicLinks());
       ref.listenManual(totpLimitReachedProvider, (previous, next) {
         if (next.valueOrNull != true) {

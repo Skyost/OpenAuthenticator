@@ -4,7 +4,7 @@
     "mobileDialog": {
       "title": "Actions sur le TOTP",
       "edit": "Éditer le TOTP",
-      "delete": "Supprimier le TOTP"
+      "delete": "Supprimer le TOTP"
     },
     "desktopButtons": {
       "copy": "Copier code",

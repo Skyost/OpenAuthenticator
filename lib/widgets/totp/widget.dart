@@ -77,6 +77,7 @@ class TotpWidget extends ConsumerWidget {
                   width: MediaQuery.of(context).size.width - contentPadding.left - contentPadding.right - imageSize - space,
                   child: _DesktopActionsWidget(
                     onCopyPressed: totp.isDecrypted ? (() async => await _copyCode(context)) : null,
+                    onDecryptPressed: totp.isDecrypted ? null : () => _tryDecrypt(context, ref),
                     onEditPressed: () async => await _edit(context),
                     onDeletePressed: () async => await _delete(context, ref),
                   ),
@@ -84,28 +85,22 @@ class TotpWidget extends ConsumerWidget {
             ],
           ),
           const Spacer(),
-          if (totp.isDecrypted && currentPlatform.isMobile)
-            IconButton(
-              icon: Icon(
-                Icons.copy,
-                color: Theme.of(context).primaryColor,
-              ),
-              onPressed: () async => await _copyCode(context),
-            )
-          else if (!totp.isDecrypted)
-            if (currentPlatform.isMobile)
+          if (currentPlatform.isMobile)
+            if (totp.isDecrypted)
+              IconButton(
+                icon: Icon(
+                  Icons.copy,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onPressed: () async => await _copyCode(context),
+              )
+            else
               IconButton(
                 icon: Icon(
                   Icons.lock,
                   color: Theme.of(context).primaryColor,
                 ),
                 onPressed: () async => await _tryDecrypt(context, ref),
-              )
-            else
-              TextButton.icon(
-                onPressed: () => _tryDecrypt(context, ref),
-                icon: const Icon(Icons.lock),
-                label: Text(translations.totp.actions.decrypt),
               ),
         ],
       ),
@@ -235,6 +230,9 @@ enum _MobileActionsDialogResult {
 
 /// Wraps all three desktop actions in a widget.
 class _DesktopActionsWidget extends StatelessWidget {
+  /// Triggered when the user clicks on "Decrypt".
+  final VoidCallback? onDecryptPressed;
+
   /// Triggered when the user clicks on "Copy code".
   final VoidCallback? onCopyPressed;
 
@@ -246,6 +244,7 @@ class _DesktopActionsWidget extends StatelessWidget {
 
   /// Creates a new desktop actions instance.
   const _DesktopActionsWidget({
+    this.onDecryptPressed,
     this.onCopyPressed,
     required this.onEditPressed,
     required this.onDeletePressed,
@@ -255,11 +254,18 @@ class _DesktopActionsWidget extends StatelessWidget {
   Widget build(BuildContext context) => Wrap(
         alignment: WrapAlignment.end,
         children: [
-          TextButton.icon(
-            onPressed: onCopyPressed,
-            icon: const Icon(Icons.copy),
-            label: Text(translations.totp.actions.desktopButtons.copy),
-          ),
+          if (onDecryptPressed == null)
+            TextButton.icon(
+              onPressed: onCopyPressed,
+              icon: const Icon(Icons.copy),
+              label: Text(translations.totp.actions.desktopButtons.copy),
+            )
+          else
+            TextButton.icon(
+              onPressed: onDecryptPressed,
+              icon: const Icon(Icons.lock),
+              label: Text(translations.totp.actions.decrypt),
+            ),
           TextButton.icon(
             onPressed: onEditPressed,
             icon: const Icon(Icons.edit),

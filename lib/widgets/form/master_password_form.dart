@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 
@@ -21,14 +22,15 @@ class MasterPasswordForm extends StatefulWidget {
   final String hintText;
 
   /// Creates a new master password form instance.
-  const MasterPasswordForm({
+  MasterPasswordForm({
     super.key,
     this.formKey,
     this.onFormChanged,
     this.onChanged,
-    this.inputText = 'Your master password',
-    this.hintText = 'Enter a strong password here',
-  });
+    String? inputText,
+    String? hintText,
+  })  : inputText = inputText ?? translations.masterPasswordForm.password.input,
+        hintText = hintText ?? translations.masterPasswordForm.password.hint;
 
   @override
   State<StatefulWidget> createState() => _MasterPasswordFormState();
@@ -63,7 +65,7 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Text(
-                'Security score : $securityScore/40',
+                translations.masterPasswordForm.securityScore(score: '$securityScore/40'),
                 style: Theme.of(context).textTheme.labelSmall!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: securityScoreColor,
@@ -74,8 +76,8 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
             PasswordFormField(
               decoration: FormLabelWithIcon(
                 icon: Icons.check,
-                text: 'Master password confirmation',
-                hintText: 'Confirm your password',
+                text: translations.masterPasswordForm.confirmation.input,
+                hintText: translations.masterPasswordForm.confirmation.hint,
               ),
               onChanged: (value) {
                 confirmationInput = value;
@@ -88,7 +90,7 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
       );
 
   /// Calls [widget.onChanged] if the password has changed.
-  void notifyChangesIfNeeded({ String? password, String? confirmation }) {
+  void notifyChangesIfNeeded({String? password, String? confirmation}) {
     if (validatePassword(password ?? passwordInput) == null && validateConfirmation(confirmation ?? confirmationInput) == null) {
       widget.onChanged?.call(password ?? passwordInput);
     } else {
@@ -99,7 +101,7 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
   /// Validates the password input field.
   String? validatePassword(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Password is required';
+      return translations.masterPasswordForm.password.emptyError;
     }
     return null;
   }
@@ -107,7 +109,7 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
   /// Validates the confirmation field.
   String? validateConfirmation(String? value) {
     if (value != passwordInput) {
-      return "Confirmation doesn't match";
+      return translations.masterPasswordForm.confirmation.mismatchError;
     }
     return null;
   }

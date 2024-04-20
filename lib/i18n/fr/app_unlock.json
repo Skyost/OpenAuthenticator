@@ -1,6 +1,6 @@
 {
   "widget": {
-    "text": "$app est verrouillée.",
+    "text": "$app est verrouillé.",
     "button": "Déverrouiller"
   },
   "localAuthentication(map)": {
@@ -11,5 +11,6 @@
   "masterPasswordDialog": {
     "title": "Mot de passe maître",
     "message": "Veuillez entrer votre mot de passe maître pour déverrouiller l'application."
-  }
+  },
+  "error": "Impossible de déverrouiller l'application. Veuillez réessayer."
 }
