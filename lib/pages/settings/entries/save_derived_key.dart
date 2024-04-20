@@ -4,6 +4,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/pages/settings/entries/bool_entry.dart';
+import 'package:open_authenticator/widgets/snackbar_icon.dart';
 
 /// Allows to configure [saveDerivedKeySettingsEntryProvider].
 class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppUnlockMethodSettingsEntry, AppUnlockMethod> {
@@ -36,9 +37,11 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
   }
 
   @override
-  void changeValue(BuildContext context, WidgetRef ref, bool newValue) {
+  Future<void> changeValue(BuildContext context, WidgetRef ref, bool newValue) async {
     AppUnlockMethod newMethod = newValue ? NoneAppUnlockMethod() : MasterPasswordAppUnlockMethod();
-    ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValueIfUnlockSucceed(newMethod, context);
+    if (!(await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValueIfUnlockSucceed(newMethod, context)) && context.mounted) {
+      SnackBarIcon.showErrorSnackBar(context, text: translations.settings.security.saveDerivedKey.error);
+    }
   }
 
   @override

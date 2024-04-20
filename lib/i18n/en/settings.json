@@ -31,7 +31,8 @@
     },
     "saveDerivedKey": {
       "title": "Save encryption / decryption key",
-      "subtitle": "Save your encryption / decryption key so that you do not have to reenter your master password everytime you open the app."
+      "subtitle": "Save your encryption / decryption key so that you do not have to reenter your master password everytime you open the app.",
+      "error": "Unable to do this action. Please try again."
     },
     "changeMasterPassword": {
       "title": "Change master password",

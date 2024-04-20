@@ -23,6 +23,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
           provider: storageTypeSettingsEntryProvider,
           icon: Icons.sync,
           title: translations.settings.synchronization.synchronizeTotps.title,
+          subtitle: translations.settings.synchronization.synchronizeTotps.subtitle.description,
         );
 
   /// Creates a new synchronize settings entry widget instance for the intro page.

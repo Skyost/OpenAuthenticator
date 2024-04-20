@@ -8,7 +8,7 @@ import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 /// The app unlock state state provider.
 final appUnlockStateProvider = AsyncNotifierProvider<AppUnlockState, bool>(AppUnlockState.new);
 
-/// Allows to get and set the app unlock state.
+/// Allows to get and set the app unlocked state.
 class AppUnlockState extends AsyncNotifier<bool> {
   @override
   FutureOr<bool> build() => Future.value(false);

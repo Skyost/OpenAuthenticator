@@ -54,16 +54,21 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
     if (password == null) {
       return false;
     }
-    Storage storage = await ref.read(storageProvider.future);
-    CryptoStore? cryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
-    if (cryptoStore == null) {
-      return false;
-    }
-    if (!await ref.read(totpRepositoryProvider.notifier).tryDecryptAll(cryptoStore)) {
-      return false;
-    }
     if (reason == UnlockReason.openApp) {
+      Storage storage = await ref.read(storageProvider.future);
+      CryptoStore? cryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
+      if (cryptoStore == null) {
+        return false;
+      }
+      if (!await ref.read(totpRepositoryProvider.notifier).tryDecryptAll(cryptoStore)) {
+        return false;
+      }
       ref.read(cryptoStoreProvider.notifier).use(cryptoStore);
+    } else {
+      CryptoStore? currentCryptoStore = await ref.read(cryptoStoreProvider.future);
+      if (currentCryptoStore == null || !(await currentCryptoStore.checkPasswordValidity(password))) {
+        return false;
+      }
     }
     return true;
   }
@@ -72,7 +77,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
   Future<void> onMethodChosen(AsyncNotifierProviderRef ref) async => await ref.read(cryptoStoreProvider.notifier).deleteFromLocalStorage();
 
   @override
-  Future<void> onMethodChanged(AsyncNotifierProviderRef ref) async => await ref.read(cryptoStoreProvider.notifier).saveCurrentOnLocalStorage();
+  Future<void> onMethodChanged(AsyncNotifierProviderRef ref) async => await ref.read(cryptoStoreProvider.notifier).saveCurrentOnLocalStorage(checkSettings: false);
 }
 
 /// No unlock.

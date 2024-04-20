@@ -31,7 +31,8 @@
     },
     "saveDerivedKey": {
       "title": "Enregistrer la clé de chiffrement / déchiffrement",
-      "subtitle": "Enregistre votre clé de chiffrement / déchiffrement pour ne pas avoir à entrer votre mot de passe maître à chaque fois que vous démarrez l'application."
+      "subtitle": "Enregistre votre clé de chiffrement / déchiffrement pour ne pas avoir à entrer votre mot de passe maître à chaque fois que vous démarrez l'application.",
+      "error": "Impossible d'effectuer cette action. Veuillez réessayer."
     },
     "changeMasterPassword": {
       "title": "Changer le mot de passe maître",

@@ -56,13 +56,19 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
 
   @override
   Future<void> changeValue(AppUnlockMethod value) async {
-    if (value is NoneAppUnlockMethod) {
-      await SimpleSecureStorage.delete(key);
-    } else {
-      await SimpleSecureStorage.write(key, true.toString());
+    switch (value) {
+      case NoneAppUnlockMethod():
+        await SimpleSecureStorage.delete(key);
+        break;
+      case LocalAuthenticationAppUnlockMethod():
+      case MasterPasswordAppUnlockMethod():
+      default:
+        await SimpleSecureStorage.write(key, value.serialize());
+        break;
     }
+    AppUnlockMethod current = await future;
     await value.onMethodChosen(ref);
-    await (await future).onMethodChanged(ref);
+    await current.onMethodChanged(ref);
     await super.changeValue(value);
   }
 }
