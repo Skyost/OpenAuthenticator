@@ -11,20 +11,24 @@ class ExpandListTile extends StatefulWidget {
   /// Whether the tile is enabled.
   final bool enabled;
 
+  /// The icon color.
+  final Color? iconColor;
+
   /// Creates a new expand list tile instance.
   const ExpandListTile({
     super.key,
     required this.title,
     this.children = const [],
     this.enabled = true,
+    this.iconColor,
   });
 
   @override
-  State<StatefulWidget> createState() => _ExpandListTile();
+  State<StatefulWidget> createState() => _ExpandListTileState();
 }
 
 /// The expand list tile instance.
-class _ExpandListTile extends State<ExpandListTile> {
+class _ExpandListTileState extends State<ExpandListTile> {
   /// Whether the content is expanded.
   bool expand = false;
 
@@ -41,7 +45,10 @@ class _ExpandListTile extends State<ExpandListTile> {
             trailing: AnimatedRotation(
               turns: expand ? 0.25 : 0,
               duration: const Duration(milliseconds: 100),
-              child: const Icon(Icons.chevron_right),
+              child: Icon(
+                Icons.chevron_right,
+                color: widget.iconColor ?? (MediaQuery.of(context).platformBrightness == Brightness.light ? null : Colors.white),
+              ),
             ),
             enabled: widget.enabled,
           ),

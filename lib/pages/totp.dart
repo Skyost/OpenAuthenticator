@@ -179,7 +179,7 @@ class _TotpPageState extends ConsumerState<TotpPage> {
               ExpandListTile(
                 title: Text(translations.totp.page.showQrCode),
                 enabled: enabled,
-                children: [createQrCodeWidget()],
+                children: [createQrCodeWidget(context)],
               ),
             ],
           ),
@@ -281,36 +281,39 @@ class _TotpPageState extends ConsumerState<TotpPage> {
       );
 
   /// Creates the QR code widget.
-  Widget createQrCodeWidget() => ListTilePadding(
-        child: Center(
-          child: isValidTotp
-              ? QrImageView(
-                  data: DecryptedTotp.toUri(
-                    decryptedSecret: decryptedSecret,
-                    label: label,
-                    issuer: issuer,
-                    algorithm: algorithm,
-                    digits: digits,
-                    validity: validity,
-                  ).toString(),
-                  errorCorrectionLevel: QrErrorCorrectLevel.M,
-                  size: 200,
-                  eyeStyle: QrEyeStyle(
-                    eyeShape: QrEyeShape.square,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  dataModuleStyle: QrDataModuleStyle(
-                    dataModuleShape: QrDataModuleShape.square,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                )
-              : Text(
-                  translations.totp.page.error.qrCode,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontStyle: FontStyle.italic),
-                ),
+  Widget createQrCodeWidget(BuildContext context) {
+    Color color = MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).colorScheme.primary : Colors.white;
+    return ListTilePadding(
+      child: Center(
+        child: isValidTotp
+            ? QrImageView(
+          data: DecryptedTotp.toUri(
+            decryptedSecret: decryptedSecret,
+            label: label,
+            issuer: issuer,
+            algorithm: algorithm,
+            digits: digits,
+            validity: validity,
+          ).toString(),
+          errorCorrectionLevel: QrErrorCorrectLevel.M,
+          size: 200,
+          eyeStyle: QrEyeStyle(
+            eyeShape: QrEyeShape.square,
+            color: color,
+          ),
+          dataModuleStyle: QrDataModuleStyle(
+            dataModuleShape: QrDataModuleShape.square,
+            color: color,
+          ),
+        )
+            : Text(
+          translations.totp.page.error.qrCode,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontStyle: FontStyle.italic),
         ),
-      );
+      ),
+    );
+  }
 
   /// Whether the TOTP is valid.
   bool get isValidTotp => validateDecryptedSecret() == null && validateLabel() == null && validateIssuer() == null;
