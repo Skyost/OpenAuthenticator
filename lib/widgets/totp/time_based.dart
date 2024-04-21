@@ -38,7 +38,7 @@ abstract class TimeBasedTotpWidgetState<T extends TimeBasedTotpWidget> extends S
     super.dispose();
   }
 
-  /// The validity.
+  /// The validity, in seconds.
   int get validity => widget.totp.validity ?? Totp.kDefaultValidity;
 
   /// Triggered when the state should be updated.

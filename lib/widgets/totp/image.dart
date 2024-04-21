@@ -147,28 +147,29 @@ class TotpCountdownImageWidget extends TimeBasedTotpWidget {
 }
 
 /// The TOTP countdown image widget state.
-class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountdownImageWidget> {
+class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountdownImageWidget> with TickerProviderStateMixin {
   /// The progress indicator color.
   late Color color = widget.progressColor.shade700;
 
   /// The progress indicator background color.
   late Color backgroundColor = widget.progressColor.shade100;
 
-  /// The currently remaining validity time.
-  late int currentRemainingValidity = remainingValidity;
-
-  /// The timer that allows this widget to refresh every second.
-  late Timer refreshTimer;
+  /// The animation controller.
+  late AnimationController animationController;
 
   @override
   void initState() {
     super.initState();
-    DateTime now = DateTime.now();
-    DateTime target = DateTime(now.year, now.month, now.day, now.hour, now.minute, now.second).add(const Duration(seconds: 1));
-    refreshTimer = Timer(target.difference(now), () {
-      updateState(changeColors: false);
-      refreshTimer = Timer.periodic(const Duration(seconds: 1), (_) => updateState(changeColors: false));
-    });
+    Duration validity = _validity;
+    animationController = AnimationController(
+      vsync: this,
+      duration: validity,
+      upperBound: validity.inSeconds.toDouble(),
+    )
+      ..addListener(() {
+        setState(() {});
+      })
+      ..forward(from: (validity - calculateExpirationDuration()).inMilliseconds / 1000);
   }
 
   @override
@@ -184,7 +185,7 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
             ),
             Positioned.fill(
               child: CircularProgressIndicator(
-                value: 1 - remainingValidity / validity,
+                value: animationController.value / validity,
                 color: color,
                 backgroundColor: backgroundColor,
               ),
@@ -195,7 +196,7 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
 
   @override
   void dispose() {
-    refreshTimer.cancel();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -203,7 +204,8 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
   void updateState({bool changeColors = true}) {
     if (mounted) {
       setState(() {
-        currentRemainingValidity = remainingValidity;
+        animationController.duration = _validity;
+        animationController.forward(from: 0);
         if (changeColors) {
           Color? temporary = color;
           color = backgroundColor;
@@ -213,5 +215,6 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
     }
   }
 
-  int get remainingValidity => validity - calculateExpirationDuration().inSeconds;
+  /// Returns the TOTP validity.
+  Duration get _validity => Duration(seconds: validity);
 }

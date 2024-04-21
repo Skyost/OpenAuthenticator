@@ -51,10 +51,15 @@ class TotpWidget extends ConsumerWidget {
         children: [
           Padding(
             padding: EdgeInsets.only(right: space),
-            child: TotpCountdownImageWidget(
-              totp: totp,
-              size: imageSize,
-            ),
+            child: totp.isDecrypted
+                ? TotpCountdownImageWidget(
+                    totp: totp,
+                    size: imageSize,
+                  )
+                : TotpImageWidget.fromTotp(
+                    totp: totp,
+                    size: imageSize,
+                  ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
