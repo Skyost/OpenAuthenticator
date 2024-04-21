@@ -353,14 +353,6 @@ mixin _RestIdpAuthMethod on FirebaseAuthMethod, CanLinkTo {
         'returnIdpCredential': true,
       }),
     );
-    print({
-      ...additionalParameters,
-      'postBody': _postBody,
-      'requestUri': 'http://localhost',
-      'returnSecureToken': true,
-      'returnIdpCredential': true,
-    });
-    print(_postBody);
     if (response.statusCode != 200) {
       throw Exception(_invalidResponseErrorMessage(response));
     }

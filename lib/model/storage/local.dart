@@ -12,6 +12,7 @@ import 'package:open_authenticator/utils/sqlite.dart';
 part 'local.g.dart';
 
 /// Represents a [oa_totp.Totp].
+@DataClassName('DriftTotp')
 class Totps extends Table {
   /// Maps to [oa_totp.Totp.secret].
   TextColumn get secret => text().map(const Uint8ListConverter())();
@@ -161,10 +162,10 @@ class Uint8ListConverter extends TypeConverter<Uint8List, String> {
   const Uint8ListConverter();
 
   @override
-  Uint8List fromSql(String fromDb) => Uint8List.fromList((json.decode(fromDb) as List).cast<int>());
+  Uint8List fromSql(String fromDb) => base64.decode(fromDb);
 
   @override
-  String toSql(Uint8List value) => json.encode(value);
+  String toSql(Uint8List value) => base64.encode(value);
 }
 
 /// Contains some useful methods from the generated [Secret] class.
