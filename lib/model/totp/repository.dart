@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
+import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
@@ -206,7 +207,13 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
   }
 
   /// Changes the master password.
-  Future<bool> changeMasterPassword(String password, {Uint8List? salt, updateTotps = true}) async {
+  /// Please consider doing a backup by passing a [backupPassword], and restore it in case of failure.
+  Future<bool> changeMasterPassword(
+    String password, {
+    String? backupPassword,
+    Uint8List? salt,
+    updateTotps = true,
+  }) async {
     StoredCryptoStore storedCryptoStore = ref.read(cryptoStoreProvider.notifier);
     CryptoStore? currentCryptoStore = await storedCryptoStore.future;
     if (currentCryptoStore == null) {
@@ -215,6 +222,10 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
     }
     CryptoStore? newCryptoStore = await CryptoStore.fromPassword(password, salt: salt);
     if (newCryptoStore == null) {
+      return false;
+    }
+    if (backupPassword != null) {
+      await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
       return false;
     }
     if (updateTotps) {
@@ -235,7 +246,6 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
     return true;
   }
 }
-
 
 /// The TOTP limit reached provider.
 final totpLimitReachedProvider = AsyncNotifierProvider.autoDispose<TotpLimitReachedNotifier, bool>(TotpLimitReachedNotifier.new);

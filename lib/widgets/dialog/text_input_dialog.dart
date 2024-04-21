@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/crypto.dart';
+import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 
 /// Shows a dialog for prompting text.
@@ -63,7 +67,7 @@ class TextInputDialog extends StatefulWidget {
       return null;
     }
     if (!RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$').hasMatch(email)) {
-      return 'Invalid email';
+      return translations.error.validation.email;
     }
     return null;
   }
@@ -131,5 +135,112 @@ class _TextInputDialogState extends State<TextInputDialog> {
       bool result = widget.validator!(newValue) == null;
       setState(() => valid = result);
     }
+  }
+}
+
+/// An input dialog for inputting and validating the master password.
+class MasterPasswordInputDialog extends ConsumerStatefulWidget {
+  /// The dialog title.
+  final String title;
+
+  /// The prompt message.
+  final String message;
+
+  /// Creates a new master password input dialog instance.
+  MasterPasswordInputDialog({
+    super.key,
+    String? title,
+    String? message,
+  })  : title = title ?? translations.miscellaneous.masterPasswordDialog.title,
+        message = message ?? translations.miscellaneous.masterPasswordDialog.message;
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _MasterPasswordInputDialogState();
+
+  /// Prompts for a the master password.
+  /// The returned String, if not null, is the correct master password.
+  static Future<String?> prompt(
+    BuildContext context, {
+    String? title,
+    String? message,
+  }) =>
+      showAdaptiveDialog<String>(
+        context: context,
+        builder: (context) => MasterPasswordInputDialog(
+          title: title,
+          message: message,
+        ),
+      );
+}
+
+/// The master password input dialog state.
+class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputDialog> {
+  /// The form field key.
+  final GlobalKey<FormState> formFieldKey = GlobalKey<FormState>();
+
+  /// The password.
+  String password = '';
+
+  /// The master password validation result.
+  bool validationResult = false;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog.adaptive(
+        title: Text(widget.title),
+        scrollable: true,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.message,
+              textAlign: TextAlign.left,
+            ),
+            PasswordFormField(
+              formFieldKey: formFieldKey,
+              initialValue: password,
+              onChanged: (value) => password = value,
+              autofocus: true,
+              onFieldSubmitted: (value) => onOkPressed(password: value),
+              textInputAction: TextInputAction.go,
+              validator: isPasswordValid,
+              autovalidateMode: AutovalidateMode.disabled,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: onOkPressed,
+            child: Text(MaterialLocalizations.of(context).okButtonLabel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+        ],
+      );
+
+  /// Triggered when the ok button has been pressed.
+  Future<void> onOkPressed({String? password}) async {
+    password ??= this.password;
+    CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
+    if (cryptoStore == null) {
+      TotpRepository totpRepository = ref.read(totpRepositoryProvider.notifier);
+      cryptoStore = await CryptoStore.fromPassword(password, salt: await StoredCryptoStore.readSaltFromLocalStorage());
+      validationResult = await totpRepository.tryDecryptAll(cryptoStore);
+    } else {
+      validationResult = await cryptoStore.checkPasswordValidity(password);
+    }
+    if (!formFieldKey.currentState!.validate() || !mounted) {
+      return;
+    }
+    Navigator.pop(context, password);
+  }
+
+  /// Checks whether the entered password is valid.
+  String? isPasswordValid(String? value) {
+    if (!validationResult) {
+      return translations.error.validation.masterPassword;
+    }
+    return null;
   }
 }

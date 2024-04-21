@@ -142,7 +142,7 @@ class TotpWidget extends ConsumerWidget {
       return;
     }
     if (!await ref.read(totpRepositoryProvider.notifier).deleteTotp(totp.uuid) && context.mounted) {
-      SnackBarIcon.showErrorSnackBar(context, text: translations.totp.actions.deleteConfirmationDialog.error);
+      SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
     }
   }
 
@@ -183,13 +183,13 @@ class TotpWidget extends ConsumerWidget {
     Totp result = await totp.decrypt(await CryptoStore.fromPassword(password));
     if (!result.isDecrypted) {
       if (context.mounted) {
-        SnackBarIcon.showErrorSnackBar(context, text: translations.totp.decryptDialog.error);
+        SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);
       }
       return;
     }
     await ref.read(totpRepositoryProvider.notifier).replaceBy([result], cacheTotpImages: false);
     if (context.mounted) {
-      SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.decryptDialog.success);
+      SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
     }
   }
 }

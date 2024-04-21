@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 /// A form field for entering passwords.
 class PasswordFormField extends StatefulWidget {
+  /// The form field key, if needed.
+  final GlobalKey<FormState>? formFieldKey;
+
   /// The reveal button builder.
   final Widget Function(BuildContext, VoidCallback, bool) revealButtonBuilder;
 
@@ -38,6 +41,7 @@ class PasswordFormField extends StatefulWidget {
   /// Creates a new password form field instance.
   const PasswordFormField({
     super.key,
+    this.formFieldKey,
     this.revealButtonBuilder = _defaultRevealButtonBuilder,
     this.enabled = true,
     this.autofocus = false,
@@ -68,6 +72,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
 
   @override
   Widget build(BuildContext context) => TextFormField(
+        key: widget.formFieldKey,
         obscureText: !isRevealed,
         enableSuggestions: false,
         autocorrect: false,

@@ -23,7 +23,7 @@ class AccountUtils {
       provider,
       waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
       action: (context, provider) => provider.signIn(context),
-      timeoutMessage: translations.authentication.logIn.error.timeoutDialog.message,
+      timeoutMessage: translations.error.timeout.authentication,
     );
   }
 
@@ -35,7 +35,11 @@ class AccountUtils {
     }
     bool unlink = ref.read(userAuthenticationProviders).contains(provider);
     if (unlink &&
-        !(await ConfirmationDialog.ask(context, title: translations.authentication.unlink.confirmationDialog.title, message: translations.authentication.unlink.confirmationDialog.message))) {
+        !(await ConfirmationDialog.ask(
+          context,
+          title: translations.authentication.unlinkConfirmationDialog.title,
+          message: translations.authentication.unlinkConfirmationDialog.message,
+        ))) {
       return;
     }
     if (!context.mounted) {
@@ -47,7 +51,7 @@ class AccountUtils {
       provider,
       waitingDialogMessage: unlink ? null : translations.authentication.logIn.waitingLoginMessage,
       action: unlink ? ((context, provider) => provider.unlink(context)) : ((context, provider) => provider.link(context)),
-      timeoutMessage: unlink ? translations.authentication.unlink.error.timeout : translations.authentication.linkErrorTimeout,
+      timeoutMessage: unlink ? translations.error.timeout.unlink : translations.error.timeout.authentication,
     );
   }
 
@@ -104,7 +108,7 @@ class AccountUtils {
         if (provider is ConfirmationProvider) {
           SnackBarIcon.showSuccessSnackBar(context, text: translations.authentication.logIn.successNeedConfirmation);
         } else {
-          SnackBarIcon.showSuccessSnackBar(context, text: translations.authentication.logIn.success);
+          SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
         }
         break;
       case FirebaseAuthenticationCancelled(:final timedOut):
@@ -112,9 +116,8 @@ class AccountUtils {
           showAdaptiveDialog(
             context: context,
             builder: (context) => AlertDialog.adaptive(
-              title: Text(translations.authentication.logIn.error.timeoutDialog.title),
               scrollable: true,
-              content: Text(translations.authentication.logIn.error.timeoutDialog.message),
+              content: Text(translations.error.timeout.authentication),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
@@ -130,9 +133,9 @@ class AccountUtils {
           showAdaptiveDialog(
             context: context,
             builder: (context) => AlertDialog.adaptive(
-              title: Text(translations.authentication.logIn.error.accountExistsWithDifferentCredentialsDialog.title),
+              title: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.title),
               scrollable: true,
-              content: Text(translations.authentication.logIn.error.accountExistsWithDifferentCredentialsDialog.message),
+              content: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -149,26 +152,26 @@ class AccountUtils {
             ),
           );
         } else {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.authentication.logIn.error.accountExistsWithDifferentCredentialsDialog.message);
+          SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message);
         }
         break;
       case FirebaseAuthenticationErrorInvalidCredential():
-        SnackBarIcon.showErrorSnackBar(context, text: translations.authentication.logIn.error.invalidCredential);
+        SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.invalidCredential);
         break;
       case FirebaseAuthenticationErrorOperationNotAllowed():
-        SnackBarIcon.showErrorSnackBar(context, text: translations.authentication.logIn.error.operationNotAllowed);
+        SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.operationNotAllowed);
         break;
       case FirebaseAuthenticationErrorUserDisabled():
-        SnackBarIcon.showErrorSnackBar(context, text: translations.authentication.logIn.error.userDisabled);
+        SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.userDisabled);
         break;
       case FirebaseAuthenticationFirebaseError(:final exception):
-        SnackBarIcon.showErrorSnackBar(context, text: translations.authentication.logIn.error.firebaseException(exception: exception));
+        SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.firebaseException(exception: exception));
         break;
       case FirebaseAuthenticationError(:final exception):
         if (exception == null) {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.authentication.logIn.error.generic);
+          SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
         } else {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.authentication.logIn.error.exception(exception: exception as Object));
+          SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.firebaseException(exception: exception));
         }
         break;
     }

@@ -1,17 +1,12 @@
 {
   "subscribe": {
-    "waitingDialog": {
-      "message": "En attente de votre paiement...",
-      "timedOut": "Délai d'attente de la souscription à l'Abonnement Contributeur dépassé. Veuillez réessayer."
-    },
-    "success": "Vous avez souscrit à l'Abonnement Contributeur avec succès. Merci beaucoup !",
-    "error": "Une erreur est survenue pendant votre souscription à l'Abonnement Contributeur. Veuillez réessayer plus tard."
+    "waitingDialogMessage": "En attente de votre paiement...",
+    "success": "Vous avez souscrit à l'Abonnement Contributeur avec succès. Merci beaucoup !"
   },
   "billingPickerDialog": {
     "title": "Choisissez votre souscription",
     "priceSubtitle(rich)": "$subtitle\n$price / $interval.",
     "empty": "Vous ne pouvez pas souscrire à l'Abonnement Contributeur actuellement.",
-    "error": "Erreur : $error.",
     "packageTypeName(map)": {
       "annual": "Annuelle",
       "monthly": "Mensuelle"
@@ -26,8 +21,7 @@
     },
     "restorePurchases": {
       "button": "Restaurer les achats",
-      "success": "Vos achats ont été restauré avec succès !",
-      "error": "Une erreur est survenue. Veuillez réessayer plus tard."
+      "success": "Vos achats ont été restauré avec succès !"
     }
   }
 }

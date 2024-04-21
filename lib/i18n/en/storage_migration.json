@@ -1,14 +1,10 @@
 {
-  "masterPasswordDialog": {
-    "title": "Master password",
-    "message": "Please enter your master password to continue."
-  },
-  "success": "Success !",
-  "error(map)": {
-    "saltError": "\"Salt\" error while migrating your data. Please try again later.",
-    "currentStoragePasswordMismatch": "Invalid master password entered.",
-    "encryptionKeyChangeFailed": "An error occurred while encrypting your data. Please try again later.",
-    "genericError": "An error occurred while migrating your data. Please try again later."
+  "confirmDialog": {
+    "title": "Confirmation",
+    "message": {
+      "enable": "Do you really want to synchronize your TOTPs ? They will be available on all your synced devices.",
+      "disable": "Do you really want to stop synchronizing your TOTPs ? Any change made on this instance of the app will not be reflected anymore on the other linked devices."
+    }
   },
   "newStoragePasswordMismatchDialog": {
     "title": "Storage master password",

@@ -40,7 +40,7 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
   Future<void> changeValue(BuildContext context, WidgetRef ref, bool newValue) async {
     AppUnlockMethod newMethod = newValue ? NoneAppUnlockMethod() : MasterPasswordAppUnlockMethod();
     if (!(await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValueIfUnlockSucceed(newMethod, context)) && context.mounted) {
-      SnackBarIcon.showErrorSnackBar(context, text: translations.settings.security.saveDerivedKey.error);
+      SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
     }
   }
 

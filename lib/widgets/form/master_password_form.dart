@@ -101,7 +101,7 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
   /// Validates the password input field.
   String? validatePassword(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return translations.masterPasswordForm.password.emptyError;
+      return translations.error.validation.empty;
     }
     return null;
   }
@@ -109,7 +109,7 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
   /// Validates the confirmation field.
   String? validateConfirmation(String? value) {
     if (value != passwordInput) {
-      return translations.masterPasswordForm.confirmation.mismatchError;
+      return translations.error.validation.confirmation;
     }
     return null;
   }

@@ -77,7 +77,7 @@ class _WaitingDialogState extends State<_WaitingDialog> {
           content: PopScope(
             canPop: false,
             child: timedOut
-                ? Text(widget.timeoutMessage ?? translations.miscellaneous.waitingDialog.defaultTimeoutMessage)
+                ? Text(widget.timeoutMessage ?? translations.error.timeout.generic)
                 : Row(
                     children: [
                       const Padding(

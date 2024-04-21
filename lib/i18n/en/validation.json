@@ -1,13 +1,8 @@
 {
   "success": "Validated with success. You can safely close this tab.",
-  "error": {
-    "incorrectPath": "Something went wrong (path is '$path'). Please report this error.",
-    "generic": "Unable to validate request (exception : $exception). Please try again later."
-  },
   "oauth2": {
     "title": "Login with $name",
-    "loading": "Loading... Click <a href=\"$link\">here</a> if you are not being redirected.",
-    "error": "Unable to login using $name. Please try again later."
+    "loading": "Loading... Click <a href=\"$link\">here</a> if you are not being redirected."
   },
   "githubCodeDialog": {
     "title": "Code",

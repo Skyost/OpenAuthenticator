@@ -8,9 +8,5 @@
     "enable": "Authenticate to enable local authentication.",
     "disable":  "Authenticate to disable local authentication."
   },
-  "masterPasswordDialog": {
-    "title": "Master password",
-    "message": "Please enter your master password to unlock the app."
-  },
-  "error": "Failed to unlock the app. Please try again."
+  "masterPasswordDialogMessage": "Please enter your master password to unlock the app."
 }

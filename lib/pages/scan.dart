@@ -30,7 +30,7 @@ class ScanPage extends ConsumerWidget {
           if (code != null && context.mounted) {
             Uri? uri = Uri.tryParse(code);
             if (uri == null) {
-              SnackBarIcon.showErrorSnackBar(context, text: translations.scan.error.noUri);
+              SnackBarIcon.showErrorSnackBar(context, text: translations.error.scan.noUri);
               return;
             }
             CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
@@ -39,7 +39,7 @@ class ScanPage extends ConsumerWidget {
               return;
             }
             if (totp == null) {
-              SnackBarIcon.showErrorSnackBar(context, text: translations.scan.error.scanError(exception: Exception('Failed to decrypt TOTP.')));
+              SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: Exception('Failed to decrypt TOTP.')));
               return;
             }
             Navigator.pushNamedAndRemoveUntil(
@@ -55,9 +55,9 @@ class ScanPage extends ConsumerWidget {
         },
         onAccessDenied: (exception, listener) => ConfirmationDialog.ask(
           context,
-          title: translations.scan.error.accessDeniedDialog.title,
-          message: translations.scan.error.accessDeniedDialog.message(exception: exception),
+          title: translations.error.scan.accessDeniedDialog.title,
+          message: translations.error.scan.accessDeniedDialog.message(exception: exception),
         ),
-        onError: (exception, listener) => SnackBarIcon.showErrorSnackBar(context, text: translations.scan.error.scanError(exception: exception)),
+        onError: (exception, listener) => SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: exception)),
       );
 }

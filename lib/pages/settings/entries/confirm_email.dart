@@ -75,10 +75,10 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
       return;
     }
     if (result) {
-      SnackBarIcon.showSuccessSnackBar(context, text: translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.success);
+      SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
       return;
     }
-    SnackBarIcon.showErrorSnackBar(context, text: translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.error);
+    SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
   }
 
   /// Tries to confirm the user. He has to enter the link manually.

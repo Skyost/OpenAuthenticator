@@ -93,7 +93,7 @@ class _TotpPageState extends ConsumerState<TotpPage> {
                     return;
                   }
                   if (!await ref.read(totpRepositoryProvider.notifier).deleteTotp(widget.totp!.uuid) && context.mounted) {
-                    SnackBarIcon.showErrorSnackBar(context, text: translations.totp.actions.deleteConfirmationDialog.error);
+                    SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
                   }
                 },
                 icon: const Icon(Icons.delete),
@@ -176,11 +176,12 @@ class _TotpPageState extends ConsumerState<TotpPage> {
                   children: createAdvancedOptionsWidgets(),
                 ),
               ),
-              ExpandListTile(
-                title: Text(translations.totp.page.showQrCode),
-                enabled: enabled,
-                children: [createQrCodeWidget(context)],
-              ),
+              if (isValidTotp)
+                ExpandListTile(
+                  title: Text(translations.totp.page.showQrCode),
+                  enabled: enabled,
+                  children: [createQrCodeWidget(context)],
+                ),
             ],
           ),
         ),
@@ -203,10 +204,10 @@ class _TotpPageState extends ConsumerState<TotpPage> {
                   setState(() => enabled = true);
                   switch (editResult) {
                     case _TotpEditResult.success:
-                      SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.page.success);
+                      SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
                       Navigator.pop(context);
                     case _TotpEditResult.error:
-                      SnackBarIcon.showErrorSnackBar(context, text: translations.totp.page.error.save);
+                      SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
                     case _TotpEditResult.cancelled:
                       return;
                   }
@@ -285,8 +286,7 @@ class _TotpPageState extends ConsumerState<TotpPage> {
     Color color = MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).colorScheme.primary : Colors.white;
     return ListTilePadding(
       child: Center(
-        child: isValidTotp
-            ? QrImageView(
+        child: QrImageView(
           data: DecryptedTotp.toUri(
             decryptedSecret: decryptedSecret,
             label: label,
@@ -305,11 +305,6 @@ class _TotpPageState extends ConsumerState<TotpPage> {
             dataModuleShape: QrDataModuleShape.square,
             color: color,
           ),
-        )
-            : Text(
-          translations.totp.page.error.qrCode,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontStyle: FontStyle.italic),
         ),
       ),
     );
@@ -322,10 +317,10 @@ class _TotpPageState extends ConsumerState<TotpPage> {
   String? validateDecryptedSecret([String? decryptedSecret]) {
     decryptedSecret ??= this.decryptedSecret;
     if (decryptedSecret.isEmpty) {
-      return translations.totp.page.error.emptySecret;
+      return translations.error.validation.empty;
     }
     if (!RegExp(r'^[A-Z2-7]{16,128}$').hasMatch(decryptedSecret)) {
-      return translations.totp.page.error.invalidSecret;
+      return translations.error.validation.secret;
     }
     return null;
   }
@@ -334,7 +329,7 @@ class _TotpPageState extends ConsumerState<TotpPage> {
   String? validateLabel([String? label]) {
     label ??= this.label;
     if (label.isEmpty) {
-      return translations.totp.page.error.emptyLabel;
+      return translations.error.validation.empty;
     }
     return null;
   }
@@ -343,7 +338,7 @@ class _TotpPageState extends ConsumerState<TotpPage> {
   String? validateIssuer([String? issuer]) {
     issuer ??= this.issuer;
     if (issuer.isEmpty) {
-      return translations.totp.page.error.emptyIssuer;
+      return translations.error.validation.empty;
     }
     return null;
   }

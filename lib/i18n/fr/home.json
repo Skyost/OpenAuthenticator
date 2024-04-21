@@ -1,8 +1,5 @@
 {
-  "list": {
-    "empty": "Pas de TOTP pour le moment.\nEssayez d'en ajouter un !",
-    "error": "Erreur : $error. Veuillez réessayer de rafraîchir les données."
-  },
+  "empty": "Pas de TOTP pour le moment.\nEssayez d'en ajouter un !",
   "addDialog": {
     "title": "Ajouter un TOTP",
     "qrCode": {

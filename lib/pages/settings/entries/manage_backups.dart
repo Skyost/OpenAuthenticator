@@ -77,9 +77,9 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
           ],
         );
         break;
-      case AsyncError():
+      case AsyncError(:final error):
         content = Center(
-          child: Text(translations.settings.backups.manageBackups.backupsDialog.errorLoadingBackups),
+          child: Text(translations.error.generic.withException(exception: error)),
         );
         break;
       default:
@@ -87,7 +87,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
         break;
     }
     return AlertDialog.adaptive(
-      title: Text(translations.settings.backups.manageBackups.backupsDialog.title),
+      title: Text(translations.settings.backups.manageBackups.backupsDialogTitle),
       content: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: content,
@@ -106,8 +106,8 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
         onPressed: () async {
           String? password = await TextInputDialog.prompt(
             context,
-            title: translations.settings.backups.manageBackups.restoreBackup.passwordDialog.title,
-            message: translations.settings.backups.manageBackups.restoreBackup.passwordDialog.message,
+            title: translations.settings.backups.manageBackups.restoreBackupPasswordDialog.title,
+            message: translations.settings.backups.manageBackups.restoreBackupPasswordDialog.message,
             password: true,
           );
           if (password == null || !mounted) {
@@ -121,9 +121,9 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
             return;
           }
           if (result) {
-            SnackBarIcon.showSuccessSnackBar(context, text: translations.settings.backups.manageBackups.restoreBackup.success);
+            SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
           } else {
-            SnackBarIcon.showErrorSnackBar(context, text: translations.settings.backups.manageBackups.restoreBackup.error);
+            SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
           }
           Navigator.pop(context);
         },
@@ -134,8 +134,8 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
   void deleteBackup(Backup backup) async {
     bool result = await ConfirmationDialog.ask(
       context,
-      title: translations.settings.backups.manageBackups.deleteBackup.confirmationDialog.title,
-      message: translations.settings.backups.manageBackups.deleteBackup.confirmationDialog.message,
+      title: translations.settings.backups.manageBackups.deleteBackupConfirmationDialog.title,
+      message: translations.settings.backups.manageBackups.deleteBackupConfirmationDialog.message,
     );
     if (!result) {
       return;
@@ -145,13 +145,13 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
       return;
     }
     if (result) {
-      SnackBarIcon.showSuccessSnackBar(context, text: translations.settings.backups.manageBackups.deleteBackup.success);
+      SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
       List<Backup> backups = await ref.read(backupStoreProvider.future);
       if (backups.isEmpty && mounted) {
         Navigator.pop(context);
       }
     } else {
-      SnackBarIcon.showErrorSnackBar(context, text: translations.settings.backups.manageBackups.deleteBackup.error);
+      SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
     }
   }
 }

@@ -46,7 +46,5 @@ app.*.map.json
 firebase.json
 lib/app.dart
 lib/firebase_options.dart
-lib/*.g.dart
-lib/i18n/*.g.dart
 **/*.g.dart
 generate.bat

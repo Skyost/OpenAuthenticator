@@ -49,7 +49,7 @@ class _UnlockChallengeRouteWidgetState extends ConsumerState<UnlockChallengeRout
   Future<void> tryUnlock() async {
     bool result = await ref.read(appUnlockStateProvider.notifier).tryUnlock(context);
     if (!result && mounted) {
-      SnackBarIcon.showErrorSnackBar(context, text: translations.appUnlock.error);
+      SnackBarIcon.showErrorSnackBar(context, text: translations.error.appUnlock);
     }
   }
 }

@@ -1,8 +1,5 @@
 {
-  "list": {
-    "empty": "No TOTP for the moment.\nFeel free to add one !",
-    "error": "Error : $error. Please try to refresh the data."
-  },
+  "empty": "No TOTP for the moment.\nFeel free to add one !",
   "addDialog": {
     "title": "Add a TOTP",
     "qrCode": {

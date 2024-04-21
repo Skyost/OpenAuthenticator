@@ -30,9 +30,9 @@ class ContributorPlanUtils {
         bool result = await showWaitingOverlay(
           context,
           future: contributorPlan.purchaseManually(packageType),
-          message: translations.contributorPlan.subscribe.waitingDialog.message,
+          message: translations.contributorPlan.subscribe.waitingDialogMessage,
           timeout: timeout,
-          timeoutMessage: translations.contributorPlan.subscribe.waitingDialog.timedOut,
+          timeoutMessage: translations.error.timeout.contributorPlan,
         );
         if (!context.mounted) {
           return result;
@@ -40,7 +40,7 @@ class ContributorPlanUtils {
         if (result) {
           SnackBarIcon.showSuccessSnackBar(context, text: translations.contributorPlan.subscribe.success);
         } else {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.contributorPlan.subscribe.error);
+          SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
         }
         return result;
       case PaywallResult.purchased:
@@ -76,7 +76,7 @@ class _ContributorPlanBillingPickerDialogState extends ConsumerState<_Contributo
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(
-            child: Text(translations.contributorPlan.billingPickerDialog.error(error: snapshot.error!)),
+            child: Text(translations.error.generic.withException(exception: snapshot.error!)),
           );
         }
         if (snapshot.hasData) {
@@ -118,7 +118,7 @@ class _ContributorPlanBillingPickerDialogState extends ConsumerState<_Contributo
           } else {
             SnackBarIcon.showErrorSnackBar(
               context,
-              text: translations.contributorPlan.billingPickerDialog.restorePurchases.error,
+              text: translations.error.generic.tryAgain,
             );
           }
         },

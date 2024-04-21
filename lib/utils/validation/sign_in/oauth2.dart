@@ -175,7 +175,7 @@ mixin OAuth2SignInVerifyFragment on OAuth2SignInServer {
   </script>
 </head>
 <body>
-  <span id="message">${translations.validation.oauth2.error(name: name)}</span>
+  <span id="message">${translations.error.authenticationValidation.oauth2(name: name)}</span>
 </body>
 </html>''';
 }

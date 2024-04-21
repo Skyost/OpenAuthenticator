@@ -45,11 +45,9 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
     if (!context.mounted) {
       return false;
     }
-    String? password = await TextInputDialog.prompt(
+    String? password = await MasterPasswordInputDialog.prompt(
       context,
-      title: translations.appUnlock.masterPasswordDialog.title,
-      message: translations.appUnlock.masterPasswordDialog.message,
-      password: true,
+      message: translations.appUnlock.masterPasswordDialogMessage,
     );
     if (password == null) {
       return false;

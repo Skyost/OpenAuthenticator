@@ -1,17 +1,12 @@
 {
   "subscribe": {
-    "waitingDialog": {
-      "message": "Waiting for your purchase...",
-      "timedOut": "Timed out while waiting for your Contributor Plan subscription purchase. Please try again."
-    },
-    "success": "You have successfully subscribed to the Contributor Plan. Thanks a lot !",
-    "error": "An error occurred while trying to subscribe to the Contributor Plan. Please try again later."
+    "waitingDialogMessage": "Waiting for your purchase...",
+    "success": "You have successfully subscribed to the Contributor Plan. Thanks a lot !"
   },
   "billingPickerDialog": {
     "title": "Choose your billing",
     "priceSubtitle(rich)": "$subtitle\n$price / $interval.",
     "empty": "There isn't any option for you to subscribe to the Contributor Plan.",
-    "error": "Error : $error.",
     "packageTypeName(map)": {
       "annual": "Annual",
       "monthly": "Monthly"
@@ -26,8 +21,7 @@
     },
     "restorePurchases": {
       "button": "Restore purchases",
-      "success": "Your purchases have been restored with success !",
-      "error": "An error occurred. Please try again later."
+      "success": "Your purchases have been restored with success !"
     }
   }
 }

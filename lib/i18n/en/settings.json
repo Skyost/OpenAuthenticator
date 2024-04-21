@@ -7,7 +7,7 @@
       "subtitle": {
         "loading": "Checking your subscription status...",
         "active": "You have subscribed to the Contributor Plan. Thanks a lot !",
-        "inactive": "You currently have not subscribed to the Contributor Plan. We have to display some ads in order to contribute to the servers costs."
+        "inactive": "You currently have not subscribed to the Contributor Plan."
       }
     },
     "cacheTotpPictures": {
@@ -31,20 +31,21 @@
     },
     "saveDerivedKey": {
       "title": "Save encryption / decryption key",
-      "subtitle": "Save your encryption / decryption key so that you do not have to reenter your master password everytime you open the app.",
-      "error": "Unable to do this action. Please try again."
+      "subtitle": "Save your encryption / decryption key so that you do not have to reenter your master password everytime you open the app."
     },
     "changeMasterPassword": {
       "title": "Change master password",
-      "subtitle(rich)": "You can change your master password at any time.\n${italic(Note that you will have to reenter it in all your Open Authenticator instances that are synced together.)}",
+      "subtitle": {
+        "text": "You can change your master password at any time.",
+        "sync": "Note that you will have to reenter it in all your Open Authenticator instances that are synced together."
+      },
       "dialog": {
         "title": "Change your master password",
         "current": {
           "label": "Current master password",
           "hint": "Enter your current master password here"
         },
-        "newLabel": "Your new master password",
-        "errorIncorrectPassword": "Incorrect password"
+        "newLabel": "Your new master password"
       }
     }
   },
@@ -75,7 +76,6 @@
       "title": "Confirm your email",
       "subtitle(rich)": "A confirmation email has been sent to your email address : $email.\nPlease click on the link to finish your login. You can also tap on this tile to enter it manually.",
       "waitingDialogMessage": "Please wait while we are confirming your account... Do not close the application.",
-      "error": "Something went wrong. Please try again later.",
       "success": "Email confirmed with success.",
       "confirmActionPickerDialog": {
         "title": "What do you want to do ?",
@@ -89,9 +89,7 @@
           "validationDialog": {
             "title": "Confirmation",
             "message": "Are you sure ?"
-          },
-          "success": "Success !",
-          "error": "An error occurred. Please try again later."
+          }
         }
       },
       "linkDialog": {
@@ -119,9 +117,7 @@
       "passwordDialog": {
         "title": "Backup password",
         "message": "Please enter a password for your backup. Note that we can only save the decrypted TOTPs (those that are displaying a code)."
-      },
-      "error": "Error while trying to backup your data.",
-      "success": "Success !"
+      }
     },
     "manageBackups": {
       "title": "Manage backups",
@@ -130,25 +126,14 @@
         "one": "You currently have $n backup stored.",
         "other": "You currently have $n backups stored."
       },
-      "backupsDialog": {
-        "title": "Manage backups",
-        "errorLoadingBackups": "Unable to load backups. Please try again later."
+      "backupsDialogTitle": "Manage backups",
+      "restoreBackupPasswordDialog": {
+        "title": "Backup password",
+        "message": "Please enter your backup password."
       },
-      "restoreBackup": {
-        "passwordDialog": {
-          "title": "Backup password",
-          "message": "Please enter your backup password."
-        },
-        "success": "Success !",
-        "error": "Error while trying to restore your data. Make sure that you have entered the correct password."
-      },
-      "deleteBackup": {
-        "confirmationDialog": {
-          "title": "Delete backup",
-          "message": "Do you want to delete this backup ?"
-        },
-        "success": "Success !",
-        "error": "Error while trying to delete this backup. Please try again later."
+      "deleteBackupConfirmationDialog": {
+        "title": "Delete backup",
+        "message": "Do you want to delete this backup ?"
       }
     }
   },

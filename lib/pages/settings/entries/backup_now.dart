@@ -38,9 +38,9 @@ class BackupNowSettingsEntryWidget extends ConsumerWidget {
           return;
         }
         if (result == null) {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.settings.backups.backupNow.error);
+          SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
         } else {
-          SnackBarIcon.showSuccessSnackBar(context, text: translations.settings.backups.backupNow.success);
+          SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
         }
       },
     );

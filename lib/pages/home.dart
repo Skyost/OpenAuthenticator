@@ -86,7 +86,7 @@ class _HomePageBody extends ConsumerWidget {
           child: value.isEmpty
               ? Center(
                   child: Text(
-                    translations.home.list.empty,
+                    translations.home.empty,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontStyle: FontStyle.italic),
                   ),
@@ -101,7 +101,7 @@ class _HomePageBody extends ConsumerWidget {
                 ),
         ),
       AsyncError(:final error) => Center(
-          child: Text(translations.home.list.error(error: error)),
+          child: Text(translations.error.generic.withException(exception: error)),
         ),
       _ => const CenteredCircularProgressIndicator(),
     };

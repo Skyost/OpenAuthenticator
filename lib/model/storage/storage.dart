@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
@@ -24,10 +25,11 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
   }
 
   /// Changes the storage type.
-  /// Please consider doing a backup, and restore it in case of failure.
+  /// Please consider doing a backup by passing a [backupPassword], and restore it in case of failure.
   Future<StorageMigrationResult> changeStorageType(
     String masterPassword,
     StorageType newType, {
+    String? backupPassword,
     String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
@@ -51,6 +53,11 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       CryptoStore? currentCryptoStore = await CryptoStore.fromPassword(masterPassword, salt: oldSalt);
       if (currentCryptoStore == null) {
         return StorageMigrationResult.genericError;
+      }
+
+      if (backupPassword != null) {
+        await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
+        return StorageMigrationResult.backupError;
       }
 
       Storage newStorage = newType.create(ref);
@@ -151,6 +158,9 @@ enum StorageMigrationResult {
   /// When there is a salt error.
   saltError,
 
+  /// When we haven't succeeded the asked backup.
+  backupError,
+
   /// When the provided password don't match the one that has been using on the old storage.
   currentStoragePasswordMismatch,
 
@@ -230,7 +240,7 @@ mixin Storage {
 
   /// Ran when the user choose another storage method.
   @mustCallSuper
-  Future<void> onStorageTypeChanged({ bool close = true }) async {
+  Future<void> onStorageTypeChanged({bool close = true}) async {
     if (close) {
       await this.close();
     }

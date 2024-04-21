@@ -46,15 +46,6 @@
     "validity": "Validité (en secondes)",
     "advancedOptions": "Options avancées",
     "showQrCode": "Afficher le QR code",
-    "save": "Enregistrer",
-    "success": "Succès !",
-    "error": {
-      "save": "Une erreur est survenue lors de la sauvegarde de votre TOTP.",
-      "qrCode": "Veuillez remplir les champs \"clé secrète\", \"étiquette\" et \"émetteur\" pour pouvoir générer un QR code.",
-      "emptySecret": "Le secret doit être spécifié",
-      "invalidSecret": "Clé secrète invalide",
-      "emptyLabel": "L'étiquette doit être spécifiée",
-      "emptyIssuer": "L'émetteur doit être spécifié"
-    }
+    "save": "Enregistrer"
   }
 }

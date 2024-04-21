@@ -1,7 +1,17 @@
 {
   "waitingDialog": {
     "defaultMessage": "Please wait...",
-    "defaultTimeoutMessage": "Timeout occurred. Please try again later.",
     "countdown(rich)": "Time left : $countdown."
+  },
+  "masterPasswordDialog": {
+    "title": "Master password",
+    "message": "Please enter your master password to continue."
+  },
+  "backupCheckbox": {
+    "checkbox": "Create a backup",
+    "input": {
+      "text": "Backup password",
+      "hint": "Enter the backup password"
+    }
   }
 }

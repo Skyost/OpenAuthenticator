@@ -1,14 +1,10 @@
 {
-  "masterPasswordDialog": {
-    "title": "Mot de passe maître",
-    "message": "Veuillez entrer votre mot de passe maître pour continuer."
-  },
-  "success": "Succès !",
-  "error(map)": {
-    "saltError": "Erreur de \"Sel\" pendant la migration de vos données. Veuillez réessayer plus tard.",
-    "currentStoragePasswordMismatch": "Mot de passe maître invalide.",
-    "encryptionKeyChangeFailed": "Une erreur est survenue pendant le chiffrement de vos données. Veuillez réessayer plus tard.",
-    "genericError": "Une erreur est survenue pendant la migration de vos données. Veuillez réessayer plus tard."
+  "confirmDialog": {
+    "title": "Confirmation",
+    "message": {
+      "enable": "Voulez-vous vraiment synchroniser vos TOTPs ? Ils seront disponibles sur tous les appareils reliés à votre compte.",
+      "disable": "Voulez-vous vraiment arrêter de synchroniser vos TOTPs ? Tous les changements effectués sur cette instance de l'application ne seront plus synchronisés avec les autres appareils."
+    }
   },
   "newStoragePasswordMismatchDialog": {
     "title": "Mot de passe maître du stockage",

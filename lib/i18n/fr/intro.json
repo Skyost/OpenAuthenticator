@@ -8,8 +8,8 @@
     "title": "Synchroniser vos TOTPs",
     "firstParagraph": "Cliquer sur le bouton \"Connexion\" ci-dessous pour synchroniser vos TOTPs entre vos appareils.",
     "secondParagraph": "Cette étape est complètement optionnelle.",
-    "thirdParagraph": "Veuillez noter que, si vous activez cette option, nous devrons afficher des annonces dans l'application pour contribuer au coût des serveurs.",
-    "fourthParagraph": "Ces annonces peuvent être supprimés à tout moment en souscrivant à l'Abonnement Contributeur dans les paramètres d'$app.",
+    "thirdParagraph": "Veuillez noter que, si vous activez cette option, nous devrons vous limiter à $limit TOTPs afin d'éviter toute utilisation excessive.",
+    "fourthParagraph": "Cette limite peut être supprimée à tout moment en souscrivant à l'Abonnement Contributeur dans les paramètres d'$app.",
     "button": {
       "loggedOut": "Connexion",
       "waitingForConfirmation": "En attente de confirmation",

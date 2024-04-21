@@ -50,7 +50,7 @@ abstract class AbstractValidationServer<T> {
     HttpResponse response = request.response;
     response.headers.contentType = ContentType('text', 'plain', charset: 'utf-8');
     if (request.uri.pathSegments.firstOrNull != path) {
-      await sendResponse(response, translations.validation.error.incorrectPath(path: request.uri.pathSegments.firstOrNull as Object));
+      await sendResponse(response, translations.error.authenticationValidation.incorrectPath(path: request.uri.pathSegments.firstOrNull as Object));
       return;
     }
     ValidationResult<T>? object = await validate(request);
@@ -59,7 +59,7 @@ abstract class AbstractValidationServer<T> {
         await sendResponse(response, translations.validation.success);
         break;
       case ValidationError(:final exception):
-        await sendResponse(response, translations.validation.error.generic(exception: exception));
+        await sendResponse(response, translations.error.authenticationValidation.generic(exception: exception));
         break;
       default:
         break;
