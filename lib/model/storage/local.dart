@@ -6,36 +6,36 @@ import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
-import 'package:open_authenticator/model/totp/totp.dart' as oa_totp;
+import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/sqlite.dart';
 
 part 'local.g.dart';
 
-/// Represents a [oa_totp.Totp].
-@DataClassName('DriftTotp')
+/// Represents a [Totp].
+@DataClassName('_DriftTotp')
 class Totps extends Table {
-  /// Maps to [oa_totp.Totp.secret].
-  TextColumn get secret => text().map(const Uint8ListConverter())();
+  /// Maps to [Totp.secret].
+  TextColumn get secret => text().map(const _Uint8ListConverter())();
 
-  /// Maps to [oa_totp.Totp.uuid].
+  /// Maps to [Totp.uuid].
   TextColumn get uuid => text()();
 
-  /// Maps to [oa_totp.Totp.label].
+  /// Maps to [Totp.label].
   TextColumn get label => text()();
 
-  /// Maps to [oa_totp.Totp.issuer].
+  /// Maps to [Totp.issuer].
   TextColumn get issuer => text().nullable()();
 
-  /// Maps to [oa_totp.Totp.algorithm].
+  /// Maps to [Totp.algorithm].
   TextColumn get algorithm => textEnum<Algorithm>().nullable()();
 
-  /// Maps to [oa_totp.Totp.digits].
+  /// Maps to [Totp.digits].
   IntColumn get digits => integer().nullable()();
 
-  /// Maps to [oa_totp.Totp.validity].
+  /// Maps to [Totp.validity].
   IntColumn get validity => integer().nullable()();
 
-  /// Maps to [oa_totp.Totp.imageUrl].
+  /// Maps to [Totp.imageUrl].
   TextColumn get imageUrl => text().nullable()();
 
   @override
@@ -58,13 +58,13 @@ class LocalStorage extends _$LocalStorage with Storage {
   StorageType get type => StorageType.local;
 
   @override
-  Future<bool> addTotp(oa_totp.Totp totp) async {
+  Future<bool> addTotp(Totp totp) async {
     await into(totps).insert(totp.asDriftTotp);
     return true;
   }
 
   @override
-  Future<bool> addTotps(List<oa_totp.Totp> totps) async {
+  Future<bool> addTotps(List<Totp> totps) async {
     await batch((batch) {
       batch.insertAll(
         this.totps,
@@ -115,8 +115,8 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
-  Future<oa_totp.Totp?> getTotp(String uuid) async {
-    Totp? totp = await (select(totps)
+  Future<Totp?> getTotp(String uuid) async {
+    _DriftTotp? totp = await (select(totps)
           ..where((totp) => totp.uuid.isValue(uuid))
           ..limit(1))
         .getSingleOrNull();
@@ -124,15 +124,15 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
-  Future<List<oa_totp.Totp>> listTotps() async {
-    List<Totp> list = await (select(totps)).get();
+  Future<List<Totp>> listTotps() async {
+    List<_DriftTotp> list = await (select(totps)).get();
     return list.map((totp) => totp.asTotp).toList();
   }
 
   @override
   Future<bool> canDecryptAll(CryptoStore cryptoStore) async {
-    List<Totp> list = await (select(totps)).get();
-    for (Totp totp in list) {
+    List<_DriftTotp> list = await (select(totps)).get();
+    for (_DriftTotp totp in list) {
       if (!await cryptoStore.canDecrypt(totp.secret)) {
         return false;
       }
@@ -157,9 +157,9 @@ class LocalStorage extends _$LocalStorage with Storage {
 }
 
 /// Allows to store [Uint8List] into Drift databases.
-class Uint8ListConverter extends TypeConverter<Uint8List, String> {
+class _Uint8ListConverter extends TypeConverter<Uint8List, String> {
   /// Creates a new Uint8List converter instance.
-  const Uint8ListConverter();
+  const _Uint8ListConverter();
 
   @override
   Uint8List fromSql(String fromDb) => base64.decode(fromDb);
@@ -169,9 +169,9 @@ class Uint8ListConverter extends TypeConverter<Uint8List, String> {
 }
 
 /// Contains some useful methods from the generated [Secret] class.
-extension OA on Totp {
-  /// Converts this instance to a [oa_totp.Totp].
-  oa_totp.Totp get asTotp => oa_totp.Totp(
+extension _OpenAuthenticator on _DriftTotp {
+  /// Converts this instance to a [Totp].
+  Totp get asTotp => Totp(
         secret: secret,
         uuid: uuid,
         label: label,
@@ -183,10 +183,10 @@ extension OA on Totp {
       );
 }
 
-/// Contains some useful methods to use [oa_totp.Totp] with Drift.
-extension Drift on oa_totp.Totp {
+/// Contains some useful methods to use [Totp] with Drift.
+extension _Drift on Totp {
   /// Converts this instance to a Drift generated [Secret].
-  Totp get asDriftTotp => Totp(
+  _DriftTotp get asDriftTotp => _DriftTotp(
         secret: secret,
         uuid: uuid,
         label: label,
