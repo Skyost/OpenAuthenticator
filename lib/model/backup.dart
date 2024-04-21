@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
@@ -22,7 +23,7 @@ class BackupStore extends AsyncNotifier<List<Backup>> {
   /// Do a backup with the given password.
   Future<Backup?> doBackup(String password) async {
     Backup backup = Backup._(ref: ref, dateTime: DateTime.now());
-    if(!await backup.save(password)) {
+    if (!await backup.save(password)) {
       return null;
     }
     state = AsyncData([...(await future), backup]..sort());
@@ -79,64 +80,88 @@ class Backup implements Comparable<Backup> {
 
   /// Restore this backup.
   Future<bool> restore(String password) async {
-    File file = await _getBackupPath();
-    if (!file.existsSync()) {
-      return false;
-    }
-    Map<String, dynamic> jsonData = jsonDecode(file.readAsStringSync());
-    if (!jsonData.containsKey(kTotpsKey) || !jsonData.containsKey(kSaltKey)) {
-      return false;
-    }
-    CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
-    CryptoStore? cryptoStore = await CryptoStore.fromPassword(password, salt: jsonData[kSaltKey]);
-    if (currentCryptoStore == null || cryptoStore == null) {
-      return false;
-    }
-    List jsonTotps = jsonData[kTotpsKey];
-    List<Totp> totps = [];
-    for (dynamic jsonTotp in jsonTotps) {
-      Totp? totp = await JsonTotp.fromJson(jsonTotp).changeEncryptionKey(cryptoStore, currentCryptoStore);
-      if (totp != null) {
-        totps.add(totp);
+    try {
+      File file = await _getBackupPath();
+      if (!file.existsSync()) {
+        return false;
+      }
+      Map<String, dynamic> jsonData = jsonDecode(file.readAsStringSync());
+      if (!jsonData.containsKey(kTotpsKey) || !jsonData.containsKey(kSaltKey)) {
+        return false;
+      }
+      CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
+      CryptoStore? cryptoStore = await CryptoStore.fromPassword(password, salt: base64.decode(jsonData[kSaltKey]));
+      if (currentCryptoStore == null || cryptoStore == null) {
+        return false;
+      }
+      List jsonTotps = jsonData[kTotpsKey];
+      List<Totp> totps = [];
+      for (dynamic jsonTotp in jsonTotps) {
+        Totp? totp = await JsonTotp.fromJson(jsonTotp).changeEncryptionKey(cryptoStore, currentCryptoStore);
+        if (totp != null) {
+          totps.add(totp);
+        }
+      }
+      if (totps.isEmpty) {
+        return false;
+      }
+      return await _ref.read(totpRepositoryProvider.notifier).replaceBy(totps);
+    } catch (ex, stacktrace) {
+      if (kDebugMode) {
+        print(ex);
+        print(stacktrace);
       }
     }
-    if (totps.isEmpty) {
-      return false;
-    }
-    return await _ref.read(totpRepositoryProvider.notifier).replaceBy(totps);
+    return false;
   }
 
   /// Saves this backup.
   Future<bool> save(String password) async {
-    CryptoStore? newStore = await CryptoStore.fromPassword(password);
-    CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
-    if (newStore == null || currentCryptoStore == null) {
-      return false;
-    }
-    List<Totp> totps = await _ref.read(totpRepositoryProvider.future);
-    List<DecryptedTotp> toBackup = [];
-    for (Totp totp in totps) {
-      DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newStore);
-      if (decryptedTotp != null) {
-        toBackup.add(decryptedTotp);
+    try {
+      CryptoStore? newStore = await CryptoStore.fromPassword(password);
+      CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
+      if (newStore == null || currentCryptoStore == null) {
+        return false;
+      }
+      List<Totp> totps = await _ref.read(totpRepositoryProvider.future);
+      List<DecryptedTotp> toBackup = [];
+      for (Totp totp in totps) {
+        DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newStore);
+        if (decryptedTotp != null) {
+          toBackup.add(decryptedTotp);
+        }
+      }
+      File file = await _getBackupPath(createDirectory: true);
+      file.writeAsString(jsonEncode({
+        kSaltKey: base64.encode(newStore.salt),
+        kTotpsKey: toBackup.map((totp) => totp.toJson()).toList(),
+      }));
+      return true;
+    } catch (ex, stacktrace) {
+      if (kDebugMode) {
+        print(ex);
+        print(stacktrace);
       }
     }
-    File file = await _getBackupPath(createDirectory: true);
-    file.writeAsString(jsonEncode({
-      kSaltKey: base64.encode(newStore.salt),
-      kTotpsKey: totps.map((totp) => totp.toJson()).toList(),
-    }));
-    return true;
+    return false;
   }
 
   /// Deletes this backup.
   Future<bool> delete() async {
-    File file = await _getBackupPath();
-    if (file.existsSync()) {
-      file.deleteSync();
+    try {
+      File file = await _getBackupPath();
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
+      _ref.invalidateSelf();
+      return true;
+    } catch (ex, stacktrace) {
+      if (kDebugMode) {
+        print(ex);
+        print(stacktrace);
+      }
     }
-    _ref.invalidateSelf();
-    return true;
+    return false;
   }
 
   /// Returns the backup path (TOTPs and salt).

@@ -146,6 +146,10 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
     }
     if (result) {
       SnackBarIcon.showSuccessSnackBar(context, text: translations.settings.backups.manageBackups.deleteBackup.success);
+      List<Backup> backups = await ref.read(backupStoreProvider.future);
+      if (backups.isEmpty && mounted) {
+        Navigator.pop(context);
+      }
     } else {
       SnackBarIcon.showErrorSnackBar(context, text: translations.settings.backups.manageBackups.deleteBackup.error);
     }
