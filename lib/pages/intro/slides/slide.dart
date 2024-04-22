@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:open_authenticator/pages/intro/slides/log_in.dart';
 import 'package:open_authenticator/pages/intro/slides/password.dart';
 import 'package:open_authenticator/pages/intro/slides/welcome.dart';
+import 'package:open_authenticator/utils/brightness_listener.dart';
 
 /// A "slide" of the intro page.
 class IntroPageSlide {
@@ -23,7 +24,7 @@ class IntroPageSlide {
   Future<bool> shouldSkip(WidgetRef ref) => Future.value(false);
 
   /// Returns the image SVG path.
-  String get imagePath => 'assets/images/intro/$name.svg';
+  String get imagePath => 'assets/images/intro/${name.toLowerCase()}.svg';
 
   /// Triggered when the user clicks on "Next".
   Future<bool> onGoToNextSlide(BuildContext context, WidgetRef ref) => Future.value(true);
@@ -81,22 +82,40 @@ class IntroPageSlideWidget extends StatefulWidget {
 }
 
 /// An intro page slide widget state.
-class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerProviderStateMixin {
-  /// The title animation controller.
-  late final AnimationController _controller = AnimationController(
+class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerProviderStateMixin, BrightnessListener {
+  /// The image animation controller.
+  late final AnimationController _imageAnimationController = AnimationController(
     duration: const Duration(seconds: 1),
     vsync: this,
-  )..forward();
+  )
+    ..addListener(() {
+      if (_imageAnimationController.value >= 0.75 && _textAnimationController.value == 0) {
+        _textAnimationController.forward();
+      }
+    })
+    ..forward();
 
-  /// The title animation.
-  late final Animation<double> _animation = CurvedAnimation(
-    parent: _controller,
+  /// The image animation.
+  late final Animation<double> _imageAnimation = CurvedAnimation(
+    parent: _imageAnimationController,
     curve: Curves.easeIn,
+  );
+
+  /// The text animation controller.
+  late final AnimationController _textAnimationController = AnimationController(
+    duration: const Duration(milliseconds: 500),
+    vsync: this,
+  );
+
+  /// The text animation.
+  late final Animation<double> _textAnimation = CurvedAnimation(
+    parent: _textAnimationController,
+    curve: Curves.linear,
   );
 
   @override
   Widget build(BuildContext context) => DefaultTextStyle.merge(
-        style: TextStyle(color: Colors.grey.shade700),
+        style: TextStyle(color: currentBrightness == Brightness.dark ? Colors.white60 : Colors.grey.shade700),
         textAlign: TextAlign.center,
         child: Center(
           child: ListView(
@@ -106,14 +125,17 @@ class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerP
               Padding(
                 padding: const EdgeInsets.only(bottom: 40),
                 child: DefaultTextStyle.merge(
-                  child: widget.titleWidget,
+                  child: FadeTransition(
+                    opacity: _textAnimation,
+                    child: widget.titleWidget,
+                  ),
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 40),
                 child: FadeScaleTransition(
-                  animation: _animation,
+                  animation: _imageAnimation,
                   child: SizedBox(
                     height: 200,
                     child: SvgPicture.asset(
@@ -122,8 +144,13 @@ class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerP
                   ),
                 ),
               ),
-              for (int i = 0; i < widget.children.length; i++) //
-                i == widget.children.length - 1 && widget.children[i] is IntroPageSlideParagraphWidget ? (widget.children[i] as IntroPageSlideParagraphWidget).withoutPadding : widget.children[i],
+              for (int i = 0; i < widget.children.length; i++)
+                FadeTransition(
+                  opacity: _textAnimation,
+                  child: i == widget.children.length - 1 && widget.children[i] is IntroPageSlideParagraphWidget
+                      ? (widget.children[i] as IntroPageSlideParagraphWidget).withoutPadding
+                      : widget.children[i],
+                ),
             ],
           ),
         ),
@@ -131,7 +158,8 @@ class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerP
 
   @override
   void dispose() {
-    _controller.dispose();
+    _imageAnimationController.dispose();
+    _textAnimationController.dispose();
     super.dispose();
   }
 }

@@ -13,7 +13,7 @@
     "message": "Voulez-vous vraiment supprimer la liaison e votre compte à ce fournisseur d'authentification ?"
   },
   "providerPickerDialog": {
-    "title": "Pick a login method",
+    "title": "Choisissez une méthode de connexion",
     "email": {
       "title": "Email",
       "subtitle": "Utilisez votre adresse mail pour vous connecter. Pas besoin de mot de passe, nous vous enverrons un lien de confirmation."

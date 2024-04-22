@@ -9,6 +9,7 @@ import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
@@ -48,7 +49,7 @@ class TotpPage extends ConsumerStatefulWidget {
 }
 
 /// The TOTP edit page state.
-class _TotpPageState extends ConsumerState<TotpPage> {
+class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   /// The form key.
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -283,7 +284,7 @@ class _TotpPageState extends ConsumerState<TotpPage> {
 
   /// Creates the QR code widget.
   Widget createQrCodeWidget(BuildContext context) {
-    Color color = MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).colorScheme.primary : Colors.white;
+    Color color = currentBrightness == Brightness.light ? Theme.of(context).colorScheme.primary : Colors.white;
     return ListTilePadding(
       child: Center(
         child: QrImageView(

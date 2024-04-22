@@ -14,15 +14,12 @@
     "copyConfirmation": "Copié dans le presse-papier.",
     "deleteConfirmationDialog": {
       "title": "Supprimer ce TOTP",
-      "message": "Voulez-vous vraiment supprimer ce TOTP ?",
-      "error": "Impossible de supprimer ce TOTP."
+      "message": "Voulez-vous vraiment supprimer ce TOTP ?"
     }
   },
   "decryptDialog": {
     "title": "Déchiffrement du TOTP",
-    "message": "Ce TOTP a été chiffré en utilisant un mot de passe maître différent. Veuillez l'entrer ci-dessous pour le déchiffrer.",
-    "success": "Succès !",
-    "error": "Mot de passe invalide."
+    "message": "Ce TOTP a été chiffré en utilisant un mot de passe maître différent. Veuillez l'entrer ci-dessous pour le déchiffrer."
   },
   "page": {
     "title": {

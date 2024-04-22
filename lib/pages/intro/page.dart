@@ -1,11 +1,13 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/pages/home.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
+import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/step_progress_indicator.dart';
 
@@ -24,7 +26,7 @@ class IntroPage extends ConsumerStatefulWidget {
 }
 
 /// The intro page state.
-class IntroPageState extends ConsumerState<IntroPage> {
+class IntroPageState extends ConsumerState<IntroPage> with BrightnessListener {
   /// The slides to display.
   List<IntroPageSlide> _slides = [];
 
@@ -59,6 +61,15 @@ class IntroPageState extends ConsumerState<IntroPage> {
         });
       }
     });
+  }
+
+  @override
+  set currentBrightness(Brightness brightness) {
+    super.currentBrightness = brightness;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+    ));
   }
 
   @override
@@ -118,6 +129,7 @@ class IntroPageState extends ConsumerState<IntroPage> {
 
   /// Finishes the intro.
   Future<void> _finish() async {
+    SystemChrome.restoreSystemUIOverlays();
     if (mounted) {
       _slides[_slideIndex].onGoToNextSlide(context, ref);
       Navigator.pushNamedAndRemoveUntil(context, HomePage.name, (_) => false);

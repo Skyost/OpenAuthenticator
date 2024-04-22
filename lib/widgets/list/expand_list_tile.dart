@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_authenticator/utils/brightness_listener.dart';
 
 /// A list tile that allows to expand its content by tapping on it.
 class ExpandListTile extends StatefulWidget {
@@ -28,7 +29,7 @@ class ExpandListTile extends StatefulWidget {
 }
 
 /// The expand list tile instance.
-class _ExpandListTileState extends State<ExpandListTile> {
+class _ExpandListTileState extends State<ExpandListTile> with BrightnessListener {
   /// Whether the content is expanded.
   bool expand = false;
 
@@ -47,7 +48,7 @@ class _ExpandListTileState extends State<ExpandListTile> {
               duration: const Duration(milliseconds: 100),
               child: Icon(
                 Icons.chevron_right,
-                color: widget.iconColor ?? (MediaQuery.of(context).platformBrightness == Brightness.light ? null : Colors.white),
+                color: widget.iconColor ?? (currentBrightness == Brightness.light ? null : Colors.white),
               ),
             ),
             enabled: widget.enabled,
