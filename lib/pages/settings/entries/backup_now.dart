@@ -14,35 +14,32 @@ class BackupNowSettingsEntryWidget extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    BackupStore backupStore = ref.watch(backupStoreProvider.notifier);
-    return ListTile(
-      leading: const Icon(Icons.save),
-      title: Text(translations.settings.backups.backupNow.title),
-      subtitle: Text(translations.settings.backups.backupNow.subtitle),
-      onTap: () async {
-        String? password = await TextInputDialog.prompt(
-          context,
-          title: translations.settings.backups.backupNow.passwordDialog.title,
-          message: translations.settings.backups.backupNow.passwordDialog.message,
-          password: true,
-        );
-        if (password == null || !context.mounted) {
-          return;
-        }
-        Backup? result = await showWaitingOverlay(
-          context,
-          future: backupStore.doBackup(password),
-        );
-        if (!context.mounted) {
-          return;
-        }
-        if (result == null) {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
-        } else {
-          SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
-        }
-      },
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => ListTile(
+        leading: const Icon(Icons.save),
+        title: Text(translations.settings.backups.backupNow.title),
+        subtitle: Text(translations.settings.backups.backupNow.subtitle),
+        onTap: () async {
+          String? password = await TextInputDialog.prompt(
+            context,
+            title: translations.settings.backups.backupNow.passwordDialog.title,
+            message: translations.settings.backups.backupNow.passwordDialog.message,
+            password: true,
+          );
+          if (password == null || !context.mounted) {
+            return;
+          }
+          Backup? result = await showWaitingOverlay(
+            context,
+            future: ref.read(backupStoreProvider.notifier).doBackup(password),
+          );
+          if (!context.mounted) {
+            return;
+          }
+          if (result == null) {
+            SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
+          } else {
+            SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
+          }
+        },
+      );
 }

@@ -19,9 +19,9 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
 
   @override
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
-    EmailLinkAuthenticationProvider authenticationProvider = ref.watch(emailLinkAuthenticationProvider.notifier);
+    ref.watch(emailLinkAuthenticationProvider);
     return FutureBuilder(
-      future: authenticationProvider.readEmailToConfirmFromPreferences(),
+      future: ref.read(emailLinkAuthenticationProvider.notifier).readEmailToConfirmFromPreferences(),
       builder: (context, snapshot) {
         if (snapshot.data == null) {
           return const SizedBox.shrink();

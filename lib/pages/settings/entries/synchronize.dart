@@ -37,7 +37,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     FirebaseAuthenticationState? state = ref.watch(firebaseAuthenticationProvider);
-    if (state is! FirebaseAuthenticationStateLoggedIn || ref.watch(userAuthenticationProviders.notifier).availableProviders.isEmpty) {
+    if (state is! FirebaseAuthenticationStateLoggedIn || ref.read(userAuthenticationProviders.notifier).availableProviders.isEmpty) {
       return const SizedBox.shrink();
     }
     return super.build(context, ref);

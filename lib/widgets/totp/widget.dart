@@ -180,14 +180,16 @@ class TotpWidget extends ConsumerWidget {
     if (password == null) {
       return;
     }
-    Totp result = await totp.decrypt(await CryptoStore.fromPassword(password));
+    Totp result = await totp.decrypt(await CryptoStore.fromPassword(password, salt: totp.encryptionSalt));
     if (!result.isDecrypted) {
       if (context.mounted) {
         SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);
       }
       return;
     }
-    await ref.read(totpRepositoryProvider.notifier).replaceBy([result], cacheTotpImages: false);
+    TotpRepository repository =  await ref.read(totpRepositoryProvider.notifier);
+    await repository.deleteTotp(totp.uuid);
+    await repository.addTotp(result);
     if (context.mounted) {
       SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
     }

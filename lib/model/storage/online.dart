@@ -258,6 +258,7 @@ class OnlineStorage with Storage {
       return null;
     }
     return {
+      Totp.kEncryptionSalt: totpData[Totp.kEncryptionSalt],
       Totp.kSecretKey: totpData[Totp.kSecretKey],
       Totp.kUuidKey: totpData[Totp.kUuidKey],
       Totp.kLabelKey: await transformer(

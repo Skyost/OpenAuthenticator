@@ -28,8 +28,8 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
   FutureOr<List<Totp>> build() async {
     Storage storage = await ref.watch(storageProvider.future);
     storage.dependencies.forEach(ref.watch);
-    AsyncValue<CryptoStore?> cryptoStore = ref.watch(cryptoStoreProvider);
-    return _queryTotpsFromStorage(storage, cryptoStore.valueOrNull);
+    CryptoStore? cryptoStore = await ref.watch(cryptoStoreProvider.future);
+    return _queryTotpsFromStorage(storage, cryptoStore);
   }
 
   /// Refreshes the current state.
@@ -220,16 +220,18 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
       List<Totp> totps = await ref.read(totpRepositoryProvider.future);
       return totps.isEmpty;
     }
-    CryptoStore? newCryptoStore = await CryptoStore.fromPassword(password, salt: salt);
+    Storage storage = await ref.read(storageProvider.future);
+    CryptoStore? newCryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
     if (newCryptoStore == null) {
       return false;
     }
     if (backupPassword != null) {
-      await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
-      return false;
+      Backup? backup = await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
+      if (backup == null) {
+        return false;
+      }
     }
     if (updateTotps) {
-      Storage storage = await ref.read(storageProvider.future);
       List<Totp> totps = await future;
       List<Totp> totpsEncryptedWithNewKey = [];
       for (Totp totp in totps) {
@@ -240,9 +242,11 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
         totpsEncryptedWithNewKey.add(decryptedTotp);
       }
       await storage.clearTotps();
+      await storedCryptoStore.saveAndUse(newCryptoStore);
       await storage.addTotps(totpsEncryptedWithNewKey);
+    } else {
+      await storedCryptoStore.saveAndUse(newCryptoStore);
     }
-    await storedCryptoStore.saveAndUse(newCryptoStore);
     return true;
   }
 }

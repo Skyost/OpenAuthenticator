@@ -13,6 +13,7 @@ class DecryptedTotp extends Totp {
   /// Creates a new decrypted TOTP instance.
   const DecryptedTotp({
     required super.secret,
+    required super.encryptionSalt,
     required super.uuid,
     required super.label,
     super.issuer,
@@ -29,6 +30,7 @@ class DecryptedTotp extends Totp {
     required String decryptedSecret,
   }) : this(
           secret: totp.secret,
+          encryptionSalt: totp.encryptionSalt,
           uuid: totp.uuid,
           label: totp.label,
           issuer: totp.issuer,
@@ -70,6 +72,7 @@ class DecryptedTotp extends Totp {
     }
     return DecryptedTotp(
       secret: data,
+      encryptionSalt: cryptoStore!.salt,
       decryptedSecret: decryptedSecret,
       uuid: const Uuid().v4(),
       label: label,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/crypto.dart';
+import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 
@@ -195,15 +196,17 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
               widget.message,
               textAlign: TextAlign.left,
             ),
-            PasswordFormField(
-              formFieldKey: formFieldKey,
-              initialValue: password,
-              onChanged: (value) => password = value,
-              autofocus: true,
-              onFieldSubmitted: (value) => onOkPressed(password: value),
-              textInputAction: TextInputAction.go,
-              validator: isPasswordValid,
-              autovalidateMode: AutovalidateMode.disabled,
+            Form(
+              key: formFieldKey,
+              child: PasswordFormField(
+                initialValue: password,
+                onChanged: (value) => password = value,
+                autofocus: true,
+                onFieldSubmitted: (value) => onOkPressed(password: value),
+                textInputAction: TextInputAction.go,
+                validator: isPasswordValid,
+                autovalidateMode: AutovalidateMode.disabled,
+              ),
             ),
           ],
         ),
@@ -224,8 +227,9 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
     password ??= this.password;
     CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
     if (cryptoStore == null) {
+      Storage storage = await ref.read(storageProvider.future);
       TotpRepository totpRepository = ref.read(totpRepositoryProvider.notifier);
-      cryptoStore = await CryptoStore.fromPassword(password, salt: await StoredCryptoStore.readSaltFromLocalStorage());
+      cryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
       validationResult = await totpRepository.tryDecryptAll(cryptoStore);
     } else {
       validationResult = await cryptoStore.checkPasswordValidity(password);

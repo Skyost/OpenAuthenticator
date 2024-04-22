@@ -43,7 +43,7 @@ class ChangeMasterPasswordSettingsEntryWidget extends ConsumerWidget {
         }
         bool changeResult = await showWaitingOverlay(
           context,
-          future: ref.read(totpRepositoryProvider.notifier).changeMasterPassword(result.newPassword!),
+          future: ref.read(totpRepositoryProvider.notifier).changeMasterPassword(result.newPassword!, backupPassword: result.backupPassword),
         );
         if (!context.mounted) {
           return;
@@ -81,6 +81,9 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
   /// Whether the user wants to create a backup.
   bool createBackup = true;
 
+  /// The backup password form key.
+  final GlobalKey<FormState> backupPasswordFormKey = GlobalKey<FormState>();
+
   /// The backup password.
   String? backupPassword;
 
@@ -114,6 +117,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
             ),
             ListTile(
               title: Text(translations.miscellaneous.backupCheckbox.checkbox),
+              contentPadding: EdgeInsets.zero,
               trailing: Checkbox(
                 value: createBackup,
                 onChanged: (value) {
@@ -122,13 +126,17 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
               ),
             ),
             if (createBackup)
-              PasswordFormField(
-                initialValue: backupPassword,
-                onChanged: (value) => backupPassword = value,
-                decoration: FormLabelWithIcon(
-                  icon: Icons.save,
-                  text: translations.miscellaneous.backupCheckbox.input.text,
-                  hintText: translations.miscellaneous.backupCheckbox.input.hint,
+              Form(
+                key: backupPasswordFormKey,
+                child: PasswordFormField(
+                  initialValue: backupPassword,
+                  onChanged: (value) => backupPassword = value,
+                  validator: isBackupPasswordValid,
+                  decoration: FormLabelWithIcon(
+                    icon: Icons.save,
+                    text: translations.miscellaneous.backupCheckbox.input.text,
+                    hintText: translations.miscellaneous.backupCheckbox.input.hint,
+                  ),
                 ),
               ),
           ],
@@ -139,6 +147,9 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
               StoredCryptoStore cryptoStore = ref.read(cryptoStoreProvider.notifier);
               oldPasswordValidationResult = await cryptoStore.checkPasswordValidity(oldPassword);
               if (!oldPasswordFormKey.currentState!.validate() || !newPasswordFormKey.currentState!.validate()) {
+                return;
+              }
+              if (createBackup && !backupPasswordFormKey.currentState!.validate()) {
                 return;
               }
               if (context.mounted) {
@@ -158,6 +169,14 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
   String? isPasswordValid(String? value) {
     if (!oldPasswordValidationResult) {
       return translations.error.validation.masterPassword;
+    }
+    return null;
+  }
+
+  /// Checks whether the backup password is valid.
+  String? isBackupPasswordValid(String? value) {
+    if (createBackup && (backupPassword == null || backupPassword!.isEmpty)) {
+      return translations.error.validation.empty;
     }
     return null;
   }

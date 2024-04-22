@@ -17,6 +17,9 @@ class Totps extends Table {
   /// Maps to [Totp.secret].
   TextColumn get secret => text().map(const _Uint8ListConverter())();
 
+  /// Maps to [Totp.encryptionSalt].
+  TextColumn get encryptionSalt => text().map(const _Uint8ListConverter())();
+
   /// Maps to [Totp.uuid].
   TextColumn get uuid => text()();
 
@@ -173,6 +176,7 @@ extension _OpenAuthenticator on _DriftTotp {
   /// Converts this instance to a [Totp].
   Totp get asTotp => Totp(
         secret: secret,
+        encryptionSalt: encryptionSalt,
         uuid: uuid,
         label: label,
         issuer: issuer,
@@ -188,6 +192,7 @@ extension _Drift on Totp {
   /// Converts this instance to a Drift generated [Secret].
   _DriftTotp get asDriftTotp => _DriftTotp(
         secret: secret,
+        encryptionSalt: encryptionSalt,
         uuid: uuid,
         label: label,
         issuer: issuer,

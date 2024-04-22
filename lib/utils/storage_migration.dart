@@ -152,6 +152,9 @@ class _ConfirmationDialog extends StatefulWidget {
 
 /// The confirmation dialog state.
 class _ConfirmationDialogState extends State<_ConfirmationDialog> {
+  /// The backup password form key.
+  final GlobalKey<FormState> backupPasswordFormKey = GlobalKey<FormState>();
+
   /// Whether the user wants to create a backup.
   bool createBackup = true;
 
@@ -167,6 +170,7 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
             Text(translations.storageMigration.confirmDialog.message.enable),
             ListTile(
               title: Text(translations.miscellaneous.backupCheckbox.checkbox),
+              contentPadding: EdgeInsets.zero,
               trailing: Checkbox(
                 value: createBackup,
                 onChanged: (value) {
@@ -175,13 +179,17 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
               ),
             ),
             if (createBackup)
-              PasswordFormField(
-                initialValue: backupPassword,
-                onChanged: (value) => backupPassword = value,
-                decoration: FormLabelWithIcon(
-                  icon: Icons.save,
-                  text: translations.miscellaneous.backupCheckbox.input.text,
-                  hintText: translations.miscellaneous.backupCheckbox.input.hint,
+              Form(
+                key: backupPasswordFormKey,
+                child: PasswordFormField(
+                  initialValue: backupPassword,
+                  onChanged: (value) => backupPassword = value,
+                  validator: isBackupPasswordValid,
+                  decoration: FormLabelWithIcon(
+                    icon: Icons.save,
+                    text: translations.miscellaneous.backupCheckbox.input.text,
+                    hintText: translations.miscellaneous.backupCheckbox.input.hint,
+                  ),
                 ),
               ),
           ],
@@ -189,7 +197,12 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
         scrollable: true,
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, _ConfirmationResult(confirm: true, backupPassword: createBackup ? backupPassword : null)),
+            onPressed: () {
+              if (createBackup && !backupPasswordFormKey.currentState!.validate()) {
+                return;
+              }
+              Navigator.pop(context, _ConfirmationResult(confirm: true, backupPassword: createBackup ? backupPassword : null));
+            },
             child: Text(MaterialLocalizations.of(context).continueButtonLabel),
           ),
           TextButton(
@@ -198,6 +211,14 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
           ),
         ],
       );
+
+  /// Checks whether the backup password is valid.
+  String? isBackupPasswordValid(String? value) {
+    if (createBackup && (backupPassword == null || backupPassword!.isEmpty)) {
+      return translations.error.validation.empty;
+    }
+    return null;
+  }
 }
 
 /// Returned by the [_ConfirmationDialog].

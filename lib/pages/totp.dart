@@ -346,7 +346,7 @@ class _TotpPageState extends ConsumerState<TotpPage> {
   /// Adds the TOTP to the repository.
   Future<_TotpEditResult> addTotp() async {
     bool willExceed = await ref.read(totpLimitReachedProvider.notifier).willExceedIAddMore(count: 1);
-    bool canProceed = false;
+    bool canProceed = !willExceed;
     if (willExceed) {
       if (mounted) {
         showAdaptiveDialog(
@@ -395,9 +395,8 @@ class _TotpPageState extends ConsumerState<TotpPage> {
     if (!canProceed) {
       return _TotpEditResult.cancelled;
     }
-    AsyncValue<CryptoStore?> cryptoStore = ref.read(cryptoStoreProvider);
     DecryptedTotp? totp = await DecryptedTotp.create(
-      cryptoStore: cryptoStore.value,
+      cryptoStore: await ref.read(cryptoStoreProvider.future),
       decryptedSecret: decryptedSecret,
       label: label,
       issuer: issuer,

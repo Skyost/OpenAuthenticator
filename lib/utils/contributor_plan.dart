@@ -72,7 +72,7 @@ class _ContributorPlanBillingPickerDialogState extends ConsumerState<_Contributo
     title: Text(translations.contributorPlan.billingPickerDialog.title),
     scrollable: true,
     content: FutureBuilder(
-      future: ref.watch(contributorPlanStateProvider.notifier).getPrices(),
+      future: ref.read(contributorPlanStateProvider.notifier).getPrices(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(

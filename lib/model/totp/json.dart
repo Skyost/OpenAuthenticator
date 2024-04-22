@@ -8,6 +8,7 @@ extension JsonTotp on Totp {
   /// Creates a new TOTP from the specified JSON data.
   static Totp fromJson(Map<String, dynamic> data) => Totp(
     secret: Uint8List.fromList((data[Totp.kSecretKey] as List).cast<int>()),
+    encryptionSalt: Uint8List.fromList((data[Totp.kEncryptionSalt] as List).cast<int>()),
     uuid: data[Totp.kUuidKey],
     label: data[Totp.kLabelKey],
     issuer: data[Totp.kIssuerKey],
@@ -20,6 +21,7 @@ extension JsonTotp on Totp {
   /// Converts this TOTP to a JSON compatible map.
   Map<String, dynamic> toJson() => {
     Totp.kSecretKey: secret,
+    Totp.kEncryptionSalt: encryptionSalt,
     Totp.kUuidKey: uuid,
     Totp.kLabelKey: label,
     if (issuer != null) Totp.kIssuerKey: issuer,
