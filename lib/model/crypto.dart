@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
+import 'package:open_authenticator/model/totp/repository.dart';
+import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/argon2/base.dart';
 import 'package:open_authenticator/utils/argon2/parameters.dart';
 import 'package:open_authenticator/utils/utils.dart';
@@ -34,7 +36,7 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
   }
 
   /// Deletes the current crypto store from the local storage.
-  Future<void> deleteFromLocalStorage({ bool deleteSalt = false }) async {
+  Future<void> deleteFromLocalStorage({bool deleteSalt = false}) async {
     await SimpleSecureStorage.delete(_kPasswordDerivedKeyKey);
     if (deleteSalt) {
       await SimpleSecureStorage.delete(_kPasswordDerivedKeySaltKey);
@@ -70,13 +72,26 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
   }
 
   /// Checks if the given password is valid.
-  Future<bool> checkPasswordValidity(String password) async {
+  /// Will check if there is no TOTP if `trueIfTotpEmpty` is set to `true`.
+  Future<bool> checkPasswordValidity(String password, {bool trueIfTotpEmpty = true}) async {
+    if (trueIfTotpEmpty) {
+      List<Totp> totps = await ref.read(totpRepositoryProvider.future);
+      if (totps.isEmpty) {
+        return true;
+      }
+    }
     CryptoStore? cryptoStore = await future;
     return cryptoStore != null && await cryptoStore.checkPasswordValidity(password);
   }
 
   /// Reads the salt (if stored) from the secure storage.
-  static Future<Uint8List?> readSaltFromLocalStorage() async => base64.decode((await SimpleSecureStorage.read(_kPasswordDerivedKeySaltKey))!);
+  static Future<Uint8List?> readSaltFromLocalStorage() async {
+    String? value = await SimpleSecureStorage.read(_kPasswordDerivedKeySaltKey);
+    if (value == null) {
+      return null;
+    }
+    return base64.decode(value);
+  }
 
   /// Writes the salt to the secure storage.
   static Future<void> saveSaltToLocalStorage(Uint8List salt) async => await SimpleSecureStorage.write(_kPasswordDerivedKeySaltKey, base64.encode(salt));
@@ -131,7 +146,7 @@ class CryptoStore {
     argon2.init(Argon2Parameters(Argon2Parameters.argon2ID, salt));
     Uint8List key = Uint8List(_keyLength);
     argon2.generateBytesFromString(password, key);
-    return (key,salt);
+    return (key, salt);
   }
 
   /// Encrypts the given text.

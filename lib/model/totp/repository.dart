@@ -11,7 +11,6 @@ import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
-import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/deleted_totps.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
@@ -119,25 +118,12 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
 
   /// Updates the TOTP associated with the specified [uuid].
   Future<bool> updateTotp(
-    String uuid, {
-    String? label,
-    String? issuer,
-    Algorithm? algorithm,
-    int? digits,
-    int? validity,
-    String? imageUrl,
+    String uuid,
+    Totp totp, {
     bool? cacheTotpImage,
   }) async {
     Storage storage = await ref.read(storageProvider.future);
-    if (!await storage.updateTotp(
-      uuid,
-      label: label,
-      issuer: issuer,
-      algorithm: algorithm,
-      digits: digits,
-      validity: validity,
-      imageUrl: imageUrl,
-    )) {
+    if (!await storage.updateTotp(uuid, totp)) {
       return false;
     }
     Totp? result = await storage.getTotp(uuid);

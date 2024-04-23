@@ -16,11 +16,12 @@ class LoginIntroPageSlide extends IntroPageSlide {
   /// Creates a new login intro page content instance.
   LoginIntroPageSlide()
       : super(
-          name: 'logIn',
-        );
+    name: 'logIn',
+  );
 
   @override
-  Widget createWidget(BuildContext context, int remainingSteps) => IntroPageSlideWidget(
+  Widget createWidget(BuildContext context, int remainingSteps) =>
+      IntroPageSlideWidget(
         titleWidget: Text(translations.intro.logIn.title),
         slide: this,
         children: [
@@ -31,7 +32,7 @@ class LoginIntroPageSlide extends IntroPageSlide {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: IntroPageSlideParagraphWidget.kDefaultPadding),
-            child: _LoginButton(),
+            child: _LogInButton(),
           ),
           SynchronizeSettingsEntryWidget.intro(),
           IntroPageSlideParagraphWidget(text: translations.intro.logIn.thirdParagraph(limit: App.freeTotpsLimit.toString())),
@@ -44,20 +45,22 @@ class LoginIntroPageSlide extends IntroPageSlide {
 
   @override
   Future<bool> shouldSkip(WidgetRef ref) async {
-    if (ref.read(userAuthenticationProviders.notifier).availableProviders.isEmpty) {
+    if (ref
+        .read(userAuthenticationProviders.notifier)
+        .availableProviders
+        .isEmpty) {
       return true;
     }
     List<Totp> totps = await ref.read(totpRepositoryProvider.future);
     if (totps.isNotEmpty) {
       return true;
     }
-    FirebaseAuthenticationState state = await ref.read(firebaseAuthenticationProvider);
-    return state is! FirebaseAuthenticationStateLoggedOut;
+    return false;
   }
 }
 
-/// The login button.
-class _LoginButton extends ConsumerWidget {
+/// The log-in button.
+class _LogInButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     FirebaseAuthenticationState authenticationState = ref.watch(firebaseAuthenticationProvider);
@@ -70,7 +73,7 @@ class _LoginButton extends ConsumerWidget {
         );
       case FirebaseAuthenticationStateLoggedIn():
         return FilledButton.icon(
-          onPressed: () => AccountUtils.trySignIn(context, ref),
+          onPressed: null,
           icon: const Icon(Icons.check),
           label: Text(translations.intro.logIn.button.loggedIn),
         );

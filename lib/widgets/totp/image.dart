@@ -18,7 +18,7 @@ class TotpImageWidget extends StatefulWidget {
   final String? imageUrl;
 
   /// The TOTP label.
-  final String label;
+  final String? label;
 
   /// The TOTP issuer.
   final String? issuer;
@@ -52,7 +52,7 @@ class TotpImageWidget extends StatefulWidget {
 
   /// Returns a seeded random color that corresponds to the [issuer] and the [label].
   Color get _filterColor {
-    if (label.isEmpty && (issuer == null || issuer!.isEmpty)) {
+    if ((label == null || label!.isEmpty) && (issuer == null || issuer!.isEmpty)) {
       return Colors.transparent;
     }
     Random random = Random(label.hashCode + (issuer ?? '').hashCode);

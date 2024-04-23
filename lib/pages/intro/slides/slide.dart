@@ -40,11 +40,11 @@ enum IntroPageSlideType {
   /// The very first slide shown to the user.
   welcome(create: WelcomeIntroPageSlide.new),
 
-  /// The slide that allows the user to login to Firebase.
-  login(create: LoginIntroPageSlide.new),
-
   /// The slide that allows the user to define a master password.
-  password(create: PasswordIntroPageSlide.new);
+  password(create: PasswordIntroPageSlide.new),
+
+  /// The slide that allows the user to login to Firebase.
+  login(create: LoginIntroPageSlide.new);
 
   /// Allows to create a new intro page slide instance.
   final IntroPageSlide Function() create;
@@ -114,12 +114,29 @@ class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerP
   );
 
   @override
+  void initState() {
+    super.initState();
+    print('init state !');
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print('change dependencies !');
+  }
+
+  @override
   Widget build(BuildContext context) => DefaultTextStyle.merge(
         style: TextStyle(color: currentBrightness == Brightness.dark ? Colors.white60 : Colors.grey.shade700),
         textAlign: TextAlign.center,
         child: Center(
           child: ListView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(
+              top: 80,
+              right: 20,
+              left: 20,
+              bottom: 20,
+            ),
             shrinkWrap: true,
             children: [
               Padding(
@@ -184,36 +201,43 @@ class IntroPageSlideParagraphWidget extends StatelessWidget {
   /// The paragraph padding.
   static const double kDefaultPadding = 10;
 
-  /// The text to display.
-  final String text;
-
-  /// The text style.
-  final TextStyle? textStyle;
+  /// The text span.
+  final TextSpan textSpan;
 
   /// The bottom padding.
   final double padding;
 
   /// Creates a paragraph text, with a separator.
-  const IntroPageSlideParagraphWidget({
+  IntroPageSlideParagraphWidget({
+    Key? key,
+    required String text,
+    TextStyle? textStyle,
+    double padding = kDefaultPadding,
+  }) : this.rich(
+          key: key,
+          textSpan: TextSpan(
+            text: text,
+            style: textStyle,
+          ),
+          padding: padding,
+        );
+
+  /// Creates a paragraph text, with a separator.
+  const IntroPageSlideParagraphWidget.rich({
     super.key,
-    required this.text,
-    this.textStyle,
+    required this.textSpan,
     this.padding = kDefaultPadding,
   });
 
   @override
   Widget build(BuildContext context) => Padding(
         padding: EdgeInsets.only(bottom: padding),
-        child: Text(
-          text,
-          style: textStyle,
-        ),
+        child: Text.rich(textSpan),
       );
 
   /// Returns the same paragraph without padding.
-  IntroPageSlideParagraphWidget get withoutPadding => IntroPageSlideParagraphWidget(
-        text: text,
-        textStyle: textStyle,
+  IntroPageSlideParagraphWidget get withoutPadding => IntroPageSlideParagraphWidget.rich(
+        textSpan: textSpan,
         padding: 0,
       );
 }

@@ -53,7 +53,7 @@ class Totp extends Equatable implements Comparable<Totp> {
   final String uuid;
 
   /// The label.
-  final String label;
+  final String? label;
 
   /// The issuer.
   final String? issuer;
@@ -97,7 +97,7 @@ class Totp extends Equatable implements Comparable<Totp> {
   }
 
   @override
-  int compareTo(Totp other) => label.compareTo(other.label);
+  int compareTo(Totp other) => (label ?? uuid).compareTo(other.label ?? other.uuid);
 
   /// Changes the encryption key of the current TOTP.
   Future<DecryptedTotp?> changeEncryptionKey(CryptoStore previousCryptoStore, CryptoStore newCryptoStore) async {
@@ -117,4 +117,27 @@ class Totp extends Equatable implements Comparable<Totp> {
           )
         : null;
   }
+
+  /// Returns a copy of this instance with the given fields.
+  Totp copyWith({
+    Uint8List? secret,
+    Uint8List? encryptionSalt,
+    String? uuid,
+    String? label,
+    String? issuer,
+    Algorithm? algorithm,
+    int? digits,
+    int? validity,
+    String? imageUrl,
+  }) => Totp(
+    secret: secret ?? this.secret,
+    encryptionSalt: encryptionSalt ?? this.encryptionSalt,
+    uuid: uuid ?? this.uuid,
+    label: label ?? this.label,
+    issuer: issuer ?? this.issuer,
+    algorithm: algorithm ?? this.algorithm,
+    digits: digits ?? this.digits,
+    validity: validity ?? this.validity,
+    imageUrl: imageUrl ?? this.imageUrl,
+  );
 }

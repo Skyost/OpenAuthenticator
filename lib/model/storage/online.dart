@@ -107,26 +107,16 @@ class OnlineStorage with Storage {
 
   @override
   Future<bool> updateTotp(
-    String uuid, {
-    String? label,
-    String? issuer,
-    Algorithm? algorithm,
-    int? digits,
-    int? validity,
-    String? imageUrl,
-  }) async {
+    String uuid, Totp totp) async {
     CollectionReference? collection = _totpsCollection;
     if (collection == null) {
       return false;
     }
-    await collection.doc(uuid).update({
-      if (label != null) Totp.kLabelKey: label,
-      if (issuer != null) Totp.kIssuerKey: issuer,
-      if (algorithm != null) Totp.kAlgorithmKey: algorithm.name,
-      if (digits != null) Totp.kDigitsKey: digits,
-      if (validity != null) Totp.kValidityKey: validity,
-      if (imageUrl != null) Totp.kImageUrlKey: imageUrl,
-    });
+    Map<String, dynamic>? newData = await _toFirestore(totp);
+    if (newData == null) {
+      return false;
+    }
+    await collection.doc(uuid).update(newData);
     return true;
   }
 
@@ -158,6 +148,23 @@ class OnlineStorage with Storage {
       }
     }
     return totps;
+  }
+
+  @override
+  Future<List<String>> listUuids() async {
+    CollectionReference? collection = _totpsCollection;
+    if (collection == null) {
+      return [];
+    }
+    QuerySnapshot result = await collection.get();
+    List<String> uuids = [];
+    for (QueryDocumentSnapshot snapshot in result.docs) {
+      Object? data = snapshot.data();
+      if (data is Map<String, Object?> && data.containsKey(Totp.kUuidKey)) {
+        uuids.add(data[Totp.kUuidKey]!.toString());
+      }
+    }
+    return uuids;
   }
 
   @override
@@ -258,8 +265,8 @@ class OnlineStorage with Storage {
       return null;
     }
     return {
-      Totp.kEncryptionSalt: totpData[Totp.kEncryptionSalt],
       Totp.kSecretKey: totpData[Totp.kSecretKey],
+      Totp.kEncryptionSalt: totpData[Totp.kEncryptionSalt],
       Totp.kUuidKey: totpData[Totp.kUuidKey],
       Totp.kLabelKey: await transformer(
         cryptoStore,

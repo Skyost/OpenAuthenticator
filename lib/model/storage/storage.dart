@@ -6,7 +6,6 @@ import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
-import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/deleted_totps.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
@@ -68,15 +67,15 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       }
 
       List<String> toDelete = [];
-      List<Totp> newStorageTotps = await newStorage.listTotps();
-      for (Totp totp in newStorageTotps) {
-        if (await deletedTotpsDatabase.isDeleted(totp.uuid)) {
+      List<String> newStorageUuids = await newStorage.listUuids();
+      for (String uuid in newStorageUuids) {
+        if (await deletedTotpsDatabase.isDeleted(uuid)) {
           switch (storageMigrationDeletedTotpPolicy) {
             case StorageMigrationDeletedTotpPolicy.keep:
-              deletedTotpsDatabase.cancelDeletion(totp.uuid);
+              deletedTotpsDatabase.cancelDeletion(uuid);
               break;
             case StorageMigrationDeletedTotpPolicy.delete:
-              toDelete.add(totp.uuid);
+              toDelete.add(uuid);
               break;
             case StorageMigrationDeletedTotpPolicy.ask:
               await close();
@@ -108,7 +107,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
           return StorageMigrationResult.genericError;
         }
 
-        bool canDecryptAll = await newStorage.canDecryptAll(currentCryptoStore);
+        bool canDecryptAll = await newStorage.canDecryptAll(newCryptoStore);
         if (!canDecryptAll) {
           await close();
           return StorageMigrationResult.newStoragePasswordMismatch;
@@ -201,15 +200,7 @@ mixin Storage {
   Future<bool> addTotps(List<Totp> totps);
 
   /// Updates the TOTP associated with the specified [uuid].
-  Future<bool> updateTotp(
-    String uuid, {
-    String? label,
-    String? issuer,
-    Algorithm? algorithm,
-    int? digits,
-    int? validity,
-    String? imageUrl,
-  });
+  Future<bool> updateTotp(String uuid, Totp totp);
 
   /// Deletes the TOTP associated to the given [uuid].
   Future<bool> deleteTotp(String uuid);
@@ -225,6 +216,9 @@ mixin Storage {
 
   /// Lists all TOTPs.
   Future<List<Totp>> listTotps();
+
+  /// Lists all TOTPs UUID.
+  Future<List<String>> listUuids();
 
   /// Whether the given [cryptoStore] is able to decrypt all stored TOTPs.
   Future<bool> canDecryptAll(CryptoStore cryptoStore);

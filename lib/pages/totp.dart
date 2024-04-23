@@ -419,12 +419,14 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
     bool cacheTotpImage = await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
     bool result = await ref.read(totpRepositoryProvider.notifier).updateTotp(
           widget.totp!.uuid,
-          label: label,
-          issuer: issuer,
-          algorithm: algorithm,
-          digits: digits,
-          validity: validity,
-          imageUrl: imageUrl,
+          widget.totp!.copyWith(
+            label: label,
+            issuer: issuer,
+            algorithm: algorithm,
+            digits: digits,
+            validity: validity,
+            imageUrl: imageUrl,
+          ),
           cacheTotpImage: cacheTotpImage && imageUrl != widget.totp!.imageUrl,
         );
     return result ? _TotpEditResult.success : _TotpEditResult.error;

@@ -97,7 +97,7 @@ class Backup implements Comparable<Backup> {
       List jsonTotps = jsonData[kTotpsKey];
       List<Totp> totps = [];
       for (dynamic jsonTotp in jsonTotps) {
-        Totp? totp = await JsonTotp.fromJson(jsonTotp).changeEncryptionKey(cryptoStore, currentCryptoStore);
+        Totp? totp = await JsonTotp.fromJson(jsonTotp)?.changeEncryptionKey(cryptoStore, currentCryptoStore);
         if (totp != null) {
           totps.add(totp);
         }

@@ -28,6 +28,7 @@ final revenueCatClientProvider = FutureProvider((ref) async {
   }
   configuration = configuration..appUserID = authenticationState.user.uid;
   RevenueCatClient client = RevenueCatClient.fromPlatform(purchasesConfiguration: configuration);
+  await client.initialize();
   return client;
 });
 

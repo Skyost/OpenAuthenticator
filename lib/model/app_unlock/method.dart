@@ -63,8 +63,8 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
       }
       ref.read(cryptoStoreProvider.notifier).use(cryptoStore);
     } else {
-      CryptoStore? currentCryptoStore = await ref.read(cryptoStoreProvider.future);
-      if (currentCryptoStore == null || !(await currentCryptoStore.checkPasswordValidity(password))) {
+      StoredCryptoStore currentCryptoStore = ref.read(cryptoStoreProvider.notifier);
+      if (!(await currentCryptoStore.checkPasswordValidity(password))) {
         return false;
       }
     }

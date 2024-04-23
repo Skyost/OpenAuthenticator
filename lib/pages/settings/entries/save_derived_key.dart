@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
+import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/bool_entry.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 
@@ -12,8 +13,8 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
   SaveDerivedKeySettingsEntryWidget({
     super.key,
     super.contentPadding,
+    super.icon = Icons.key,
   }) : super(
-          icon: Icons.key,
           provider: appUnlockMethodSettingsEntryProvider,
           title: translations.settings.security.saveDerivedKey.title,
           subtitle: translations.settings.security.saveDerivedKey.subtitle,
@@ -24,7 +25,10 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
     Key? key,
   }) : this(
           key: key,
-          contentPadding: EdgeInsets.zero,
+          icon: null,
+          contentPadding: const EdgeInsets.only(
+            bottom: IntroPageSlideParagraphWidget.kDefaultPadding,
+          ),
         );
 
   @override

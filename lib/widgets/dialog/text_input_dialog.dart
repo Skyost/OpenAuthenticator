@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/crypto.dart';
-import 'package:open_authenticator/model/storage/storage.dart';
-import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 
 /// Shows a dialog for prompting text.
@@ -225,15 +223,8 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
   /// Triggered when the ok button has been pressed.
   Future<void> onOkPressed({String? password}) async {
     password ??= this.password;
-    CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
-    if (cryptoStore == null) {
-      Storage storage = await ref.read(storageProvider.future);
-      TotpRepository totpRepository = ref.read(totpRepositoryProvider.notifier);
-      cryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
-      validationResult = await totpRepository.tryDecryptAll(cryptoStore);
-    } else {
-      validationResult = await cryptoStore.checkPasswordValidity(password);
-    }
+    StoredCryptoStore cryptoStore = ref.read(cryptoStoreProvider.notifier);
+    validationResult = await cryptoStore.checkPasswordValidity(password);
     if (!formFieldKey.currentState!.validate() || !mounted) {
       return;
     }

@@ -69,7 +69,7 @@ class TotpWidget extends ConsumerWidget {
                   totp.issuer!,
                 ),
               Text(
-                totp.label,
+                totp.label ?? totp.uuid,
                 style: TextStyle(color: Colors.grey.shade700),
               ),
               if (totp.isDecrypted && displayCode)

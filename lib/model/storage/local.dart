@@ -24,7 +24,7 @@ class Totps extends Table {
   TextColumn get uuid => text()();
 
   /// Maps to [Totp.label].
-  TextColumn get label => text()();
+  TextColumn get label => text().nullable()();
 
   /// Maps to [Totp.issuer].
   TextColumn get issuer => text().nullable()();
@@ -97,22 +97,14 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
-  Future<bool> updateTotp(
-    String uuid, {
-    String? label,
-    String? issuer,
-    Algorithm? algorithm,
-    int? digits,
-    int? validity,
-    String? imageUrl,
-  }) async {
-    await (update(totps)..where((totp) => totp.uuid.isValue(uuid))).write(TotpsCompanion(
-      label: Value.absentIfNull(label),
-      issuer: Value.absentIfNull(issuer),
-      algorithm: Value.absentIfNull(algorithm),
-      digits: Value.absentIfNull(digits),
-      validity: Value.absentIfNull(validity),
-      imageUrl: Value.absentIfNull(imageUrl),
+  Future<bool> updateTotp(String uuid, Totp totp) async {
+    await (update(totps)..where((totp) => totp.uuid.isValue(uuid))).replace(TotpsCompanion(
+      label: Value.absentIfNull(totp.label),
+      issuer: Value.absentIfNull(totp.issuer),
+      algorithm: Value.absentIfNull(totp.algorithm),
+      digits: Value.absentIfNull(totp.digits),
+      validity: Value.absentIfNull(totp.validity),
+      imageUrl: Value.absentIfNull(totp.imageUrl),
     ));
     return true;
   }
@@ -130,6 +122,12 @@ class LocalStorage extends _$LocalStorage with Storage {
   Future<List<Totp>> listTotps() async {
     List<_DriftTotp> list = await (select(totps)).get();
     return list.map((totp) => totp.asTotp).toList();
+  }
+
+  @override
+  Future<List<String>> listUuids() async {
+    List<_DriftTotp> list = await (select(totps)).get();
+    return list.map((totp) => totp.uuid).toList();
   }
 
   @override
@@ -153,7 +151,7 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
-  Future<void> onStorageTypeChanged({ bool close = false }) async {
+  Future<void> onStorageTypeChanged({bool close = false}) async {
     await clearTotps();
     await super.onStorageTypeChanged(close: close);
   }

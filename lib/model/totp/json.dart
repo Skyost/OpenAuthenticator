@@ -6,17 +6,22 @@ import 'package:open_authenticator/model/totp/totp.dart';
 /// Gives some useful properties for serializing TOTPs.
 extension JsonTotp on Totp {
   /// Creates a new TOTP from the specified JSON data.
-  static Totp fromJson(Map<String, dynamic> data) => Totp(
-    secret: Uint8List.fromList((data[Totp.kSecretKey] as List).cast<int>()),
-    encryptionSalt: Uint8List.fromList((data[Totp.kEncryptionSalt] as List).cast<int>()),
-    uuid: data[Totp.kUuidKey],
-    label: data[Totp.kLabelKey],
-    issuer: data[Totp.kIssuerKey],
-    algorithm: data.containsKey(Totp.kAlgorithmKey) ? Algorithm.fromString(data[Totp.kAlgorithmKey]) : null,
-    digits: data[Totp.kDigitsKey],
-    validity: data[Totp.kValidityKey],
-    imageUrl: data[Totp.kImageUrlKey],
-  );
+  static Totp? fromJson(Map<String, dynamic> data) {
+    if (data[Totp.kSecretKey] == null || data[Totp.kEncryptionSalt] == null || data[Totp.kUuidKey] == null) {
+      return null;
+    }
+    return Totp(
+      secret: Uint8List.fromList((data[Totp.kSecretKey] as List).cast<int>()),
+      encryptionSalt: Uint8List.fromList((data[Totp.kEncryptionSalt] as List).cast<int>()),
+      uuid: data[Totp.kUuidKey],
+      label: data[Totp.kLabelKey],
+      issuer: data[Totp.kIssuerKey],
+      algorithm: data.containsKey(Totp.kAlgorithmKey) ? Algorithm.fromString(data[Totp.kAlgorithmKey]) : null,
+      digits: data[Totp.kDigitsKey],
+      validity: data[Totp.kValidityKey],
+      imageUrl: data[Totp.kImageUrlKey],
+    );
+  }
 
   /// Converts this TOTP to a JSON compatible map.
   Map<String, dynamic> toJson() => {

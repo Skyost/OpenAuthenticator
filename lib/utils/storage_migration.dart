@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
+import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/utils/form_label.dart';
@@ -21,7 +22,7 @@ class StorageMigrationUtils {
     bool showConfirmation = true,
     String? backupPassword,
     bool logout = false,
-    String? currentStorageMasterPassword,
+    String currentStorageMasterPassword = '',
     String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
@@ -32,8 +33,18 @@ class StorageMigrationUtils {
       }
       backupPassword ??= result.backupPassword;
     }
-    currentStorageMasterPassword ??= await MasterPasswordInputDialog.prompt(context);
-    if (currentStorageMasterPassword == null || !context.mounted) {
+    StoredCryptoStore currentCryptoStore = ref.read(cryptoStoreProvider.notifier);
+    if (!(await currentCryptoStore.checkPasswordValidity(currentStorageMasterPassword))) {
+      if (!context.mounted) {
+        return false;
+      }
+      String? enteredCurrentStorageMasterPassword = await MasterPasswordInputDialog.prompt(context);
+      if (enteredCurrentStorageMasterPassword == null || !context.mounted) {
+        return false;
+      }
+      currentStorageMasterPassword = enteredCurrentStorageMasterPassword;
+    }
+    if (!context.mounted) {
       return false;
     }
     StorageMigrationResult result = await showWaitingOverlay(
@@ -70,7 +81,7 @@ class StorageMigrationUtils {
     StorageType newType,
     bool logout,
     String? backupPassword,
-    String? currentStorageMasterPassword,
+    String currentStorageMasterPassword,
     String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy,
   ) async {
