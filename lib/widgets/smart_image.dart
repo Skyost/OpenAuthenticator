@@ -48,6 +48,8 @@ class SmartImageWidget extends StatelessWidget {
               cachedImage!,
               width: width,
               height: height,
+              cacheWidth: width?.ceil(),
+              cacheHeight: height?.ceil(),
               fit: fit,
               errorBuilder: errorBuilder,
             );
@@ -64,6 +66,8 @@ class SmartImageWidget extends StatelessWidget {
               source,
               width: width,
               height: height,
+              cacheWidth: width?.ceil(),
+              cacheHeight: height?.ceil(),
               fit: fit,
               errorBuilder: errorBuilder,
             );
@@ -79,6 +83,8 @@ class SmartImageWidget extends StatelessWidget {
             source,
             width: width,
             height: height,
+            cacheWidth: width?.ceil(),
+            cacheHeight: height?.ceil(),
             fit: fit,
             errorBuilder: errorBuilder,
           );

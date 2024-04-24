@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/crypto.dart';
-import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
@@ -93,7 +92,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
                   if (!confirmation) {
                     return;
                   }
-                  if (!await ref.read(totpRepositoryProvider.notifier).deleteTotp(widget.totp!.uuid) && context.mounted) {
+                  if (!await ref.read(totpRepositoryProvider.notifier).deleteTotp(widget.totp!) && context.mounted) {
                     SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
                   }
                 },
@@ -409,14 +408,12 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
     if (totp == null) {
       return _TotpEditResult.error;
     }
-    bool cacheTotpImage = await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
-    bool result = await ref.read(totpRepositoryProvider.notifier).addTotp(totp, cacheTotpImage: cacheTotpImage);
+    bool result = await ref.read(totpRepositoryProvider.notifier).addTotp(totp);
     return result ? _TotpEditResult.success : _TotpEditResult.error;
   }
 
   /// Updates the TOTP in the repository.
   Future<_TotpEditResult> updateTotp() async {
-    bool cacheTotpImage = await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
     bool result = await ref.read(totpRepositoryProvider.notifier).updateTotp(
           widget.totp!.uuid,
           widget.totp!.copyWith(
@@ -427,7 +424,6 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
             validity: validity,
             imageUrl: imageUrl,
           ),
-          cacheTotpImage: cacheTotpImage && imageUrl != widget.totp!.imageUrl,
         );
     return result ? _TotpEditResult.success : _TotpEditResult.error;
   }

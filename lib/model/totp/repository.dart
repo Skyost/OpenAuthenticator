@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +15,6 @@ import 'package:open_authenticator/model/totp/deleted_totps.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
 /// The provider instance.
 final totpRepositoryProvider = AsyncNotifierProvider.autoDispose<TotpRepository, List<Totp>>(TotpRepository.new);
@@ -51,7 +49,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
   Future<List<Totp>> _queryTotpsFromStorage(Storage storage, CryptoStore? cryptoStore) async {
     List<Totp> totps = await storage.listTotps();
     for (Totp totp in totps) {
-      _cacheTotpImage(totp, checkExists: true);
+      totp.cacheImage();
     }
     return [
       for (Totp totp in totps) //
@@ -75,7 +73,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
   }
 
   /// Adds the given [totp].
-  Future<bool> addTotp(Totp totp, {bool? cacheTotpImage}) async {
+  Future<bool> addTotp(Totp totp) async {
     Storage storage = await ref.read(storageProvider.future);
     if (!await storage.addTotp(totp)) {
       return false;
@@ -84,20 +82,18 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
     if (cryptoStore == null) {
       return false;
     }
-    List<Totp> totps = await future;
-    cacheTotpImage ??= await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
-    if (cacheTotpImage!) {
-      await _cacheTotpImage(totp);
+    if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+      await totp.cacheImage();
     }
     state = AsyncData([
-      ...totps,
+      ...await future,
       await totp.decrypt(cryptoStore),
     ]..sort());
     return true;
   }
 
-  /// Clears all TOTPs and then add the [totps].
-  Future<bool> replaceBy(List<Totp> totps, {bool? cacheTotpImages}) async {
+  /// Clears all TOTPs and then adds the [totps].
+  Future<bool> replaceBy(List<Totp> totps) async {
     Storage storage = await ref.read(storageProvider.future);
     if (!await storage.clearTotps() || !await storage.addTotps(totps)) {
       return false;
@@ -106,10 +102,13 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
     if (cryptoStore == null) {
       return false;
     }
-    cacheTotpImages ??= await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
-    if (cacheTotpImages!) {
+    if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+      Map<String, String?> previousImages = {
+        for (Totp totp in await future) //
+          totp.uuid: totp.imageUrl,
+      };
       for (Totp totp in totps) {
-        await _cacheTotpImage(totp);
+        await totp.cacheImage(previousImageUrl: previousImages[totp.uuid]);
       }
     }
     state = AsyncData([for (Totp totp in totps) await totp.decrypt(cryptoStore)]..sort());
@@ -117,79 +116,41 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
   }
 
   /// Updates the TOTP associated with the specified [uuid].
-  Future<bool> updateTotp(
-    String uuid,
-    Totp totp, {
-    bool? cacheTotpImage,
-  }) async {
+  Future<bool> updateTotp(String uuid, Totp totp) async {
     Storage storage = await ref.read(storageProvider.future);
     if (!await storage.updateTotp(uuid, totp)) {
       return false;
     }
-    Totp? result = await storage.getTotp(uuid);
-    if (result == null) {
-      return false;
-    }
     List<Totp> totps = await future;
-    Totp? current = totps.firstWhereOrNull((totp) => totp.uuid == uuid);
-    if (current != null && current.isDecrypted) {
-      result = DecryptedTotp.fromTotp(
-        totp: result,
-        decryptedSecret: (current as DecryptedTotp).decryptedSecret,
-      );
+    Totp? previous = totps.firstWhereOrNull((totp) => totp.uuid == uuid);
+    if (previous != null) {
+      if (!totp.isDecrypted && previous.isDecrypted) {
+        totp = DecryptedTotp.fromTotp(
+          totp: totp,
+          decryptedSecret: (current as DecryptedTotp).decryptedSecret,
+        );
+      }
+      totps.remove(previous);
     }
-    totps.removeWhere((totp) => totp.uuid == uuid);
-    totps.add(result);
-    cacheTotpImage ??= await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
-    if (cacheTotpImage!) {
-      await _cacheTotpImage(result);
+    totps.add(totp);
+    if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+      await totp.cacheImage(previousImageUrl: previous?.imageUrl);
     }
     state = AsyncData(totps..sort());
     return true;
   }
 
   /// Deletes the TOTP associated to the given [uuid].
-  Future<bool> deleteTotp(String uuid) async {
+  Future<bool> deleteTotp(Totp totp) async {
     Storage storage = await ref.read(storageProvider.future);
-    if (!await storage.deleteTotp(uuid)) {
+    if (!await storage.deleteTotp(totp.uuid)) {
       return false;
     }
-    await ref.read(deletedTotpsProvider).markDeleted(uuid);
+    await ref.read(deletedTotpsProvider).markDeleted(totp.uuid);
     List<Totp> totps = await future;
-    totps.removeWhere((totp) => totp.uuid == uuid);
-    state = AsyncData(totps);
-    File cachedImage = await getTotpCachedImage(uuid);
-    if (cachedImage.existsSync()) {
-      cachedImage.deleteSync();
-    }
+    state = AsyncData(totps..removeWhere((currentTotp) => currentTotp.uuid == totp.uuid));
+    totp.deleteCachedImage();
     return true;
-  }
-
-  /// Caches the TOTP image.
-  static Future<void> _cacheTotpImage(Totp totp, {bool checkExists = false}) async {
-    if (totp.imageUrl == null) {
-      return;
-    }
-    File file = await getTotpCachedImage(totp.uuid, createDirectory: true);
-    if (checkExists && file.existsSync()) {
-      return;
-    }
-    HttpClientRequest request = await HttpClient().getUrl(Uri.parse(totp.imageUrl!));
-    HttpClientResponse response = await request.close();
-    Uint8List bytes = await consolidateHttpClientResponseBytes(response);
-    await file.writeAsBytes(bytes);
-  }
-
-  /// Returns the TOTP cached image file.
-  static Future<File> getTotpCachedImage(String uuid, {bool createDirectory = false}) async => File(join((await _getTotpImagesDirectory(create: createDirectory)).path, uuid));
-
-  /// Returns the totp images directory, creating it if doesn't exist yet.
-  static Future<Directory> _getTotpImagesDirectory({bool create = false}) async {
-    Directory directory = Directory(join((await getApplicationCacheDirectory()).path, 'totps_images'));
-    if (create && !directory.existsSync()) {
-      directory.createSync(recursive: true);
-    }
-    return directory;
   }
 
   /// Changes the master password.

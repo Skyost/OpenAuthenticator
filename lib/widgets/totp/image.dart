@@ -4,7 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:open_authenticator/model/totp/repository.dart';
+import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/widgets/smart_image.dart';
 import 'package:open_authenticator/widgets/totp/time_based.dart';
@@ -111,8 +111,8 @@ class _TotpImageWidgetState extends State<TotpImageWidget> {
   /// Loads the cached image if possible.
   Future<void> _loadCachedImageIfPossible() async {
     File? cached;
-    if (widget.uuid != null) {
-      cached = await TotpRepository.getTotpCachedImage(widget.uuid!);
+    if (widget.uuid != null && widget.imageUrl != null) {
+      cached = await TotpImageCache.getTotpCachedImage(widget.uuid!);
       if (!cached.existsSync()) {
         cached = null;
       }

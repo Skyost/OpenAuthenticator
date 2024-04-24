@@ -98,14 +98,7 @@ class LocalStorage extends _$LocalStorage with Storage {
 
   @override
   Future<bool> updateTotp(String uuid, Totp totp) async {
-    await (update(totps)..where((totp) => totp.uuid.isValue(uuid))).replace(TotpsCompanion(
-      label: Value.absentIfNull(totp.label),
-      issuer: Value.absentIfNull(totp.issuer),
-      algorithm: Value.absentIfNull(totp.algorithm),
-      digits: Value.absentIfNull(totp.digits),
-      validity: Value.absentIfNull(totp.validity),
-      imageUrl: Value.absentIfNull(totp.imageUrl),
-    ));
+    await update(totps).replace(totp.asDriftTotp);
     return true;
   }
 

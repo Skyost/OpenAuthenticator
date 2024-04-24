@@ -55,8 +55,10 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       }
 
       if (backupPassword != null) {
-        await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
-        return StorageMigrationResult.backupError;
+        Backup? backup = await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
+        if (backup == null) {
+          return StorageMigrationResult.backupError;
+        }
       }
 
       Storage newStorage = newType.create(ref);

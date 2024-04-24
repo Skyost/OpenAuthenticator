@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/json.dart';
@@ -50,7 +51,7 @@ class BackupStore extends AsyncNotifier<List<Backup>> {
 
   /// Returns the backup directory.
   static Future<Directory> _getBackupsDirectory({bool create = false}) async {
-    Directory directory = Directory(join((await getApplicationDocumentsDirectory()).path, 'backups'));
+    Directory directory = Directory(join((await getApplicationDocumentsDirectory()).path, '${App.appName} Backups'));
     if (create && !directory.existsSync()) {
       directory.createSync(recursive: true);
     }

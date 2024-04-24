@@ -141,7 +141,7 @@ class TotpWidget extends ConsumerWidget {
     if (!confirmation) {
       return;
     }
-    if (!await ref.read(totpRepositoryProvider.notifier).deleteTotp(totp.uuid) && context.mounted) {
+    if (!await ref.read(totpRepositoryProvider.notifier).deleteTotp(totp) && context.mounted) {
       SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
     }
   }
@@ -188,7 +188,7 @@ class TotpWidget extends ConsumerWidget {
       return;
     }
     TotpRepository repository =  await ref.read(totpRepositoryProvider.notifier);
-    await repository.deleteTotp(totp.uuid);
+    await repository.deleteTotp(totp);
     await repository.addTotp(result);
     if (context.mounted) {
       SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
