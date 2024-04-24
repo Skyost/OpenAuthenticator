@@ -1,5 +1,6 @@
 {
   "empty": "No TOTP for the moment.\nFeel free to add one !",
+  "refreshButton": "Refresh",
   "addDialog": {
     "title": "Add a TOTP",
     "qrCode": {

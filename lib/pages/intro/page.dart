@@ -69,6 +69,7 @@ class IntroPageState extends ConsumerState<IntroPage> with BrightnessListener {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+      systemNavigationBarIconBrightness: brightness == Brightness.dark ? Brightness.light : Brightness.dark,
     ));
   }
 

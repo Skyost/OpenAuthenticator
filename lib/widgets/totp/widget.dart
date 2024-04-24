@@ -95,7 +95,7 @@ class TotpWidget extends ConsumerWidget {
               IconButton(
                 icon: Icon(
                   Icons.copy,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () async => await _copyCode(context),
               )
@@ -103,7 +103,7 @@ class TotpWidget extends ConsumerWidget {
               IconButton(
                 icon: Icon(
                   Icons.lock,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () async => await _tryDecrypt(context, ref),
               ),

@@ -40,7 +40,7 @@ class _LabelWidget extends StatelessWidget {
               padding: const EdgeInsets.only(top: 2, right: 6),
               child: Icon(
                 icon,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.primary,
                 size: 12,
               ),
             ),

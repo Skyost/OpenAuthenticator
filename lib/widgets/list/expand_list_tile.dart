@@ -38,7 +38,7 @@ class _ExpandListTileState extends State<ExpandListTile> with BrightnessListener
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            iconColor: Theme.of(context).primaryColor,
+            iconColor: Theme.of(context).colorScheme.primary,
             title: widget.title,
             onTap: () {
               setState(() => expand = !expand);

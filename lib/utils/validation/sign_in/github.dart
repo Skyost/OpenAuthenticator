@@ -103,7 +103,7 @@ class GithubSignIn with OAuth2SignIn {
                     child: IconButton(
                       icon: Icon(
                         Icons.copy,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       onPressed: () async => await Clipboard.setData(ClipboardData(text: userCode)),
                     ),

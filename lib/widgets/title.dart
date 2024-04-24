@@ -35,7 +35,7 @@ class TitleWidget extends StatelessWidget {
           ],
         ],
       ),
-      style: textStyle,
+      style: (textStyle ?? TextStyle()).copyWith(height: 1.2),
       textAlign: textAlign,
     );
   }
@@ -44,26 +44,32 @@ class TitleWidget extends StatelessWidget {
   WidgetSpan _createGradientText(String text) => WidgetSpan(
         child: ShaderMask(
           blendMode: BlendMode.srcIn,
-          shaderCallback: (bounds) => LinearGradient(colors: [
-            Colors.green.shade300,
-            Colors.green.shade400,
-            Colors.green.shade500,
-            Colors.green.shade500,
-            Colors.green.shade600,
-            Colors.green.shade800,
-          ], stops: const [
-            0,
-            0.021,
-            0.293,
-            0.554,
-            0.796,
-            1,
-          ]).createShader(
+          shaderCallback: (bounds) => LinearGradient(
+            colors: [
+              Colors.green.shade300,
+              Colors.green.shade400,
+              Colors.green.shade500,
+              Colors.green.shade500,
+              Colors.green.shade600,
+              Colors.green.shade800,
+            ],
+            stops: const [
+              0,
+              0.021,
+              0.293,
+              0.554,
+              0.796,
+              1,
+            ],
+          ).createShader(
             Rect.fromLTWH(0, 0, bounds.width, bounds.height),
           ),
           child: Text(
             text,
-            style: (textStyle ?? const TextStyle()).copyWith(fontWeight: FontWeight.bold),
+            style: (textStyle ?? const TextStyle()).copyWith(
+              fontWeight: FontWeight.bold,
+              height: 1.2,
+            ),
           ),
         ),
       );

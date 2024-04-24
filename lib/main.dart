@@ -6,6 +6,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
@@ -91,6 +92,13 @@ class OpenAuthenticatorApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<bool> showIntro = ref.watch(showIntroSettingsEntryProvider);
     AsyncValue<ThemeMode> theme = ref.watch(themeSettingsEntryProvider);
+    ColorScheme light = ColorScheme.fromSeed(
+      seedColor: Colors.green,
+    );
+    ColorScheme dark = ColorScheme.fromSeed(
+      seedColor: Colors.green,
+      brightness: Brightness.dark,
+    );
     return switch (showIntro) {
       AsyncData(:bool value) => MaterialApp(
           title: App.appName,
@@ -102,31 +110,40 @@ class OpenAuthenticatorApp extends ConsumerWidget {
           ],
           supportedLocales: AppLocaleUtils.supportedLocales,
           themeMode: theme.value,
+          debugShowCheckedModeBanner: false,
           darkTheme: ThemeData(
             brightness: Brightness.dark,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.green,
-              brightness: Brightness.dark,
-            ),
-            iconButtonTheme: IconButtonThemeData(
-              style: ButtonStyle(
-                foregroundColor: MaterialStatePropertyAll(Colors.green.shade300),
+            appBarTheme: AppBarTheme(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarIconBrightness: Brightness.light,
+                systemNavigationBarColor: dark.background,
               ),
+              shape: const RoundedRectangleBorder(),
             ),
+            colorScheme: dark,
+            // iconButtonTheme: IconButtonThemeData(
+            //   style: ButtonStyle(
+            //     foregroundColor: MaterialStatePropertyAll(Colors.green.shade300),
+            //   ),
+            // ),
             buttonTheme: const ButtonThemeData(
               alignedDropdown: true,
             ),
-            floatingActionButtonTheme: const FloatingActionButtonThemeData(
-              shape: CircleBorder(),
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              shape: const CircleBorder(),
+              backgroundColor: Colors.green.shade700,
+              foregroundColor: Colors.green.shade50,
             ),
           ),
           theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-            // iconButtonTheme: IconButtonThemeData(
-            //   style: ButtonStyle(
-            //     foregroundColor: MaterialStatePropertyAll(Colors.green.shade700),
-            //   ),
-            // ),
+            colorScheme: light,
+            appBarTheme: AppBarTheme(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarIconBrightness: Brightness.dark,
+                systemNavigationBarColor: light.background,
+              ),
+              shape: const RoundedRectangleBorder(),
+            ),
             buttonTheme: const ButtonThemeData(
               alignedDropdown: true,
             ),

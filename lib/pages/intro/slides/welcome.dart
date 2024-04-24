@@ -24,7 +24,10 @@ class WelcomeIntroPageSlide extends IntroPageSlide {
             ),
           IntroPageSlideParagraphWidget(
             text: translations.intro.welcome.thirdParagraph,
-            textStyle: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+            textStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ],
       );
