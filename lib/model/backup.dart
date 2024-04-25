@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/crypto.dart';
@@ -10,6 +9,7 @@ import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/json.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -22,13 +22,14 @@ class BackupStore extends AsyncNotifier<List<Backup>> {
   FutureOr<List<Backup>> build() => _listBackups();
 
   /// Do a backup with the given password.
-  Future<Backup?> doBackup(String password) async {
+  Future<Result<Backup>> doBackup(String password) async {
     Backup backup = Backup._(ref: ref, dateTime: DateTime.now());
-    if (!await backup.save(password)) {
-      return null;
+    Result result = await backup.save(password);
+    if (result is! ResultSuccess) {
+      return result as Result<Backup>;
     }
     state = AsyncData([...(await future), backup]..sort());
-    return backup;
+    return ResultSuccess(value: backup);
   }
 
   /// Lists available backups.
@@ -80,20 +81,20 @@ class Backup implements Comparable<Backup> {
   }) : _ref = ref;
 
   /// Restore this backup.
-  Future<bool> restore(String password) async {
+  Future<Result> restore(String password) async {
     try {
       File file = await _getBackupPath();
       if (!file.existsSync()) {
-        return false;
+        throw _BackupFileDoesNotExistException(path: file.path);
       }
       Map<String, dynamic> jsonData = jsonDecode(file.readAsStringSync());
       if (!jsonData.containsKey(kTotpsKey) || !jsonData.containsKey(kSaltKey)) {
-        return false;
+        throw _InvalidBackupContentException();
       }
       CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
       CryptoStore? cryptoStore = await CryptoStore.fromPassword(password, salt: base64.decode(jsonData[kSaltKey]));
       if (currentCryptoStore == null || cryptoStore == null) {
-        return false;
+        throw _EncryptionError(operationName: 'decryption');
       }
       List jsonTotps = jsonData[kTotpsKey];
       List<Totp> totps = [];
@@ -104,25 +105,24 @@ class Backup implements Comparable<Backup> {
         }
       }
       if (totps.isEmpty) {
-        return false;
+        throw _InvalidPasswordException();
       }
       return await _ref.read(totpRepositoryProvider.notifier).replaceBy(totps);
     } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
     }
-    return false;
   }
 
   /// Saves this backup.
-  Future<bool> save(String password) async {
+  Future<Result> save(String password) async {
     try {
       CryptoStore? newStore = await CryptoStore.fromPassword(password);
       CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
       if (newStore == null || currentCryptoStore == null) {
-        return false;
+        throw _EncryptionError(operationName: 'encryption');
       }
       List<Totp> totps = await _ref.read(totpRepositoryProvider.future);
       List<DecryptedTotp> toBackup = [];
@@ -132,37 +132,38 @@ class Backup implements Comparable<Backup> {
           toBackup.add(decryptedTotp);
         }
       }
+      if (toBackup.isEmpty) {
+        throw _InvalidPasswordException();
+      }
       File file = await _getBackupPath(createDirectory: true);
       file.writeAsString(jsonEncode({
         kSaltKey: base64.encode(newStore.salt),
         kTotpsKey: toBackup.map((totp) => totp.toJson()).toList(),
       }));
-      return true;
+      return const ResultSuccess();
     } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
     }
-    return false;
   }
 
   /// Deletes this backup.
-  Future<bool> delete() async {
+  Future<Result> delete() async {
     try {
       File file = await _getBackupPath();
       if (file.existsSync()) {
         file.deleteSync();
       }
       _ref.invalidateSelf();
-      return true;
+      return const ResultSuccess();
     } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
     }
-    return false;
   }
 
   /// Returns the backup path (TOTPs and salt).
@@ -173,4 +174,40 @@ class Backup implements Comparable<Backup> {
 
   @override
   int compareTo(Backup other) => dateTime.compareTo(other.dateTime);
+}
+
+/// Thrown when the file does not exist.
+class _BackupFileDoesNotExistException implements Exception {
+  /// The file path.
+  final String path;
+
+  /// Creates a new backup file doesn't exist exception instance.
+  _BackupFileDoesNotExistException({required this.path,});
+
+  @override
+  String toString() => 'Backup file does not exist : "$path"';
+}
+
+/// Thrown when an invalid password has been provided.
+class _InvalidPasswordException implements Exception {
+  @override
+  String toString() => 'Invalid password exception';
+}
+
+/// Thrown when the backup content is invalid.
+class _InvalidBackupContentException implements Exception {
+  @override
+  String toString() => 'Invalid backup content';
+}
+
+/// Thrown when there is an encryption error.
+class _EncryptionError implements Exception {
+  /// The operation name.
+  final String operationName;
+
+  /// Creates a new encryption error instance.
+  _EncryptionError({required this.operationName,});
+
+  @override
+  String toString() => 'Error while doing $operationName.';
 }

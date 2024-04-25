@@ -13,6 +13,7 @@ import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/deleted_totps.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:path/path.dart';
 
@@ -59,142 +60,175 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
 
   /// Tries to decrypt all TOTPs.
   Future<bool> tryDecryptAll(CryptoStore? cryptoStore) async {
-    List<Totp> totps = await future;
-    // List<Totp> decryptedTotps = [];
-    for (Totp totp in totps) {
-      Totp decryptedTotp = await totp.decrypt(cryptoStore);
-      if (!decryptedTotp.isDecrypted) {
-        return false;
+    try {
+      List<Totp> totps = await future;
+      // List<Totp> decryptedTotps = [];
+      for (Totp totp in totps) {
+        Totp decryptedTotp = await totp.decrypt(cryptoStore);
+        if (!decryptedTotp.isDecrypted) {
+          return false;
+        }
+        // decryptedTotps.add(decryptedTotp);
       }
-      // decryptedTotps.add(decryptedTotp);
+      // state = AsyncData(decryptedTotps);
+      return true;
+    } catch (ex, stacktrace) {
+      handleException(ex, stacktrace);
     }
-    // state = AsyncData(decryptedTotps);
-    return true;
+    return false;
   }
 
   /// Adds the given [totp].
-  Future<bool> addTotp(Totp totp) async {
-    Storage storage = await ref.read(storageProvider.future);
-    if (!await storage.addTotp(totp)) {
-      return false;
+  Future<Result<Totp>> addTotp(Totp totp) async {
+    try {
+      Storage storage = await ref.read(storageProvider.future);
+      await storage.addTotp(totp);
+      CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
+      if (cryptoStore == null) {
+        throw _NoCryptoStoreException();
+      }
+      if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+        await totp.cacheImage();
+      }
+      state = AsyncData([
+        ...await future,
+        await totp.decrypt(cryptoStore),
+      ]..sort());
+      return const ResultSuccess();
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
     }
-    CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
-    if (cryptoStore == null) {
-      return false;
-    }
-    if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
-      await totp.cacheImage();
-    }
-    state = AsyncData([
-      ...await future,
-      await totp.decrypt(cryptoStore),
-    ]..sort());
-    return true;
   }
 
   /// Clears all TOTPs and then adds the [totps].
-  Future<bool> replaceBy(List<Totp> totps) async {
-    Storage storage = await ref.read(storageProvider.future);
-    if (!await storage.clearTotps() || !await storage.addTotps(totps)) {
-      return false;
-    }
-    CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
-    if (cryptoStore == null) {
-      return false;
-    }
-    if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
-      Map<String, String?> previousImages = {
-        for (Totp totp in await future) //
-          totp.uuid: totp.imageUrl,
-      };
-      for (Totp totp in totps) {
-        await totp.cacheImage(previousImageUrl: previousImages[totp.uuid]);
+  Future<Result<List<Totp>>> replaceBy(List<Totp> totps) async {
+    try {
+      Storage storage = await ref.read(storageProvider.future);
+      await storage.clearTotps();
+      await storage.addTotps(totps);
+      CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
+      if (cryptoStore == null) {
+        throw _NoCryptoStoreException();
       }
+      if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+        Map<String, String?> previousImages = {
+          for (Totp totp in await future) //
+            totp.uuid: totp.imageUrl,
+        };
+        for (Totp totp in totps) {
+          await totp.cacheImage(previousImageUrl: previousImages[totp.uuid]);
+        }
+      }
+      state = AsyncData([for (Totp totp in totps) await totp.decrypt(cryptoStore)]..sort());
+      return const ResultSuccess();
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
     }
-    state = AsyncData([for (Totp totp in totps) await totp.decrypt(cryptoStore)]..sort());
-    return true;
   }
 
   /// Updates the TOTP associated with the specified [uuid].
-  Future<bool> updateTotp(String uuid, Totp totp) async {
-    Storage storage = await ref.read(storageProvider.future);
-    if (!await storage.updateTotp(uuid, totp)) {
-      return false;
-    }
-    List<Totp> totps = await future;
-    Totp? previous = totps.firstWhereOrNull((totp) => totp.uuid == uuid);
-    if (previous != null) {
-      if (!totp.isDecrypted && previous.isDecrypted) {
-        totp = DecryptedTotp.fromTotp(
-          totp: totp,
-          decryptedSecret: (current as DecryptedTotp).decryptedSecret,
-        );
+  Future<Result> updateTotp(String uuid, Totp totp) async {
+    try {
+      Storage storage = await ref.read(storageProvider.future);
+      await storage.updateTotp(uuid, totp);
+      List<Totp> totps = await future;
+      Totp? previous = totps.firstWhereOrNull((totp) => totp.uuid == uuid);
+      if (previous != null) {
+        if (!totp.isDecrypted && previous.isDecrypted) {
+          totp = DecryptedTotp.fromTotp(
+            totp: totp,
+            decryptedSecret: (current as DecryptedTotp).decryptedSecret,
+          );
+        }
+        totps.remove(previous);
       }
-      totps.remove(previous);
+      totps.add(totp);
+      if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+        await totp.cacheImage(previousImageUrl: previous?.imageUrl);
+      }
+      state = AsyncData(totps..sort());
+      return const ResultSuccess();
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
     }
-    totps.add(totp);
-    if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
-      await totp.cacheImage(previousImageUrl: previous?.imageUrl);
-    }
-    state = AsyncData(totps..sort());
-    return true;
   }
 
   /// Deletes the TOTP associated to the given [uuid].
-  Future<bool> deleteTotp(Totp totp) async {
-    Storage storage = await ref.read(storageProvider.future);
-    if (!await storage.deleteTotp(totp.uuid)) {
-      return false;
+  Future<Result> deleteTotp(Totp totp) async {
+    try {
+      Storage storage = await ref.read(storageProvider.future);
+      await storage.deleteTotp(totp.uuid);
+      await ref.read(deletedTotpsProvider).markDeleted(totp.uuid);
+      List<Totp> totps = await future;
+      state = AsyncData(totps..removeWhere((currentTotp) => currentTotp.uuid == totp.uuid));
+      totp.deleteCachedImage();
+      return const ResultSuccess();
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
     }
-    await ref.read(deletedTotpsProvider).markDeleted(totp.uuid);
-    List<Totp> totps = await future;
-    state = AsyncData(totps..removeWhere((currentTotp) => currentTotp.uuid == totp.uuid));
-    totp.deleteCachedImage();
-    return true;
   }
 
   /// Changes the master password.
   /// Please consider doing a backup by passing a [backupPassword], and restore it in case of failure.
-  Future<bool> changeMasterPassword(
+  Future<Result> changeMasterPassword(
     String password, {
     String? backupPassword,
     Uint8List? salt,
     updateTotps = true,
   }) async {
-    StoredCryptoStore storedCryptoStore = ref.read(cryptoStoreProvider.notifier);
-    CryptoStore? currentCryptoStore = await storedCryptoStore.future;
-    if (currentCryptoStore == null) {
-      List<Totp> totps = await ref.read(totpRepositoryProvider.future);
-      return totps.isEmpty;
-    }
-    Storage storage = await ref.read(storageProvider.future);
-    CryptoStore? newCryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
-    if (newCryptoStore == null) {
-      return false;
-    }
-    if (backupPassword != null) {
-      Backup? backup = await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
-      if (backup == null) {
-        return false;
+    try {
+      StoredCryptoStore storedCryptoStore = ref.read(cryptoStoreProvider.notifier);
+      CryptoStore? currentCryptoStore = await storedCryptoStore.future;
+      if (currentCryptoStore == null) {
+        List<Totp> totps = await ref.read(totpRepositoryProvider.future);
+        return totps.isEmpty ? const ResultSuccess() : ResultError();
       }
-    }
-    if (updateTotps) {
-      List<Totp> totps = await future;
-      List<Totp> totpsEncryptedWithNewKey = [];
-      for (Totp totp in totps) {
-        DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newCryptoStore);
-        if (decryptedTotp == null) {
-          return false;
+      Storage storage = await ref.read(storageProvider.future);
+      CryptoStore? newCryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
+      if (newCryptoStore == null) {
+        throw _NoCryptoStoreException();
+      }
+      if (backupPassword != null) {
+        Result<Backup> backupResult = await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
+        if (backupResult is! ResultSuccess) {
+          return backupResult.to((value) => null);
         }
-        totpsEncryptedWithNewKey.add(decryptedTotp);
       }
-      await storage.clearTotps();
-      await storedCryptoStore.saveAndUse(newCryptoStore);
-      await storage.addTotps(totpsEncryptedWithNewKey);
-    } else {
-      await storedCryptoStore.saveAndUse(newCryptoStore);
+      if (updateTotps) {
+        List<Totp> totps = await future;
+        List<Totp> totpsEncryptedWithNewKey = [];
+        for (Totp totp in totps) {
+          DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newCryptoStore);
+          if (decryptedTotp == null) {
+            throw _EncryptionKeyChangeError();
+          }
+          totpsEncryptedWithNewKey.add(decryptedTotp);
+        }
+        await storage.clearTotps();
+        await storedCryptoStore.saveAndUse(newCryptoStore);
+        await storage.addTotps(totpsEncryptedWithNewKey);
+      } else {
+        await storedCryptoStore.saveAndUse(newCryptoStore);
+      }
+      return const ResultSuccess();
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
     }
-    return true;
   }
 }
 
@@ -208,7 +242,7 @@ class TotpLimitReachedNotifier extends AutoDisposeAsyncNotifier<bool> {
     StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
     ContributorPlanState contributorPlanState = await ref.watch(contributorPlanStateProvider.future);
     List<Totp> totps = await ref.watch(totpRepositoryProvider.future);
-    return willExceedIAddMore(
+    return willExceedIfAddMore(
       count: 0,
       storageType: storageType,
       contributorPlanState: contributorPlanState,
@@ -217,7 +251,7 @@ class TotpLimitReachedNotifier extends AutoDisposeAsyncNotifier<bool> {
   }
 
   /// Returns whether the limit will be exceeded if one more TOTP is added.
-  Future<bool> willExceedIAddMore({
+  Future<bool> willExceedIfAddMore({
     int count = 1,
     StorageType? storageType,
     ContributorPlanState? contributorPlanState,
@@ -234,4 +268,16 @@ class TotpLimitReachedNotifier extends AutoDisposeAsyncNotifier<bool> {
     totps ??= await ref.read(totpRepositoryProvider.future);
     return totps!.length + count >= App.freeTotpsLimit;
   }
+}
+
+/// Thrown when we can't get the current crypto store instance.
+class _NoCryptoStoreException implements Exception {
+  @override
+  String toString() => 'Failed to get current crypto store';
+}
+
+/// Thrown when we can't change the encryption key of a TOTP.
+class _EncryptionKeyChangeError implements Exception {
+  @override
+  String toString() => 'Failed to change encryption key';
 }

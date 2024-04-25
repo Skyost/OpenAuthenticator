@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/state.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/route/locked.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
@@ -47,8 +48,8 @@ class _UnlockChallengeRouteWidgetState extends ConsumerState<UnlockChallengeRout
 
   /// Tries to unlock the app.
   Future<void> tryUnlock() async {
-    bool result = await ref.read(appUnlockStateProvider.notifier).tryUnlock(context);
-    if (!result && mounted) {
+    Result result = await ref.read(appUnlockStateProvider.notifier).unlock(context);
+    if (result is ResultError && mounted) {
       SnackBarIcon.showErrorSnackBar(context, text: translations.error.appUnlock);
     }
   }

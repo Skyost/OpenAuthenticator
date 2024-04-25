@@ -11,13 +11,13 @@ import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/form_label.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/logo_search/dialog.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 import 'package:open_authenticator/widgets/list/expand_list_tile.dart';
 import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/totp/image.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -92,8 +92,12 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
                   if (!confirmation) {
                     return;
                   }
-                  if (!await ref.read(totpRepositoryProvider.notifier).deleteTotp(widget.totp!) && context.mounted) {
-                    SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
+                  Result result = await ref.read(totpRepositoryProvider.notifier).deleteTotp(widget.totp!);
+                  if (context.mounted) {
+                    context.showSnackBarForResult(result);
+                    if (result is ResultSuccess) {
+                      Navigator.pop(context);
+                    }
                   }
                 },
                 icon: const Icon(Icons.delete),
@@ -197,19 +201,14 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
                     return;
                   }
                   setState(() => enabled = false);
-                  _TotpEditResult editResult = await (widget.add ? addTotp() : updateTotp());
+                  Result editResult = await (widget.add ? addTotp() : updateTotp());
                   if (!context.mounted) {
                     return;
                   }
                   setState(() => enabled = true);
-                  switch (editResult) {
-                    case _TotpEditResult.success:
-                      SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
-                      Navigator.pop(context);
-                    case _TotpEditResult.error:
-                      SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
-                    case _TotpEditResult.cancelled:
-                      return;
+                  context.showSnackBarForResult(editResult);
+                  if (editResult is ResultSuccess) {
+                    Navigator.pop(context);
                   }
                 }
               : null,
@@ -344,8 +343,8 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   }
 
   /// Adds the TOTP to the repository.
-  Future<_TotpEditResult> addTotp() async {
-    bool willExceed = await ref.read(totpLimitReachedProvider.notifier).willExceedIAddMore(count: 1);
+  Future<Result> addTotp() async {
+    bool willExceed = await ref.read(totpLimitReachedProvider.notifier).willExceedIfAddMore(count: 1);
     bool canProceed = !willExceed;
     if (willExceed) {
       if (mounted) {
@@ -393,7 +392,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
       }
     }
     if (!canProceed) {
-      return _TotpEditResult.cancelled;
+      return const ResultCancelled();
     }
     DecryptedTotp? totp = await DecryptedTotp.create(
       cryptoStore: await ref.read(cryptoStoreProvider.future),
@@ -406,37 +405,21 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
       imageUrl: imageUrl,
     );
     if (totp == null) {
-      return _TotpEditResult.error;
+      return ResultError();
     }
-    bool result = await ref.read(totpRepositoryProvider.notifier).addTotp(totp);
-    return result ? _TotpEditResult.success : _TotpEditResult.error;
+    return await ref.read(totpRepositoryProvider.notifier).addTotp(totp);
   }
 
   /// Updates the TOTP in the repository.
-  Future<_TotpEditResult> updateTotp() async {
-    bool result = await ref.read(totpRepositoryProvider.notifier).updateTotp(
-          widget.totp!.uuid,
-          widget.totp!.copyWith(
-            label: label,
-            issuer: issuer,
-            algorithm: algorithm,
-            digits: digits,
-            validity: validity,
-            imageUrl: imageUrl,
-          ),
-        );
-    return result ? _TotpEditResult.success : _TotpEditResult.error;
-  }
-}
-
-/// The TOTP edit result.
-enum _TotpEditResult {
-  /// When the edit is a success.
-  success,
-
-  /// When there is an error editing the TOTP.
-  error,
-
-  /// When the edit has been cancelled.
-  cancelled;
+  Future<Result> updateTotp() => ref.read(totpRepositoryProvider.notifier).updateTotp(
+    widget.totp!.uuid,
+    widget.totp!.copyWith(
+      label: label,
+      issuer: issuer,
+      algorithm: algorithm,
+      digits: digits,
+      validity: validity,
+      imageUrl: imageUrl,
+    ),
+  );
 }

@@ -6,13 +6,14 @@ import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 
 /// Allows to unlock the app.
 sealed class AppUnlockMethod {
   /// Tries to unlock the app.
   /// [context] is required so that we can interact with the user.
-  Future<bool> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason);
+  Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason);
 
   /// Triggered when this method has been chosen has the app unlock method.
   /// [unlockResult] is the result of the [tryUnlock] call.
@@ -25,50 +26,56 @@ sealed class AppUnlockMethod {
 /// Local authentication.
 class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
   @override
-  Future<bool> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) async {
+  Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) async {
     String message = translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.';
     LocalAuthentication auth = LocalAuthentication();
-    return !(await auth.isDeviceSupported()) || await auth.authenticate(localizedReason: message);
+    if (!(await auth.isDeviceSupported())) {
+      return ResultError();
+    }
+    return (await auth.authenticate(localizedReason: message)) ? const ResultSuccess() : const ResultCancelled();
   }
+
+  /// Returns whether this unlock method is supported;
+  static Future<bool> isSupported() => LocalAuthentication().isDeviceSupported();
 }
 
 /// Enter master password.
 class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
   @override
-  Future<bool> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) async {
+  Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) async {
     if (reason != UnlockReason.openApp) {
       List<Totp> totps = await ref.read(totpRepositoryProvider.future);
       if (totps.isEmpty) {
-        return true;
+        return const ResultSuccess();
       }
     }
     if (!context.mounted) {
-      return false;
+      return const ResultCancelled();
     }
     String? password = await MasterPasswordInputDialog.prompt(
       context,
       message: translations.appUnlock.masterPasswordDialogMessage,
     );
     if (password == null) {
-      return false;
+      return const ResultCancelled();
     }
     if (reason == UnlockReason.openApp) {
       Storage storage = await ref.read(storageProvider.future);
       CryptoStore? cryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
       if (cryptoStore == null) {
-        return false;
+        return ResultError();
       }
       if (!await ref.read(totpRepositoryProvider.notifier).tryDecryptAll(cryptoStore)) {
-        return false;
+        return ResultError();
       }
       ref.read(cryptoStoreProvider.notifier).use(cryptoStore);
     } else {
       StoredCryptoStore currentCryptoStore = ref.read(cryptoStoreProvider.notifier);
       if (!(await currentCryptoStore.checkPasswordValidity(password))) {
-        return false;
+        return ResultError();
       }
     }
-    return true;
+    return const ResultSuccess();
   }
 
   @override
@@ -81,7 +88,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
 /// No unlock.
 class NoneAppUnlockMethod extends AppUnlockMethod {
   @override
-  Future<bool> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) => Future.value(true);
+  Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) => Future.value(const ResultSuccess());
 }
 
 /// Configures the unlock reason for [UnlockChallenge]s.

@@ -23,7 +23,7 @@ class ContributorPlanUtils {
           return false;
         }
         PackageType? packageType = await _ContributorPlanBillingPickerDialog.ask(context);
-        Duration? timeout = await contributorPlan.getPurchaseTimeout();
+        Duration? timeout = contributorPlan.getPurchaseTimeout();
         if (packageType == null || !context.mounted) {
           return false;
         }

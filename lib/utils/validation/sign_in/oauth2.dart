@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 
@@ -15,7 +16,7 @@ mixin OAuth2SignIn {
   String get name;
 
   /// Tries to sign in the user.
-  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context);
+  Future<Result<OAuth2Response>> signIn(BuildContext context);
 
   /// The scopes to request.
   List<String> get scopes => [];
@@ -48,7 +49,7 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
         );
 
   @override
-  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context) async {
+  Future<Result<OAuth2Response>> signIn(BuildContext context) async {
     _state = generateRandomString();
     await start();
     return await completer!.future;
@@ -56,25 +57,25 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
 
   @override
   @protected
-  FutureOr<ValidationResult<OAuth2Response>> validate(HttpRequest request) {
+  FutureOr<Result<OAuth2Response>> validate(HttpRequest request) {
     Map<String, String> params = request.uri.queryParameters;
     if (params.containsKey('error')) {
-      return ValidationError(
-        exception: ValidationException(code: params['error']),
+      return ResultError(
+        exception: ValidationException(code: params['error'] ?? ValidationException.kErrorGeneric),
       );
     }
     return validateResponse(params);
   }
 
   /// Validates the response using the [params].
-  ValidationResult<OAuth2Response> validateResponse(Map<String, String> params) {
+  Result<OAuth2Response> validateResponse(Map<String, String> params) {
     OAuth2Response response = createResponseFromParams(params);
     if (response.accessToken == null && response.idToken == null) {
-      return ValidationError(
+      return ResultError(
         exception: ValidationException(code: ValidationException.kErrorNoToken),
       );
     }
-    return ValidationSuccess<OAuth2Response>(object: response);
+    return ResultSuccess<OAuth2Response>(value: response);
   }
 
   /// Creates a new OAuth2Response instance from the given params.
@@ -100,15 +101,13 @@ mixin OAuth2SignInNonce on OAuth2SignInServer {
   FutureOr<void> generateNonce() => nonce = generateRandomString();
 
   @override
-  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context) async {
+  Future<Result<OAuth2Response>> signIn(BuildContext context) async {
     await generateNonce();
     if (context.mounted) {
       return await super.signIn(context);
     }
-    return ValidationError(
-      exception: ValidationException(
-        code: ValidationException.kErrorGeneric,
-      ),
+    return ResultError(
+      exception: ValidationException(),
     );
   }
 

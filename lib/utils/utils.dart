@@ -1,5 +1,6 @@
 import 'dart:math';
-import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart';
 
 /// Contains some useful iterable methods.
 extension IterableUtils<T> on Iterable<T> {
@@ -9,6 +10,14 @@ extension IterableUtils<T> on Iterable<T> {
       if (test(element)) return element;
     }
     return null;
+  }
+}
+
+/// Handles an exception.
+void handleException(Object? ex, StackTrace? stacktrace) {
+  if (kDebugMode) {
+    print(ex);
+    print(stacktrace);
   }
 }
 

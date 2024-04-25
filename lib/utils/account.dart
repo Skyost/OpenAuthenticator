@@ -1,9 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
-import 'package:open_authenticator/model/authentication/providers/result.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/authentication_provider_picker.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
@@ -60,29 +59,21 @@ class AccountUtils {
     BuildContext context,
     WidgetRef ref,
     T provider, {
-    required Future<FirebaseAuthenticationResult> Function(BuildContext, T) action,
+    required Future<Result<String>> Function(BuildContext, T) action,
     String? waitingDialogMessage,
     String? timeoutMessage,
   }) async {
-    FirebaseAuthenticationResult result;
-    try {
-      if (provider.showLoadingDialog) {
-        result = await showWaitingOverlay(
-          context,
-          future: action(context, provider),
-          message: waitingDialogMessage,
-          timeout: provider is FallbackAuthenticationProvider && provider.shouldFallback ? provider.fallbackTimeout : null,
-          timeoutMessage: timeoutMessage,
-        );
-      } else {
-        result = await action(context, provider);
-      }
-    } catch (ex, stacktrace) {
-      result = FirebaseAuthenticationError(ex is Exception ? ex : null);
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
+    Result<String> result;
+    if (provider.showLoadingDialog) {
+      result = await showWaitingOverlay(
+        context,
+        future: action(context, provider),
+        message: waitingDialogMessage,
+        timeout: provider is FallbackAuthenticationProvider && provider.shouldFallback ? provider.fallbackTimeout : null,
+        timeoutMessage: timeoutMessage,
+      );
+    } else {
+      result = await action(context, provider);
     }
     if (context.mounted) {
       handleAuthenticationResult(
@@ -100,18 +91,18 @@ class AccountUtils {
     BuildContext context,
     WidgetRef ref,
     FirebaseAuthenticationProvider provider,
-    FirebaseAuthenticationResult result, {
+    Result<String> result, {
     bool handleDifferentCredentialError = false,
   }) async {
     switch (result) {
-      case FirebaseAuthenticationSuccess():
+      case ResultSuccess():
         if (provider is ConfirmationProvider) {
           SnackBarIcon.showSuccessSnackBar(context, text: translations.authentication.logIn.successNeedConfirmation);
         } else {
           SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
         }
         break;
-      case FirebaseAuthenticationCancelled(:final timedOut):
+      case ResultCancelled(:final timedOut):
         if (timedOut) {
           showAdaptiveDialog(
             context: context,
@@ -128,50 +119,62 @@ class AccountUtils {
           );
         }
         break;
-      case FirebaseAuthenticationErrorAccountExistsWithDifferentCredential():
-        if (handleDifferentCredentialError) {
-          showAdaptiveDialog(
-            context: context,
-            builder: (context) => AlertDialog.adaptive(
-              title: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.title),
-              scrollable: true,
-              content: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    trySignIn(context, ref);
-                  },
-                  child: Text(MaterialLocalizations.of(context).okButtonLabel),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-                ),
-              ],
-            ),
-          );
-        } else {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message);
+      case ResultError(:final exception):
+        if (exception is! FirebaseAuthenticationException) {
+          if (exception == null) {
+            context.showSnackBarForResult(result, retryIfError: true);
+          } else {
+            SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.firebaseException(exception: exception));
+          }
+          break;
         }
-        break;
-      case FirebaseAuthenticationErrorInvalidCredential():
-        SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.invalidCredential);
-        break;
-      case FirebaseAuthenticationErrorOperationNotAllowed():
-        SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.operationNotAllowed);
-        break;
-      case FirebaseAuthenticationErrorUserDisabled():
-        SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.userDisabled);
-        break;
-      case FirebaseAuthenticationFirebaseError(:final exception):
-        SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.firebaseException(exception: exception));
-        break;
-      case FirebaseAuthenticationError(:final exception):
-        if (exception == null) {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
-        } else {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.firebaseException(exception: exception));
+        switch (exception) {
+          case FirebaseAuthenticationErrorAccountExistsWithDifferentCredential():
+            if (handleDifferentCredentialError) {
+              showAdaptiveDialog(
+                context: context,
+                builder: (context) => AlertDialog.adaptive(
+                  title: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.title),
+                  scrollable: true,
+                  content: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        trySignIn(context, ref);
+                      },
+                      child: Text(MaterialLocalizations.of(context).okButtonLabel),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message);
+            }
+            break;
+          case FirebaseAuthenticationErrorInvalidCredential():
+            SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.invalidCredential);
+            break;
+          case FirebaseAuthenticationErrorOperationNotAllowed():
+            SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.operationNotAllowed);
+            break;
+          case FirebaseAuthenticationErrorUserDisabled():
+            SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.userDisabled);
+            break;
+          case FirebaseAuthenticationFirebaseError(:final exception):
+            SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.firebaseException(exception: exception));
+            break;
+          case FirebaseAuthenticationGenericError(:final exception):
+            if (exception == null) {
+              SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
+            } else {
+              SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.firebaseException(exception: exception));
+            }
+            break;
         }
         break;
     }

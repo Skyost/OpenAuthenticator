@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 
 /// Allows to sign in using an email link.
@@ -26,7 +27,7 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInR
   }) : super(path: 'email-link');
 
   /// Sends a sign-in link to the [email].
-  Future<ValidationResult<EmailLinkSignInResponse>> sendSignInLinkToEmailAndWaitForConfirmation() async {
+  Future<Result<EmailLinkSignInResponse>> sendSignInLinkToEmailAndWaitForConfirmation() async {
     _idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
     http.Response response = await http.post(
       Uri.https(
@@ -46,7 +47,7 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInR
       },
     );
     if (response.statusCode != 200) {
-      return ValidationError(
+      return ResultError(
         exception: ValidationException(code: _kErrorInvalidResponse),
       );
     }
@@ -55,23 +56,23 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInR
   }
 
   @override
-  FutureOr<ValidationResult<EmailLinkSignInResponse>> validate(HttpRequest request) async {
+  FutureOr<Result<EmailLinkSignInResponse>> validate(HttpRequest request) async {
     return await validateUrl(request.uri.toString());
   }
 
   /// Validates the [url] as a sign-in link.
-  FutureOr<ValidationResult<EmailLinkSignInResponse>> validateUrl(String url) async {
+  FutureOr<Result<EmailLinkSignInResponse>> validateUrl(String url) async {
     Uri? uri = Uri.tryParse(url);
     String? apiKey = uri?.queryParameters['apiKey'];
     String? oobCode = uri?.queryParameters['oobCode'];
     String? email = uri?.queryParameters['email'];
     if (apiKey == null || oobCode == null || email == null) {
-      return ValidationError(
+      return ResultError(
         exception: ValidationException(code: _kErrorInvalidUrl),
       );
     }
-    return ValidationSuccess(
-      object: EmailLinkSignInResponse(
+    return ResultSuccess(
+      value: EmailLinkSignInResponse(
         email: email,
         oobCode: oobCode,
       ),

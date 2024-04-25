@@ -13,7 +13,6 @@ import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
-import 'package:open_authenticator/model/authentication/providers/result.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
 import 'package:open_authenticator/model/storage/type.dart';
@@ -26,6 +25,7 @@ import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/route/unlock_challenge.dart';
@@ -118,7 +118,7 @@ class OpenAuthenticatorApp extends ConsumerWidget {
                 statusBarIconBrightness: Brightness.light,
                 systemNavigationBarColor: dark.background,
               ),
-              shape: const RoundedRectangleBorder(),
+              shape: const RoundedRectangleBorder(), // TODO: Will not be needed in the future : https://github.com/flutter/flutter/issues/131042#issuecomment-2075381623.
             ),
             colorScheme: dark,
             // iconButtonTheme: IconButtonThemeData(
@@ -288,7 +288,7 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
   /// Triggered when a dynamic link has been received.
   Future<void> dynamicLinkCallback(PendingDynamicLinkData link) async {
     EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
-    FirebaseAuthenticationResult result = await emailAuthenticationProvider.confirm(link.link.toString());
+    Result<String> result = await emailAuthenticationProvider.confirm(link.link.toString());
     if (!mounted) {
       return;
     }

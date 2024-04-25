@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
-import 'package:open_authenticator/model/authentication/providers/result.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/account.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
@@ -93,7 +93,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
       return;
     }
     EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
-    FirebaseAuthenticationResult result = await showWaitingOverlay(
+    Result<String> result = await showWaitingOverlay(
       context,
       future: emailAuthenticationProvider.confirm(emailLink),
       message: translations.settings.synchronization.confirmEmail.waitingDialogMessage,

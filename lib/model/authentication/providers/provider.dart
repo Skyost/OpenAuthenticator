@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/authentication/providers/apple.dart';
@@ -8,12 +8,11 @@ import 'package:open_authenticator/model/authentication/providers/email_link.dar
 import 'package:open_authenticator/model/authentication/providers/github.dart';
 import 'package:open_authenticator/model/authentication/providers/google.dart';
 import 'package:open_authenticator/model/authentication/providers/microsoft.dart';
-import 'package:open_authenticator/model/authentication/providers/result.dart';
 import 'package:open_authenticator/model/authentication/providers/twitter.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
-import 'package:open_authenticator/utils/validation/server.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 
 /// Contains all the user authentication providers.
@@ -89,24 +88,20 @@ abstract class FirebaseAuthenticationProvider extends Notifier<FirebaseAuthentic
   String get providerId;
 
   /// Log-ins the current user.
-  Future<FirebaseAuthenticationResult> signIn(BuildContext context) async {
+  Future<Result<String>> signIn(BuildContext context) async {
     try {
       return await trySignIn(context);
     } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
-      if (ex is Exception) {
-        return FirebaseAuthenticationError(ex);
-      }
+      return ResultError(
+        exception: FirebaseAuthenticationException(ex),
+        stacktrace: stacktrace,
+      );
     }
-    return FirebaseAuthenticationError();
   }
 
   /// Tries to log in.
   @protected
-  Future<FirebaseAuthenticationResult> trySignIn(BuildContext context);
+  Future<Result<String>> trySignIn(BuildContext context);
 
   /// Whether to show the loading dialog.
   bool get showLoadingDialog => true;
@@ -118,24 +113,20 @@ mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
   Future<bool> isWaitingForConfirmation() => Future.value(false);
 
   /// Confirms the log in, with the given [code], if needed.
-  Future<FirebaseAuthenticationResult> confirm(T? code) async {
+  Future<Result<String>> confirm(T? code) async {
     try {
       return await tryConfirm(code);
     } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
-      if (ex is Exception) {
-        return FirebaseAuthenticationError(ex);
-      }
+      return ResultError(
+        exception: FirebaseAuthenticationException(ex),
+        stacktrace: stacktrace,
+      );
     }
-    return FirebaseAuthenticationError();
   }
 
   /// Tries to confirm the log in, with the given [code], if needed.
   @protected
-  Future<FirebaseAuthenticationResult> tryConfirm(T? code);
+  Future<Result<String>> tryConfirm(T? code);
 
   /// Cancels the confirmation.
   Future<bool> cancelConfirmation();
@@ -145,38 +136,34 @@ mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
 mixin LinkProvider on FirebaseAuthenticationProvider {
   @override
   @protected
-  Future<FirebaseAuthenticationResult> trySignIn(BuildContext context) => tryTo(
+  Future<Result<String>> trySignIn(BuildContext context) => tryTo(
         context,
         action: FirebaseAuth.instance.signInWith,
       );
 
   /// Links the current provider.
-  Future<FirebaseAuthenticationResult> link(BuildContext context) async {
+  Future<Result<String>> link(BuildContext context) async {
     try {
       return await tryLink(context);
     } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
-      if (ex is Exception) {
-        return FirebaseAuthenticationError(ex);
-      }
+      return ResultError(
+        exception: FirebaseAuthenticationException(ex),
+        stacktrace: stacktrace,
+      );
     }
-    return FirebaseAuthenticationError();
   }
 
   /// Tries to link the current provider.
   @protected
-  Future<FirebaseAuthenticationResult> tryLink(BuildContext context) => tryTo(
+  Future<Result<String>> tryLink(BuildContext context) => tryTo(
         context,
         action: FirebaseAuth.instance.linkTo,
       );
 
   /// Tries to unlink the current provider.
-  Future<FirebaseAuthenticationResult> unlink(BuildContext context) async {
+  Future<Result<String>> unlink(BuildContext context) async {
     SignInResult result = await FirebaseAuth.instance.unlinkFrom(providerId);
-    return FirebaseAuthenticationSuccess(email: result.email);
+    return ResultSuccess(value: result.email);
   }
 
   /// Creates the default auth method instance.
@@ -184,12 +171,12 @@ mixin LinkProvider on FirebaseAuthenticationProvider {
 
   /// Tries to do the specified [credentialAction] or [providerAction].
   @protected
-  Future<FirebaseAuthenticationResult> tryTo(
+  Future<Result<String>> tryTo(
     BuildContext context, {
     required Future<SignInResult> Function(CanLinkTo) action,
   }) async {
     SignInResult result = await action(createDefaultAuthMethod(context));
-    return FirebaseAuthenticationSuccess(email: result.email);
+    return ResultSuccess(value: result.email);
   }
 }
 
@@ -212,29 +199,111 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
 
   @override
   @protected
-  Future<FirebaseAuthenticationResult> tryTo(
+  Future<Result<String>> tryTo(
     BuildContext context, {
     required Future<SignInResult> Function(CanLinkTo) action,
   }) async {
     SignInResult actionResult;
     OAuth2SignIn fallbackAuthProvider = createFallbackAuthProvider();
     if (shouldFallback) {
-      ValidationResult<OAuth2Response> result = await fallbackAuthProvider.signIn(context);
+      Result<OAuth2Response> result = await fallbackAuthProvider.signIn(context);
       if (!context.mounted) {
-        return FirebaseAuthenticationCancelled();
+        return const ResultCancelled();
       }
       switch (result) {
-        case ValidationSuccess(:final object):
-          actionResult = await action(createRestAuthMethod(context, object));
+        case ResultSuccess(:final value):
+          actionResult = await action(createRestAuthMethod(context, value));
           break;
-        case ValidationCancelled(:final timedOut):
-          return FirebaseAuthenticationCancelled(timedOut: timedOut);
-        case ValidationError(:final exception):
-          return FirebaseAuthenticationError(exception);
+        case ResultCancelled():
+          return ResultCancelled.fromAnother(result);
+        case ResultError(:final exception, :final stacktrace):
+          return ResultError(
+            exception: FirebaseAuthenticationException(exception),
+            stacktrace: stacktrace,
+          );
       }
     } else {
       actionResult = await action(createDefaultAuthMethod(context, scopes: fallbackAuthProvider.scopes));
     }
-    return FirebaseAuthenticationSuccess(email: actionResult.email);
+    return ResultSuccess(value: actionResult.email);
   }
+}
+
+/// Thrown when there is an error authenticating the user.
+sealed class FirebaseAuthenticationException implements Exception {
+  /// The exception.
+  final Object? exception;
+
+  /// Creates a new Firebase authentication result error instance.
+  FirebaseAuthenticationException._(this.exception);
+
+  /// Creates a new error instance from the given [exception].
+  factory FirebaseAuthenticationException([Object? exception]) {
+    if (exception is! FirebaseAuthException) {
+      return FirebaseAuthenticationGenericError._(exception);
+    }
+    switch (exception.code) {
+      case FirebaseAuthenticationErrorAccountExistsWithDifferentCredential.code:
+        return FirebaseAuthenticationErrorAccountExistsWithDifferentCredential._(exception);
+      case FirebaseAuthenticationErrorInvalidCredential.code:
+        return FirebaseAuthenticationErrorInvalidCredential._(exception);
+      case FirebaseAuthenticationErrorOperationNotAllowed.code:
+        return FirebaseAuthenticationErrorOperationNotAllowed._(exception);
+      case FirebaseAuthenticationErrorUserDisabled.code:
+        return FirebaseAuthenticationErrorUserDisabled._(exception);
+      default:
+        return FirebaseAuthenticationFirebaseError._(exception);
+    }
+  }
+}
+
+/// Returned when there is an error.
+class FirebaseAuthenticationGenericError extends FirebaseAuthenticationException {
+  /// Creates a new Firebase authentication genetic error instance.
+  FirebaseAuthenticationGenericError._(super.exception) : super._();
+}
+
+/// Returned when there is a Firebase error.
+class FirebaseAuthenticationFirebaseError extends FirebaseAuthenticationException {
+  /// Creates a new Firebase authentication Firebase error instance.
+  FirebaseAuthenticationFirebaseError._(FirebaseAuthException super.exception) : super._();
+
+  @override
+  FirebaseAuthException get exception => super.exception as FirebaseAuthException;
+}
+
+/// Returned when "account-exists-with-different-credential" has been triggered.
+class FirebaseAuthenticationErrorAccountExistsWithDifferentCredential extends FirebaseAuthenticationFirebaseError {
+  /// The error code.
+  static const String code = 'account-exists-with-different-credentials';
+
+  /// Creates a new Firebase authentication result error "account-exists-with-different-credential" instance.
+  FirebaseAuthenticationErrorAccountExistsWithDifferentCredential._(super.exception) : super._();
+}
+
+/// Returned when "invalid-credential" has been triggered.
+class FirebaseAuthenticationErrorInvalidCredential extends FirebaseAuthenticationFirebaseError {
+  /// The error code.
+  static const String code = 'invalid-credential';
+
+  /// Creates a new Firebase authentication result error "invalid-credential" instance.
+  FirebaseAuthenticationErrorInvalidCredential._(super.exception) : super._();
+}
+
+/// Returned when "operation-not-allowed" has been triggered.
+class FirebaseAuthenticationErrorOperationNotAllowed extends FirebaseAuthenticationFirebaseError {
+  /// The error code.
+  static const String code = 'operation-not-allowed';
+
+  /// Creates a new Firebase authentication result error "operation-not-allowed" instance.
+  FirebaseAuthenticationErrorOperationNotAllowed._(super.exception) : super._();
+}
+
+/// Returned when "user-disabled" has been triggered.
+class FirebaseAuthenticationErrorUserDisabled extends FirebaseAuthenticationFirebaseError {
+  /// The error code.
+  static const String code = 'user-disabled';
+
+  /// Creates a new Firebase authentication result error "user-disabled" instance.
+  FirebaseAuthenticationErrorUserDisabled._(super.exception) : super._();
 }

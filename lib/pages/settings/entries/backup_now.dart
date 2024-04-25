@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backup.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
 
 /// Allows the user to backup everything now.
 class BackupNowSettingsEntryWidget extends ConsumerWidget {
@@ -28,17 +28,12 @@ class BackupNowSettingsEntryWidget extends ConsumerWidget {
           if (password == null || !context.mounted) {
             return;
           }
-          Backup? result = await showWaitingOverlay(
+          Result<Backup> result = await showWaitingOverlay(
             context,
             future: ref.read(backupStoreProvider.notifier).doBackup(password),
           );
-          if (!context.mounted) {
-            return;
-          }
-          if (result == null) {
-            SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
-          } else {
-            SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
+          if (context.mounted) {
+            context.showSnackBarForResult(result);
           }
         },
       );

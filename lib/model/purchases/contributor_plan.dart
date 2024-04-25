@@ -11,8 +11,8 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 /// The RevenueCat client provider.
-final revenueCatClientProvider = FutureProvider((ref) async {
-  FirebaseAuthenticationState authenticationState = await ref.watch(firebaseAuthenticationProvider);
+final revenueCatClientProvider = Provider((ref) {
+  FirebaseAuthenticationState authenticationState = ref.watch(firebaseAuthenticationProvider);
   if (authenticationState is! FirebaseAuthenticationStateLoggedIn) {
     return null;
   }
@@ -27,9 +27,7 @@ final revenueCatClientProvider = FutureProvider((ref) async {
     return null;
   }
   configuration = configuration..appUserID = authenticationState.user.uid;
-  RevenueCatClient client = RevenueCatClient.fromPlatform(purchasesConfiguration: configuration);
-  await client.initialize();
-  return client;
+  return RevenueCatClient.fromPlatform(purchasesConfiguration: configuration);
 });
 
 /// The Contributor Plan provider.
@@ -37,30 +35,22 @@ final contributorPlanStateProvider = AsyncNotifierProvider<ContributorPlan, Cont
 
 /// Allows to read and change the Contributor Plan state.
 class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
-  /// The Contributor Plan entitlement id.
-  static const String _kEntitlementId = kDebugMode ? 'contributor_plan_test' : 'contributor_plan';
-
   @override
   FutureOr<ContributorPlanState> build() async {
-    RevenueCatClient? client = await ref.watch(revenueCatClientProvider.future);
+    RevenueCatClient? client = await ref.watch(revenueCatClientProvider);
     if (client == null) {
       return ContributorPlanState.impossible;
     }
-    return await client.hasEntitlement(_kEntitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive;
+    await client.initialize();
+    return await client.hasEntitlement(AppContributorPlan.entitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive;
   }
 
   /// Returns the purchase timeout.
-  Future<Duration?> getPurchaseTimeout() async {
-    RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
-    if (revenueCatClient == null) {
-      return null;
-    }
-    return revenueCatClient.purchaseTimeout;
-  }
+  Duration? getPurchaseTimeout() => ref.read(revenueCatClientProvider)?.purchaseTimeout;
 
   /// Returns the prices of the contributor plan.
   Future<Map<PackageType, String>> getPrices() async {
-    RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
+    RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
     if (revenueCatClient == null) {
       return {};
     }
@@ -69,20 +59,20 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
 
   /// Tries to restore the subscription state.
   Future<bool> restoreState() async {
-    RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
+    RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
     if (revenueCatClient == null || !(await revenueCatClient.restorePurchases())) {
       return false;
     }
-    state = AsyncData(await revenueCatClient.hasEntitlement(_kEntitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive);
+    state = AsyncData(await revenueCatClient.hasEntitlement(AppContributorPlan.entitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive);
     return true;
   }
 
   /// Presents the paywall.
   Future<PaywallResult> presentPaywall() async {
     try {
-      RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
+      RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
       PaywallResult paywallResult = await revenueCatClient!.presentPaywall(Purchasable.contributorPlan);
-      if ((paywallResult == PaywallResult.purchased || paywallResult == PaywallResult.restored) && await revenueCatClient.hasEntitlement(_kEntitlementId)) {
+      if ((paywallResult == PaywallResult.purchased || paywallResult == PaywallResult.restored) && await revenueCatClient.hasEntitlement(AppContributorPlan.entitlementId)) {
         state = const AsyncData(ContributorPlanState.active);
         return paywallResult;
       }
@@ -98,9 +88,9 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
   /// Purchases the given item.
   Future<bool> purchaseManually(PackageType packageType) async {
     try {
-      RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
+      RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
       List<String>? entitlements = await revenueCatClient?.purchaseManually(Purchasable.contributorPlan, packageType);
-      if (entitlements != null && entitlements.contains(_kEntitlementId)) {
+      if (entitlements != null && entitlements.contains(AppContributorPlan.entitlementId)) {
         state = const AsyncData(ContributorPlanState.active);
         return true;
       }

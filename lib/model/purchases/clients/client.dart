@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/purchases/clients/method_channel.dart';
 import 'package:open_authenticator/model/purchases/clients/rest.dart';
 import 'package:open_authenticator/utils/platform.dart';
@@ -63,15 +63,9 @@ abstract class RevenueCatClient {
 enum Purchasable {
   /// Allows to subscribe to the Contributor Plan.
   contributorPlan(
-    offeringId: kDebugMode ? 'contributor_plan_test' : 'contributor_plan',
-    stripeBuyUrls: {
-      PackageType.annual: kDebugMode ? 'test_14kbLD3PN2gFgQE001' : 'cN2eWD4Khfkxh2MdQT',
-      PackageType.monthly: kDebugMode ? 'test_28og1T8639J7cAoeUU' : 'aEU8yfekR6O1dQA8wy',
-    },
-    stripePrices: {
-      PackageType.annual: kDebugMode ? 'price_1OxUmHA6p1nUn9O0Jxqpx3xN' : 'price_1P2UzNA6p1nUn9O0Cnm3FUpe',
-      PackageType.monthly: kDebugMode ? 'price_1OxH1yA6p1nUn9O04XyDgF76' : 'price_1P2V0EA6p1nUn9O0DgwzkTfj',
-    },
+    offeringId: AppContributorPlan.offeringId,
+    stripeBuyUrls: AppContributorPlan.stripeBuyUrls,
+    stripePrices: AppContributorPlan.stripePrices,
   );
 
   /// The offering ID.

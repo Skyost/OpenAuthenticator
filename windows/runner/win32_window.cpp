@@ -123,6 +123,30 @@ Win32Window::~Win32Window() {
 bool Win32Window::Create(const std::wstring& title,
                          const Point& origin,
                          const Size& size) {
+  HANDLE mutex = CreateMutex(NULL, TRUE, L"app.openauthenticator");
+  HWND handle = FindWindow(NULL, title.c_str());
+
+  if (GetLastError() == ERROR_ALREADY_EXISTS) {
+    WINDOWPLACEMENT place = {sizeof(WINDOWPLACEMENT)};
+    GetWindowPlacement(handle, &place);
+    switch (place.showCmd) {
+      case SW_SHOWMAXIMIZED:
+        ShowWindow(handle, SW_SHOWMAXIMIZED);
+        break;
+      case SW_SHOWMINIMIZED:
+        ShowWindow(handle, SW_RESTORE);
+        break;
+      default:
+        ShowWindow(handle, SW_NORMAL);
+        break;
+    }
+    SetWindowPos(0, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOSIZE | SWP_NOMOVE);
+    SetForegroundWindow(handle);
+    return 0;
+  }
+
+  ReleaseMutex(mutex);
+
   Destroy();
 
   const wchar_t* window_class =

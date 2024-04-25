@@ -6,10 +6,10 @@ import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/utils/form_label.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
 import 'package:open_authenticator/widgets/form/master_password_form.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
 
 /// Allows to change the user master password.
 class ChangeMasterPasswordSettingsEntryWidget extends ConsumerWidget {
@@ -41,17 +41,12 @@ class ChangeMasterPasswordSettingsEntryWidget extends ConsumerWidget {
         if (result == null || result.newPassword == null || !context.mounted) {
           return;
         }
-        bool changeResult = await showWaitingOverlay(
+        Result changeResult = await showWaitingOverlay(
           context,
           future: ref.read(totpRepositoryProvider.notifier).changeMasterPassword(result.newPassword!, backupPassword: result.backupPassword),
         );
-        if (!context.mounted) {
-          return;
-        }
-        if (changeResult) {
-          SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
-        } else {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
+        if (context.mounted) {
+          context.showSnackBarForResult(changeResult);
         }
       },
     );

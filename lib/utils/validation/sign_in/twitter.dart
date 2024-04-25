@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/utils/pkce.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 
@@ -22,15 +23,13 @@ class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
         );
 
   @override
-  Future<ValidationResult<OAuth2Response>> signIn(BuildContext context) async {
+  Future<Result<OAuth2Response>> signIn(BuildContext context) async {
     pkcePair = await PkcePair.generate();
     if (context.mounted) {
       return await super.signIn(context);
     }
-    return ValidationError(
-      exception: ValidationException(
-        code: ValidationException.kErrorGeneric,
-      ),
+    return ResultError(
+      exception: ValidationException(),
     );
   }
 
@@ -55,13 +54,13 @@ class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
       };
 
   @override
-  FutureOr<ValidationResult<OAuth2Response>> validate(HttpRequest request) async {
+  FutureOr<Result<OAuth2Response>> validate(HttpRequest request) async {
     Map<String, List<String>> parameters = request.requestedUri.queryParametersAll;
     if (!parameters.containsKey('code') || !parameters.containsKey('state')) {
       return await super.validate(request);
     }
     if (!validateState(parameters)) {
-      return ValidationError(
+      return ResultError(
         exception: ValidationException(code: ValidationException.kErrorInvalidState),
       );
     }
@@ -79,7 +78,7 @@ class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
       },
     );
     if (response.statusCode != 200) {
-      return ValidationError(
+      return ResultError(
         exception: ValidationException(
           code: ValidationException.kErrorInvalidResponse,
         ),

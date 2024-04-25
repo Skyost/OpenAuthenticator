@@ -23,18 +23,21 @@ class CacheTotpPicturesSettingsEntry extends SettingsEntry<bool> {
 
   @override
   Future<void> changeValue(bool value) async {
-    await super.changeValue(value);
-    if (value) {
-      List<Totp> totps = await ref.read(totpRepositoryProvider.future);
-      for (Totp totp in totps) {
-        await totp.cacheImage();
-      }
-    } else {
-      Directory cache = await TotpImageCache._getTotpImagesDirectory();
-      if (await cache.exists()) {
-        await cache.delete(recursive: true);
+    if (value != state.valueOrNull) {
+      state = const AsyncLoading();
+      if (value) {
+        List<Totp> totps = await ref.read(totpRepositoryProvider.future);
+        for (Totp totp in totps) {
+          await totp.cacheImage();
+        }
+      } else {
+        Directory cache = await TotpImageCache._getTotpImagesDirectory();
+        if (await cache.exists()) {
+          await cache.delete(recursive: true);
+        }
       }
     }
+    await super.changeValue(value);
   }
 }
 

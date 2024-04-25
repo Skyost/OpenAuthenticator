@@ -10,6 +10,7 @@ import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
@@ -141,7 +142,7 @@ class TotpWidget extends ConsumerWidget {
     if (!confirmation) {
       return;
     }
-    if (!await ref.read(totpRepositoryProvider.notifier).deleteTotp(totp) && context.mounted) {
+    if ((await ref.read(totpRepositoryProvider.notifier).deleteTotp(totp)) is ResultError && context.mounted) {
       SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
     }
   }

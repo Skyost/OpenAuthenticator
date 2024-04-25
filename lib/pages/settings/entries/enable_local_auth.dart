@@ -18,6 +18,17 @@ class EnableLocalAuthSettingsEntryWidget extends CheckboxSettingsEntryWidget<App
         );
 
   @override
+  Widget build(BuildContext context, WidgetRef ref) => FutureBuilder(
+    future: LocalAuthenticationAppUnlockMethod.isSupported(),
+    builder: (context, snapshot) {
+      if (snapshot.data == null) {
+        return createListTile(context, ref, enabled: false);
+      }
+      return snapshot.data == true ? super.build(context, ref) : const SizedBox.shrink();
+    },
+  );
+
+  @override
   Future<void> changeValue(BuildContext context, WidgetRef ref, bool newValue) async {
     AppUnlockMethod newMethod = newValue ? LocalAuthenticationAppUnlockMethod() : NoneAppUnlockMethod();
     ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValueIfUnlockSucceed(newMethod, context);

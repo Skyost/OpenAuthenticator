@@ -161,6 +161,7 @@ class CryptoStore {
   }
 
   /// Decrypts the given bytes.
+  /// Returns `null` if not possible.
   Future<String?> decrypt(Uint8List encryptedData) async {
     try {
       Uint8List initializationVector = encryptedData.sublist(0, _initializationVectorLength);

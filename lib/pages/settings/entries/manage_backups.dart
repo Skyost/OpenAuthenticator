@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
 
 /// Allows the user to restore a backup.
 class ManageBackupSettingsEntryWidget extends ConsumerWidget {
@@ -113,19 +113,14 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
           if (password == null || !mounted) {
             return;
           }
-          bool result = await showWaitingOverlay(
+          Result result = await showWaitingOverlay(
             context,
             future: backup.restore(password),
           );
-          if (!mounted) {
-            return;
+          if (mounted) {
+            context.showSnackBarForResult(result);
+            Navigator.pop(context);
           }
-          if (result) {
-            SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
-          } else {
-            SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
-          }
-          Navigator.pop(context);
         },
         icon: const Icon(Icons.upload),
       );
@@ -140,18 +135,20 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
     if (!result) {
       return;
     }
-    result = await backup.delete();
-    if (!mounted) {
-      return;
-    }
-    if (result) {
-      SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
-      List<Backup> backups = await ref.read(backupStoreProvider.future);
-      if (backups.isEmpty && mounted) {
-        Navigator.pop(context);
+    Result deleteResult = await backup.delete();
+    if (mounted) {
+      context.showSnackBarForResult(deleteResult);
+      if (deleteResult is ResultSuccess) {
+        await closeIfNoRemainingBackup();
       }
-    } else {
-      SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
+    }
+  }
+
+  /// Closes this dialog if there is no remaining backup.
+  Future<void> closeIfNoRemainingBackup() async {
+    List<Backup> backups = await ref.read(backupStoreProvider.future);
+    if (backups.isEmpty && mounted) {
+      Navigator.pop(context);
     }
   }
 }

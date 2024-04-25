@@ -61,46 +61,28 @@ class LocalStorage extends _$LocalStorage with Storage {
   StorageType get type => StorageType.local;
 
   @override
-  Future<bool> addTotp(Totp totp) async {
-    await into(totps).insert(totp.asDriftTotp);
-    return true;
-  }
+  Future<void> addTotp(Totp totp) => into(totps).insert(totp.asDriftTotp);
 
   @override
-  Future<bool> addTotps(List<Totp> totps) async {
-    await batch((batch) {
-      batch.insertAll(
-        this.totps,
-        totps.map((totp) => totp.asDriftTotp),
-        mode: InsertMode.insertOrReplace,
-      );
-    });
-    return true;
-  }
+  Future<void> addTotps(List<Totp> totps) => batch((batch) {
+        batch.insertAll(
+          this.totps,
+          totps.map((totp) => totp.asDriftTotp),
+          mode: InsertMode.insertOrReplace,
+        );
+      });
 
   @override
-  Future<bool> deleteTotp(String uuid) async {
-    await (delete(totps)..where((totp) => totp.uuid.isValue(uuid))).go();
-    return true;
-  }
+  Future<void> deleteTotp(String uuid) => (delete(totps)..where((totp) => totp.uuid.isValue(uuid))).go();
 
   @override
-  Future<bool> deleteTotps(List<String> uuids) async {
-    await (delete(totps)..where((totp) => totp.uuid.isIn(uuids))).go();
-    return true;
-  }
+  Future<void> deleteTotps(List<String> uuids) => (delete(totps)..where((totp) => totp.uuid.isIn(uuids))).go();
 
   @override
-  Future<bool> clearTotps() async {
-    await (delete(totps)).go();
-    return true;
-  }
+  Future<void> clearTotps() => (delete(totps)).go();
 
   @override
-  Future<bool> updateTotp(String uuid, Totp totp) async {
-    await update(totps).replace(totp.asDriftTotp);
-    return true;
-  }
+  Future<bool> updateTotp(String uuid, Totp totp) => update(totps).replace(totp.asDriftTotp);
 
   @override
   Future<Totp?> getTotp(String uuid) async {
@@ -138,10 +120,7 @@ class LocalStorage extends _$LocalStorage with Storage {
   Future<Uint8List?> readSecretsSalt() => StoredCryptoStore.readSaltFromLocalStorage();
 
   @override
-  Future<bool> saveSecretsSalt(Uint8List salt) async {
-    await StoredCryptoStore.saveSaltToLocalStorage(salt);
-    return true;
-  }
+  Future<void> saveSecretsSalt(Uint8List salt) => StoredCryptoStore.saveSaltToLocalStorage(salt);
 
   @override
   Future<void> onStorageTypeChanged({bool close = false}) async {

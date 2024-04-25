@@ -35,7 +35,7 @@ class TitleWidget extends StatelessWidget {
           ],
         ],
       ),
-      style: (textStyle ?? TextStyle()).copyWith(height: 1.2),
+      style: textStyle,
       textAlign: textAlign,
     );
   }
@@ -68,9 +68,9 @@ class TitleWidget extends StatelessWidget {
             text,
             style: (textStyle ?? const TextStyle()).copyWith(
               fontWeight: FontWeight.bold,
-              height: 1.2,
             ),
           ),
         ),
+        alignment: PlaceholderAlignment.middle,
       );
 }

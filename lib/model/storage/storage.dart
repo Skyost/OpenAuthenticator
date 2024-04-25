@@ -9,6 +9,7 @@ import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/deleted_totps.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/result.dart';
 
 /// The provider instance.
 final storageProvider = AsyncNotifierProvider.autoDispose<StorageNotifier, Storage>(StorageNotifier.new);
@@ -25,48 +26,49 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
 
   /// Changes the storage type.
   /// Please consider doing a backup by passing a [backupPassword], and restore it in case of failure.
-  Future<StorageMigrationResult> changeStorageType(
+  Future<Result> changeStorageType(
     String masterPassword,
     StorageType newType, {
     String? backupPassword,
     String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
+    Future<void> Function()? close;
     try {
       if (!(await ref.read(cryptoStoreProvider.notifier).checkPasswordValidity(masterPassword))) {
-        return StorageMigrationResult.currentStoragePasswordMismatch;
+        throw CurrentStoragePasswordMismatchException();
       }
 
       newStorageMasterPassword ??= masterPassword;
 
       Storage currentStorage = await future;
       if (currentStorage.type == newType) {
-        return StorageMigrationResult.success;
+        return const ResultSuccess();
       }
 
       Uint8List? oldSalt = await currentStorage.readSecretsSalt();
       if (oldSalt == null) {
-        return StorageMigrationResult.saltError;
+        throw SaltError();
       }
 
       CryptoStore? currentCryptoStore = await CryptoStore.fromPassword(masterPassword, salt: oldSalt);
       if (currentCryptoStore == null) {
-        return StorageMigrationResult.genericError;
+        throw GenericMigrationError();
       }
 
       if (backupPassword != null) {
-        Backup? backup = await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
-        if (backup == null) {
-          return StorageMigrationResult.backupError;
+        Result<Backup> backupResult = await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
+        if (backupResult is! ResultSuccess) {
+          throw BackupException();
         }
       }
 
       Storage newStorage = newType.create(ref);
       DeletedTotpsDatabase deletedTotpsDatabase = ref.read(deletedTotpsProvider);
-      Future<void> close() async {
+      close = () async {
         await newStorage.close();
         // await deletedTotpsDatabase.close();
-      }
+      };
 
       List<String> toDelete = [];
       List<String> newStorageUuids = await newStorage.listUuids();
@@ -80,8 +82,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
               toDelete.add(uuid);
               break;
             case StorageMigrationDeletedTotpPolicy.ask:
-              await close();
-              return StorageMigrationResult.askForDifferentDeletedTotpPolicy;
+              throw ShouldAskForDifferentDeletedTotpPolicyException();
           }
         }
       }
@@ -90,89 +91,170 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       List<Totp> totps = await currentStorage.listTotps();
       List<Totp> toAdd = [];
       if (salt == null) {
-        if (!(await newStorage.saveSecretsSalt(oldSalt))) {
-          await close();
-          return StorageMigrationResult.saltError;
-        }
+        await newStorage.saveSecretsSalt(oldSalt);
 
         bool canDecryptAll = await newStorage.canDecryptAll(currentCryptoStore);
         if (!canDecryptAll) {
-          await close();
-          return StorageMigrationResult.newStoragePasswordMismatch;
+          throw NewStoragePasswordMismatchException();
         }
 
         toAdd.addAll(totps.where((totp) => totp.isDecrypted));
       } else {
         CryptoStore? newCryptoStore = await CryptoStore.fromPassword(newStorageMasterPassword, salt: salt);
         if (newCryptoStore == null) {
-          await close();
-          return StorageMigrationResult.genericError;
+          throw GenericMigrationError();
         }
 
         bool canDecryptAll = await newStorage.canDecryptAll(newCryptoStore);
         if (!canDecryptAll) {
-          await close();
-          return StorageMigrationResult.newStoragePasswordMismatch;
+          throw NewStoragePasswordMismatchException();
         }
 
         for (Totp totp in totps) {
           DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newCryptoStore);
           if (decryptedTotp == null) {
-            await close();
-            return StorageMigrationResult.encryptionKeyChangeFailed;
+            throw EncryptionKeyChangeFailedError();
           }
           toAdd.add(decryptedTotp);
         }
         await ref.read(cryptoStoreProvider.notifier).saveAndUse(newCryptoStore);
       }
 
-      if (!await newStorage.addTotps(toAdd)) {
-        await close();
-        return StorageMigrationResult.genericError;
-      }
+      await newStorage.addTotps(toAdd);
       await newStorage.deleteTotps(toDelete);
 
       await close();
+      close = null;
 
       await currentStorage.onStorageTypeChanged(close: false);
       await ref.read(storageTypeSettingsEntryProvider.notifier).changeValue(newType);
 
-      return StorageMigrationResult.success;
+      return const ResultSuccess();
     } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
+    } finally {
+      await close?.call();
     }
-    return StorageMigrationResult.genericError;
   }
 }
 
 /// Allows to return various results from the storage migration.
-enum StorageMigrationResult {
-  /// When it's a success.
-  success,
+sealed class StorageMigrationException implements Exception {
+  /// The exception code.
+  final String code;
 
-  /// Whether we should ask for a different [StorageMigrationDeletedTotpPolicy].
-  askForDifferentDeletedTotpPolicy,
+  /// Creates a new storage migration exception instance.
+  StorageMigrationException({
+    required this.code,
+  });
+}
 
-  /// When there is a salt error.
-  saltError,
+/// An generic error occurred.
+class GenericMigrationError extends StorageMigrationException {
+  /// The error code.
+  static const String _code = 'genericError';
 
-  /// When we haven't succeeded the asked backup.
-  backupError,
+  /// Creates a new generic migration error instance.
+  GenericMigrationError()
+      : super(
+          code: _code,
+        );
 
-  /// When the provided password don't match the one that has been using on the old storage.
-  currentStoragePasswordMismatch,
+  @override
+  String toString() => 'Generic exception occurred';
+}
 
-  /// When the provided password don't match the one that has been using on the new storage.
-  newStoragePasswordMismatch,
+/// Whether we should ask for a different [StorageMigrationDeletedTotpPolicy].
+class ShouldAskForDifferentDeletedTotpPolicyException extends StorageMigrationException {
+  /// The error code.
+  static const String _code = 'genericError';
 
-  /// When there is an error while trying to change the encryption key of the old storage.
-  encryptionKeyChangeFailed,
+  /// Creates a new storage migration policy exception instance.
+  ShouldAskForDifferentDeletedTotpPolicyException()
+      : super(
+          code: _code,
+        );
 
-  /// An unknown error occured.
-  genericError;
+  @override
+  String toString() => 'StorageMigrationDeletedTotpPolicy error';
+}
+
+/// When there is a salt error.
+class SaltError extends StorageMigrationException {
+  /// The error code.
+  static const String _code = 'genericError';
+
+  /// Creates a new salt error instance.
+  SaltError()
+      : super(
+          code: _code,
+        );
+
+  @override
+  String toString() => 'Salt error';
+}
+
+/// When we haven't succeeded to do the asked backup.
+class BackupException extends StorageMigrationException {
+  /// The error code.
+  static const String _code = 'genericError';
+
+  /// Creates a new backup exception instance.
+  BackupException()
+      : super(
+          code: _code,
+        );
+
+  @override
+  String toString() => 'Exception while doing the backup';
+}
+
+/// When the provided password don't match the one that has been using on the old storage.
+class CurrentStoragePasswordMismatchException extends StorageMigrationException {
+  /// The error code.
+  static const String _code = 'genericError';
+
+  /// Creates a new current storage password mismatch exception instance.
+  CurrentStoragePasswordMismatchException()
+      : super(
+          code: _code,
+        );
+
+  @override
+  String toString() => 'Current storage password is incorrect';
+}
+
+/// When the provided password don't match the one that has been using on the new storage.
+class NewStoragePasswordMismatchException extends StorageMigrationException {
+  /// The error code.
+  static const String _code = 'genericError';
+
+  /// Creates a new new storage password mismatch exception instance.
+  NewStoragePasswordMismatchException()
+      : super(
+          code: _code,
+        );
+
+  @override
+  String toString() => 'New storage password is incorrect';
+}
+
+/// When there is an error while trying to change the encryption key of the old storage.
+class EncryptionKeyChangeFailedError extends StorageMigrationException {
+  /// The error code.
+  static const String _code = 'genericError';
+
+  /// Creates a new encryption key change error instance.
+  EncryptionKeyChangeFailedError()
+      : super(
+          code: _code,
+        );
+
+  @override
+  String toString() => 'Failed to change encryption key';
 }
 
 /// Allows to control the behavior when a TOTP has locally been deleted, but not on a different storage.
@@ -196,22 +278,22 @@ mixin Storage {
   List<NotifierProvider> get dependencies => [];
 
   /// Stores the given [totp].
-  Future<bool> addTotp(Totp totp);
+  Future<void> addTotp(Totp totp);
 
   /// Stores the given [totps].
-  Future<bool> addTotps(List<Totp> totps);
+  Future<void> addTotps(List<Totp> totps);
 
   /// Updates the TOTP associated with the specified [uuid].
-  Future<bool> updateTotp(String uuid, Totp totp);
+  Future<void> updateTotp(String uuid, Totp totp);
 
   /// Deletes the TOTP associated to the given [uuid].
-  Future<bool> deleteTotp(String uuid);
+  Future<void> deleteTotp(String uuid);
 
   /// Deletes the TOTP associated to the given [uuids].
-  Future<bool> deleteTotps(List<String> uuids);
+  Future<void> deleteTotps(List<String> uuids);
 
   /// Clears all TOTPs.
-  Future<bool> clearTotps();
+  Future<void> clearTotps();
 
   /// Returns the TOTP associated to the given [uuid].
   Future<Totp?> getTotp(String uuid);
@@ -229,7 +311,7 @@ mixin Storage {
   Future<Uint8List?> readSecretsSalt();
 
   /// Saves the salt that allows to encrypt secrets.
-  Future<bool> saveSecretsSalt(Uint8List salt);
+  Future<void> saveSecretsSalt(Uint8List salt);
 
   /// Closes this storage instance.
   Future<void> close();

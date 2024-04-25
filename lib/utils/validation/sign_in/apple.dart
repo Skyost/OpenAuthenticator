@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:open_authenticator/app.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 import 'package:webcrypto/webcrypto.dart';
@@ -55,9 +56,9 @@ class AppleSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment, OA
   }
 
   @override
-  Future<ValidationResult<OAuth2Response>> validate(HttpRequest request) async {
+  Future<Result<OAuth2Response>> validate(HttpRequest request) async {
     if (!validateState(request.requestedUri.queryParametersAll)) {
-      return ValidationError(
+      return ResultError(
         exception: ValidationException(code: ValidationException.kErrorInvalidState),
       );
     }

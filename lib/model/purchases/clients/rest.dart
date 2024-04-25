@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -107,14 +108,14 @@ class RevenueCatRestClient extends RevenueCatClient {
   }
 
   /// Validates the checkout.
-  Future<ValidationResult<String>> _validateCheckout(HttpRequest request) async {
+  Future<Result<String>> _validateCheckout(HttpRequest request) async {
     String? token = request.uri.queryParametersAll['token']?.firstOrNull;
     return token == null
-        ? ValidationError<String>(
+        ? ResultError<String>(
             exception: ValidationException(code: 'no_token'),
           )
-        : ValidationSuccess(
-            object: token,
+        : ResultSuccess<String>(
+            value: token,
           );
   }
 

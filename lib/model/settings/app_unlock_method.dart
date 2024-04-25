@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 
@@ -42,16 +43,24 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
   Future<void> saveToPreferences(SharedPreferences preferences, AppUnlockMethod value) async => await preferences.setString(key, value.serialize());
 
   /// Changes the entry value but check for unlock success before.
-  Future<bool> changeValueIfUnlockSucceed(AppUnlockMethod newMethod, BuildContext context) async {
+  Future<Result> changeValueIfUnlockSucceed(AppUnlockMethod newMethod, BuildContext context) async {
     AppUnlockMethod currentMethod = await future;
-    if (!context.mounted || (currentMethod is NoneAppUnlockMethod && !(await newMethod.tryUnlock(context, ref, UnlockReason.enable)))) {
-      return false;
+    if (!context.mounted) {
+      return const ResultCancelled();
     }
-    if (!context.mounted || (newMethod is NoneAppUnlockMethod && !(await currentMethod.tryUnlock(context, ref, UnlockReason.disable)))) {
-      return false;
+    Result disableResult = await currentMethod.tryUnlock(context, ref, UnlockReason.disable);
+    if (disableResult is! ResultSuccess) {
+      return disableResult;
+    }
+    if (!context.mounted) {
+      return const ResultCancelled();
+    }
+    Result enableResult = await newMethod.tryUnlock(context, ref, UnlockReason.enable);
+    if (enableResult is! ResultSuccess) {
+      return enableResult;
     }
     await changeValue(newMethod);
-    return true;
+    return const ResultSuccess();
   }
 
   @override
