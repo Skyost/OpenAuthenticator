@@ -8,6 +8,11 @@
         "loading": "Checking your subscription status...",
         "active": "You have subscribed to the Contributor Plan. Thanks a lot !",
         "inactive": "You currently have not subscribed to the Contributor Plan."
+      },
+      "subscriptionDialog": {
+        "title": "Your Contributor Plan",
+        "message": "You have successfully subscribed to the Contributor Plan. With this subscription, you're helping this small open-source software to keep growing. Thanks a lot.",
+        "manageSubscriptionButton": "Manage subscription"
       }
     },
     "cacheTotpPictures": {

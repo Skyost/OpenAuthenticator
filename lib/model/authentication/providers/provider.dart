@@ -129,7 +129,7 @@ mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
   Future<Result<String>> tryConfirm(T? code);
 
   /// Cancels the confirmation.
-  Future<bool> cancelConfirmation();
+  Future<Result> cancelConfirmation();
 }
 
 /// Allows to link an account.

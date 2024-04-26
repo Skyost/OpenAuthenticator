@@ -1,10 +1,33 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
+import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
+import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/purchases/clients/method_channel.dart';
 import 'package:open_authenticator/model/purchases/clients/rest.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:purchases_flutter/models/package_wrapper.dart';
 import 'package:purchases_flutter/models/purchases_configuration.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
+
+/// The RevenueCat client provider.
+final revenueCatClientProvider = Provider((ref) {
+  FirebaseAuthenticationState authenticationState = ref.watch(firebaseAuthenticationProvider);
+  if (authenticationState is! FirebaseAuthenticationStateLoggedIn) {
+    return null;
+  }
+  PurchasesConfiguration? configuration = switch (currentPlatform) {
+    Platform.android => PurchasesConfiguration(AppCredentials.revenueCatPublicKeyAndroid),
+    Platform.iOS || Platform.macOS => PurchasesConfiguration(AppCredentials.revenueCatPublicKeyDarwin),
+    Platform.windows => PurchasesConfiguration(AppCredentials.revenueCatPublicKeyWindows),
+    Platform.linux => PurchasesConfiguration(AppCredentials.revenueCatPublicKeyLinux),
+    _ => null,
+  };
+  if (configuration == null) {
+    return null;
+  }
+  configuration = configuration..appUserID = authenticationState.user.uid;
+  return RevenueCatClient.fromPlatform(purchasesConfiguration: configuration);
+});
 
 /// A RevenueCat client.
 abstract class RevenueCatClient {
@@ -56,7 +79,10 @@ abstract class RevenueCatClient {
   Future<Map<PackageType, String>> getPrices(Purchasable purchasable);
 
   /// Restores the user purchases, if possible.
-  Future<bool> restorePurchases();
+  Future<void> restorePurchases();
+
+  /// Returns the user management URL.
+  Future<String?> getManagementUrl();
 }
 
 /// Represents a purchasable item.

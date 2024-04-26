@@ -102,13 +102,20 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   Future<bool> isWaitingForConfirmation() async => (await readEmailToConfirmFromPreferences()) != null;
 
   @override
-  Future<bool> cancelConfirmation() async {
-    SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
-    bool result = await preferences.remove(_kFirebaseAuthenticationEmailKey);
-    if (result) {
-      ref.invalidateSelf();
+  Future<Result> cancelConfirmation() async {
+    try {
+      SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
+      bool result = await preferences.remove(_kFirebaseAuthenticationEmailKey);
+      if (result) {
+        ref.invalidateSelf();
+      }
+      return const ResultSuccess();
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
     }
-    return result;
   }
 
   @override

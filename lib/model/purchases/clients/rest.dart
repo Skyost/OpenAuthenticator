@@ -43,7 +43,7 @@ class RevenueCatRestClient extends RevenueCatClient {
       },
     );
     if (response.statusCode != 200) {
-      return false;
+      throw _InvalidResponseCodeException(code: response.statusCode);
     }
     Map<String, dynamic> json = jsonDecode(response.body);
     return _getEntitlementsFromJson(json).contains(entitlementId);
@@ -60,7 +60,7 @@ class RevenueCatRestClient extends RevenueCatClient {
     );
 
     if (response.statusCode != 200) {
-      return [];
+      throw _InvalidResponseCodeException(code: response.statusCode);
     }
 
     List jsonOfferings = jsonDecode(response.body)['value']['offerings'];
@@ -137,7 +137,7 @@ class RevenueCatRestClient extends RevenueCatClient {
       }),
     );
     if (response.statusCode != 200) {
-      return [];
+      throw _InvalidResponseCodeException(code: response.statusCode);
     }
     Map<String, dynamic> json = jsonDecode(response.body);
     return _getEntitlementsFromJson(json);
@@ -194,7 +194,10 @@ class RevenueCatRestClient extends RevenueCatClient {
   }
 
   @override
-  Future<bool> restorePurchases() => Future.value(true);
+  Future<void> restorePurchases() => Future.value();
+
+  @override
+  Future<String> getManagementUrl() => Future.value(AppContributorPlan.stripeCustomerPortalLink);
 
   /// Contains all common request headers.
   Map<String, String> get _revenueCatHeaders => {
@@ -216,4 +219,16 @@ extension _DefaultIdentifier on PackageType {
         PackageType.weekly => '\$rc_weekly',
         PackageType.unknown || PackageType.custom || _ => null,
       };
+}
+
+/// Thrown when the response code is invalid.
+class _InvalidResponseCodeException implements Exception {
+  /// The response code.
+  final int code;
+
+  /// Creates a new invalid response code exception instance.
+  _InvalidResponseCodeException({required this.code,});
+
+  @override
+  String toString() => 'Invalid status code : $code';
 }

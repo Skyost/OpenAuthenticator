@@ -8,6 +8,11 @@
         "loading": "Vérification de l'état de votre abonnement...",
         "active": "Vous avez souscrit à l'Abonnement Contributeur. Merci beaucoup !",
         "inactive": "Vous n'avez pas encore souscrit à l'Abonnement Contributeur."
+      },
+      "subscriptionDialog": {
+        "title": "Votre Abonnement Contributeur",
+        "message": "Vous avez souscrit à l'Abonnement Contributeur avec succès. Avec cette souscription, vous aidez ce petit logiciel open-source à grandir. Merci beaucoup.",
+        "manageSubscriptionButton": "Gérer l'abonnement"
       }
     },
     "cacheTotpPictures": {

@@ -119,17 +119,20 @@ class AppContributorPlan {
   /// The Contributor Plan offering id.
   static const String offeringId = entitlementId;
 
-  /// The Stripe Buy URLs.
+  /// The Stripe buy URLs.
   static const Map<PackageType, String> stripeBuyUrls = {
-    PackageType.annual: kDebugMode ? 'test_14kbLD3PN2gFgQE001' : 'cN2eWD4Khfkxh2MdQT',
+    PackageType.annual: kDebugMode ? 'test_14kbLD3PN2gFgQE001' : '14k8yfb8Fa0dh2M28d',
     PackageType.monthly: kDebugMode ? 'test_28og1T8639J7cAoeUU' : 'aEU8yfekR6O1dQA8wy',
   };
 
-  /// The Stripe Buy prices.
+  /// The Stripe prices.
   static const Map<PackageType, String> stripePrices = {
-    PackageType.annual: kDebugMode ? 'price_1OxUmHA6p1nUn9O0Jxqpx3xN' : 'price_1P2UzNA6p1nUn9O0Cnm3FUpe',
+    PackageType.annual: kDebugMode ? 'price_1OxUmHA6p1nUn9O0Jxqpx3xN' : 'price_1P9n3wA6p1nUn9O0nN1kZ38k',
     PackageType.monthly: kDebugMode ? 'price_1OxH1yA6p1nUn9O04XyDgF76' : 'price_1P2V0EA6p1nUn9O0DgwzkTfj',
   };
+
+  /// The Stripe customer portal link.
+  static const String stripeCustomerPortalLink = kDebugMode ? 'https://billing.stripe.com/p/login/test_28o5mbdMd6K5dQAcMM' : 'https://billing.stripe.com/p/login/dR65lCdFwb7d7ledQQ';
 }
 
 ''');

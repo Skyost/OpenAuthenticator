@@ -76,16 +76,11 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
   }
 
   @override
-  Future<bool> restorePurchases() async {
-    try {
-      await Purchases.restorePurchases();
-      return true;
-    } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
-    }
-    return false;
+  Future<CustomerInfo> restorePurchases() => Purchases.restorePurchases();
+
+  @override
+  Future<String?> getManagementUrl() async {
+    CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+    return customerInfo.managementURL;
   }
 }

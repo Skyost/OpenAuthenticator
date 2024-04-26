@@ -96,11 +96,11 @@ class AccountUtils {
   }) async {
     switch (result) {
       case ResultSuccess():
-        if (provider is ConfirmationProvider) {
-          SnackBarIcon.showSuccessSnackBar(context, text: translations.authentication.logIn.successNeedConfirmation);
-        } else {
-          SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
-        }
+        context.showSnackBarForResult(
+          result,
+          retryIfError: true,
+          successMessage: translations.authentication.logIn.successNeedConfirmation,
+        );
         break;
       case ResultCancelled(:final timedOut):
         if (timedOut) {

@@ -8,7 +8,6 @@ import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
 
 /// Allows the user to confirm its email from the app.
 class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthenticationProvider {
@@ -66,19 +65,14 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     if (!confirmation || !context.mounted) {
       return;
     }
-    bool result = await showWaitingOverlay(
+    Result result = await showWaitingOverlay(
       context,
       future: ref.read(emailLinkAuthenticationProvider.notifier).cancelConfirmation(),
       message: translations.settings.synchronization.confirmEmail.waitingDialogMessage,
     );
-    if (!context.mounted) {
-      return;
+    if (context.mounted) {
+      context.showSnackBarForResult(result, retryIfError: true);
     }
-    if (result) {
-      SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
-      return;
-    }
-    SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
   }
 
   /// Tries to confirm the user. He has to enter the link manually.

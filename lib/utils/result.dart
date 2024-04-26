@@ -43,7 +43,7 @@ class ResultError<T> extends Result<T> {
   ResultError({
     this.exception,
     StackTrace? stacktrace,
-  })  : stacktrace = stacktrace ?? StackTrace.current;
+  }) : stacktrace = stacktrace ?? StackTrace.current;
 
   /// Creates a new result error instance from another [result].
   ResultError.fromAnother(ResultError result)
@@ -79,10 +79,14 @@ class ResultCancelled<T> extends Result<T> {
 /// Allows to display a result into a SnackBar.
 extension DisplayResult on BuildContext {
   /// Display the given [result].
-  void showSnackBarForResult(Result result, { bool retryIfError = false }) {
+  void showSnackBarForResult(
+    Result result, {
+    bool retryIfError = false,
+    String? successMessage,
+  }) {
     switch (result) {
       case ResultSuccess():
-        SnackBarIcon.showSuccessSnackBar(this, text: translations.error.noError);
+        SnackBarIcon.showSuccessSnackBar(this, text: successMessage ?? translations.error.noError);
         break;
       case ResultError(:final exception):
         if (exception == null) {
