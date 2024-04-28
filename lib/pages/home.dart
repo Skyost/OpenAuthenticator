@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/state.dart';
+import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/scan.dart';
@@ -103,32 +104,35 @@ class _HomePageBody extends ConsumerWidget {
               : ListView.separated(
                   itemCount: value.length,
                   itemBuilder: (context, position) => TotpWidget(
+                    key: ValueKey(value[position].uuid),
                     totp: value[position],
                     displayCode: isUnlocked.valueOrNull ?? false,
                   ),
                   separatorBuilder: (context, position) => const Divider(),
                 ),
         ),
-      AsyncError(:final error) => Center(
-        child: ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(20),
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Text(
-                  translations.error.generic.withException(exception: error),
-                  textAlign: TextAlign.center,
-                ),
+      AsyncError(:final error) => error is NotLoggedInException
+          ? const CenteredCircularProgressIndicator()
+          : Center(
+              child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(20),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      translations.error.generic.withException(exception: error),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  FilledButton.icon(
+                    onPressed: ref.read(totpRepositoryProvider.notifier).refresh,
+                    label: Text(translations.home.refreshButton),
+                    icon: const Icon(Icons.sync),
+                  ),
+                ],
               ),
-              FilledButton.icon(
-                onPressed: ref.read(totpRepositoryProvider.notifier).refresh,
-                label: Text(translations.home.refreshButton),
-                icon: const Icon(Icons.sync),
-              ),
-            ],
-          ),
-      ),
+            ),
       _ => const CenteredCircularProgressIndicator(),
     };
   }

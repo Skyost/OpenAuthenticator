@@ -103,7 +103,7 @@ class OnlineStorage with Storage {
 
   @override
   Future<List<Totp>> listTotps() async {
-    QuerySnapshot result = await _totpsCollection.get();
+    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get();
     List<Totp> totps = [];
     for (QueryDocumentSnapshot doc in result.docs) {
       Totp? totp = await _fromFirestore(doc);
@@ -116,7 +116,7 @@ class OnlineStorage with Storage {
 
   @override
   Future<List<String>> listUuids() async {
-    QuerySnapshot result = await _totpsCollection.get();
+    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get();
     List<String> uuids = [];
     for (QueryDocumentSnapshot snapshot in result.docs) {
       Object? data = snapshot.data();
@@ -164,16 +164,16 @@ class OnlineStorage with Storage {
   }
 
   /// Returns a reference to the current user document.
-  /// Throws a [_NotLoggedInException] if user is not logged in.
+  /// Throws a [NotLoggedInException] if user is not logged in.
   DocumentReference<Map<String, dynamic>> get _userDocument {
     if (!FirebaseAuth.instance.isLoggedIn) {
-      throw _NotLoggedInException();
+      throw NotLoggedInException();
     }
     return FirebaseFirestore.instance.collection(FirebaseAuth.instance.currentUser!.uid).doc(_kUserDataDocument);
   }
 
   /// Returns a reference to the current user collection.
-  /// Throws a [_NotLoggedInException] if user is not logged in.
+  /// Throws a [NotLoggedInException] if user is not logged in.
   CollectionReference get _totpsCollection => _userDocument.collection(_kTotpsCollection);
 
   /// Creates a new TOTP from the specified JSON data.
@@ -262,7 +262,7 @@ class OnlineStorage with Storage {
 }
 
 /// Thrown when the user is not logged in.
-class _NotLoggedInException implements Exception {
+class NotLoggedInException implements Exception {
   @override
   String toString() => 'User is not logged in';
 }

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// Displays a classic image or vector image.
+/// Displays a classic image or a vector image.
 class SmartImageWidget extends StatelessWidget {
   /// The image source.
   final String source;

@@ -114,18 +114,6 @@ class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerP
   );
 
   @override
-  void initState() {
-    super.initState();
-    print('init state !');
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    print('change dependencies !');
-  }
-
-  @override
   Widget build(BuildContext context) => DefaultTextStyle.merge(
         style: TextStyle(color: currentBrightness == Brightness.dark ? Colors.white60 : Colors.grey.shade700),
         textAlign: TextAlign.center,

@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/model/settings/entry.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -62,10 +62,7 @@ extension TotpImageCache on Totp {
       }
     }
     catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
+      handleException(ex, stacktrace);
     }
   }
 

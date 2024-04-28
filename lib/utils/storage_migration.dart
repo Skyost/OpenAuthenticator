@@ -28,7 +28,7 @@ class StorageMigrationUtils {
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
     if (showConfirmation) {
-      _ConfirmationResult? result = await _ConfirmationDialog.ask(context);
+      _ConfirmationResult? result = await _ConfirmationDialog.ask(context, newType == StorageType.online);
       if (result == null || !result.confirm || !context.mounted) {
         return false;
       }
@@ -162,13 +162,21 @@ class StorageMigrationUtils {
 
 /// The dialog that allows to confirm the operation.
 class _ConfirmationDialog extends StatefulWidget {
+
+  /// Whether the user wants to enable the data synchronization.
+  final bool enable;
+
+
+  /// Creates a new confirmation dialog instance.
+  const _ConfirmationDialog({required this.enable,});
+
   @override
   State<StatefulWidget> createState() => _ConfirmationDialogState();
 
   /// Asks for the confirmation.
-  static Future<_ConfirmationResult?> ask(BuildContext context) => showAdaptiveDialog<_ConfirmationResult>(
+  static Future<_ConfirmationResult?> ask(BuildContext context, bool enable) => showAdaptiveDialog<_ConfirmationResult>(
         context: context,
-        builder: (context) => _ConfirmationDialog(),
+        builder: (context) => _ConfirmationDialog(enable: enable,),
       );
 }
 
@@ -189,7 +197,7 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(translations.storageMigration.confirmDialog.message.enable),
+            Text(widget.enable ? translations.storageMigration.confirmDialog.message.enable : translations.storageMigration.confirmDialog.message.disable),
             ListTile(
               title: Text(translations.miscellaneous.backupCheckbox.checkbox),
               contentPadding: EdgeInsets.zero,

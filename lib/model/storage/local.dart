@@ -95,13 +95,13 @@ class LocalStorage extends _$LocalStorage with Storage {
 
   @override
   Future<List<Totp>> listTotps() async {
-    List<_DriftTotp> list = await (select(totps)).get();
+    List<_DriftTotp> list = await (select(totps)..orderBy([(table) => OrderingTerm(expression: table.issuer)])).get();
     return list.map((totp) => totp.asTotp).toList();
   }
 
   @override
   Future<List<String>> listUuids() async {
-    List<_DriftTotp> list = await (select(totps)).get();
+    List<_DriftTotp> list = await (select(totps)..orderBy([(table) => OrderingTerm(expression: table.issuer)])).get();
     return list.map((totp) => totp.uuid).toList();
   }
 

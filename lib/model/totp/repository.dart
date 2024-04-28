@@ -38,10 +38,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
       CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
       state = AsyncData(await _queryTotpsFromStorage(storage, cryptoStore));
     } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
+      handleException(ex, stacktrace);
       state = AsyncError(ex, stacktrace);
     }
   }

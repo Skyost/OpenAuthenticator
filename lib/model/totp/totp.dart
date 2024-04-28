@@ -97,7 +97,7 @@ class Totp extends Equatable implements Comparable<Totp> {
   }
 
   @override
-  int compareTo(Totp other) => (label ?? uuid).compareTo(other.label ?? other.uuid);
+  int compareTo(Totp other) => (issuer ?? label ?? uuid).compareTo(other.issuer ?? other.label ?? other.uuid);
 
   /// Changes the encryption key of the current TOTP.
   Future<DecryptedTotp?> changeEncryptionKey(CryptoStore previousCryptoStore, CryptoStore newCryptoStore) async {

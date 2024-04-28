@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
+import 'package:open_authenticator/utils/utils.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
@@ -37,10 +37,7 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
     try {
       return await RevenueCatUI.presentPaywall(offering: offering);
     } catch (ex, stacktrace) {
-      if (kDebugMode) {
-        print(ex);
-        print(stacktrace);
-      }
+      handleException(ex, stacktrace);
     }
     return PaywallResult.error;
   }
