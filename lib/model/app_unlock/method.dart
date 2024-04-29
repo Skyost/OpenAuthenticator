@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/crypto.dart';
-import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -59,21 +58,9 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
     if (password == null) {
       return const ResultCancelled();
     }
-    if (reason == UnlockReason.openApp) {
-      Storage storage = await ref.read(storageProvider.future);
-      CryptoStore? cryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
-      if (cryptoStore == null) {
-        return ResultError();
-      }
-      if (!await ref.read(totpRepositoryProvider.notifier).tryDecryptAll(cryptoStore)) {
-        return ResultError();
-      }
-      ref.read(cryptoStoreProvider.notifier).use(cryptoStore);
-    } else {
-      StoredCryptoStore currentCryptoStore = ref.read(cryptoStoreProvider.notifier);
-      if (!(await currentCryptoStore.checkPasswordValidity(password))) {
-        return ResultError();
-      }
+    StoredCryptoStore currentCryptoStore = ref.read(cryptoStoreProvider.notifier);
+    if (!(await currentCryptoStore.checkPasswordValidity(password, useIfValid: reason == UnlockReason.openApp))) {
+      return ResultError();
     }
     return const ResultSuccess();
   }

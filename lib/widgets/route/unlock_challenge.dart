@@ -24,6 +24,9 @@ class UnlockChallengeRouteWidget extends ConsumerStatefulWidget {
 
 /// The master password unlock route widget state.
 class _UnlockChallengeRouteWidgetState extends ConsumerState<UnlockChallengeRouteWidget> {
+  /// Whether the unlock challenge has started.
+  bool unlockChallengedStarted = false;
+
   @override
   void initState() {
     super.initState();
@@ -36,21 +39,28 @@ class _UnlockChallengeRouteWidgetState extends ConsumerState<UnlockChallengeRout
   Widget build(BuildContext context) {
     AsyncValue<bool> isUnlocked = ref.watch(appUnlockStateProvider);
     return switch (isUnlocked) {
-      AsyncData(:bool value) => LockedRouteWidget(
-        isLocked: !value,
-        onUnlockButtonClicked: tryUnlock,
-        child: widget.child,
-      ),
+      AsyncData(:bool value) => _createRouteWidget(value),
       AsyncError() => widget.child,
-      _ => const CenteredCircularProgressIndicator(),
+      _ => unlockChallengedStarted ? _createRouteWidget() : const CenteredCircularProgressIndicator(),
     };
   }
 
+  /// Creates the route widget.
+  Widget _createRouteWidget([bool isUnlocked = false]) => LockedRouteWidget(
+    isLocked: !isUnlocked,
+    onUnlockButtonClicked: tryUnlock,
+    child: widget.child,
+  );
+
   /// Tries to unlock the app.
   Future<void> tryUnlock() async {
+    setState(() => unlockChallengedStarted = true);
     Result result = await ref.read(appUnlockStateProvider.notifier).unlock(context);
-    if (result is ResultError && mounted) {
-      SnackBarIcon.showErrorSnackBar(context, text: translations.error.appUnlock);
+    if (mounted) {
+      setState(() => unlockChallengedStarted = false);
+      if (result is ResultError) {
+        SnackBarIcon.showErrorSnackBar(context, text: translations.error.appUnlock);
+      }
     }
   }
 }

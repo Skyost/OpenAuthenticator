@@ -553,10 +553,10 @@ packages:
     dependency: "direct main"
     description:
       name: google_mlkit_barcode_scanning
-      sha256: "1b4327f9dce15cf64384aeb17012a61601c81c6aaeb495bd7df5f6c83e65c930"
+      sha256: f1a2a39cf1730b9a5e2784a07efa1ca5bfdfdde6aa00b193b3f8cd1953c638ec
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.1"
+    version: "0.12.0"
   google_mlkit_commons:
     dependency: transitive
     description:
@@ -913,18 +913,18 @@ packages:
     dependency: "direct main"
     description:
       name: purchases_flutter
-      sha256: "375eee487e4098b99b7d7d360f1c6033e6ed6b8e4b9c1e92c6df7a3dd44846cf"
+      sha256: c119839d22e93875c7ab52b1ac881171000868682986e031705add5c966383a5
       url: "https://pub.dev"
     source: hosted
-    version: "6.27.0"
+    version: "6.28.0"
   purchases_ui_flutter:
     dependency: "direct main"
     description:
       name: purchases_ui_flutter
-      sha256: eb9ea32f1cfa98a7a00556a39a0e32ed3a500379c9294d5b8a447972777fa514
+      sha256: "5a792e65325f7e3d73ed6308e790979dfb7b7783e37dd855db0474f841f60001"
       url: "https://pub.dev"
     source: hosted
-    version: "6.27.0"
+    version: "6.28.0"
   qr:
     dependency: transitive
     description:
@@ -1422,10 +1422,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: "0a989dc7ca2bb51eac91e8fd00851297cfffd641aa7538b165c62637ca0eaa4a"
+      sha256: "0eaf06e3446824099858367950a813472af675116bf63f008a4c2a75ae13e9cb"
       url: "https://pub.dev"
     source: hosted
-    version: "5.4.0"
+    version: "5.5.0"
   window_manager:
     dependency: "direct main"
     description:

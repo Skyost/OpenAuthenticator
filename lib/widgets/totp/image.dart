@@ -104,7 +104,10 @@ class _TotpImageWidgetState extends State<TotpImageWidget> {
     }
     return ClipRRect(
       borderRadius: BorderRadius.circular(widget.size),
-      child: child,
+      child: SizedBox.square(
+        dimension: widget.size,
+        child: child,
+      ),
     );
   }
 
@@ -173,9 +176,8 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
   }
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: widget.size,
-        width: widget.size,
+  Widget build(BuildContext context) => SizedBox.square(
+        dimension: widget.size,
         child: Stack(
           children: [
             Positioned.fill(

@@ -1,9 +1,10 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:open_authenticator/utils/brightness_listener.dart';
 
 /// Allows to blur a widget. Kudos to "jagritjkh/blur" for the initial implementation.
-class BlurWidget extends StatelessWidget {
+class BlurWidget extends StatefulWidget {
   /// The child widget.
   final Widget child;
 
@@ -12,9 +13,6 @@ class BlurWidget extends StatelessWidget {
 
   /// Value of blur effect, higher the blur more the blur effect.
   final double blur;
-
-  /// Color of blur effect.
-  final Color blurColor;
 
   /// Radius of the child to be blurred.
   final BorderRadius? borderRadius;
@@ -34,7 +32,6 @@ class BlurWidget extends StatelessWidget {
     required this.child,
     this.above,
     this.blur = 5,
-    this.blurColor = Colors.white,
     this.borderRadius,
     this.colorOpacity = 0.5,
     this.overlay,
@@ -42,24 +39,30 @@ class BlurWidget extends StatelessWidget {
   });
 
   @override
+  State<StatefulWidget> createState() => _BlurWidgetState();
+}
+
+/// The blur widget state.
+class _BlurWidgetState extends State<BlurWidget> with BrightnessListener {
+  @override
   Widget build(BuildContext context) => ClipRRect(
-        borderRadius: borderRadius ?? BorderRadius.zero,
+        borderRadius: widget.borderRadius ?? BorderRadius.zero,
         child: Stack(
           children: [
-            child,
+            widget.child,
             Positioned.fill(
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                filter: ImageFilter.blur(sigmaX: widget.blur, sigmaY: widget.blur),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: blurColor.withOpacity(colorOpacity),
+                    color: (currentBrightness == Brightness.light ? Colors.white : Colors.black).withOpacity(widget.colorOpacity),
                   ),
-                  alignment: alignment,
-                  child: overlay,
+                  alignment: widget.alignment,
+                  child: widget.overlay,
                 ),
               ),
             ),
-            if (above != null) above!,
+            if (widget.above != null) widget.above!,
           ],
         ),
       );

@@ -21,17 +21,21 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
   /// The password derived key storage key.
   static const String _kPasswordDerivedKeyKey = 'passwordDerivedKey';
 
+  /// The password signature.
+  static const String _kPasswordSignature = 'passwordSignature';
+
   /// The password derived key storage key.
   static const String _kPasswordDerivedKeySaltKey = 'passwordDerivedKeySalt';
 
   @override
   FutureOr<CryptoStore?> build() async {
-    if (!await SimpleSecureStorage.has(_kPasswordDerivedKeyKey) || !await SimpleSecureStorage.has(_kPasswordDerivedKeySaltKey)) {
+    if (!await SimpleSecureStorage.has(_kPasswordDerivedKeyKey) || !await SimpleSecureStorage.has(_kPasswordSignature) || !await SimpleSecureStorage.has(_kPasswordDerivedKeySaltKey)) {
       return null;
     }
-    return CryptoStore(
+    return CryptoStore._(
       key: await AesGcmSecretKey.importRawKey(base64.decode((await SimpleSecureStorage.read(_kPasswordDerivedKeyKey))!)),
       salt: (await readSaltFromLocalStorage())!,
+      passwordSignature: base64.decode((await SimpleSecureStorage.read(_kPasswordSignature))!),
     );
   }
 
@@ -65,6 +69,7 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
   /// Saves the [cryptoStore] on disk.
   Future<void> _saveOnLocalStorage(CryptoStore cryptoStore, {bool checkSettings = true}) async {
     await saveSaltToLocalStorage(cryptoStore.salt);
+    await SimpleSecureStorage.write(_kPasswordSignature, base64.encode(cryptoStore._passwordSignature));
     if (checkSettings && (await ref.read(appUnlockMethodSettingsEntryProvider.future)) is MasterPasswordAppUnlockMethod) {
       return;
     }
@@ -73,15 +78,43 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
 
   /// Checks if the given password is valid.
   /// Will check if there is no TOTP if `trueIfTotpEmpty` is set to `true`.
-  Future<bool> checkPasswordValidity(String password, {bool trueIfTotpEmpty = true}) async {
+  Future<bool> checkPasswordValidity(String password, {bool trueIfTotpEmpty = true, bool useIfValid = false}) async {
     if (trueIfTotpEmpty) {
       List<Totp> totps = await ref.read(totpRepositoryProvider.future);
       if (totps.isEmpty) {
         return true;
       }
     }
+
     CryptoStore? cryptoStore = await future;
-    return cryptoStore != null && await cryptoStore.checkPasswordValidity(password);
+    if (cryptoStore != null) {
+      return await cryptoStore._checkPasswordValidity(password);
+    }
+
+    String? signature = await SimpleSecureStorage.read(_kPasswordSignature);
+    if (signature == null) {
+      return false;
+    }
+
+    (Uint8List, Uint8List) keySalt = await CryptoStore._deriveKey(password, salt: await readSaltFromLocalStorage());
+    HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(keySalt.$1, Hash.sha256);
+    Uint8List decodedSignature = base64.decode(signature);
+    if (!(await hmacSecretKey.verifyBytes(decodedSignature, utf8.encode(password)))) {
+      return false;
+    }
+
+    CryptoStore newCryptoStore = CryptoStore._(
+      key: await AesGcmSecretKey.importRawKey(keySalt.$1),
+      salt: keySalt.$2,
+      passwordSignature: await hmacSecretKey.signBytes(decodedSignature),
+    );
+    if(!(await ref.read(totpRepositoryProvider.notifier).tryDecryptAll(newCryptoStore))) {
+      return false;
+    }
+    if (useIfValid) {
+      use(newCryptoStore);
+    }
+    return true;
   }
 
   /// Reads the salt (if stored) from the secure storage.
@@ -114,11 +147,15 @@ class CryptoStore {
   /// The salt.
   final Uint8List salt;
 
+  /// The password signature.
+  final Uint8List _passwordSignature;
+
   /// Creates a new crypto store instance.
-  const CryptoStore({
+  const CryptoStore._({
     required this.key,
     required this.salt,
-  });
+    required Uint8List passwordSignature,
+  }) : _passwordSignature = passwordSignature;
 
   /// Creates a [CryptoStore] from the given [password].
   static Future<CryptoStore?> fromPassword(
@@ -126,9 +163,11 @@ class CryptoStore {
     Uint8List? salt,
   }) async {
     (Uint8List, Uint8List) data = await _deriveKey(password, salt: salt);
-    return CryptoStore(
+    HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(data.$1, Hash.sha256);
+    return CryptoStore._(
       key: await AesGcmSecretKey.importRawKey(data.$1),
       salt: data.$2,
+      passwordSignature: await hmacSecretKey.signBytes(utf8.encode(password)),
     );
   }
 
@@ -174,7 +213,7 @@ class CryptoStore {
   }
 
   /// Checks if the given password is valid.
-  Future<bool> checkPasswordValidity(String password) async {
+  Future<bool> _checkPasswordValidity(String password) async {
     (Uint8List, Uint8List) data = await _deriveKey(password, salt: salt);
     return memEquals(data.$1, await key.exportRawKey());
   }
