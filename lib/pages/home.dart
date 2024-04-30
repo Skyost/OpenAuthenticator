@@ -81,60 +81,66 @@ class _HomePageBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<List<Totp>> totps = ref.watch(totpRepositoryProvider);
     AsyncValue<bool> isUnlocked = ref.watch(appUnlockStateProvider);
-    return switch (totps) {
-      AsyncData(:final value) => RefreshIndicator(
-          onRefresh: ref.read(totpRepositoryProvider.notifier).refresh,
-          child: value.isEmpty
-              ? CustomScrollView(
-                  slivers: [
-                    SliverFillRemaining(
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Text(
-                            translations.home.empty,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontStyle: FontStyle.italic),
-                          ),
+    switch (totps) {
+      case AsyncData(:final value):
+        Widget child = value.isEmpty
+            ? CustomScrollView(
+                slivers: [
+                  SliverFillRemaining(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Text(
+                          translations.home.empty,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontStyle: FontStyle.italic),
                         ),
                       ),
                     ),
-                  ],
-                )
-              : ListView.separated(
-                  itemCount: value.length,
-                  itemBuilder: (context, position) => TotpWidget(
-                    key: ValueKey(value[position].uuid),
-                    totp: value[position],
-                    displayCode: isUnlocked.valueOrNull ?? false,
-                  ),
-                  separatorBuilder: (context, position) => const Divider(),
-                ),
-        ),
-      AsyncError(:final error) => error is NotLoggedInException
-          ? const CenteredCircularProgressIndicator()
-          : Center(
-              child: ListView(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Text(
-                      translations.error.generic.withException(exception: error),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  FilledButton.icon(
-                    onPressed: ref.read(totpRepositoryProvider.notifier).refresh,
-                    label: Text(translations.home.refreshButton),
-                    icon: const Icon(Icons.sync),
                   ),
                 ],
-              ),
-            ),
-      _ => const CenteredCircularProgressIndicator(),
-    };
+              )
+            : ListView.separated(
+                itemCount: value.length,
+                itemBuilder: (context, position) => TotpWidget(
+                  key: ValueKey(value[position].uuid),
+                  totp: value[position],
+                  displayCode: isUnlocked.valueOrNull ?? false,
+                ),
+                separatorBuilder: (context, position) => const Divider(),
+              );
+        return currentPlatform.isMobile
+            ? RefreshIndicator(
+                onRefresh: ref.read(totpRepositoryProvider.notifier).refresh,
+                child: child,
+              )
+            : child;
+      case AsyncError(:final error):
+        return error is NotLoggedInException
+            ? const CenteredCircularProgressIndicator()
+            : Center(
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        translations.error.generic.withException(exception: error),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    FilledButton.icon(
+                      onPressed: ref.read(totpRepositoryProvider.notifier).refresh,
+                      label: Text(translations.home.refreshButton),
+                      icon: const Icon(Icons.sync),
+                    ),
+                  ],
+                ),
+              );
+      default:
+        return const CenteredCircularProgressIndicator();
+    }
   }
 }
 
