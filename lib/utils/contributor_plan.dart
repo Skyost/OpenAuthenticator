@@ -71,9 +71,17 @@ class _ContributorPlanBillingPickerDialogState extends ConsumerState<_Contributo
         content: FutureBuilder(
           future: ref.read(contributorPlanStateProvider.notifier).getPrices(),
           builder: (context, snapshot) {
-            if (snapshot.hasError || snapshot.data is! ResultSuccess<Map<PackageType, String>>) {
+            if (snapshot.hasError || snapshot.data is ResultError) {
+              Object? error;
+              if (snapshot.hasError) {
+                error = snapshot.error!;
+              } else if (snapshot.data is ResultError) {
+                error = snapshot.error;
+              }
               return Center(
-                child: Text(translations.error.generic.withException(exception: snapshot.error!)),
+                child: Text(
+                  error == null ? translations.error.generic.tryAgain : translations.error.generic.withException(exception: error),
+                ),
               );
             }
             if (snapshot.hasData) {

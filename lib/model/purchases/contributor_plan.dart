@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
@@ -20,6 +21,13 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
     }
     await client.initialize();
     return await client.hasEntitlement(AppContributorPlan.entitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive;
+  }
+
+  /// Changes the state to [newState].
+  void debugChangeState(ContributorPlanState newState) {
+    if (kDebugMode) {
+      state = AsyncData(newState);
+    }
   }
 
   /// Returns the purchase timeout.

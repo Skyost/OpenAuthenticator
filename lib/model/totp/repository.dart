@@ -177,6 +177,25 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
     }
   }
 
+  /// Returns whether the limit will be exceeded if one more TOTP is added.
+  Future<bool> willExceedIfAddMore({
+    int count = 1,
+    StorageType? storageType,
+    ContributorPlanState? contributorPlanState,
+    List<Totp>? totps,
+  }) async {
+    storageType ??= await ref.read(storageTypeSettingsEntryProvider.future);
+    if (storageType == StorageType.local) {
+      return false;
+    }
+    contributorPlanState ??= await ref.read(contributorPlanStateProvider.future);
+    if (contributorPlanState == ContributorPlanState.active) {
+      return false;
+    }
+    totps ??= await ref.read(totpRepositoryProvider.future);
+    return totps!.length + count >= App.freeTotpsLimit;
+  }
+
   /// Changes the master password.
   /// Please consider doing a backup by passing a [backupPassword], and restore it in case of failure.
   Future<Result> changeMasterPassword(
@@ -227,16 +246,16 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
 }
 
 /// The TOTP limit reached provider.
-final totpLimitReachedProvider = AsyncNotifierProvider.autoDispose<TotpLimitReachedNotifier, bool>(TotpLimitReachedNotifier.new);
+final totpLimitExceededProvider = AsyncNotifierProvider.autoDispose<TotpLimitExceededNotifier, bool>(TotpLimitExceededNotifier.new);
 
 /// The TOTP limit reached notifier.
-class TotpLimitReachedNotifier extends AutoDisposeAsyncNotifier<bool> {
+class TotpLimitExceededNotifier extends AutoDisposeAsyncNotifier<bool> {
   @override
   Future<bool> build() async {
     StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
     ContributorPlanState contributorPlanState = await ref.watch(contributorPlanStateProvider.future);
     List<Totp> totps = await ref.watch(totpRepositoryProvider.future);
-    return willExceedIfAddMore(
+    return await willExceedIfAddMore(
       count: 0,
       storageType: storageType,
       contributorPlanState: contributorPlanState,
@@ -260,7 +279,18 @@ class TotpLimitReachedNotifier extends AutoDisposeAsyncNotifier<bool> {
       return false;
     }
     totps ??= await ref.read(totpRepositoryProvider.future);
-    return totps!.length + count >= App.freeTotpsLimit;
+    return totps!.length + count > App.freeTotpsLimit;
+  }
+
+  /// Returns whether the user should be able to change the current storage type.
+  Future<bool> canChangeStorageType(StorageType currentStorageType) async {
+    if (currentStorageType == StorageType.online) {
+      return true;
+    }
+    return !(await willExceedIfAddMore(
+      count: 0,
+      storageType: currentStorageType == StorageType.online ? StorageType.local : StorageType.online,
+    ));
   }
 }
 

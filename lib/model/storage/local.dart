@@ -52,7 +52,7 @@ class LocalStorage extends _$LocalStorage with Storage {
   static const _kDbFileName = 'totps';
 
   /// Creates a new Drift storage instance.
-  LocalStorage(AutoDisposeAsyncNotifierProviderRef ref) : super(SqliteUtils.openConnection(_kDbFileName));
+  LocalStorage(Ref ref) : super(SqliteUtils.openConnection(_kDbFileName));
 
   @override
   int get schemaVersion => 1;

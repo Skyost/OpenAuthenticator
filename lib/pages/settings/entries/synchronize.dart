@@ -49,18 +49,28 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
 
   @override
   Widget createListTile(BuildContext context, WidgetRef ref, {StorageType? value, bool enabled = true}) {
+    if (value == null) {
+      return super.createListTile(
+        context,
+        ref,
+        enabled: false,
+      );
+    }
+    ref.watch(totpLimitExceededProvider);
     AsyncValue<ContributorPlanState> state = ref.watch(contributorPlanStateProvider);
-    StorageType? storageType = value;
+    StorageType storageType = value;
     switch (state) {
       case AsyncData(:final value):
         switch (value) {
           case ContributorPlanState.inactive:
-            List<Totp>? totps = ref.watch(totpRepositoryProvider).valueOrNull;
-            return super.createListTile(
-              context,
-              ref,
-              value: storageType,
-              enabled: totps != null && totps.length < App.freeTotpsLimit,
+            return FutureBuilder(
+              future: ref.read(totpLimitExceededProvider.notifier).canChangeStorageType(storageType),
+              builder: (context, snapshot) => super.createListTile(
+                context,
+                ref,
+                value: storageType,
+                enabled: snapshot.data == true,
+              ),
             );
           case ContributorPlanState.active:
             return super.createListTile(
@@ -112,7 +122,6 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
               style: const TextStyle(fontStyle: FontStyle.italic),
             ),
           ),
-          const TextSpan(text: '\n'),
           if (storageType == StorageType.local && totps.value.length > App.freeTotpsLimit)
             TextSpan(
               text: '\n${translations.settings.synchronization.synchronizeTotps.subtitle.totpLimit.notEnabled}',

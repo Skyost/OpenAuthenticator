@@ -8,6 +8,7 @@ import 'package:open_authenticator/pages/settings/entries/cache_totp_pictures.da
 import 'package:open_authenticator/pages/settings/entries/change_master_password.dart';
 import 'package:open_authenticator/pages/settings/entries/confirm_email.dart';
 import 'package:open_authenticator/pages/settings/entries/contributor_plan.dart';
+import 'package:open_authenticator/pages/settings/entries/contributor_plan_state.dart';
 import 'package:open_authenticator/pages/settings/entries/enable_local_auth.dart';
 import 'package:open_authenticator/pages/settings/entries/link.dart';
 import 'package:open_authenticator/pages/settings/entries/login.dart';
@@ -31,27 +32,35 @@ class SettingsPage extends ConsumerWidget {
         appBar: AppBar(
           title: Text(translations.settings.title),
         ),
-        body: ListView(
-          children: [
-            _SettingsPageSectionTitle(title: translations.settings.application.title),
-            const ContributorPlanEntryWidget(),
-            const ThemeSettingsEntryWidget(),
-            CacheTotpPicturesSettingsEntryWidget(),
-            _SettingsPageSectionTitle(title: translations.settings.security.title),
-            EnableLocalAuthSettingsEntryWidget(),
-            SaveDerivedKeySettingsEntryWidget(),
-            const ChangeMasterPasswordSettingsEntryWidget(),
-            const _SynchronizationSectionTitle(),
-            const AccountLinkSettingsEntryWidget(),
-            const AccountLoginSettingsEntryWidget(),
-            const ConfirmEmailSettingsEntryWidget(),
-            SynchronizeSettingsEntryWidget(),
-            _SettingsPageSectionTitle(title: translations.settings.backups.title),
-            const BackupNowSettingsEntryWidget(),
-            const ManageBackupSettingsEntryWidget(),
-            _SettingsPageSectionTitle(title: translations.settings.about.title),
-            const AboutSettingsEntryWidget(),
-          ],
+        body: Theme(
+          data: Theme.of(context).copyWith(
+            buttonTheme: const ButtonThemeData(
+              alignedDropdown: false,
+            ),
+          ),
+          child: ListView(
+            children: [
+              _SettingsPageSectionTitle(title: translations.settings.application.title),
+              const ContributorPlanEntryWidget(),
+              const ContributorPlanStateEntryWidget(),
+              const ThemeSettingsEntryWidget(),
+              CacheTotpPicturesSettingsEntryWidget(),
+              _SettingsPageSectionTitle(title: translations.settings.security.title),
+              EnableLocalAuthSettingsEntryWidget(),
+              SaveDerivedKeySettingsEntryWidget(),
+              const ChangeMasterPasswordSettingsEntryWidget(),
+              const _SynchronizationSectionTitle(),
+              const AccountLinkSettingsEntryWidget(),
+              const AccountLoginSettingsEntryWidget(),
+              const ConfirmEmailSettingsEntryWidget(),
+              SynchronizeSettingsEntryWidget(),
+              _SettingsPageSectionTitle(title: translations.settings.backups.title),
+              const BackupNowSettingsEntryWidget(),
+              const ManageBackupSettingsEntryWidget(),
+              _SettingsPageSectionTitle(title: translations.settings.about.title),
+              const AboutSettingsEntryWidget(),
+            ],
+          ),
         ),
       );
 }
@@ -87,7 +96,8 @@ class _SynchronizationSectionTitle extends ConsumerWidget with RequiresAuthentic
 /// A widget that needs some authentication providers.
 mixin RequiresAuthenticationProvider on ConsumerWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) => ref.read(userAuthenticationProviders.notifier).availableProviders.isEmpty ? const SizedBox.shrink() : buildWidgetWithAuthenticationProviders(context, ref);
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ref.read(userAuthenticationProviders.notifier).availableProviders.isEmpty ? const SizedBox.shrink() : buildWidgetWithAuthenticationProviders(context, ref);
 
   /// Builds the widget when authentication providers are available.
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref);

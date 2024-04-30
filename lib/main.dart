@@ -15,7 +15,6 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
-import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/home.dart';
 import 'package:open_authenticator/pages/intro/page.dart';
@@ -23,11 +22,10 @@ import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/account.dart';
-import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
+import 'package:open_authenticator/widgets/dialog/totp_limit.dart';
 import 'package:open_authenticator/widgets/route/unlock_challenge.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 import 'package:window_manager/window_manager.dart';
@@ -160,11 +158,11 @@ class OpenAuthenticatorApp extends ConsumerWidget {
           ),
           routes: {
             IntroPage.name: (_) => _RouteWidget(
-                  listen: currentPlatform.isMobile,
+                  listen: currentPlatform.isMobile || kDebugMode,
                   child: const IntroPage(),
                 ),
             HomePage.name: (_) => _RouteWidget(
-                  listen: currentPlatform.isMobile,
+                  listen: currentPlatform.isMobile || kDebugMode,
                   child: const HomePage(),
                 ),
             ScanPage.name: (_) => const _RouteWidget(
@@ -191,12 +189,12 @@ class OpenAuthenticatorApp extends ConsumerWidget {
   }
 }
 
-/// A route that allows to listen to dynamic links and [totpLimitReachedProvider].
+/// A route that allows to listen to dynamic links and [totpLimitExceededProvider].
 class _RouteWidget extends ConsumerStatefulWidget {
   /// The route widget.
   final Widget child;
 
-  /// Listen to dynamic links and [totpLimitReachedProvider].
+  /// Listen to dynamic links and [totpLimitExceededProvider].
   final bool listen;
 
   /// Whether to provide an [UnlockChallengeRouteWidget].
@@ -222,42 +220,17 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
   void initState() {
     super.initState();
     if (widget.listen) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => listenDynamicLinks());
-      ref.listenManual(totpLimitReachedProvider, (previous, next) {
+      if (currentPlatform.isMobile) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => listenDynamicLinks());
+      }
+      ref.listenManual(totpLimitExceededProvider, (previous, next) async {
         if (next.valueOrNull != true) {
           return;
         }
-        showAdaptiveDialog(
-          context: context,
-          builder: (context) => AlertDialog.adaptive(
-            title: Text(translations.totpLimit.autoDialog.title),
-            scrollable: true,
-            content: Text(
-              translations.totpLimit.autoDialog.message(
-                count: App.freeTotpsLimit.toString(),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  if (await StorageMigrationUtils.changeStorageType(context, ref, StorageType.local) && context.mounted) {
-                    Navigator.pop(context);
-                  }
-                },
-                child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
-              ),
-              TextButton(
-                onPressed: () async {
-                  if (await ContributorPlanUtils.purchase(context, ref) && context.mounted) {
-                    Navigator.pop(context);
-                  }
-                },
-                child: Text(translations.totpLimit.autoDialog.actions.subscribe),
-              ),
-            ],
-          ),
-          barrierDismissible: false,
-        );
+        bool result = false;
+        while (!result && mounted) {
+          result = await MandatoryTotpLimitDialog.show(context);
+        }
       });
     }
   }

@@ -3,18 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/crypto.dart';
-import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
-import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/logo_search/dialog.dart';
+import 'package:open_authenticator/widgets/dialog/totp_limit.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 import 'package:open_authenticator/widgets/list/expand_list_tile.dart';
 import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
@@ -344,54 +342,18 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
 
   /// Adds the TOTP to the repository.
   Future<Result> addTotp() async {
-    bool willExceed = await ref.read(totpLimitReachedProvider.notifier).willExceedIfAddMore(count: 1);
-    bool canProceed = !willExceed;
-    if (willExceed) {
-      if (mounted) {
-        showAdaptiveDialog(
-          context: context,
-          builder: (context) => AlertDialog.adaptive(
-            title: Text(translations.totpLimit.addDialog.title),
-            scrollable: true,
-            content: Text(
-              translations.totpLimit.addDialog.message(
-                count: App.freeTotpsLimit.toString(),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  if (await StorageMigrationUtils.changeStorageType(context, ref, StorageType.local)) {
-                    canProceed = true;
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                  }
-                },
-                child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
-              ),
-              TextButton(
-                onPressed: () async {
-                  if (await ContributorPlanUtils.purchase(context, ref)) {
-                    canProceed = true;
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                  }
-                },
-                child: Text(translations.totpLimit.autoDialog.actions.subscribe),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(translations.totpLimit.addDialog.actions.cancel),
-              ),
-            ],
-          ),
-          barrierDismissible: false,
-        );
-      }
+    bool willExceed = await ref.read(totpLimitExceededProvider.notifier).willExceedIfAddMore(count: 1);
+    if (willExceed && mounted) {
+      willExceed = !(await MandatoryTotpLimitDialog.show(
+        context,
+        title: translations.totpLimit.addDialog.title,
+        message: translations.totpLimit.addDialog.message(
+          count: App.freeTotpsLimit.toString(),
+        ),
+        cancelButton: true,
+      ));
     }
-    if (!canProceed) {
+    if (!willExceed) {
       return const ResultCancelled();
     }
     DecryptedTotp? totp = await DecryptedTotp.create(
@@ -412,14 +374,14 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
 
   /// Updates the TOTP in the repository.
   Future<Result> updateTotp() => ref.read(totpRepositoryProvider.notifier).updateTotp(
-    widget.totp!.uuid,
-    widget.totp!.copyWith(
-      label: label,
-      issuer: issuer,
-      algorithm: algorithm,
-      digits: digits,
-      validity: validity,
-      imageUrl: imageUrl,
-    ),
-  );
+        widget.totp!.uuid,
+        widget.totp!.copyWith(
+          label: label,
+          issuer: issuer,
+          algorithm: algorithm,
+          digits: digits,
+          validity: validity,
+          imageUrl: imageUrl,
+        ),
+      );
 }

@@ -12,7 +12,7 @@ enum StorageType {
   online(create: OnlineStorage.new);
 
   /// Creates a storage instance associated to the current type.
-  final Storage Function(AutoDisposeAsyncNotifierProviderRef) create;
+  final Storage Function(Ref) create;
 
   /// Creates a new storage type instance.
   const StorageType({

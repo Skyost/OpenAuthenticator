@@ -16,31 +16,24 @@ class ThemeSettingsEntryWidget extends ConsumerWidget {
     return ListTile(
       leading: Icon(theme.valueOrNull.icon),
       enabled: theme.hasValue,
-      title: Theme(
-        data: Theme.of(context).copyWith(
-          buttonTheme: const ButtonThemeData(
-            alignedDropdown: false,
-          ),
+      title: DropdownButtonFormField<ThemeMode>(
+        value: theme.valueOrNull,
+        decoration: InputDecoration(
+          labelText: translations.settings.application.theme.title,
         ),
-        child: DropdownButtonFormField<ThemeMode>(
-          value: theme.valueOrNull,
-          decoration: InputDecoration(
-            labelText: translations.settings.application.theme.title,
-          ),
-          items: [
-            for (ThemeMode theme in ThemeMode.values)
-              if (translations.settings.application.theme.values.containsKey(theme.name))
-                DropdownMenuItem<ThemeMode>(
-                  value: theme,
-                  child: Text(translations.settings.application.theme.values[theme.name]!),
-                ),
-          ],
-          onChanged: (value) async {
-            if (value != null) {
-              await ref.read(themeSettingsEntryProvider.notifier).changeValue(value);
-            }
-          },
-        ),
+        items: [
+          for (ThemeMode theme in ThemeMode.values)
+            if (translations.settings.application.theme.values.containsKey(theme.name))
+              DropdownMenuItem<ThemeMode>(
+                value: theme,
+                child: Text(translations.settings.application.theme.values[theme.name]!),
+              ),
+        ],
+        onChanged: (value) async {
+          if (value != null) {
+            await ref.read(themeSettingsEntryProvider.notifier).changeValue(value);
+          }
+        },
       ),
     );
   }

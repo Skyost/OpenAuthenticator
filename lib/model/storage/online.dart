@@ -23,7 +23,7 @@ class OnlineStorage with Storage {
   static const String _kSaltKey = 'salt';
 
   /// The ref instance.
-  final AutoDisposeAsyncNotifierProviderRef _ref;
+  final Ref _ref;
 
   /// Creates a new online storage instance.
   OnlineStorage(this._ref);
