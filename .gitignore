@@ -43,12 +43,15 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Bat files
+generate.bat
+msix.bat
+
 # Generated files
 firebase.json
 lib/app.dart
 lib/firebase_options.dart
 **/*.g.dart
-generate.bat
 /macos/firebase_app_id_file.json
 /ios/firebase_app_id_file.json
 /android/app/google-services.json
