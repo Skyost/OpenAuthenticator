@@ -181,7 +181,7 @@ class TotpWidget extends ConsumerWidget {
     if (password == null) {
       return;
     }
-    Totp result = await totp.decrypt(await CryptoStore.fromPassword(password, salt: totp.encryptionSalt));
+    Totp result = await totp.decrypt(await CryptoStore.fromPassword(password, totp.encryptionSalt));
     if (!result.isDecrypted) {
       if (context.mounted) {
         SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);

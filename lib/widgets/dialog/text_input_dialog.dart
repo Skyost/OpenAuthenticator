@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/crypto.dart';
+import 'package:open_authenticator/model/password_verification/password_verification.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 
 /// Shows a dialog for prompting text.
@@ -170,6 +171,25 @@ class MasterPasswordInputDialog extends ConsumerStatefulWidget {
           message: message,
         ),
       );
+
+  /// Returns the string that validates the master password according to the given [validationResult].
+  static String? validateMasterPassword(Result<bool> validationResult) {
+    switch (validationResult) {
+      case ResultSuccess<bool>(:final value):
+        if (value) {
+          return null;
+        }
+        return translations.error.validation.masterPassword;
+      case ResultError<bool>(:final exception):
+        if (exception != null) {
+          return translations.error.generic.withException(exception: exception);
+        }
+        break;
+      default:
+        break;
+    }
+    return translations.error.generic.tryAgain;
+  }
 }
 
 /// The master password input dialog state.
@@ -181,7 +201,7 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
   String password = '';
 
   /// The master password validation result.
-  bool validationResult = false;
+  Result<bool> oldPasswordValidationResult = const ResultSuccess(value: false);
 
   @override
   Widget build(BuildContext context) => AlertDialog.adaptive(
@@ -202,7 +222,7 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
                 autofocus: true,
                 onFieldSubmitted: (value) => onOkPressed(password: value),
                 textInputAction: TextInputAction.go,
-                validator: isPasswordValid,
+                validator: (_) => MasterPasswordInputDialog.validateMasterPassword(oldPasswordValidationResult),
                 autovalidateMode: AutovalidateMode.disabled,
               ),
             ),
@@ -223,19 +243,10 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
   /// Triggered when the ok button has been pressed.
   Future<void> onOkPressed({String? password}) async {
     password ??= this.password;
-    StoredCryptoStore cryptoStore = ref.read(cryptoStoreProvider.notifier);
-    validationResult = await cryptoStore.checkPasswordValidity(password);
+    oldPasswordValidationResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(password);
     if (!formFieldKey.currentState!.validate() || !mounted) {
       return;
     }
     Navigator.pop(context, password);
-  }
-
-  /// Checks whether the entered password is valid.
-  String? isPasswordValid(String? value) {
-    if (!validationResult) {
-      return translations.error.validation.masterPassword;
-    }
-    return null;
   }
 }

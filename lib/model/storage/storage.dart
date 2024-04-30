@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/model/crypto.dart';
+import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
@@ -35,8 +36,9 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
   }) async {
     Future<void> Function()? close;
     try {
-      if (!(await ref.read(cryptoStoreProvider.notifier).checkPasswordValidity(masterPassword))) {
-        throw CurrentStoragePasswordMismatchException();
+      Result<bool> passwordCheckResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(masterPassword);
+      if (passwordCheckResult is! ResultSuccess || !(passwordCheckResult as ResultSuccess<bool>).value) {
+        throw (passwordCheckResult as ResultError).exception ?? CurrentStoragePasswordMismatchException();
       }
 
       newStorageMasterPassword ??= masterPassword;
@@ -46,14 +48,9 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
         return const ResultSuccess();
       }
 
-      Uint8List? oldSalt = await currentStorage.readSecretsSalt();
+      Salt? oldSalt = await currentStorage.readSecretsSalt();
       if (oldSalt == null) {
         throw SaltError();
-      }
-
-      CryptoStore? currentCryptoStore = await CryptoStore.fromPassword(masterPassword, salt: oldSalt);
-      if (currentCryptoStore == null) {
-        throw GenericMigrationError();
       }
 
       if (backupPassword != null) {
@@ -87,7 +84,8 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
         }
       }
 
-      Uint8List? salt = await newStorage.readSecretsSalt();
+      CryptoStore currentCryptoStore = await CryptoStore.fromPassword(masterPassword, oldSalt);
+      Salt? salt = await newStorage.readSecretsSalt();
       List<Totp> totps = await currentStorage.listTotps();
       List<Totp> toAdd = [];
       if (salt == null) {
@@ -100,11 +98,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
 
         toAdd.addAll(totps.where((totp) => totp.isDecrypted));
       } else {
-        CryptoStore? newCryptoStore = await CryptoStore.fromPassword(newStorageMasterPassword, salt: salt);
-        if (newCryptoStore == null) {
-          throw GenericMigrationError();
-        }
-
+        CryptoStore newCryptoStore = await CryptoStore.fromPassword(newStorageMasterPassword, salt);
         bool canDecryptAll = await newStorage.canDecryptAll(newCryptoStore);
         if (!canDecryptAll) {
           throw NewStoragePasswordMismatchException();
@@ -308,10 +302,10 @@ mixin Storage {
   Future<bool> canDecryptAll(CryptoStore cryptoStore);
 
   /// Loads the salt that allows to encrypt secrets.
-  Future<Uint8List?> readSecretsSalt();
+  Future<Salt?> readSecretsSalt();
 
   /// Saves the salt that allows to encrypt secrets.
-  Future<void> saveSecretsSalt(Uint8List salt);
+  Future<void> saveSecretsSalt(Salt salt);
 
   /// Closes this storage instance.
   Future<void> close();

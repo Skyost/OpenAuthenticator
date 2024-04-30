@@ -47,7 +47,7 @@ class Totp extends Equatable implements Comparable<Totp> {
 
   /// The salt that has encrypted the secret.
   /// Stored "just in case".
-  final Uint8List encryptionSalt;
+  final Salt encryptionSalt;
 
   /// The TOTP UUID.
   final String uuid;
@@ -84,7 +84,7 @@ class Totp extends Equatable implements Comparable<Totp> {
   });
 
   @override
-  List<Object?> get props => [secret, encryptionSalt, uuid, label, issuer, algorithm, digits, validity, imageUrl];
+  List<Object?> get props => [secret, encryptionSalt.value, uuid, label, issuer, algorithm, digits, validity, imageUrl];
 
   /// Tries to decrypt the current TOTP [secret].
   /// Returns the current instance if failed.
@@ -121,7 +121,7 @@ class Totp extends Equatable implements Comparable<Totp> {
   /// Returns a copy of this instance with the given fields.
   Totp copyWith({
     Uint8List? secret,
-    Uint8List? encryptionSalt,
+    Salt? encryptionSalt,
     String? uuid,
     String? label,
     String? issuer,

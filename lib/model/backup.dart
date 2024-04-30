@@ -92,10 +92,10 @@ class Backup implements Comparable<Backup> {
         throw _InvalidBackupContentException();
       }
       CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
-      CryptoStore? cryptoStore = await CryptoStore.fromPassword(password, salt: base64.decode(jsonData[kSaltKey]));
-      if (currentCryptoStore == null || cryptoStore == null) {
+      if (currentCryptoStore == null) {
         throw _EncryptionError(operationName: 'decryption');
       }
+      CryptoStore cryptoStore = await CryptoStore.fromPassword(password, Salt.fromRawValue(value: base64.decode(jsonData[kSaltKey])));
       List jsonTotps = jsonData[kTotpsKey];
       List<Totp> totps = [];
       for (dynamic jsonTotp in jsonTotps) {
@@ -119,11 +119,11 @@ class Backup implements Comparable<Backup> {
   /// Saves this backup.
   Future<Result> save(String password) async {
     try {
-      CryptoStore? newStore = await CryptoStore.fromPassword(password);
       CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
-      if (newStore == null || currentCryptoStore == null) {
+      if (currentCryptoStore == null) {
         throw _EncryptionError(operationName: 'encryption');
       }
+      CryptoStore newStore = await CryptoStore.fromPassword(password, await Salt.generate());
       List<Totp> totps = await _ref.read(totpRepositoryProvider.future);
       List<DecryptedTotp> toBackup = [];
       for (Totp totp in totps) {
@@ -137,7 +137,7 @@ class Backup implements Comparable<Backup> {
       }
       File file = await _getBackupPath(createDirectory: true);
       file.writeAsString(jsonEncode({
-        kSaltKey: base64.encode(newStore.salt),
+        kSaltKey: base64.encode(newStore.salt.value),
         kTotpsKey: toBackup.map((totp) => totp.toJson()).toList(),
       }));
       return const ResultSuccess();

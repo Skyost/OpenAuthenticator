@@ -193,10 +193,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
         return totps.isEmpty ? const ResultSuccess() : ResultError();
       }
       Storage storage = await ref.read(storageProvider.future);
-      CryptoStore? newCryptoStore = await CryptoStore.fromPassword(password, salt: await storage.readSecretsSalt());
-      if (newCryptoStore == null) {
-        throw _NoCryptoStoreException();
-      }
+      CryptoStore newCryptoStore = await CryptoStore.fromPassword(password, currentCryptoStore.salt);
       if (backupPassword != null) {
         Result<Backup> backupResult = await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
         if (backupResult is! ResultSuccess) {

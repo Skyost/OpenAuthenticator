@@ -117,10 +117,10 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
-  Future<Uint8List?> readSecretsSalt() => StoredCryptoStore.readSaltFromLocalStorage();
+  Future<Salt?> readSecretsSalt() async => await Salt.readFromLocalStorage();
 
   @override
-  Future<void> saveSecretsSalt(Uint8List salt) => StoredCryptoStore.saveSaltToLocalStorage(salt);
+  Future<void> saveSecretsSalt(Salt salt) => salt.saveToLocalStorage();
 
   @override
   Future<void> onStorageTypeChanged({bool close = false}) async {
@@ -146,7 +146,7 @@ extension _OpenAuthenticator on _DriftTotp {
   /// Converts this instance to a [Totp].
   Totp get asTotp => Totp(
         secret: secret,
-        encryptionSalt: encryptionSalt,
+        encryptionSalt: Salt.fromRawValue(value: encryptionSalt),
         uuid: uuid,
         label: label,
         issuer: issuer,
@@ -162,7 +162,7 @@ extension _Drift on Totp {
   /// Converts this instance to a Drift generated [Secret].
   _DriftTotp get asDriftTotp => _DriftTotp(
         secret: secret,
-        encryptionSalt: encryptionSalt,
+        encryptionSalt: encryptionSalt.value,
         uuid: uuid,
         label: label,
         issuer: issuer,

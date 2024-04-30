@@ -12,7 +12,10 @@ final appUnlockStateProvider = AsyncNotifierProvider<AppUnlockState, bool>(AppUn
 /// Allows to get and set the app unlocked state.
 class AppUnlockState extends AsyncNotifier<bool> {
   @override
-  FutureOr<bool> build() => future;
+  FutureOr<bool> build() async {
+    AppUnlockMethod unlockMethod = await ref.read(appUnlockMethodSettingsEntryProvider.future);
+    return unlockMethod is NoneAppUnlockMethod;
+  }
 
   /// Tries to unlock the app.
   Future<Result> unlock(BuildContext context, {UnlockReason unlockReason = UnlockReason.openApp}) async {

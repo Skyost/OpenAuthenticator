@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/crypto.dart';
+import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
 import 'package:open_authenticator/widgets/form/master_password_form.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
@@ -83,7 +84,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
   String? backupPassword;
 
   /// The old password validation result.
-  bool oldPasswordValidationResult = false;
+  Result<bool> oldPasswordValidationResult = const ResultSuccess(value: false);
 
   @override
   Widget build(BuildContext context) => AlertDialog.adaptive(
@@ -102,7 +103,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
                 ),
                 onChanged: (value) => oldPassword = value,
                 initialValue: oldPassword,
-                validator: isPasswordValid,
+                validator: (_) => MasterPasswordInputDialog.validateMasterPassword(oldPasswordValidationResult),
               ),
             ),
             MasterPasswordForm(
@@ -139,8 +140,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
         actions: [
           TextButton(
             onPressed: () async {
-              StoredCryptoStore cryptoStore = ref.read(cryptoStoreProvider.notifier);
-              oldPasswordValidationResult = await cryptoStore.checkPasswordValidity(oldPassword);
+              oldPasswordValidationResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(oldPassword);
               if (!oldPasswordFormKey.currentState!.validate() || !newPasswordFormKey.currentState!.validate()) {
                 return;
               }
@@ -159,14 +159,6 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
           ),
         ],
       );
-
-  /// Checks whether the entered password is valid.
-  String? isPasswordValid(String? value) {
-    if (!oldPasswordValidationResult) {
-      return translations.error.validation.masterPassword;
-    }
-    return null;
-  }
 
   /// Checks whether the backup password is valid.
   String? isBackupPasswordValid(String? value) {

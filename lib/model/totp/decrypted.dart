@@ -150,7 +150,7 @@ class DecryptedTotp extends Totp {
   @override
   DecryptedTotp copyWith({
     Uint8List? secret,
-    Uint8List? encryptionSalt,
+    Salt? encryptionSalt,
     String? uuid,
     String? label,
     String? issuer,

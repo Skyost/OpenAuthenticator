@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 
@@ -12,7 +13,7 @@ extension JsonTotp on Totp {
     }
     return Totp(
       secret: Uint8List.fromList((data[Totp.kSecretKey] as List).cast<int>()),
-      encryptionSalt: Uint8List.fromList((data[Totp.kEncryptionSalt] as List).cast<int>()),
+      encryptionSalt: Salt.fromRawValue(value: Uint8List.fromList((data[Totp.kEncryptionSalt] as List).cast<int>())),
       uuid: data[Totp.kUuidKey],
       label: data[Totp.kLabelKey],
       issuer: data[Totp.kIssuerKey],
@@ -26,7 +27,7 @@ extension JsonTotp on Totp {
   /// Converts this TOTP to a JSON compatible map.
   Map<String, dynamic> toJson() => {
     Totp.kSecretKey: secret,
-    Totp.kEncryptionSalt: encryptionSalt,
+    Totp.kEncryptionSalt: encryptionSalt.value,
     Totp.kUuidKey: uuid,
     Totp.kLabelKey: label,
     if (issuer != null) Totp.kIssuerKey: issuer,

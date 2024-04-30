@@ -31,7 +31,7 @@ class _UnlockChallengeRouteWidgetState extends ConsumerState<UnlockChallengeRout
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      tryUnlock();
+      tryUnlockIfNeeded();
     });
   }
 
@@ -48,12 +48,16 @@ class _UnlockChallengeRouteWidgetState extends ConsumerState<UnlockChallengeRout
   /// Creates the route widget.
   Widget _createRouteWidget([bool isUnlocked = false]) => LockedRouteWidget(
     isLocked: !isUnlocked,
-    onUnlockButtonClicked: tryUnlock,
+    onUnlockButtonClicked: tryUnlockIfNeeded,
     child: widget.child,
   );
 
   /// Tries to unlock the app.
-  Future<void> tryUnlock() async {
+  Future<void> tryUnlockIfNeeded() async {
+    bool isUnlocked = await ref.watch(appUnlockStateProvider.future);
+    if (isUnlocked || !mounted) {
+      return;
+    }
     setState(() => unlockChallengedStarted = true);
     Result result = await ref.read(appUnlockStateProvider.notifier).unlock(context);
     if (mounted) {

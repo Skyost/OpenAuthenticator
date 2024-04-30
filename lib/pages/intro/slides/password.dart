@@ -50,12 +50,8 @@ class PasswordIntroPageSlide extends IntroPageSlide {
     if (_password == null) {
       return false;
     }
-    CryptoStore? store = await CryptoStore.fromPassword(_password!);
-    if (store == null) {
-      return false;
-    }
     StoredCryptoStore currentCryptoStore = ref.read(cryptoStoreProvider.notifier);
-    await currentCryptoStore.saveAndUse(store);
+    await currentCryptoStore.saveAndUse(await CryptoStore.fromPassword(_password!, await Salt.generate()));
     return true;
   }
 }

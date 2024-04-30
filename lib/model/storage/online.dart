@@ -143,19 +143,19 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<Uint8List?> readSecretsSalt() async {
+  Future<Salt?> readSecretsSalt() async {
     DocumentSnapshot<Map<String, dynamic>> userDoc = await _userDocument.get();
     if (!userDoc.exists) {
       return null;
     }
     List salt = (userDoc.data() as Map<String, dynamic>)[_kSaltKey];
-    return Uint8List.fromList(salt.cast<int>());
+    return Salt.fromRawValue(value: Uint8List.fromList(salt.cast<int>()));
   }
 
   @override
-  Future<void> saveSecretsSalt(Uint8List salt) async {
+  Future<void> saveSecretsSalt(Salt salt) async {
     DocumentReference<Map<String, dynamic>> userDoc = _userDocument;
-    await userDoc.set({_kSaltKey: salt}, SetOptions(merge: true));
+    await userDoc.set({_kSaltKey: salt.value}, SetOptions(merge: true));
   }
 
   @override

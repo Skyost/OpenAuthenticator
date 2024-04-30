@@ -59,12 +59,12 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
     if (enableResult is! ResultSuccess) {
       return enableResult;
     }
-    await changeValue(newMethod);
+    await changeValue(newMethod, enableResult: enableResult, disableResult: disableResult);
     return const ResultSuccess();
   }
 
   @override
-  Future<void> changeValue(AppUnlockMethod value) async {
+  Future<void> changeValue(AppUnlockMethod value, { ResultSuccess? enableResult, ResultSuccess? disableResult }) async {
     switch (value) {
       case NoneAppUnlockMethod():
         await SimpleSecureStorage.delete(key);
@@ -76,8 +76,8 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
         break;
     }
     AppUnlockMethod current = await future;
-    await value.onMethodChosen(ref);
-    await current.onMethodChanged(ref);
+    await value.onMethodChosen(ref, enableResult: enableResult);
+    await current.onMethodChanged(ref, disableResult: disableResult);
     await super.changeValue(value);
   }
 }

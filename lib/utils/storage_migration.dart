@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
-import 'package:open_authenticator/model/crypto.dart';
+import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/utils/form_label.dart';
@@ -34,8 +34,8 @@ class StorageMigrationUtils {
       }
       backupPassword ??= result.backupPassword;
     }
-    StoredCryptoStore currentCryptoStore = ref.read(cryptoStoreProvider.notifier);
-    if (!(await currentCryptoStore.checkPasswordValidity(currentStorageMasterPassword))) {
+    Result<bool> passwordCheckResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(currentStorageMasterPassword);
+    if (passwordCheckResult is! ResultSuccess<bool> || !passwordCheckResult.value) {
       if (!context.mounted) {
         return false;
       }
