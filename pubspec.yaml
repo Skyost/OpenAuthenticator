@@ -61,12 +61,12 @@ dependencies:
   sqlite3: ^2.4.2
   url_launcher: ^6.2.6
   firebase_app_check: ^0.2.2
-  purchases_flutter: ^6.28.0
+  purchases_flutter: ^6.29.0
   firebase_crashlytics: ^3.5.4
   window_manager: ^0.3.8
   slang: ^3.30.2
   slang_flutter: ^3.30.0
-  purchases_ui_flutter: ^6.28.0
+  purchases_ui_flutter: ^6.29.0
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to

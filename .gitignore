@@ -48,7 +48,6 @@ generate.bat
 msix.bat
 
 # Generated files
-firebase.json
 lib/app.dart
 lib/firebase_options.dart
 **/*.g.dart
