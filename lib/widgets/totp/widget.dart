@@ -9,6 +9,7 @@ import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/totp.dart';
+import 'package:open_authenticator/utils/master_password.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
@@ -181,23 +182,65 @@ class TotpWidget extends ConsumerWidget {
     if (password == null) {
       return;
     }
-    Totp result = await totp.decrypt(await CryptoStore.fromPassword(password, totp.encryptionSalt));
-    if (!result.isDecrypted) {
-      if (context.mounted) {
-        SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);
-      }
+    CryptoStore previousCryptoStore = await CryptoStore.fromPassword(password, totp.encryptionSalt);
+    Totp decrypted = await totp.decrypt(previousCryptoStore);
+    if (!context.mounted) {
       return;
     }
-    TotpRepository repository =  await ref.read(totpRepositoryProvider.notifier);
-    await repository.deleteTotp(totp);
-    await repository.addTotp(result);
+    if (!decrypted.isDecrypted) {
+      SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);
+      return;
+    }
+
+    _TotpKeyDialogResult choice = (await showAdaptiveDialog<_TotpKeyDialogResult>(
+          context: context,
+          builder: (context) => _TotpKeyDialog(),
+        )) ??
+        _TotpKeyDialogResult.doNothing;
+
+    Future<Result> updateTotp() async {
+      TotpRepository repository = await ref.read(totpRepositoryProvider.notifier);
+      Result result = await repository.deleteTotp(totp);
+      if(result is! ResultSuccess) {
+        return result;
+      }
+      result = await repository.addTotp(decrypted);
+      return result;
+    }
+
+    Result result;
+    switch (choice) {
+      case _TotpKeyDialogResult.changeTotpKey:
+        CryptoStore? currentCryptoStore = await ref.read(cryptoStoreProvider.future);
+        if (currentCryptoStore == null) {
+          result = ResultError();
+          break;
+        }
+        DecryptedTotp? decryptedTotpWithNewKey = await totp.changeEncryptionKey(previousCryptoStore, currentCryptoStore);
+        if (decryptedTotpWithNewKey == null || !decryptedTotpWithNewKey.isDecrypted) {
+          result = ResultError();
+          break;
+        }
+        decrypted = decryptedTotpWithNewKey;
+        result = await updateTotp();
+        break;
+      case _TotpKeyDialogResult.changeMasterPassword:
+        result = await updateTotp();
+        if (context.mounted) {
+          await MasterPasswordUtils.changeMasterPassword(context, ref, password: password);
+        }
+        break;
+      default:
+        result = await updateTotp();
+        break;
+    }
     if (context.mounted) {
-      SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
+      context.showSnackBarForResult(result);
     }
   }
 }
 
-/// Wraps all two desktop actions in a dialog.
+/// Wraps all two mobile actions in a dialog.
 class _MobileActionsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AlertDialog.adaptive(
@@ -234,6 +277,59 @@ enum _MobileActionsDialogResult {
 
   /// When the user wants to delete the TOTP.
   delete;
+}
+
+/// Allows the user to choose an action to execute when a TOTP decryption has been done with success.
+class _TotpKeyDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => AlertDialog.adaptive(
+        title: Text(translations.totp.totpKeyDialog.title),
+        scrollable: true,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              translations.totp.totpKeyDialog.message,
+            ),
+            ListTile(
+              leading: const Icon(Icons.key),
+              onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeTotpKey),
+              title: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.title),
+              subtitle: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.subtitle),
+            ),
+            ListTile(
+              leading: const Icon(Icons.password),
+              onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeMasterPassword),
+              title: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.title),
+              subtitle: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.subtitle),
+            ),
+            ListTile(
+              leading: const Icon(Icons.close),
+              onTap: () => Navigator.pop(context, _TotpKeyDialogResult.doNothing),
+              title: Text(translations.totp.totpKeyDialog.choices.doNothing.title),
+              subtitle: Text(translations.totp.totpKeyDialog.choices.doNothing.subtitle),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, _TotpKeyDialogResult.doNothing),
+            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+        ],
+      );
+}
+
+/// The [_TotpKeyDialog] result.
+enum _TotpKeyDialogResult {
+  /// Allows to change the TOTP key.
+  changeTotpKey,
+
+  /// Allows to change the current master password.
+  changeMasterPassword,
+
+  /// Just leave it, as it.
+  doNothing;
 }
 
 /// Wraps all three desktop actions in a widget.

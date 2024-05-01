@@ -21,6 +21,24 @@
     "title": "Decrypt TOTP",
     "message": "This TOTP has been encrypted using a different a master password. Please enter it below in order to decrypt it."
   },
+  "totpKeyDialog": {
+    "title": "Decrypted with success",
+    "message": "Do you want to change your master password or to encrypt this TOTP with your current encryption key ?",
+    "choices": {
+      "changeTotpKey": {
+        "title": "Encrypt this TOTP with your current key",
+        "subtitle": "Change this TOTP encryption key, and use yours instead."
+      },
+      "changeMasterPassword": {
+        "title": "Change your current master password",
+        "subtitle": "Use the entered password as your new master password and generate an encryption key from it.\nAll TOTPs encrypted with another password will need to be decrypted manually."
+      },
+      "doNothing": {
+        "title": "Do nothing",
+        "subtitle": "You will have to reenter this password to decrypt this TOTP."
+      }
+    }
+  },
   "page": {
     "title": {
       "edit": "Edit TOTP",

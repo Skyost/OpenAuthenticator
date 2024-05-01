@@ -21,6 +21,24 @@
     "title": "Déchiffrement du TOTP",
     "message": "Ce TOTP a été chiffré en utilisant un mot de passe maître différent. Veuillez l'entrer ci-dessous pour le déchiffrer."
   },
+  "totpKeyDialog": {
+    "title": "Déchiffrement réussi",
+    "message": "Souhaitez-vous changer votre mot de passe maître ou chiffrer ce TOTP avec votre clé de chiffrement actuelle ?",
+    "choices": {
+      "changeTotpKey": {
+        "title": "Chiffrer ce TOTP avec votre clé actuelle",
+        "subtitle": "Changer la clé de chiffrement utilisée pour ce TOTP, et utiliser la votre à la place."
+      },
+      "changeMasterPassword": {
+        "title": "Changer votre mot de passe maître",
+        "subtitle": "Utiliser le mot de passe que vous venez d'entrer comme nouveau mot de passe maître et générer une clé de chiffrement à partir de celui-ci.\nTous les TOTPs chiffrés avec un autre mot de passe devront être déchiffrés manuellement."
+      },
+      "doNothing": {
+        "title": "Ne rien faire",
+        "subtitle": "Vous devrez entrer de nouveau le même mot de passe pour déchiffrer ce TOTP."
+      }
+    }
+  },
   "page": {
     "title": {
       "edit": "Éditer le TOTP",
