@@ -30,6 +30,16 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
     return _queryTotpsFromStorage(storage, cryptoStore);
   }
 
+  /// Tries to decrypt all TOTPs with the given [cryptoStore].
+  Future<void> tryDecryptAll(CryptoStore? cryptoStore) async {
+    state = const AsyncLoading();
+    List<Totp> totps = await future;
+    state = AsyncData([
+      for (Totp totp in totps)
+        await totp.decrypt(cryptoStore)
+    ]);
+  }
+
   /// Refreshes the current state.
   Future<void> refresh() async {
     state = const AsyncLoading();

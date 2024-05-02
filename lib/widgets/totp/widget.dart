@@ -186,11 +186,16 @@ class TotpWidget extends ConsumerWidget {
     }
     CryptoStore previousCryptoStore = await CryptoStore.fromPassword(password, totp.encryptedData.encryptionSalt);
     Totp decrypted = await totp.decrypt(previousCryptoStore);
-    if (!context.mounted) {
+    if (!decrypted.isDecrypted) {
+      if (context.mounted) {
+        SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);
+      }
       return;
     }
-    if (!decrypted.isDecrypted) {
-      SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);
+
+    TotpRepository repository = ref.read(totpRepositoryProvider.notifier);
+    await repository.tryDecryptAll(previousCryptoStore);
+    if (!context.mounted) {
       return;
     }
 
@@ -200,39 +205,31 @@ class TotpWidget extends ConsumerWidget {
         )) ??
         _TotpKeyDialogResult.doNothing;
 
-    Future<Result> updateTotp() async {
-      TotpRepository repository = await ref.read(totpRepositoryProvider.notifier);
-      return await repository.updateTotp(totp.uuid, decrypted as DecryptedTotp);
-    }
-
-    Result? result;
     switch (choice) {
       case _TotpKeyDialogResult.changeTotpKey:
         CryptoStore? currentCryptoStore = await ref.read(cryptoStoreProvider.future);
         if (currentCryptoStore == null) {
-          result = ResultError();
+          if (context.mounted) {
+            SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
+          }
           break;
         }
         DecryptedTotp? decryptedTotpWithNewKey = await totp.changeEncryptionKey(previousCryptoStore, currentCryptoStore);
         if (decryptedTotpWithNewKey == null || !decryptedTotpWithNewKey.isDecrypted) {
-          result = ResultError();
+          if (context.mounted) {
+            SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
+          }
           break;
         }
-        decrypted = decryptedTotpWithNewKey;
-        result = await updateTotp();
+        await repository.updateTotp(totp.uuid, decryptedTotpWithNewKey);
         break;
       case _TotpKeyDialogResult.changeMasterPassword:
-        await updateTotp();
         if (context.mounted) {
           await MasterPasswordUtils.changeMasterPassword(context, ref, password: password);
         }
         break;
       default:
-        result = await updateTotp();
         break;
-    }
-    if (context.mounted && result != null) {
-      context.showSnackBarForResult(result);
     }
   }
 }
