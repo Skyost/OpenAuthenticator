@@ -6,7 +6,6 @@ import 'package:open_authenticator/model/authentication/firebase_authentication.
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
-import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/json.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
@@ -82,8 +81,7 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<void> updateTotp(
-    String uuid, Totp totp) async {
+  Future<void> updateTotp(String uuid, Totp totp) async {
     CollectionReference? collection = _totpsCollection;
     Map<String, dynamic>? newData = await _toFirestore(totp);
     if (newData == null) {
@@ -182,19 +180,13 @@ class OnlineStorage with Storage {
       return null;
     }
     Map<String, Object?> data = snapshot.data() as Map<String, Object?>;
-    Map<String, dynamic>? decryptedData = await _transform<List, dynamic>(
+    Map<String, dynamic>? decryptedData = await _transform<List?, dynamic>(
       data,
       (cryptoStore, key, input) async {
+        if (input == null) {
+          return null;
+        }
         String? decrypted = await cryptoStore.decrypt(Uint8List.fromList(input.cast<int>()));
-        if (decrypted == null) {
-          return decrypted;
-        }
-        if (key == Totp.kDigitsKey || key == Totp.kValidityKey) {
-          return int.tryParse(decrypted);
-        }
-        if (key == Totp.kAlgorithmKey) {
-          return Algorithm.fromString(decrypted);
-        }
         return decrypted;
       },
       cryptoStore: cryptoStore,
@@ -205,7 +197,13 @@ class OnlineStorage with Storage {
   /// Converts the [totp] to an encrypted Firestore map.
   Future<Map<String, dynamic>?> _toFirestore(Totp totp) async => await _transform<dynamic, List>(
         totp.toJson(),
-        (cryptoStore, key, input) async => input == null ? null : (await cryptoStore.encrypt(input.toString())),
+        (cryptoStore, key, input) async {
+          if (input == null) {
+            return null;
+          }
+          Uint8List? encrypted = await cryptoStore.encrypt(input.toString());
+          return encrypted;
+        },
       );
 
   /// Transforms the [totpData] using the [transformer].
@@ -233,24 +231,9 @@ class OnlineStorage with Storage {
           Totp.kIssuerKey,
           totpData[Totp.kIssuerKey],
         ),
-      if (totpData.containsKey(Totp.kAlgorithmKey))
-        Totp.kAlgorithmKey: await transformer(
-          cryptoStore,
-          Totp.kAlgorithmKey,
-          totpData[Totp.kIssuerKey],
-        ),
-      if (totpData.containsKey(Totp.kDigitsKey))
-        Totp.kDigitsKey: await transformer(
-          cryptoStore,
-          Totp.kDigitsKey,
-          totpData[Totp.kDigitsKey],
-        ),
-      if (totpData.containsKey(Totp.kValidityKey))
-        Totp.kValidityKey: await transformer(
-          cryptoStore,
-          Totp.kValidityKey,
-          totpData[Totp.kValidityKey],
-        ),
+      if (totpData.containsKey(Totp.kAlgorithmKey)) Totp.kAlgorithmKey: totpData[Totp.kAlgorithmKey],
+      if (totpData.containsKey(Totp.kDigitsKey)) Totp.kDigitsKey: totpData[Totp.kDigitsKey],
+      if (totpData.containsKey(Totp.kValidityKey)) Totp.kValidityKey: totpData[Totp.kValidityKey],
       if (totpData.containsKey(Totp.kImageUrlKey))
         Totp.kImageUrlKey: await transformer(
           cryptoStore,
@@ -273,7 +256,9 @@ class _SerializationError implements Exception {
   final Totp totp;
 
   /// Creates a new serialization error instance.
-  _SerializationError({required this.totp,});
+  _SerializationError({
+    required this.totp,
+  });
 
   @override
   String toString() => 'Unable to serialize TOTP (${totp.uuid} / ${totp.label})';
