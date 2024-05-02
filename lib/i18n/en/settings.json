@@ -113,7 +113,7 @@
       "subtitle": "Backup your TOTPs now.",
       "passwordDialog": {
         "title": "Backup password",
-        "message": "Please enter a password for your backup. Note that we can only save the decrypted TOTPs (those that are displaying a code)."
+        "message": "Please enter a password for your backup."
       }
     },
     "manageBackups": {

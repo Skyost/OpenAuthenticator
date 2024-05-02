@@ -12,6 +12,7 @@ import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:webcrypto/webcrypto.dart';
 
 /// The backup store provider.
 final backupStoreProvider = AsyncNotifierProvider<BackupStore, List<Backup>>(BackupStore.new);
@@ -68,6 +69,9 @@ class Backup implements Comparable<Backup> {
   /// The salt JSON key.
   static const String kSaltKey = 'salt';
 
+  /// The password signature JSON key.
+  static const String kPasswordSignatureKey = 'passwordSignature';
+
   /// The Riverpod ref.
   final AsyncNotifierProviderRef _ref;
 
@@ -87,21 +91,30 @@ class Backup implements Comparable<Backup> {
       if (!file.existsSync()) {
         throw _BackupFileDoesNotExistException(path: file.path);
       }
+
       Map<String, dynamic> jsonData = jsonDecode(file.readAsStringSync());
-      if (!jsonData.containsKey(kTotpsKey) || !jsonData.containsKey(kSaltKey)) {
+      if (jsonData[kTotpsKey] is! List || jsonData[kSaltKey] is! List || jsonData[kPasswordSignatureKey] is! List) {
         throw _InvalidBackupContentException();
       }
+
+      CryptoStore cryptoStore = await CryptoStore.fromPassword(password, Salt.fromRawValue(value: base64.decode(jsonData[kSaltKey])));
+      HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(await cryptoStore.key.exportRawKey(), Hash.sha256);
+      if(!(await hmacSecretKey.verifyBytes((jsonData[kPasswordSignatureKey] as List).cast<int>(), utf8.encode(password)))) {
+        throw _InvalidPasswordException();
+      }
+
       CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
       if (currentCryptoStore == null) {
         throw _EncryptionError(operationName: 'decryption');
       }
-      CryptoStore cryptoStore = await CryptoStore.fromPassword(password, Salt.fromRawValue(value: base64.decode(jsonData[kSaltKey])));
+
       List jsonTotps = jsonData[kTotpsKey];
       List<Totp> totps = [];
       for (dynamic jsonTotp in jsonTotps) {
-        Totp? totp = await JsonTotp.fromJson(jsonTotp)?.changeEncryptionKey(cryptoStore, currentCryptoStore);
+        Totp? totp = JsonTotp.fromJson(jsonTotp);
         if (totp != null) {
-          totps.add(totp);
+          DecryptedTotp? decrypted = await totp.changeEncryptionKey(cryptoStore, currentCryptoStore);
+          totps.add(decrypted ?? totp);
         }
       }
       if (totps.isEmpty) {
@@ -125,18 +138,15 @@ class Backup implements Comparable<Backup> {
       }
       CryptoStore newStore = await CryptoStore.fromPassword(password, await Salt.generate());
       List<Totp> totps = await _ref.read(totpRepositoryProvider.future);
-      List<DecryptedTotp> toBackup = [];
+      List<Totp> toBackup = [];
       for (Totp totp in totps) {
         DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newStore);
-        if (decryptedTotp != null) {
-          toBackup.add(decryptedTotp);
-        }
+        toBackup.add(decryptedTotp ?? totp);
       }
-      if (toBackup.isEmpty) {
-        throw _InvalidPasswordException();
-      }
+      HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(await newStore.key.exportRawKey(), Hash.sha256);
       File file = await _getBackupPath(createDirectory: true);
       file.writeAsString(jsonEncode({
+        kPasswordSignatureKey: base64.encode(await hmacSecretKey.signBytes(utf8.encode(password))),
         kSaltKey: base64.encode(newStore.salt.value),
         kTotpsKey: toBackup.map((totp) => totp.toJson()).toList(),
       }));

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/password_verification/methods/crypto_store.dart';
 import 'package:open_authenticator/model/password_verification/methods/method.dart';
 import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
-import 'package:open_authenticator/model/password_verification/methods/totps_decrypt.dart';
 import 'package:open_authenticator/utils/result.dart';
 
 /// The provider instance.
@@ -17,7 +16,6 @@ class PasswordVerification extends AutoDisposeAsyncNotifier<List<PasswordVerific
         for (AutoDisposeAsyncNotifierProvider<PasswordVerificationMethod, bool> provider in [
           cryptoStoreVerificationMethodProvider,
           passwordSignatureVerificationMethodProvider,
-          totpsDecryptVerificationMethodProvider,
         ])
           if (await ref.watch(provider.future)) ref.read(provider.notifier),
       ];

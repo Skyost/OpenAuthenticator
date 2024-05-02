@@ -6,11 +6,6 @@
       "disable": "Voulez-vous vraiment arrêter de synchroniser vos TOTPs ? Tous les changements effectués sur cette instance de l'application ne seront plus synchronisés avec les autres appareils."
     }
   },
-  "newStoragePasswordMismatchDialog": {
-    "title": "Mot de passe maître du stockage",
-    "defaultMessage": "Le stockage distant a été chiffré avec un mot de passe maître différent du vôtre. Veuillez l'entrer ci-dessous pour continuer.\nNotez que cela va définir votre nouveau mot de passe maître. Vous pourrez tout de même le changer à n'importe quel moment.",
-    "errorMessage": "Le stockage distant a été chiffré avec un mot de passe maître différent du vôtre. Vous en avez entré un mauvais, veuillez réessayer.\nNotez que cela va définir votre nouveau mot de passe maître. Vous pourrez tout de même le changer à n'importe quel moment."
-  },
   "deletedTotpPolicyPickerDialog": {
     "title": "Migrer les TOTPs",
     "message": "Certains TOTPs ont été supprimés sur votre appareil, mais pas sur le stockage distant. Que voulez-vous faire ?",

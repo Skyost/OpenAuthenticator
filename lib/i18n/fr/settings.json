@@ -113,7 +113,7 @@
       "subtitle": "Créer une sauvegarde de vos TOTPs.",
       "passwordDialog": {
         "title": "Mot de passe de la sauvegarde",
-        "message": "Veuillez entrer un mot de passe pour la sauvegarde. Veuillez noter que nous ne pouvons sauvegarder que les TOTPs déchiffrés (ceux qui affichent un code)."
+        "message": "Veuillez entrer un mot de passe pour la sauvegarde."
       }
     },
     "manageBackups": {

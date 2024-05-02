@@ -24,7 +24,6 @@ class StorageMigrationUtils {
     String? backupPassword,
     bool logout = false,
     String currentStorageMasterPassword = '',
-    String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
     if (showConfirmation) {
@@ -54,7 +53,6 @@ class StorageMigrationUtils {
             currentStorageMasterPassword,
             newType,
             backupPassword: backupPassword,
-            newStorageMasterPassword: newStorageMasterPassword,
             storageMigrationDeletedTotpPolicy: storageMigrationDeletedTotpPolicy,
           ),
     );
@@ -69,7 +67,6 @@ class StorageMigrationUtils {
       logout,
       backupPassword,
       currentStorageMasterPassword,
-      newStorageMasterPassword,
       storageMigrationDeletedTotpPolicy,
     );
   }
@@ -83,7 +80,6 @@ class StorageMigrationUtils {
     bool logout,
     String? backupPassword,
     String currentStorageMasterPassword,
-    String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy,
   ) async {
     switch (result) {
@@ -117,32 +113,7 @@ class StorageMigrationUtils {
               logout: logout,
               backupPassword: backupPassword,
               currentStorageMasterPassword: currentStorageMasterPassword,
-              newStorageMasterPassword: newStorageMasterPassword,
               storageMigrationDeletedTotpPolicy: enteredStorageMigrationDeletedTotpPolicy,
-            );
-          case NewStoragePasswordMismatchException():
-            String? enteredNewStorageMasterPassword = await TextInputDialog.prompt(
-              context,
-              title: translations.storageMigration.newStoragePasswordMismatchDialog.title,
-              message: newStorageMasterPassword == null
-                  ? translations.storageMigration.newStoragePasswordMismatchDialog.defaultMessage
-                  : translations.storageMigration.newStoragePasswordMismatchDialog.errorMessage,
-              password: true,
-              initialValue: newStorageMasterPassword,
-            );
-            if (enteredNewStorageMasterPassword == null || !context.mounted) {
-              return false;
-            }
-            return await changeStorageType(
-              context,
-              ref,
-              newType,
-              showConfirmation: false,
-              logout: logout,
-              backupPassword: backupPassword,
-              currentStorageMasterPassword: currentStorageMasterPassword,
-              newStorageMasterPassword: enteredNewStorageMasterPassword,
-              storageMigrationDeletedTotpPolicy: storageMigrationDeletedTotpPolicy,
             );
           case BackupException():
           case SaltError():

@@ -6,11 +6,6 @@
       "disable": "Do you really want to stop synchronizing your TOTPs ? Any change made on this instance of the app will not be reflected anymore on the other linked devices."
     }
   },
-  "newStoragePasswordMismatchDialog": {
-    "title": "Storage master password",
-    "defaultMessage": "The remote storage has been encrypted using another master password. Please enter it below in order to continue.\nNote that this will define your new master password. You can still change it at any time.",
-    "errorMessage": "The remote storage has been encrypted using another master password. You've entered a wrong one, please try again.\nNote that this will define your new master password. You can still change it at any time."
-  },
   "deletedTotpPolicyPickerDialog": {
     "title": "Migrate TOTPs",
     "message": "Some TOTPs have been deleted on this device, but not on the remote storage. What do you want to do with them ?",

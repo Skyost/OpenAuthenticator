@@ -21,18 +21,23 @@ class PasswordSignatureVerificationMethod extends PasswordVerificationMethod {
 
   @override
   Future<bool> verify(String password) async {
+    Salt? salt = await Salt.readFromLocalStorage();
+    if (salt == null) {
+      return false;
+    }
     String? signature = await SimpleSecureStorage.read(_kPasswordSignatureKey);
     Uint8List decodedSignature = base64.decode(signature!);
-    HmacSecretKey hmacSecretKey = await _createHmacKey(password);
+    HmacSecretKey hmacSecretKey = await CryptoStore.createHmacKey(password, salt);
     return await hmacSecretKey.verifyBytes(decodedSignature, utf8.encode(password));
   }
 
   /// Enables this method.
   Future<bool> enable(String? password) async {
-    if (password == null) {
+    Salt? salt = await Salt.readFromLocalStorage();
+    if (password == null || salt == null) {
       return false;
     }
-    HmacSecretKey hmacSecretKey = await _createHmacKey(password);
+    HmacSecretKey hmacSecretKey = await CryptoStore.createHmacKey(password, salt);
     await SimpleSecureStorage.write(_kPasswordSignatureKey, base64.encode(await hmacSecretKey.signBytes(utf8.encode(password))));
     state = const AsyncData(true);
     return true;
@@ -42,12 +47,5 @@ class PasswordSignatureVerificationMethod extends PasswordVerificationMethod {
   Future<void> disable() async {
     await SimpleSecureStorage.delete(_kPasswordSignatureKey);
     state = const AsyncData(false);
-  }
-
-  /// Creates the HMAC key that corresponds to the [password].
-  Future<HmacSecretKey> _createHmacKey(String password) async {
-    CryptoStore cryptoStore = await CryptoStore.fromPassword(password, (await Salt.readFromLocalStorage())!);
-    HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(await cryptoStore.key.exportRawKey(), Hash.sha256);
-    return hmacSecretKey;
   }
 }

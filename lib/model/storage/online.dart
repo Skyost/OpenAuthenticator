@@ -108,21 +108,6 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<bool> canDecryptAll(CryptoStore cryptoStore) async {
-    QuerySnapshot result = await _totpsCollection.get();
-    for (QueryDocumentSnapshot doc in result.docs) {
-      Totp? totp = await _fromFirestore(doc, cryptoStore: cryptoStore);
-      if (totp == null) {
-        return false;
-      }
-      if (!await totp.encryptedData.canDecryptData(cryptoStore)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @override
   Future<Salt?> readSecretsSalt() async {
     DocumentSnapshot<Map<String, dynamic>> userDoc = await _userDocument.get();
     if (!userDoc.exists) {

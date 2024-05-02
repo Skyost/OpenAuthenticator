@@ -90,6 +90,13 @@ class CryptoStore {
     required this.salt,
   });
 
+  /// Creates an HMAC secret key corresponding to the [password] with the [salt].
+  static Future<HmacSecretKey> createHmacKey(String password, Salt salt) async {
+    Uint8List derivedKey = await _deriveKey(password, salt);
+    HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(derivedKey, Hash.sha256);
+    return hmacSecretKey;
+  }
+
   /// Creates a [CryptoStoreWithPasswordSignature] from the given [password].
   static Future<CryptoStore> fromPassword(String password, Salt salt) async {
     Uint8List derivedKey = await _deriveKey(password, salt);

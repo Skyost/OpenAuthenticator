@@ -105,17 +105,6 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
-  Future<bool> canDecryptAll(CryptoStore cryptoStore) async {
-    List<_DriftTotp> list = await (select(totps)).get();
-    for (_DriftTotp totp in list) {
-      if (!await cryptoStore.canDecrypt(totp.secret)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @override
   Future<Salt?> readSecretsSalt() async => await Salt.readFromLocalStorage();
 
   @override

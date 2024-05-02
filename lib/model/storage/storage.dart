@@ -31,7 +31,6 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
     String masterPassword,
     StorageType newType, {
     String? backupPassword,
-    String? newStorageMasterPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
     Future<void> Function()? close;
@@ -40,8 +39,6 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       if (passwordCheckResult is! ResultSuccess || !(passwordCheckResult as ResultSuccess<bool>).value) {
         throw (passwordCheckResult as ResultError).exception ?? CurrentStoragePasswordMismatchException();
       }
-
-      newStorageMasterPassword ??= masterPassword;
 
       Storage currentStorage = await future;
       if (currentStorage.type == newType) {
@@ -90,26 +87,12 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       List<Totp> toAdd = [];
       if (salt == null) {
         await newStorage.saveSecretsSalt(oldSalt);
-
-        bool canDecryptAll = await newStorage.canDecryptAll(currentCryptoStore);
-        if (!canDecryptAll) {
-          throw NewStoragePasswordMismatchException();
-        }
-
         toAdd.addAll(totps.where((totp) => totp.isDecrypted));
       } else {
-        CryptoStore newCryptoStore = await CryptoStore.fromPassword(newStorageMasterPassword, salt);
-        bool canDecryptAll = await newStorage.canDecryptAll(newCryptoStore);
-        if (!canDecryptAll) {
-          throw NewStoragePasswordMismatchException();
-        }
-
+        CryptoStore newCryptoStore = await CryptoStore.fromPassword(masterPassword, salt);
         for (Totp totp in totps) {
           DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newCryptoStore);
-          if (decryptedTotp == null) {
-            throw EncryptionKeyChangeFailedError();
-          }
-          toAdd.add(decryptedTotp);
+          toAdd.add(decryptedTotp ?? totp);
         }
         await ref.read(cryptoStoreProvider.notifier).saveAndUse(newCryptoStore);
       }
@@ -297,9 +280,6 @@ mixin Storage {
 
   /// Lists all TOTPs UUID.
   Future<List<String>> listUuids();
-
-  /// Whether the given [cryptoStore] is able to decrypt all stored TOTPs.
-  Future<bool> canDecryptAll(CryptoStore cryptoStore);
 
   /// Loads the salt that allows to encrypt secrets.
   Future<Salt?> readSecretsSalt();
