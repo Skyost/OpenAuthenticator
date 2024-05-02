@@ -71,6 +71,6 @@ class TitleWidget extends StatelessWidget {
             ),
           ),
         ),
-        alignment: PlaceholderAlignment.middle,
+        alignment: PlaceholderAlignment.bottom,
       );
 }

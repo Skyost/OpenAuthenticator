@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/model/settings/entry.dart';
+import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/utils.dart';
@@ -46,6 +47,10 @@ extension TotpImageCache on Totp {
   /// Caches the TOTP image.
   Future<void> cacheImage({String? previousImageUrl}) async {
     try {
+      if (!isDecrypted) {
+        return;
+      }
+      String? imageUrl = (this as DecryptedTotp).imageUrl;
       if (imageUrl == null) {
         File file = await getTotpCachedImage(uuid);
         if (await file.exists()) {
@@ -57,7 +62,7 @@ extension TotpImageCache on Totp {
         if (previousImageUrl == imageUrl && file.existsSync()) {
           return;
         }
-        http.Response response = await http.get(Uri.parse(imageUrl!));
+        http.Response response = await http.get(Uri.parse(imageUrl));
         await file.writeAsBytes(response.bodyBytes);
       }
     }

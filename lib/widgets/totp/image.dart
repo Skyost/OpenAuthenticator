@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
+import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/widgets/smart_image.dart';
 import 'package:open_authenticator/widgets/totp/time_based.dart';
@@ -44,9 +45,9 @@ class TotpImageWidget extends StatefulWidget {
   }) : this(
           key: key,
           uuid: totp.uuid,
-          imageUrl: totp.imageUrl,
-          label: totp.label,
-          issuer: totp.issuer,
+          imageUrl: totp.isDecrypted ? (totp as DecryptedTotp).imageUrl : null,
+          label: totp.isDecrypted ? (totp as DecryptedTotp).label : null,
+          issuer: totp.isDecrypted ? (totp as DecryptedTotp).issuer : null,
           size: size,
         );
 

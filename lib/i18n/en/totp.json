@@ -31,7 +31,7 @@
       },
       "changeMasterPassword": {
         "title": "Change your current master password",
-        "subtitle": "Use the entered password as your new master password and generate an encryption key from it.\nAll TOTPs encrypted with another password will need to be decrypted manually."
+        "subtitle": "Use the entered password as your new master password and generate an encryption key from it.\nAll TOTPs still encrypted with another password will need to be decrypted manually."
       },
       "doNothing": {
         "title": "Do nothing",

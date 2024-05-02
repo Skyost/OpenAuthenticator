@@ -31,7 +31,7 @@
       },
       "changeMasterPassword": {
         "title": "Changer votre mot de passe maître",
-        "subtitle": "Utiliser le mot de passe que vous venez d'entrer comme nouveau mot de passe maître et générer une clé de chiffrement à partir de celui-ci.\nTous les TOTPs chiffrés avec un autre mot de passe devront être déchiffrés manuellement."
+        "subtitle": "Utiliser le mot de passe que vous venez d'entrer comme nouveau mot de passe maître et générer une clé de chiffrement à partir de celui-ci.\nTous les TOTPs encore chiffrés avec un autre mot de passe devront être déchiffrés manuellement."
       },
       "doNothing": {
         "title": "Ne rien faire",

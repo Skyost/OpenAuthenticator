@@ -57,7 +57,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   late String label = widget.totp?.label ?? '';
 
   /// The TOTP data.
-  late String decryptedSecret = widget.totp?.decryptedSecret ?? '';
+  late String secret = widget.totp?.secret ?? '';
 
   /// The TOTP issuer.
   late String issuer = widget.totp?.issuer ?? '';
@@ -140,9 +140,9 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
               ),
               ListTilePadding(
                 child: PasswordFormField(
-                  initialValue: decryptedSecret,
+                  initialValue: secret,
                   onChanged: (value) {
-                    setState(() => decryptedSecret = value);
+                    setState(() => secret = value);
                   },
                   enabled: widget.add && enabled,
                   decoration: FormLabelWithIcon(
@@ -150,7 +150,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
                     text: translations.totp.page.secret.text,
                     hintText: translations.totp.page.secret.hint,
                   ),
-                  validator: validateDecryptedSecret,
+                  validator: validateSecret,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
@@ -289,7 +289,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
       child: Center(
         child: QrImageView(
           data: DecryptedTotp.toUri(
-            decryptedSecret: decryptedSecret,
+            secret: secret,
             label: label,
             issuer: issuer,
             algorithm: algorithm,
@@ -312,15 +312,15 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   }
 
   /// Whether the TOTP is valid.
-  bool get isValidTotp => validateDecryptedSecret() == null && validateLabel() == null && validateIssuer() == null && validateDigits() == null && validateValidity() == null;
+  bool get isValidTotp => validateSecret() == null && validateLabel() == null && validateIssuer() == null && validateDigits() == null && validateValidity() == null;
 
-  /// Validates the [decryptedSecret].
-  String? validateDecryptedSecret([String? decryptedSecret]) {
-    decryptedSecret ??= this.decryptedSecret;
-    if (decryptedSecret.isEmpty) {
+  /// Validates the [secret].
+  String? validateSecret([String? secret]) {
+    secret ??= this.secret;
+    if (secret.isEmpty) {
       return translations.error.validation.empty;
     }
-    if (!RegExp(r'^[A-Z2-7]{16,128}$').hasMatch(decryptedSecret)) {
+    if (!RegExp(r'^[A-Z2-7]{16,128}$').hasMatch(secret)) {
       return translations.error.validation.secret;
     }
     return null;
@@ -344,11 +344,10 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
     return null;
   }
 
-
   /// Validates the [digits].
   String? validateDigits([String? digits]) {
     if (digits == null || digits.isEmpty) {
-      digits ??= Totp.kDefaultDigits.toString();
+      return null;
     }
     int? parsedDigits = int.tryParse(digits);
     if (parsedDigits == null) {
@@ -363,7 +362,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   /// Validates the [validity].
   String? validateValidity([String? validity]) {
     if (validity == null || validity.isEmpty) {
-      validity ??= Totp.kDefaultValidity.toString();
+      return null;
     }
     int? parsedValidity = int.tryParse(validity);
     if (parsedValidity == null) {
@@ -388,16 +387,8 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
     if (!willExceed) {
       return const ResultCancelled();
     }
-    DecryptedTotp? totp = await DecryptedTotp.create(
-      cryptoStore: await ref.read(cryptoStoreProvider.future),
-      decryptedSecret: decryptedSecret,
-      label: label,
-      issuer: issuer,
-      algorithm: algorithm,
-      digits: digits,
-      validity: validity,
-      imageUrl: imageUrl,
-    );
+
+    DecryptedTotp? totp = await _createTotp();
     if (totp == null) {
       return ResultError();
     }
@@ -405,15 +396,24 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   }
 
   /// Updates the TOTP in the repository.
-  Future<Result> updateTotp() => ref.read(totpRepositoryProvider.notifier).updateTotp(
-        widget.totp!.uuid,
-        widget.totp!.copyWith(
-          label: label,
-          issuer: issuer,
-          algorithm: algorithm,
-          digits: digits,
-          validity: validity,
-          imageUrl: imageUrl,
-        ),
+  Future<Result> updateTotp() async {
+    DecryptedTotp? totp = await _createTotp();
+    if (totp == null) {
+      return ResultError();
+    }
+    return await ref.read(totpRepositoryProvider.notifier).updateTotp(widget.totp!.uuid, totp);
+  }
+
+  /// Creates a [DecryptedTotp] corresponding to the current fields.
+  Future<DecryptedTotp?> _createTotp() async => await DecryptedTotp.create(
+        cryptoStore: await ref.read(cryptoStoreProvider.future),
+        uuid: widget.totp?.uuid,
+        secret: secret,
+        label: label,
+        issuer: issuer,
+        algorithm: algorithm,
+        digits: digits,
+        validity: validity,
+        imageUrl: imageUrl,
       );
 }

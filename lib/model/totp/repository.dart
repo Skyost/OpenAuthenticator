@@ -112,8 +112,9 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
       }
       if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
         Map<String, String?> previousImages = {
-          for (Totp totp in await future) //
-            totp.uuid: totp.imageUrl,
+          for (Totp totp in await future)
+            if (totp.isDecrypted)
+              totp.uuid: (totp as DecryptedTotp).imageUrl,
         };
         for (Totp totp in totps) {
           await totp.cacheImage(previousImageUrl: previousImages[totp.uuid]);
@@ -130,7 +131,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
   }
 
   /// Updates the TOTP associated with the specified [uuid].
-  Future<Result> updateTotp(String uuid, Totp totp) async {
+  Future<Result<Totp>> updateTotp(String uuid, DecryptedTotp totp) async {
     try {
       Storage storage = await ref.read(storageProvider.future);
       await storage.updateTotp(uuid, totp);
@@ -140,14 +141,14 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
         if (!totp.isDecrypted && previous.isDecrypted) {
           totp = DecryptedTotp.fromTotp(
             totp: totp,
-            decryptedSecret: (current as DecryptedTotp).decryptedSecret,
+            decryptedData: (current as DecryptedTotp).decryptedData,
           );
         }
         totps.remove(previous);
       }
       totps.add(totp);
       if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
-        await totp.cacheImage(previousImageUrl: previous?.imageUrl);
+        await totp.cacheImage(previousImageUrl: previous != null && previous.isDecrypted ? (previous as DecryptedTotp).imageUrl : null);
       }
       state = AsyncData(totps..sort());
       return const ResultSuccess();

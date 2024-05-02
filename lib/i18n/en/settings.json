@@ -43,14 +43,6 @@
       "subtitle": {
         "text": "You can change your master password at any time.",
         "sync": "Note that you will have to reenter it in all your Open Authenticator instances that are synced together."
-      },
-      "dialog": {
-        "title": "Change your master password",
-        "current": {
-          "label": "Current master password",
-          "hint": "Enter your current master password here"
-        },
-        "newLabel": "Your new master password"
       }
     }
   },

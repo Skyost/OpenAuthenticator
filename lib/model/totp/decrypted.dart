@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
@@ -7,50 +6,62 @@ import 'package:uuid/uuid.dart';
 
 /// Represents a TOTP, in its decrypted state.
 class DecryptedTotp extends Totp {
-  /// The decrypted secret.
-  final String decryptedSecret;
-
   /// Creates a new decrypted TOTP instance.
   const DecryptedTotp({
-    required super.secret,
-    required super.encryptionSalt,
     required super.uuid,
-    required super.label,
-    super.issuer,
+    required DecryptedData decryptedData,
     super.algorithm,
     super.digits,
     super.validity,
-    super.imageUrl,
-    required this.decryptedSecret,
-  });
+  }) : super(
+          encryptedData: decryptedData,
+        );
 
   /// Creates a new decrypted TOTP instance.
   DecryptedTotp.fromTotp({
     required Totp totp,
-    required String decryptedSecret,
+    required DecryptedData decryptedData,
   }) : this(
-          secret: totp.secret,
-          encryptionSalt: totp.encryptionSalt,
           uuid: totp.uuid,
-          label: totp.label,
-          issuer: totp.issuer,
+          decryptedData: decryptedData,
           algorithm: totp.algorithm,
           digits: totp.digits,
           validity: totp.validity,
-          imageUrl: totp.imageUrl,
-          decryptedSecret: decryptedSecret,
         );
 
+  /// Returns the decrypted data.
+  DecryptedData get decryptedData => super.encryptedData as DecryptedData;
+
+  /// Returns the decrypted secret.
+  String get secret => decryptedData.decryptedSecret;
+
+  /// Returns the decrypted label.
+  String? get label => decryptedData.decryptedLabel;
+
+  /// Returns the decrypted issuer.
+  String? get issuer => decryptedData.decryptedIssuer;
+
+  /// Returns the decrypted image URL.
+  String? get imageUrl => decryptedData.decryptedImageUrl;
+
   /// Returns the [totp_lib.Totp] instance.
-  totp_lib.Totp get generator => totp_lib.Totp(
-        secret: decryptedSecret.codeUnits,
+  totp_lib.Totp get generator => totp_lib.Totp.fromBase32(
+        secret: secret,
         algorithm: (algorithm ?? Totp.kDefaultAlgorithm).mapsTo,
         digits: digits ?? Totp.kDefaultDigits,
         period: validity ?? Totp.kDefaultValidity,
       );
 
   @override
-  List<Object?> get props => [...super.props, decryptedSecret];
+  List<Object?> get props => [...super.props, secret, label, issuer];
+
+  @override
+  int compareTo(Totp other) {
+    if (other.isDecrypted) {
+      return (issuer ?? label ?? uuid).compareTo((other as DecryptedTotp).issuer ?? other.label ?? other.uuid);
+    }
+    return -1;
+  }
 
   @override
   Future<Totp> decrypt(CryptoStore? cryptoStore) => Future.value(this);
@@ -58,7 +69,8 @@ class DecryptedTotp extends Totp {
   /// Manually creates a [DecryptedTotp].
   static Future<DecryptedTotp?> create({
     required CryptoStore? cryptoStore,
-    required String decryptedSecret,
+    String? uuid,
+    required String secret,
     required String label,
     String? issuer,
     Algorithm? algorithm,
@@ -66,21 +78,28 @@ class DecryptedTotp extends Totp {
     int? validity,
     String? imageUrl,
   }) async {
-    Uint8List? data = await cryptoStore?.encrypt(decryptedSecret);
-    if (data == null) {
+    EncryptedData? encryptedData = await EncryptedData.encrypt(
+      cryptoStore: cryptoStore,
+      secret: secret,
+      label: label,
+      issuer: issuer,
+      imageUrl: imageUrl,
+    );
+    if (encryptedData == null) {
       return null;
     }
     return DecryptedTotp(
-      secret: data,
-      encryptionSalt: cryptoStore!.salt,
-      decryptedSecret: decryptedSecret,
-      uuid: const Uuid().v4(),
-      label: label,
-      issuer: issuer,
+      uuid: uuid ?? const Uuid().v4(),
+      decryptedData: DecryptedData.fromEncryptedData(
+        encryptedData: encryptedData,
+        decryptedSecret: secret,
+        decryptedLabel: label,
+        decryptedIssuer: issuer,
+        decryptedImageUrl: imageUrl,
+      ),
       algorithm: algorithm,
       digits: digits,
       validity: validity,
-      imageUrl: imageUrl,
     );
   }
 
@@ -95,7 +114,7 @@ class DecryptedTotp extends Totp {
     }
     return create(
       cryptoStore: cryptoStore,
-      decryptedSecret: Uri.decodeFull(uri.queryParameters[Totp.kSecretKey]!),
+      secret: Uri.decodeFull(uri.queryParameters[Totp.kSecretKey]!),
       label: label,
       issuer: uri.queryParameters[Totp.kIssuerKey],
       algorithm: uri.queryParameters.containsKey(Totp.kAlgorithmKey) ? Algorithm.fromString(uri.queryParameters[Totp.kAlgorithmKey]!) : null,
@@ -106,7 +125,7 @@ class DecryptedTotp extends Totp {
 
   /// Returns the URI associated to this TOTP instance.
   Uri get uri => toUri(
-        decryptedSecret: decryptedSecret,
+        secret: secret,
         label: label ?? uuid,
         issuer: issuer,
         algorithm: algorithm,
@@ -116,7 +135,7 @@ class DecryptedTotp extends Totp {
 
   /// Converts the given TOTP parameters to an URI.
   static Uri toUri({
-    required String decryptedSecret,
+    required String secret,
     required String label,
     String? issuer,
     Algorithm? algorithm,
@@ -124,7 +143,7 @@ class DecryptedTotp extends Totp {
     int? validity,
   }) {
     Map<String, dynamic> queryParameters = {};
-    queryParameters[Totp.kSecretKey] = decryptedSecret;
+    queryParameters[Totp.kSecretKey] = secret;
     if (issuer != null) {
       queryParameters[Totp.kIssuerKey] = issuer;
     }
@@ -144,36 +163,132 @@ class DecryptedTotp extends Totp {
       queryParameters: queryParameters,
     );
   }
-
-  @override
-  DecryptedTotp copyWith({
-    Uint8List? secret,
-    Salt? encryptionSalt,
-    String? uuid,
-    String? label,
-    String? issuer,
-    Algorithm? algorithm,
-    int? digits,
-    int? validity,
-    String? imageUrl,
-    String? decryptedSecret,
-  }) =>
-      DecryptedTotp(
-        secret: secret ?? this.secret,
-        encryptionSalt: encryptionSalt ?? this.encryptionSalt,
-        uuid: uuid ?? this.uuid,
-        label: label ?? this.label,
-        issuer: issuer ?? this.issuer,
-        algorithm: algorithm ?? this.algorithm,
-        digits: digits ?? this.digits,
-        validity: validity ?? this.validity,
-        imageUrl: imageUrl ?? this.imageUrl,
-        decryptedSecret: decryptedSecret ?? this.decryptedSecret,
-      );
 }
 
 /// Allows to check if the TOTP instance is decrypted.
 extension IsDecrypted on Totp {
   /// Returns whether the current TOTP instance is a decrypted secret.
   bool get isDecrypted => this is DecryptedTotp;
+}
+
+/// Everything that should be encrypted goes here.
+class DecryptedData extends EncryptedData {
+  /// The decrypted secret.
+  final String decryptedSecret;
+
+  /// The decrypted label.
+  final String? decryptedLabel;
+
+  /// The decrypted issuer.
+  final String? decryptedIssuer;
+
+  /// The decrypted image URL.
+  final String? decryptedImageUrl;
+
+  /// Creates a new decrypted data instance.
+  const DecryptedData({
+    required super.encryptedSecret,
+    required super.encryptedLabel,
+    super.encryptedIssuer,
+    super.encryptedImageUrl,
+    required super.encryptionSalt,
+    required this.decryptedSecret,
+    this.decryptedLabel,
+    this.decryptedIssuer,
+    this.decryptedImageUrl,
+  });
+
+  /// Creates a new decrypted data instance from the specified [encryptedData].
+  DecryptedData.fromEncryptedData({
+    required EncryptedData encryptedData,
+    required String decryptedSecret,
+    String? decryptedLabel,
+    String? decryptedIssuer,
+    String? decryptedImageUrl,
+  }) : this(
+          encryptedSecret: encryptedData.encryptedSecret,
+          encryptedLabel: encryptedData.encryptedLabel,
+          encryptedIssuer: encryptedData.encryptedIssuer,
+          encryptedImageUrl: encryptedData.encryptedImageUrl,
+          encryptionSalt: encryptedData.encryptionSalt,
+          decryptedSecret: decryptedSecret,
+          decryptedLabel: decryptedLabel,
+          decryptedIssuer: decryptedIssuer,
+          decryptedImageUrl: decryptedImageUrl,
+        );
+
+  /// Decrypts the passed [encryptedData].
+  static Future<DecryptedData?> decrypt({
+    CryptoStore? cryptoStore,
+    required EncryptedData encryptedData,
+  }) async {
+    if (encryptedData is DecryptedData) {
+      return encryptedData;
+    }
+    String? decryptedSecret = await cryptoStore?.decrypt(encryptedData.encryptedSecret);
+    if (decryptedSecret == null) {
+      return null;
+    }
+    String? decryptedLabel;
+    if (encryptedData.encryptedLabel != null) {
+      decryptedLabel = await cryptoStore?.decrypt(encryptedData.encryptedLabel!);
+      if (decryptedLabel == null) {
+        return null;
+      }
+    }
+    String? decryptedIssuer;
+    if (encryptedData.encryptedIssuer != null) {
+      decryptedIssuer = await cryptoStore?.decrypt(encryptedData.encryptedIssuer!);
+      if (decryptedIssuer == null) {
+        return null;
+      }
+    }
+    String? decryptedImageUrl;
+    if (encryptedData.encryptedImageUrl != null) {
+      decryptedImageUrl = await cryptoStore?.decrypt(encryptedData.encryptedImageUrl!);
+      if (decryptedImageUrl == null) {
+        return null;
+      }
+    }
+    return DecryptedData.fromEncryptedData(
+      encryptedData: encryptedData,
+      decryptedSecret: decryptedSecret,
+      decryptedIssuer: decryptedIssuer,
+      decryptedLabel: decryptedLabel,
+      decryptedImageUrl: decryptedImageUrl,
+    );
+  }
+
+  /// Changes the encryption key of the current TOTP.
+  Future<DecryptedData?> changeEncryptionKey(CryptoStore newCryptoStore) async {
+    if (await canDecryptData(newCryptoStore)) {
+      return this;
+    }
+    EncryptedData? encryptedData = await EncryptedData.encrypt(
+      cryptoStore: newCryptoStore,
+      secret: decryptedSecret,
+      issuer: decryptedIssuer,
+      label: decryptedLabel,
+      imageUrl: decryptedImageUrl,
+    );
+    if (encryptedData == null) {
+      return null;
+    }
+    return DecryptedData.fromEncryptedData(
+      encryptedData: encryptedData,
+      decryptedSecret: decryptedSecret,
+      decryptedIssuer: decryptedIssuer,
+      decryptedLabel: decryptedLabel,
+      decryptedImageUrl: decryptedImageUrl,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        ...super.props,
+        decryptedSecret,
+        decryptedLabel,
+        decryptedIssuer,
+        decryptedImageUrl,
+      ];
 }

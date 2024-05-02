@@ -13,7 +13,7 @@ import 'package:open_authenticator/widgets/form/password_form_field.dart';
 /// Contains various useful methods about the master password.
 class MasterPasswordUtils {
   /// Prompts the user to change his master password.
-  static Future<void> changeMasterPassword(
+  static Future<Result> changeMasterPassword(
     BuildContext context,
     WidgetRef ref, {
     String? password,
@@ -21,11 +21,11 @@ class MasterPasswordUtils {
     _ChangeMasterPasswordDialogResult? result = await showAdaptiveDialog<_ChangeMasterPasswordDialogResult>(
       context: context,
       builder: (context) => _ChangeMasterPasswordDialog(
-        initialValue: password,
+        defaultPassword: password,
       ),
     );
     if (result == null || result.newPassword == null || !context.mounted) {
-      return;
+      return const ResultCancelled();
     }
     Result changeResult = await showWaitingOverlay(
       context,
@@ -34,17 +34,18 @@ class MasterPasswordUtils {
     if (context.mounted) {
       context.showSnackBarForResult(changeResult);
     }
+    return changeResult;
   }
 }
 
 /// The dialog that allows to change the master password.
 class _ChangeMasterPasswordDialog extends ConsumerStatefulWidget {
-  /// The initial value.
-  final String? initialValue;
+  /// The default password.
+  final String? defaultPassword;
 
   /// Creates a new change master password dialog instance.
   const _ChangeMasterPasswordDialog({
-    this.initialValue,
+    this.defaultPassword,
   });
 
   @override
@@ -63,7 +64,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
   final GlobalKey<FormState> newPasswordFormKey = GlobalKey<FormState>();
 
   /// The new password value.
-  String newPassword = '';
+  late String newPassword = widget.defaultPassword ?? '';
 
   /// Whether the user wants to create a backup.
   bool createBackup = true;
@@ -79,7 +80,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
 
   @override
   Widget build(BuildContext context) => AlertDialog.adaptive(
-        title: Text(translations.settings.security.changeMasterPassword.dialog.title),
+        title: Text(translations.masterPassword.changeDialog.title),
         scrollable: true,
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -89,8 +90,8 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
               child: PasswordFormField(
                 decoration: FormLabelWithIcon(
                   icon: Icons.key,
-                  text: translations.settings.security.changeMasterPassword.dialog.current.label,
-                  hintText: translations.settings.security.changeMasterPassword.dialog.current.hint,
+                  text: translations.masterPassword.changeDialog.current.label,
+                  hintText: translations.masterPassword.changeDialog.current.hint,
                 ),
                 onChanged: (value) => oldPassword = value,
                 initialValue: oldPassword,
@@ -99,7 +100,8 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
             ),
             MasterPasswordForm(
               formKey: newPasswordFormKey,
-              inputText: translations.settings.security.changeMasterPassword.dialog.newLabel,
+              defaultPassword: widget.defaultPassword,
+              inputText: translations.masterPassword.changeDialog.newLabel,
               onChanged: (value) => newPassword = value ?? '',
             ),
             ListTile(

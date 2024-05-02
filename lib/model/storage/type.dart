@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/storage/local.dart';
 import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
@@ -12,7 +11,7 @@ enum StorageType {
   online(create: OnlineStorage.new);
 
   /// Creates a storage instance associated to the current type.
-  final Storage Function(Ref) create;
+  final Storage Function() create;
 
   /// Creates a new storage type instance.
   const StorageType({

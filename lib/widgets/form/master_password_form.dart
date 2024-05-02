@@ -21,6 +21,9 @@ class MasterPasswordForm extends StatefulWidget {
   /// The hint text.
   final String hintText;
 
+  /// The default password.
+  final String? defaultPassword;
+
   /// Creates a new master password form instance.
   MasterPasswordForm({
     super.key,
@@ -29,8 +32,9 @@ class MasterPasswordForm extends StatefulWidget {
     this.onChanged,
     String? inputText,
     String? hintText,
-  })  : inputText = inputText ?? translations.masterPasswordForm.password.input,
-        hintText = hintText ?? translations.masterPasswordForm.password.hint;
+    this.defaultPassword,
+  })  : inputText = inputText ?? translations.masterPassword.form.password.input,
+        hintText = hintText ?? translations.masterPassword.form.password.hint;
 
   @override
   State<StatefulWidget> createState() => _MasterPasswordFormState();
@@ -39,10 +43,10 @@ class MasterPasswordForm extends StatefulWidget {
 /// The master password form state.
 class _MasterPasswordFormState extends State<MasterPasswordForm> {
   /// The password input.
-  String passwordInput = '';
+  late String passwordInput = widget.defaultPassword ?? '';
 
   /// The confirmation input.
-  String confirmationInput = '';
+  late String confirmationInput = passwordInput;
 
   @override
   Widget build(BuildContext context) => Form(
@@ -51,6 +55,7 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
         child: Column(
           children: [
             PasswordFormField(
+              initialValue: widget.defaultPassword,
               decoration: FormLabelWithIcon(
                 icon: Icons.password,
                 text: widget.inputText,
@@ -65,7 +70,7 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Text(
-                translations.masterPasswordForm.securityScore(score: '$securityScore/40'),
+                translations.masterPassword.form.securityScore(score: '$securityScore/40'),
                 style: Theme.of(context).textTheme.labelSmall!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: securityScoreColor,
@@ -74,10 +79,11 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
               ),
             ),
             PasswordFormField(
+              initialValue: widget.defaultPassword,
               decoration: FormLabelWithIcon(
                 icon: Icons.check,
-                text: translations.masterPasswordForm.confirmation.input,
-                hintText: translations.masterPasswordForm.confirmation.hint,
+                text: translations.masterPassword.form.confirmation.input,
+                hintText: translations.masterPassword.form.confirmation.hint,
               ),
               onChanged: (value) {
                 confirmationInput = value;

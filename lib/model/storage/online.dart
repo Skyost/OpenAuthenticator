@@ -21,12 +21,6 @@ class OnlineStorage with Storage {
   /// The salt document.
   static const String _kSaltKey = 'salt';
 
-  /// The ref instance.
-  final Ref _ref;
-
-  /// Creates a new online storage instance.
-  OnlineStorage(this._ref);
-
   @override
   StorageType get type => StorageType.online;
 
@@ -36,11 +30,7 @@ class OnlineStorage with Storage {
   @override
   Future<void> addTotp(Totp totp) async {
     CollectionReference? collection = _totpsCollection;
-    Map<String, dynamic>? data = await _toFirestore(totp);
-    if (data == null) {
-      throw _SerializationError(totp: totp);
-    }
-    await collection.doc(totp.uuid).set(data);
+    await collection.doc(totp.uuid).set(totp.toJson());
   }
 
   @override
@@ -48,11 +38,7 @@ class OnlineStorage with Storage {
     CollectionReference? collection = _totpsCollection;
     WriteBatch batch = FirebaseFirestore.instance.batch();
     for (Totp totp in totps) {
-      Map<String, dynamic>? data = await _toFirestore(totp);
-      if (data == null) {
-        throw _SerializationError(totp: totp);
-      }
-      batch.set(collection.doc(totp.uuid), data);
+      batch.set(collection.doc(totp.uuid), totp.toJson());
     }
     await batch.commit();
   }
@@ -83,11 +69,7 @@ class OnlineStorage with Storage {
   @override
   Future<void> updateTotp(String uuid, Totp totp) async {
     CollectionReference? collection = _totpsCollection;
-    Map<String, dynamic>? newData = await _toFirestore(totp);
-    if (newData == null) {
-      throw _SerializationError(totp: totp);
-    }
-    await collection.doc(uuid).update(newData);
+    await collection.doc(uuid).update(totp.toJson());
   }
 
   @override
@@ -133,7 +115,7 @@ class OnlineStorage with Storage {
       if (totp == null) {
         return false;
       }
-      if (!await cryptoStore.canDecrypt(totp.secret)) {
+      if (!await totp.encryptedData.canDecryptData(cryptoStore)) {
         return false;
       }
     }
@@ -179,68 +161,7 @@ class OnlineStorage with Storage {
     if (snapshot.data() is! Map<String, Object?>) {
       return null;
     }
-    Map<String, Object?> data = snapshot.data() as Map<String, Object?>;
-    Map<String, dynamic>? decryptedData = await _transform<List?, dynamic>(
-      data,
-      (cryptoStore, key, input) async {
-        if (input == null) {
-          return null;
-        }
-        String? decrypted = await cryptoStore.decrypt(Uint8List.fromList(input.cast<int>()));
-        return decrypted;
-      },
-      cryptoStore: cryptoStore,
-    );
-    return decryptedData == null ? null : JsonTotp.fromJson(decryptedData);
-  }
-
-  /// Converts the [totp] to an encrypted Firestore map.
-  Future<Map<String, dynamic>?> _toFirestore(Totp totp) async => await _transform<dynamic, List>(
-        totp.toJson(),
-        (cryptoStore, key, input) async {
-          if (input == null) {
-            return null;
-          }
-          Uint8List? encrypted = await cryptoStore.encrypt(input.toString());
-          return encrypted;
-        },
-      );
-
-  /// Transforms the [totpData] using the [transformer].
-  Future<Map<String, dynamic>?> _transform<I, O>(
-    Map<String, dynamic> totpData,
-    Future<O?> Function(CryptoStore, String, I) transformer, {
-    CryptoStore? cryptoStore,
-  }) async {
-    cryptoStore ??= await _ref.read(cryptoStoreProvider.future);
-    if (cryptoStore == null) {
-      return null;
-    }
-    return {
-      Totp.kSecretKey: totpData[Totp.kSecretKey],
-      Totp.kEncryptionSalt: totpData[Totp.kEncryptionSalt],
-      Totp.kUuidKey: totpData[Totp.kUuidKey],
-      Totp.kLabelKey: await transformer(
-        cryptoStore,
-        Totp.kLabelKey,
-        totpData[Totp.kLabelKey],
-      ),
-      if (totpData.containsKey(Totp.kIssuerKey))
-        Totp.kIssuerKey: await transformer(
-          cryptoStore,
-          Totp.kIssuerKey,
-          totpData[Totp.kIssuerKey],
-        ),
-      if (totpData.containsKey(Totp.kAlgorithmKey)) Totp.kAlgorithmKey: totpData[Totp.kAlgorithmKey],
-      if (totpData.containsKey(Totp.kDigitsKey)) Totp.kDigitsKey: totpData[Totp.kDigitsKey],
-      if (totpData.containsKey(Totp.kValidityKey)) Totp.kValidityKey: totpData[Totp.kValidityKey],
-      if (totpData.containsKey(Totp.kImageUrlKey))
-        Totp.kImageUrlKey: await transformer(
-          cryptoStore,
-          Totp.kImageUrlKey,
-          totpData[Totp.kImageUrlKey],
-        ),
-    };
+    return JsonTotp.fromJson(snapshot.data() as Map<String, Object?>);
   }
 }
 
@@ -248,18 +169,4 @@ class OnlineStorage with Storage {
 class NotLoggedInException implements Exception {
   @override
   String toString() => 'User is not logged in';
-}
-
-/// Thrown when there is an error serializing a given TOTP.
-class _SerializationError implements Exception {
-  /// The TOTP.
-  final Totp totp;
-
-  /// Creates a new serialization error instance.
-  _SerializationError({
-    required this.totp,
-  });
-
-  @override
-  String toString() => 'Unable to serialize TOTP (${totp.uuid} / ${totp.label})';
 }

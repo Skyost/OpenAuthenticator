@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
@@ -14,20 +13,17 @@ part 'local.g.dart';
 /// Represents a [Totp].
 @DataClassName('_DriftTotp')
 class Totps extends Table {
-  /// Maps to [Totp.secret].
-  TextColumn get secret => text().map(const _Uint8ListConverter())();
-
-  /// Maps to [Totp.encryptionSalt].
-  TextColumn get encryptionSalt => text().map(const _Uint8ListConverter())();
-
   /// Maps to [Totp.uuid].
   TextColumn get uuid => text()();
 
+  /// Maps to [Totp.secret].
+  TextColumn get secret => text().map(const _Uint8ListConverter())();
+
   /// Maps to [Totp.label].
-  TextColumn get label => text().nullable()();
+  TextColumn get label => text().map(const _Uint8ListConverter()).nullable()();
 
   /// Maps to [Totp.issuer].
-  TextColumn get issuer => text().nullable()();
+  TextColumn get issuer => text().map(const _Uint8ListConverter()).nullable()();
 
   /// Maps to [Totp.algorithm].
   TextColumn get algorithm => textEnum<Algorithm>().nullable()();
@@ -39,7 +35,10 @@ class Totps extends Table {
   IntColumn get validity => integer().nullable()();
 
   /// Maps to [Totp.imageUrl].
-  TextColumn get imageUrl => text().nullable()();
+  TextColumn get imageUrl => text().map(const _Uint8ListConverter()).nullable()();
+
+  /// Maps to [Totp.encryptionSalt].
+  TextColumn get encryptionSalt => text().map(const _Uint8ListConverter())();
 
   @override
   Set<Column> get primaryKey => {uuid};
@@ -52,7 +51,7 @@ class LocalStorage extends _$LocalStorage with Storage {
   static const _kDbFileName = 'totps';
 
   /// Creates a new Drift storage instance.
-  LocalStorage(Ref ref) : super(SqliteUtils.openConnection(_kDbFileName));
+  LocalStorage() : super(SqliteUtils.openConnection(_kDbFileName));
 
   @override
   int get schemaVersion => 1;
@@ -145,15 +144,17 @@ class _Uint8ListConverter extends TypeConverter<Uint8List, String> {
 extension _OpenAuthenticator on _DriftTotp {
   /// Converts this instance to a [Totp].
   Totp get asTotp => Totp(
-        secret: secret,
-        encryptionSalt: Salt.fromRawValue(value: encryptionSalt),
         uuid: uuid,
-        label: label,
-        issuer: issuer,
+        encryptedData: EncryptedData(
+          encryptedSecret: secret,
+          encryptedLabel: label,
+          encryptedIssuer: issuer,
+          encryptedImageUrl: imageUrl,
+          encryptionSalt: Salt.fromRawValue(value: encryptionSalt),
+        ),
         algorithm: algorithm,
         digits: digits,
         validity: validity,
-        imageUrl: imageUrl,
       );
 }
 
@@ -161,14 +162,14 @@ extension _OpenAuthenticator on _DriftTotp {
 extension _Drift on Totp {
   /// Converts this instance to a Drift generated [Secret].
   _DriftTotp get asDriftTotp => _DriftTotp(
-        secret: secret,
-        encryptionSalt: encryptionSalt.value,
         uuid: uuid,
-        label: label,
-        issuer: issuer,
         algorithm: algorithm,
         digits: digits,
         validity: validity,
-        imageUrl: imageUrl,
+        secret: encryptedData.encryptedSecret,
+        label: encryptedData.encryptedLabel,
+        issuer: encryptedData.encryptedIssuer,
+        imageUrl: encryptedData.encryptedImageUrl,
+        encryptionSalt: encryptedData.encryptionSalt.value,
       );
 }

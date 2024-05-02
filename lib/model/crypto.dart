@@ -188,4 +188,7 @@ class Salt {
 
   /// Writes the salt to the secure storage.
   Future<void> saveToLocalStorage() async => await SimpleSecureStorage.write(_kPasswordDerivedKeySaltKey, base64.encode(value));
+
+  @override
+  String toString() => base64Encode(value);
 }

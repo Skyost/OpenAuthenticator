@@ -66,12 +66,12 @@ class TotpWidget extends ConsumerWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (totp.issuer != null && totp.issuer!.isNotEmpty)
+              if (totp.isDecrypted && (totp as DecryptedTotp).issuer != null && (totp as DecryptedTotp).issuer!.isNotEmpty)
                 Text(
-                  totp.issuer!,
+                  ((totp as DecryptedTotp)).issuer!,
                 ),
               Text(
-                totp.label ?? totp.uuid,
+                (totp.isDecrypted ? (totp as DecryptedTotp).label : null) ?? totp.uuid,
                 style: TextStyle(color: Colors.grey.shade700),
               ),
               if (totp.isDecrypted && displayCode)
@@ -156,7 +156,9 @@ class TotpWidget extends ConsumerWidget {
     }
     _MobileActionsDialogResult? choice = await showAdaptiveDialog<_MobileActionsDialogResult>(
       context: context,
-      builder: (context) => _MobileActionsDialog(),
+      builder: (context) => _MobileActionsDialog(
+        canEdit: totp.isDecrypted,
+      ),
     );
     if (choice == null || !context.mounted) {
       return;
@@ -182,7 +184,7 @@ class TotpWidget extends ConsumerWidget {
     if (password == null) {
       return;
     }
-    CryptoStore previousCryptoStore = await CryptoStore.fromPassword(password, totp.encryptionSalt);
+    CryptoStore previousCryptoStore = await CryptoStore.fromPassword(password, totp.encryptedData.encryptionSalt);
     Totp decrypted = await totp.decrypt(previousCryptoStore);
     if (!context.mounted) {
       return;
@@ -200,15 +202,10 @@ class TotpWidget extends ConsumerWidget {
 
     Future<Result> updateTotp() async {
       TotpRepository repository = await ref.read(totpRepositoryProvider.notifier);
-      Result result = await repository.deleteTotp(totp);
-      if(result is! ResultSuccess) {
-        return result;
-      }
-      result = await repository.addTotp(decrypted);
-      return result;
+      return await repository.updateTotp(totp.uuid, decrypted as DecryptedTotp);
     }
 
-    Result result;
+    Result? result;
     switch (choice) {
       case _TotpKeyDialogResult.changeTotpKey:
         CryptoStore? currentCryptoStore = await ref.read(cryptoStoreProvider.future);
@@ -225,7 +222,7 @@ class TotpWidget extends ConsumerWidget {
         result = await updateTotp();
         break;
       case _TotpKeyDialogResult.changeMasterPassword:
-        result = await updateTotp();
+        await updateTotp();
         if (context.mounted) {
           await MasterPasswordUtils.changeMasterPassword(context, ref, password: password);
         }
@@ -234,7 +231,7 @@ class TotpWidget extends ConsumerWidget {
         result = await updateTotp();
         break;
     }
-    if (context.mounted) {
+    if (context.mounted && result != null) {
       context.showSnackBarForResult(result);
     }
   }
@@ -242,6 +239,15 @@ class TotpWidget extends ConsumerWidget {
 
 /// Wraps all two mobile actions in a dialog.
 class _MobileActionsDialog extends StatelessWidget {
+  /// Whether the user can edit the TOTP.
+  final bool canEdit;
+
+  /// Creates a new mobile actions dialog instance.
+  const _MobileActionsDialog({
+    super.key,
+    this.canEdit = true,
+  });
+
   @override
   Widget build(BuildContext context) => AlertDialog.adaptive(
         title: Text(translations.totp.actions.mobileDialog.title),
@@ -249,11 +255,12 @@ class _MobileActionsDialog extends StatelessWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.edit),
-              onTap: () => Navigator.pop(context, _MobileActionsDialogResult.edit),
-              title: Text(translations.totp.actions.mobileDialog.edit),
-            ),
+            if (canEdit)
+              ListTile(
+                leading: const Icon(Icons.edit),
+                onTap: () => Navigator.pop(context, _MobileActionsDialogResult.edit),
+                title: Text(translations.totp.actions.mobileDialog.edit),
+              ),
             ListTile(
               leading: const Icon(Icons.delete),
               onTap: () => Navigator.pop(context, _MobileActionsDialogResult.delete),
@@ -358,23 +365,23 @@ class _DesktopActionsWidget extends StatelessWidget {
   Widget build(BuildContext context) => Wrap(
         alignment: WrapAlignment.end,
         children: [
-          if (onDecryptPressed == null)
+          if (onDecryptPressed == null) ...[
             TextButton.icon(
               onPressed: onCopyPressed,
               icon: const Icon(Icons.copy),
               label: Text(translations.totp.actions.desktopButtons.copy),
-            )
-          else
+            ),
+            TextButton.icon(
+              onPressed: onEditPressed,
+              icon: const Icon(Icons.edit),
+              label: Text(translations.totp.actions.desktopButtons.edit),
+            ),
+          ] else
             TextButton.icon(
               onPressed: onDecryptPressed,
               icon: const Icon(Icons.lock),
               label: Text(translations.totp.actions.decrypt),
             ),
-          TextButton.icon(
-            onPressed: onEditPressed,
-            icon: const Icon(Icons.edit),
-            label: Text(translations.totp.actions.desktopButtons.edit),
-          ),
           TextButton.icon(
             onPressed: onDeletePressed,
             icon: const Icon(Icons.delete),

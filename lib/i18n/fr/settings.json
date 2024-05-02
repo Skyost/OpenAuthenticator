@@ -43,14 +43,6 @@
       "subtitle": {
         "text": "Vous pouvez changer votre mot de passe maître quand vous le souhaitez.",
         "sync": "Veuillez noter que vous devrez le réentrer dans toutes les instances d'Open Authenticator qui sont synchronisées."
-      },
-      "dialog": {
-        "title": "Changer votre mot de passe maître",
-        "current": {
-          "label": "Mot de passe maître actuel",
-          "hint": "Entrer votre mot de passe maître actuel"
-        },
-        "newLabel": "Votre nouveau mot de passe maître"
       }
     }
   },
