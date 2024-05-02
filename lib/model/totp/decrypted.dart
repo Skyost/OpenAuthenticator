@@ -29,21 +29,20 @@ class DecryptedTotp extends Totp {
     required Totp totp,
     required String decryptedSecret,
   }) : this(
-    secret: totp.secret,
-    encryptionSalt: totp.encryptionSalt,
-    uuid: totp.uuid,
-    label: totp.label,
-    issuer: totp.issuer,
-    algorithm: totp.algorithm,
-    digits: totp.digits,
-    validity: totp.validity,
-    imageUrl: totp.imageUrl,
-    decryptedSecret: decryptedSecret,
-  );
+          secret: totp.secret,
+          encryptionSalt: totp.encryptionSalt,
+          uuid: totp.uuid,
+          label: totp.label,
+          issuer: totp.issuer,
+          algorithm: totp.algorithm,
+          digits: totp.digits,
+          validity: totp.validity,
+          imageUrl: totp.imageUrl,
+          decryptedSecret: decryptedSecret,
+        );
 
   /// Returns the [totp_lib.Totp] instance.
-  totp_lib.Totp get generator =>
-      totp_lib.Totp(
+  totp_lib.Totp get generator => totp_lib.Totp(
         secret: decryptedSecret.codeUnits,
         algorithm: (algorithm ?? Totp.kDefaultAlgorithm).mapsTo,
         digits: digits ?? Totp.kDefaultDigits,
@@ -106,8 +105,7 @@ class DecryptedTotp extends Totp {
   }
 
   /// Returns the URI associated to this TOTP instance.
-  Uri get uri =>
-      toUri(
+  Uri get uri => toUri(
         decryptedSecret: decryptedSecret,
         label: label ?? uuid,
         issuer: issuer,
@@ -159,18 +157,19 @@ class DecryptedTotp extends Totp {
     int? validity,
     String? imageUrl,
     String? decryptedSecret,
-  }) => DecryptedTotp(
-    secret: secret ?? this.secret,
-    encryptionSalt: encryptionSalt ?? this.encryptionSalt,
-    uuid: uuid ?? this.uuid,
-    label: label ?? this.label,
-    issuer: issuer ?? this.issuer,
-    algorithm: algorithm ?? this.algorithm,
-    digits: digits ?? this.digits,
-    validity: validity ?? this.validity,
-    imageUrl: imageUrl ?? this.imageUrl,
-    decryptedSecret: decryptedSecret ?? this.decryptedSecret,
-  );
+  }) =>
+      DecryptedTotp(
+        secret: secret ?? this.secret,
+        encryptionSalt: encryptionSalt ?? this.encryptionSalt,
+        uuid: uuid ?? this.uuid,
+        label: label ?? this.label,
+        issuer: issuer ?? this.issuer,
+        algorithm: algorithm ?? this.algorithm,
+        digits: digits ?? this.digits,
+        validity: validity ?? this.validity,
+        imageUrl: imageUrl ?? this.imageUrl,
+        decryptedSecret: decryptedSecret ?? this.decryptedSecret,
+      );
 }
 
 /// Allows to check if the TOTP instance is decrypted.

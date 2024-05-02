@@ -1,9 +1,11 @@
 {
   "noError": "Succès !",
   "validation": {
+    "number": "Vous devez entrer un nombre valide",
     "empty": "Ce champ est requis",
     "email": "Adresse mail invalide",
     "secret": "Secret invalide",
+    "totpDigits": "Le nombre entré doit être supérieur ou égal à 6",
     "masterPassword": "Mot de passe invalide",
     "confirmation": "La confirmation ne correspond pas"
   },

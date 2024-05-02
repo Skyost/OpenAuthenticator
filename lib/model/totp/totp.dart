@@ -129,15 +129,16 @@ class Totp extends Equatable implements Comparable<Totp> {
     int? digits,
     int? validity,
     String? imageUrl,
-  }) => Totp(
-    secret: secret ?? this.secret,
-    encryptionSalt: encryptionSalt ?? this.encryptionSalt,
-    uuid: uuid ?? this.uuid,
-    label: label ?? this.label,
-    issuer: issuer ?? this.issuer,
-    algorithm: algorithm ?? this.algorithm,
-    digits: digits ?? this.digits,
-    validity: validity ?? this.validity,
-    imageUrl: imageUrl ?? this.imageUrl,
-  );
+  }) =>
+      Totp(
+        secret: secret ?? this.secret,
+        encryptionSalt: encryptionSalt ?? this.encryptionSalt,
+        uuid: uuid ?? this.uuid,
+        label: label ?? this.label,
+        issuer: issuer ?? this.issuer,
+        algorithm: algorithm ?? this.algorithm,
+        digits: digits ?? this.digits,
+        validity: validity ?? this.validity,
+        imageUrl: imageUrl ?? this.imageUrl,
+      );
 }

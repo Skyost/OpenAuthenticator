@@ -242,6 +242,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
         ),
         ListTilePadding(
           child: TextFormField(
+            initialValue: digits?.toString(),
             onChanged: (value) {
               setState(() => digits = int.tryParse(value));
             },
@@ -251,11 +252,13 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
               text: translations.totp.page.digits,
               hintText: Totp.kDefaultDigits.toString(),
             ),
+            validator: validateDigits,
             enabled: enabled,
           ),
         ),
         ListTilePadding(
           child: TextFormField(
+            initialValue: validity?.toString(),
             onChanged: (value) {
               setState(() => validity = int.tryParse(value));
             },
@@ -265,6 +268,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
               text: translations.totp.page.validity,
               hintText: Totp.kDefaultValidity.toString(),
             ),
+            validator: validateValidity,
             enabled: enabled,
           ),
         ),
@@ -308,7 +312,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   }
 
   /// Whether the TOTP is valid.
-  bool get isValidTotp => validateDecryptedSecret() == null && validateLabel() == null && validateIssuer() == null;
+  bool get isValidTotp => validateDecryptedSecret() == null && validateLabel() == null && validateIssuer() == null && validateDigits() == null && validateValidity() == null;
 
   /// Validates the [decryptedSecret].
   String? validateDecryptedSecret([String? decryptedSecret]) {
@@ -336,6 +340,34 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
     issuer ??= this.issuer;
     if (issuer.isEmpty) {
       return translations.error.validation.empty;
+    }
+    return null;
+  }
+
+
+  /// Validates the [digits].
+  String? validateDigits([String? digits]) {
+    if (digits == null || digits.isEmpty) {
+      digits ??= Totp.kDefaultDigits.toString();
+    }
+    int? parsedDigits = int.tryParse(digits);
+    if (parsedDigits == null) {
+      return translations.error.validation.number;
+    }
+    if (parsedDigits < 6) {
+      return translations.error.validation.totpDigits;
+    }
+    return null;
+  }
+
+  /// Validates the [validity].
+  String? validateValidity([String? validity]) {
+    if (validity == null || validity.isEmpty) {
+      validity ??= Totp.kDefaultValidity.toString();
+    }
+    int? parsedValidity = int.tryParse(validity);
+    if (parsedValidity == null) {
+      return translations.error.validation.number;
     }
     return null;
   }

@@ -155,6 +155,9 @@ class OpenAuthenticatorApp extends ConsumerWidget {
                 borderSide: BorderSide(color: Colors.grey.shade400),
               ),
             ),
+            dividerTheme: const DividerThemeData(
+              color: Colors.black12,
+            ),
           ),
           routes: {
             IntroPage.name: (_) => _RouteWidget(

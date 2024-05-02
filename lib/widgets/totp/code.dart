@@ -42,7 +42,14 @@ class _TotpCodeWidgetState extends TimeBasedTotpWidgetState<TotpCodeWidget> {
       return '';
     }
     String code = (widget.totp as DecryptedTotp).generator.generate(DateTime.now());
-    int halfLength = (code.length.isEven ? (code.length / 2) : (code.length ~/ 2 + 1)).toInt();
-    return '${code.substring(0, halfLength)} ${code.substring(halfLength)}';
+    StringBuffer buffer = StringBuffer();
+    for (int i = 0; i < code.length; i++) {
+      buffer.write(code[i]);
+      int nonZeroIndex = i + 1;
+      if (nonZeroIndex % 3 == 0 && nonZeroIndex != code.length) {
+        buffer.write(' ');
+      }
+    }
+    return buffer.toString();
   }
 }
