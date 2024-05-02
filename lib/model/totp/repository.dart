@@ -55,26 +55,6 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
     ]..sort();
   }
 
-  /// Tries to decrypt all TOTPs.
-  Future<bool> tryDecryptAll(CryptoStore? cryptoStore) async {
-    try {
-      List<Totp> totps = await future;
-      // List<Totp> decryptedTotps = [];
-      for (Totp totp in totps) {
-        Totp decryptedTotp = await totp.decrypt(cryptoStore);
-        if (!decryptedTotp.isDecrypted) {
-          return false;
-        }
-        // decryptedTotps.add(decryptedTotp);
-      }
-      // state = AsyncData(decryptedTotps);
-      return true;
-    } catch (ex, stacktrace) {
-      handleException(ex, stacktrace);
-    }
-    return false;
-  }
-
   /// Adds the given [totp].
   Future<Result<Totp>> addTotp(Totp totp) async {
     try {
@@ -222,17 +202,14 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
       }
       if (updateTotps) {
         List<Totp> totps = await future;
-        List<Totp> totpsEncryptedWithNewKey = [];
+        List<Totp> newTotps = [];
         for (Totp totp in totps) {
           DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newCryptoStore);
-          if (decryptedTotp == null) {
-            throw _EncryptionKeyChangeError();
-          }
-          totpsEncryptedWithNewKey.add(decryptedTotp);
+          newTotps.add(decryptedTotp ?? totp);
         }
         await storage.clearTotps();
         await storedCryptoStore.saveAndUse(newCryptoStore);
-        await storage.addTotps(totpsEncryptedWithNewKey);
+        await storage.addTotps(newTotps);
       } else {
         await storedCryptoStore.saveAndUse(newCryptoStore);
       }
@@ -299,10 +276,4 @@ class TotpLimitExceededNotifier extends AutoDisposeAsyncNotifier<bool> {
 class _NoCryptoStoreException implements Exception {
   @override
   String toString() => 'Failed to get current crypto store';
-}
-
-/// Thrown when we can't change the encryption key of a TOTP.
-class _EncryptionKeyChangeError implements Exception {
-  @override
-  String toString() => 'Failed to change encryption key';
 }
