@@ -8,9 +8,9 @@ import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Contains some useful methods for migrating storage type.
 class StorageMigrationUtils {

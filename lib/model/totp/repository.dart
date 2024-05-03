@@ -32,12 +32,9 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
 
   /// Tries to decrypt all TOTPs with the given [cryptoStore].
   Future<void> tryDecryptAll(CryptoStore? cryptoStore) async {
-    state = const AsyncLoading();
     List<Totp> totps = await future;
-    state = AsyncData([
-      for (Totp totp in totps)
-        await totp.decrypt(cryptoStore)
-    ]);
+    state = const AsyncLoading();
+    state = AsyncData([for (Totp totp in totps) await totp.decrypt(cryptoStore)]..sort());
   }
 
   /// Refreshes the current state.
@@ -103,8 +100,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<List<Totp>> {
       if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
         Map<String, String?> previousImages = {
           for (Totp totp in await future)
-            if (totp.isDecrypted)
-              totp.uuid: (totp as DecryptedTotp).imageUrl,
+            if (totp.isDecrypted) totp.uuid: (totp as DecryptedTotp).imageUrl,
         };
         for (Totp totp in totps) {
           await totp.cacheImage(previousImageUrl: previousImages[totp.uuid]);

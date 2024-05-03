@@ -12,6 +12,10 @@
       "delete": "Supprimer"
     },
     "copyConfirmation": "Copié dans le presse-papier.",
+    "editConfirmationDialog": {
+      "title": "Éditer ce TOTP",
+      "message": "Il semblerait que ce TOTP a été chiffré avec une autre clé que celle que vous utilisez actuellement. Cela peut arriver si vous avez changé votre mot de passe maître sur un autre appareil. Si vous éditez ce TOTP, il sera chiffré avec votre clé actuelle. Voulez-vous continuer ?"
+    },
     "deleteConfirmationDialog": {
       "title": "Supprimer ce TOTP",
       "message": "Voulez-vous vraiment supprimer ce TOTP ?"

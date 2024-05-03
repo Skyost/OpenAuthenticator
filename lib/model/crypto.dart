@@ -135,7 +135,9 @@ class CryptoStore {
       Uint8List encryptedBytes = encryptedData.sublist(_initializationVectorLength);
       return utf8.decode(await key.decryptBytes(encryptedBytes, initializationVector));
     } catch (ex, stacktrace) {
-      handleException(ex, stacktrace);
+      if (ex.toString() != 'error:1e000065:Cipher functions:OPENSSL_internal:BAD_DECRYPT') {
+        handleException(ex, stacktrace);
+      }
     }
     return null;
   }

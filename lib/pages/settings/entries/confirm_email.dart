@@ -7,7 +7,7 @@ import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Allows the user to confirm its email from the app.
 class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthenticationProvider {

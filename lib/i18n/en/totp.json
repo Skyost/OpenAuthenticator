@@ -12,6 +12,10 @@
       "delete": "Delete"
     },
     "copyConfirmation": "Copied to clipboard.",
+    "editConfirmationDialog": {
+      "title": "Edit this TOTP",
+      "message": "It seems that this TOTP has been encrypted using a different key that your current one. This can happen if you have changed your master password on another device. If you edit this TOTP, it will be encrypted using your current key. Do you want to continue ?"
+    },
     "deleteConfirmationDialog": {
       "title": "Delete this TOTP",
       "message": "Do you really want to delete this TOTP ?"

@@ -4,8 +4,8 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
-import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 /// Allows the user to subscribe to the Contributor Plan.

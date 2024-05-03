@@ -4,8 +4,8 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
-import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 /// Contains some useful methods for subscribing to the Contributor Plan.

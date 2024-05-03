@@ -67,10 +67,11 @@ class TitleWidget extends StatelessWidget {
           child: Text(
             text,
             style: (textStyle ?? const TextStyle()).copyWith(
+              height: 2,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        alignment: PlaceholderAlignment.bottom,
+        alignment: PlaceholderAlignment.middle,
       );
 }

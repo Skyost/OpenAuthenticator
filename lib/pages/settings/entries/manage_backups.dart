@@ -8,7 +8,7 @@ import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Allows the user to restore a backup.
 class ManageBackupSettingsEntryWidget extends ConsumerWidget {

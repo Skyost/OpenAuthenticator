@@ -17,6 +17,7 @@ import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/totp/code.dart';
 import 'package:open_authenticator/widgets/totp/image.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Allows to display TOTPs in a [ListView].
 class TotpWidget extends ConsumerWidget {
@@ -85,7 +86,7 @@ class TotpWidget extends ConsumerWidget {
                   child: _DesktopActionsWidget(
                     onCopyPressed: totp.isDecrypted ? (() async => await _copyCode(context)) : null,
                     onDecryptPressed: totp.isDecrypted ? null : () => _tryDecrypt(context, ref),
-                    onEditPressed: () async => await _edit(context),
+                    onEditPressed: () async => await _edit(context, ref),
                     onDeletePressed: () async => await _delete(context, ref),
                   ),
                 ),
@@ -129,8 +130,29 @@ class TotpWidget extends ConsumerWidget {
   }
 
   /// Allows to edit the TOTP.
-  Future<void> _edit(BuildContext context) async {
-    await Navigator.pushNamed(context, TotpPage.name, arguments: {OpenAuthenticatorApp.kRouteParameterTotp: totp});
+  Future<void> _edit(BuildContext context, WidgetRef ref) async {
+    CryptoStore? currentCryptoStore = await ref.read(cryptoStoreProvider.future);
+    if (currentCryptoStore == null) {
+      if (context.mounted) {
+        SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
+      }
+      return;
+    }
+    if (!(await totp.encryptedData.canDecryptData(currentCryptoStore))) {
+      if (context.mounted) {
+        bool shouldContinue = await ConfirmationDialog.ask(
+          context,
+          title: translations.totp.actions.editConfirmationDialog.title,
+          message: translations.totp.actions.editConfirmationDialog.message,
+        );
+        if (!shouldContinue) {
+          return;
+        }
+      }
+    }
+    if (context.mounted) {
+      await Navigator.pushNamed(context, TotpPage.name, arguments: {OpenAuthenticatorApp.kRouteParameterTotp: totp});
+    }
   }
 
   /// Allows to delete the TOTP.
@@ -165,7 +187,7 @@ class TotpWidget extends ConsumerWidget {
     }
     switch (choice) {
       case _MobileActionsDialogResult.edit:
-        _edit(context);
+        _edit(context, ref);
         break;
       case _MobileActionsDialogResult.delete:
         _delete(context, ref);
@@ -181,29 +203,31 @@ class TotpWidget extends ConsumerWidget {
       message: translations.totp.decryptDialog.message,
       password: true,
     );
-    if (password == null) {
-      return;
-    }
-    CryptoStore previousCryptoStore = await CryptoStore.fromPassword(password, totp.encryptedData.encryptionSalt);
-    Totp decrypted = await totp.decrypt(previousCryptoStore);
-    if (!decrypted.isDecrypted) {
-      if (context.mounted) {
-        SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);
-      }
+    if (password == null || !context.mounted) {
       return;
     }
 
+    late CryptoStore previousCryptoStore;
     TotpRepository repository = ref.read(totpRepositoryProvider.notifier);
-    await repository.tryDecryptAll(previousCryptoStore);
+    Totp decrypted = await showWaitingOverlay(
+      context,
+      future: () async {
+        previousCryptoStore = await CryptoStore.fromPassword(password, totp.encryptedData.encryptionSalt);
+        return await totp.decrypt(previousCryptoStore);
+      }(),
+    );
     if (!context.mounted) {
       return;
     }
+    if (!decrypted.isDecrypted) {
+      SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);
+      return;
+    }
 
-    _TotpKeyDialogResult choice = (await showAdaptiveDialog<_TotpKeyDialogResult>(
-          context: context,
-          builder: (context) => _TotpKeyDialog(),
-        )) ??
-        _TotpKeyDialogResult.doNothing;
+    _TotpKeyDialogResult? choice = await showAdaptiveDialog<_TotpKeyDialogResult>(
+      context: context,
+      builder: (context) => _TotpKeyDialog(),
+    );
 
     switch (choice) {
       case _TotpKeyDialogResult.changeTotpKey:
@@ -231,6 +255,7 @@ class TotpWidget extends ConsumerWidget {
       default:
         break;
     }
+    await repository.tryDecryptAll(previousCryptoStore);
   }
 }
 
@@ -241,7 +266,6 @@ class _MobileActionsDialog extends StatelessWidget {
 
   /// Creates a new mobile actions dialog instance.
   const _MobileActionsDialog({
-    super.key,
     this.canEdit = true,
   });
 
@@ -309,7 +333,7 @@ class _TotpKeyDialog extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.close),
-              onTap: () => Navigator.pop(context, _TotpKeyDialogResult.doNothing),
+              onTap: () => Navigator.pop(context),
               title: Text(translations.totp.totpKeyDialog.choices.doNothing.title),
               subtitle: Text(translations.totp.totpKeyDialog.choices.doNothing.subtitle),
             ),
@@ -317,7 +341,7 @@ class _TotpKeyDialog extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, _TotpKeyDialogResult.doNothing),
+            onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
           ),
         ],
@@ -330,10 +354,7 @@ enum _TotpKeyDialogResult {
   changeTotpKey,
 
   /// Allows to change the current master password.
-  changeMasterPassword,
-
-  /// Just leave it, as it.
-  doNothing;
+  changeMasterPassword;
 }
 
 /// Wraps all three desktop actions in a widget.

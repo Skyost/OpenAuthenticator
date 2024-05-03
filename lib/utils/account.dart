@@ -5,8 +5,8 @@ import 'package:open_authenticator/model/authentication/providers/provider.dart'
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/authentication_provider_picker.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Contains some useful methods for logging and linking the user's current account.
 class AccountUtils {

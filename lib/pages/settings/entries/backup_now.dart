@@ -4,7 +4,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/waiting_dialog.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Allows the user to backup everything now.
 class BackupNowSettingsEntryWidget extends ConsumerWidget {
