@@ -24,8 +24,8 @@ const features = computed(() => {
           <div class="mockup-phone">
             <div class="camera" />
             <div class="display">
-              <div class="artboard phone-1">
-                <img src="https://placehold.co/320x568" alt="Screenshot">
+              <div class="artboard phone">
+                <img src="/images/screenshots/home.png" alt="Screenshot">
               </div>
             </div>
           </div>
@@ -109,5 +109,10 @@ const features = computed(() => {
   strong {
     font-weight: bold;
   }
+}
+
+.artboard.phone {
+  width: 320px;
+  height: 710px;
 }
 </style>

@@ -8,15 +8,15 @@ export type OS = 'android' | 'darwin' | 'windows' | 'linux'
 export const storesLink: Record<OS, StoreInfo> = {
   android: {
     name: 'Google Play',
-    url: 'https://play.google.com/store/apps/details?id=app.openauthenticator'
+    url: null // 'https://play.google.com/store/apps/details?id=app.openauthenticator'
   },
   darwin: {
     name: 'App Store',
-    url: 'https://apps.apple.com/app/id6479272927'
+    url: null // 'https://apps.apple.com/app/id6479272927'
   },
   windows: {
     name: 'Microsoft Store',
-    url: null
+    url: null // 'https://www.microsoft.com/store/apps/9PB8HFZFKLT4'
   },
   linux: {
     name: 'Snapcraft',

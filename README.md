@@ -47,7 +47,7 @@ That's how **Open Authenticator** was born, with open-sourceness, interoperabili
 
 ## Screenshots
 
-_Coming soon !_
+<img src="https://github.com/Skyost/OpenAuthenticator/raw/main/docs/public/images/screenshots/screenshot-1.png" width="30%">
 
 ## Download
 
