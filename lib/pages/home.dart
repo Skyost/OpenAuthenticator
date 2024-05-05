@@ -5,7 +5,6 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
@@ -79,7 +78,7 @@ class HomePage extends ConsumerWidget {
 class _HomePageBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<List<Totp>> totps = ref.watch(totpRepositoryProvider);
+    AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
     AsyncValue<bool> isUnlocked = ref.watch(appUnlockStateProvider);
     switch (totps) {
       case AsyncData(:final value):

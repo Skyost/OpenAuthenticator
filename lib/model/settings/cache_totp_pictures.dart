@@ -27,7 +27,7 @@ class CacheTotpPicturesSettingsEntry extends SettingsEntry<bool> {
     if (value != state.valueOrNull) {
       state = const AsyncLoading();
       if (value) {
-        List<Totp> totps = await ref.read(totpRepositoryProvider.future);
+        TotpList totps = await ref.read(totpRepositoryProvider.future);
         for (Totp totp in totps) {
           await totp.cacheImage();
         }

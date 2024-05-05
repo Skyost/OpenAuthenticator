@@ -101,7 +101,7 @@ If this project becomes popular, I would like to provide its own backend to Open
 Currently, it's using Firebase Auth / Firestore, which is perfect for this project in its current
 state. Having a dedicated server would be too expensive for the moment.
 
-If it's sustainable enough, we could even consider completely removing ads from the app.
+If it's sustainable enough, we could even consider completely removing any TOTPs limit from the app.
 
 ## License
 

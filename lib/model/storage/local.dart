@@ -105,6 +105,12 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
+  Future<void> replaceTotps(List<Totp> newTotps) => batch((batch) {
+        batch.deleteAll(totps);
+        batch.insertAll(totps, newTotps.map((totp) => totp.asDriftTotp));
+      });
+
+  @override
   Future<Salt?> readSecretsSalt() async => await Salt.readFromLocalStorage();
 
   @override

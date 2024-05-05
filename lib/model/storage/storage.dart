@@ -254,6 +254,9 @@ mixin Storage {
   /// The storage dependencies.
   List<NotifierProvider> get dependencies => [];
 
+  /// The time to wait between two operations.
+  Duration get operationThreshold => Duration.zero;
+
   /// Stores the given [totp].
   Future<void> addTotp(Totp totp);
 
@@ -280,6 +283,9 @@ mixin Storage {
 
   /// Lists all TOTPs UUID.
   Future<List<String>> listUuids();
+
+  /// Replace all current TOTPs by [newTotps].
+  Future<void> replaceTotps(List<Totp> newTotps);
 
   /// Loads the salt that allows to encrypt secrets.
   Future<Salt?> readSecretsSalt();

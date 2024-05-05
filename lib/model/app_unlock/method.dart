@@ -6,7 +6,6 @@ import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 
@@ -45,7 +44,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
   @override
   Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) async {
     if (reason != UnlockReason.openApp) {
-      List<Totp> totps = await ref.read(totpRepositoryProvider.future);
+      TotpList totps = await ref.read(totpRepositoryProvider.future);
       if (totps.isEmpty) {
         return const ResultSuccess();
       }

@@ -28,9 +28,12 @@ class OnlineStorage with Storage {
   List<NotifierProvider> get dependencies => [firebaseAuthenticationProvider];
 
   @override
+  Duration get operationThreshold => Duration(seconds: 5);
+
+  @override
   Future<void> addTotp(Totp totp) async {
     CollectionReference? collection = _totpsCollection;
-    await collection.doc(totp.uuid).set(totp.toJson());
+    await collection.doc(totp.uuid).set(totp.toFirestore());
   }
 
   @override
@@ -38,7 +41,7 @@ class OnlineStorage with Storage {
     CollectionReference? collection = _totpsCollection;
     WriteBatch batch = FirebaseFirestore.instance.batch();
     for (Totp totp in totps) {
-      batch.set(collection.doc(totp.uuid), totp.toJson());
+      batch.set(collection.doc(totp.uuid), totp.toFirestore());
     }
     await batch.commit();
   }
@@ -69,7 +72,7 @@ class OnlineStorage with Storage {
   @override
   Future<void> updateTotp(String uuid, Totp totp) async {
     CollectionReference? collection = _totpsCollection;
-    await collection.doc(uuid).update(totp.toJson());
+    await collection.doc(uuid).update(totp.toFirestore());
   }
 
   @override
@@ -78,7 +81,7 @@ class OnlineStorage with Storage {
     if (!result.exists) {
       return null;
     }
-    return await _fromFirestore(result);
+    return await _FirestoreTotp.fromFirestore(result);
   }
 
   @override
@@ -86,7 +89,7 @@ class OnlineStorage with Storage {
     QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get();
     List<Totp> totps = [];
     for (QueryDocumentSnapshot doc in result.docs) {
-      Totp? totp = await _fromFirestore(doc);
+      Totp? totp = await _FirestoreTotp.fromFirestore(doc);
       if (totp != null) {
         totps.add(totp);
       }
@@ -105,6 +108,20 @@ class OnlineStorage with Storage {
       }
     }
     return uuids;
+  }
+
+  @override
+  Future<void> replaceTotps(List<Totp> newTotps) async {
+    CollectionReference? collection = _totpsCollection;
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    QuerySnapshot snapshots = await collection.get();
+    for (QueryDocumentSnapshot document in snapshots.docs) {
+      batch.delete(document.reference);
+    }
+    for (Totp totp in newTotps) {
+      batch.set(collection.doc(totp.uuid), totp.toFirestore());
+    }
+    await batch.commit();
   }
 
   @override
@@ -140,18 +157,27 @@ class OnlineStorage with Storage {
   /// Returns a reference to the current user collection.
   /// Throws a [NotLoggedInException] if user is not logged in.
   CollectionReference get _totpsCollection => _userDocument.collection(_kTotpsCollection);
-
-  /// Creates a new TOTP from the specified JSON data.
-  Future<Totp?> _fromFirestore(DocumentSnapshot snapshot, {CryptoStore? cryptoStore}) async {
-    if (snapshot.data() is! Map<String, Object?>) {
-      return null;
-    }
-    return JsonTotp.fromJson(snapshot.data() as Map<String, Object?>);
-  }
 }
 
 /// Thrown when the user is not logged in.
 class NotLoggedInException implements Exception {
   @override
   String toString() => 'User is not logged in';
+}
+
+/// Allows to convert a TOTP to a Firestore map.
+extension _FirestoreTotp on Totp {
+  /// Converts this TOTP to a Firestore map.
+  Map<String, dynamic> toFirestore() => {
+        ...toJson(),
+        'updated': FieldValue.serverTimestamp(),
+      };
+
+  /// Creates a new TOTP from the specified JSON data.
+  static Future<Totp?> fromFirestore(DocumentSnapshot snapshot) async {
+    if (snapshot.data() is! Map<String, Object?>) {
+      return null;
+    }
+    return JsonTotp.fromJson(snapshot.data() as Map<String, Object?>);
+  }
 }

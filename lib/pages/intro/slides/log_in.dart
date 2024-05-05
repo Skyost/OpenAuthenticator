@@ -6,7 +6,6 @@ import 'package:open_authenticator/model/authentication/firebase_authentication.
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/utils/account.dart';
@@ -51,7 +50,7 @@ class LoginIntroPageSlide extends IntroPageSlide {
         .isEmpty) {
       return true;
     }
-    List<Totp> totps = await ref.read(totpRepositoryProvider.future);
+    TotpList totps = await ref.read(totpRepositoryProvider.future);
     if (totps.isNotEmpty) {
       return true;
     }

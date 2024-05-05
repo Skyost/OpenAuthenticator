@@ -137,7 +137,7 @@ class Backup implements Comparable<Backup> {
         throw _EncryptionError(operationName: 'encryption');
       }
       CryptoStore newStore = await CryptoStore.fromPassword(password, await Salt.generate());
-      List<Totp> totps = await _ref.read(totpRepositoryProvider.future);
+      TotpList totps = await _ref.read(totpRepositoryProvider.future);
       List<Totp> toBackup = [];
       for (Totp totp in totps) {
         DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newStore);

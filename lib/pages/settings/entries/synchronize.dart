@@ -9,7 +9,6 @@ import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/bool_entry.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
@@ -103,8 +102,8 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
         storageType,
       );
     }
-    AsyncValue<List<Totp>> totps = ref.watch(totpRepositoryProvider);
-    if (totps is! AsyncData<List<Totp>>) {
+    AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
+    if (totps is! AsyncData<TotpList>) {
       return Text(translations.settings.synchronization.synchronizeTotps.subtitle.description);
     }
     return Text.rich(
