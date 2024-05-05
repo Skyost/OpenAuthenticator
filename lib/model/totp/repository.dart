@@ -45,8 +45,10 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
 
   /// Refreshes the current state.
   Future<void> refresh() async {
+    TotpList totpList = await future;
     state = const AsyncLoading();
     try {
+      await totpList.waitBeforeNextOperation();
       Storage storage = await ref.read(storageProvider.future);
       CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
       state = AsyncData(await _queryTotpsFromStorage(storage, cryptoStore));
