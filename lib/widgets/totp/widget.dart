@@ -64,35 +64,42 @@ class TotpWidget extends ConsumerWidget {
                     size: imageSize,
                   ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (totp.isDecrypted && (totp as DecryptedTotp).issuer != null && (totp as DecryptedTotp).issuer!.isNotEmpty)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (totp.isDecrypted && (totp as DecryptedTotp).issuer != null && (totp as DecryptedTotp).issuer!.isNotEmpty)
+                  Text(
+                    ((totp as DecryptedTotp)).issuer!,
+                    style: const TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 Text(
-                  ((totp as DecryptedTotp)).issuer!,
-                ),
-              Text(
-                (totp.isDecrypted ? (totp as DecryptedTotp).label : null) ?? totp.uuid,
-                style: TextStyle(color: Colors.grey.shade700),
-              ),
-              if (totp.isDecrypted && displayCode)
-                TotpCodeWidget(
-                  totp: totp as DecryptedTotp,
-                  textStyle: Theme.of(context).textTheme.headlineLarge,
-                ),
-              if (!currentPlatform.isMobile)
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - contentPadding.left - contentPadding.right - imageSize - space,
-                  child: _DesktopActionsWidget(
-                    onCopyPressed: totp.isDecrypted ? (() async => await _copyCode(context)) : null,
-                    onDecryptPressed: totp.isDecrypted ? null : () => _tryDecrypt(context, ref),
-                    onEditPressed: () async => await _edit(context, ref),
-                    onDeletePressed: () async => await _delete(context, ref),
+                  (totp.isDecrypted ? (totp as DecryptedTotp).label : null) ?? totp.uuid,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-            ],
+                if (totp.isDecrypted && displayCode)
+                  TotpCodeWidget(
+                    totp: totp as DecryptedTotp,
+                    textStyle: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                if (!currentPlatform.isMobile)
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - contentPadding.left - contentPadding.right - imageSize - space,
+                    child: _DesktopActionsWidget(
+                      onCopyPressed: totp.isDecrypted ? (() async => await _copyCode(context)) : null,
+                      onDecryptPressed: totp.isDecrypted ? null : () => _tryDecrypt(context, ref),
+                      onEditPressed: () async => await _edit(context, ref),
+                      onDeletePressed: () async => await _delete(context, ref),
+                    ),
+                  ),
+              ],
+            ),
           ),
-          const Spacer(),
           if (currentPlatform.isMobile)
             if (totp.isDecrypted)
               IconButton(
