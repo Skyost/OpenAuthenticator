@@ -20,8 +20,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
   @override
   FutureOr<Storage> build() async {
     StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
-    Storage storage = storageType.create();
-    ref.onDispose(storage.close);
+    Storage storage = await ref.watch(storageType.provider.future);
     return storage;
   }
 
@@ -57,7 +56,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
         }
       }
 
-      Storage newStorage = newType.create();
+      Storage newStorage = await ref.read(newType.provider.future);
       DeletedTotpsDatabase deletedTotpsDatabase = ref.read(deletedTotpsProvider);
       close = () async {
         await newStorage.close();
@@ -250,9 +249,6 @@ enum StorageMigrationDeletedTotpPolicy {
 mixin Storage {
   /// Returns the storage type.
   StorageType get type;
-
-  /// The storage dependencies.
-  List<NotifierProvider> get dependencies => [];
 
   /// The time to wait between two operations.
   Duration get operationThreshold => Duration.zero;

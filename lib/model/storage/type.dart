@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/storage/local.dart';
 import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
@@ -5,16 +6,18 @@ import 'package:open_authenticator/model/storage/storage.dart';
 /// Contains all storage types.
 enum StorageType {
   /// Local storage, using Drift.
-  local(create: LocalStorage.new),
+  local,
 
   /// Online storage, using Firebase Firestore.
-  online(create: OnlineStorage.new);
+  online;
 
-  /// Creates a storage instance associated to the current type.
-  final Storage Function() create;
-
-  /// Creates a new storage type instance.
-  const StorageType({
-    required this.create,
-  });
+  /// Returns the provider associated with the storage type.
+  AutoDisposeFutureProvider<Storage> get provider {
+    switch (this) {
+      case StorageType.local:
+        return localStorageProvider;
+      case StorageType.online:
+        return onlineStorageProvider;
+    }
+  }
 }

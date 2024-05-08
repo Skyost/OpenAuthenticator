@@ -8,7 +8,14 @@ import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/json.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
+
+/// The online storage provider.
+final onlineStorageProvider = FutureProvider.autoDispose<OnlineStorage>((ref) async {
+  String? userId = await ref.watch(firebaseUserIdProvider.future);
+  OnlineStorage storage = OnlineStorage(userId: userId);
+  ref.onDispose(storage.close);
+  return storage;
+});
 
 /// Stores TOTPs using Firebase Firestore.
 class OnlineStorage with Storage {
@@ -21,14 +28,19 @@ class OnlineStorage with Storage {
   /// The salt document.
   static const String _kSaltKey = 'salt';
 
+  /// The user id.
+  final String? _userId;
+
+  /// Creates a new online storage instance.
+  const OnlineStorage({
+    String? userId,
+  }) : _userId = userId;
+
   @override
   StorageType get type => StorageType.online;
 
   @override
-  List<NotifierProvider> get dependencies => [firebaseAuthenticationProvider];
-
-  @override
-  Duration get operationThreshold => Duration(seconds: 5);
+  Duration get operationThreshold => const Duration(seconds: 5);
 
   @override
   Future<void> addTotp(Totp totp) async {
@@ -148,10 +160,10 @@ class OnlineStorage with Storage {
   /// Returns a reference to the current user document.
   /// Throws a [NotLoggedInException] if user is not logged in.
   DocumentReference<Map<String, dynamic>> get _userDocument {
-    if (!FirebaseAuth.instance.isLoggedIn) {
+    if (_userId == null) {
       throw NotLoggedInException();
     }
-    return FirebaseFirestore.instance.collection(FirebaseAuth.instance.currentUser!.uid).doc(_kUserDataDocument);
+    return FirebaseFirestore.instance.collection(_userId).doc(_kUserDataDocument);
   }
 
   /// Returns a reference to the current user collection.

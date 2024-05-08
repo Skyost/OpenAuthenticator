@@ -18,10 +18,10 @@ class FirebaseAuthDefault extends FirebaseAuth {
 
   @override
   Future<SignInResult> unlinkFrom(String providerId) async {
-    if (firebase_auth.FirebaseAuth.instance.currentUser == null) {
+    if (_currentUser == null) {
       throw Exception('User must be logged in.');
     }
-    firebase_auth.User user = await firebase_auth.FirebaseAuth.instance.currentUser!.unlink(providerId);
+    firebase_auth.User user = await _currentUser!.unlinkFromProvider(providerId);
     return SignInResult(
       email: user.email,
       localId: user.uid,
@@ -65,6 +65,9 @@ class FirebaseAuthUser extends User {
 
   /// Links the current user to the given [provider].
   Future<firebase_auth.UserCredential> linkWithProvider(firebase_auth.AuthProvider provider) => _firebaseUser.linkWithProvider(provider);
+
+  /// Unlinks the current user from the given [providerId].
+  Future<firebase_auth.User> unlinkFromProvider(String providerId) => _firebaseUser.unlink(providerId);
 }
 
 /// Authenticates using a [firebase_auth.AuthProvider].

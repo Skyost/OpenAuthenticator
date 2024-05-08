@@ -18,6 +18,12 @@ class FirebaseAuthRest extends FirebaseAuth {
   /// The user data preferences key.
   static const String _kUserData = 'firebaseUserData';
 
+  /// The first method to call.
+  static const String _kCallInstall = 'auth.install';
+
+  /// The method to call when the user has changed.
+  static const String _kCallUserChanged = 'auth.userChanged';
+
   /// The current user instance.
   RestUser? _currentUser;
 
@@ -33,14 +39,15 @@ class FirebaseAuthRest extends FirebaseAuth {
     super.initialize();
     _methodChannel.setMethodCallHandler(_handlePlatformCall);
     String? userData = await SimpleSecureStorage.read(_kUserData);
-    if (userData != null) {
-      RestUser currentUser = RestUser.fromJson(jsonDecode(userData));
-      if (await currentUser.refreshUserInfo()) {
-        _currentUser = currentUser;
-        currentUser.addListener(_onUserChanged);
-      }
+    if (userData == null) {
+      _onUserChanged(methodChannelCall: _kCallInstall);
+      return;
     }
-    _onUserChanged(methodChannelCall: 'auth.install');
+    RestUser currentUser = RestUser.fromJson(jsonDecode(userData));
+    currentUser.addListener(_onUserChanged);
+    _currentUser = currentUser;
+    _onUserChanged(methodChannelCall: _kCallInstall);
+    await currentUser.refreshUserInfo();
   }
 
   @override
@@ -105,7 +112,7 @@ class FirebaseAuthRest extends FirebaseAuth {
   Stream<RestUser?> get userChanges => _controller.stream;
 
   /// Triggered when the current user has changed.
-  void _onUserChanged({String methodChannelCall = 'auth.userChanged'}) {
+  void _onUserChanged({String methodChannelCall = _kCallUserChanged}) {
     _controller.add(_currentUser);
     if (_currentUser == null) {
       SimpleSecureStorage.delete(_kUserData);

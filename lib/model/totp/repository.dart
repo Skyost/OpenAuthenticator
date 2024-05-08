@@ -25,9 +25,8 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
   @override
   FutureOr<TotpList> build() async {
     Storage storage = await ref.watch(storageProvider.future);
-    storage.dependencies.forEach(ref.watch);
     CryptoStore? cryptoStore = await ref.watch(cryptoStoreProvider.future);
-    return _queryTotpsFromStorage(storage, cryptoStore);
+    return await _queryTotpsFromStorage(storage, cryptoStore);
   }
 
   /// Tries to decrypt all TOTPs with the given [cryptoStore].
@@ -358,10 +357,4 @@ class TotpLimitExceededNotifier extends AutoDisposeAsyncNotifier<bool> {
       storageType: currentStorageType == StorageType.online ? StorageType.local : StorageType.online,
     ));
   }
-}
-
-/// Thrown when we can't get the current crypto store instance.
-class _NoCryptoStoreException implements Exception {
-  @override
-  String toString() => 'Failed to get current crypto store';
 }

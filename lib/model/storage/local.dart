@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
@@ -43,6 +44,13 @@ class Totps extends Table {
   @override
   Set<Column> get primaryKey => {uuid};
 }
+
+/// The local storage provider.
+final localStorageProvider = FutureProvider.autoDispose<LocalStorage>((ref) async {
+  LocalStorage storage = LocalStorage();
+  ref.onDispose(storage.close);
+  return storage;
+});
 
 /// Stores TOTPs using Drift and SSS.
 @DriftDatabase(tables: [Totps])
