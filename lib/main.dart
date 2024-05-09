@@ -65,9 +65,9 @@ Future<void> main() async {
   ));
   LocaleSettings.useDeviceLocale();
   runApp(
-    TranslationProvider(
-      child: const ProviderScope(
-        child: OpenAuthenticatorApp(),
+    ProviderScope(
+      child: TranslationProvider(
+        child: const OpenAuthenticatorApp(),
       ),
     ),
   );

@@ -26,7 +26,17 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
   FutureOr<TotpList> build() async {
     Storage storage = await ref.watch(storageProvider.future);
     CryptoStore? cryptoStore = await ref.watch(cryptoStoreProvider.future);
-    return await _queryTotpsFromStorage(storage, cryptoStore);
+    TotpList totpList = TotpList._fromListAndStorage(
+      list: await (await storage.firstRead()).decrypt(cryptoStore),
+      storage: storage,
+    );
+    storage.getUpdatedTotpList().then((updatedTotps) async {
+      state = AsyncData(TotpList._fromListAndStorage(
+        list: await updatedTotps.decrypt(cryptoStore),
+        storage: storage,
+      ));
+    });
+    return totpList;
   }
 
   /// Tries to decrypt all TOTPs with the given [cryptoStore].
@@ -34,10 +44,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
     TotpList totpList = await future;
     state = const AsyncLoading();
     state = AsyncData(TotpList._(
-      list: [
-        for (Totp totp in totpList) //
-          await totp.decrypt(cryptoStore),
-      ],
+      list: await totpList._list.decrypt(cryptoStore),
       operationThreshold: totpList.operationThreshold,
     ));
   }
@@ -77,10 +84,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
       totp.cacheImage();
     }
     return TotpList._fromListAndStorage(
-      list: [
-        for (Totp totp in totps) //
-          await totp.decrypt(cryptoStore),
-      ],
+      list: await totps.decrypt(cryptoStore),
       storage: storage,
     );
   }
@@ -133,10 +137,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
       CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
       state = AsyncData(
         TotpList._fromListAndStorage(
-          list: [
-            for (Totp totp in totps) //
-              await totp.decrypt(cryptoStore),
-          ],
+          list: await totps.decrypt(cryptoStore),
           storage: storage,
         ),
       );
@@ -253,6 +254,15 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
       );
     }
   }
+}
+
+/// Allows to easily decrypt a TOTP list.
+extension _DecryptList on List<Totp> {
+  /// Decrypts the current list.
+  Future<List<Totp>> decrypt(CryptoStore? cryptoStore) async => [
+        for (Totp totp in this) //
+          await totp.decrypt(cryptoStore),
+      ];
 }
 
 /// A TOTP list, with a last updated time.

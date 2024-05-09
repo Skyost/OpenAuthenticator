@@ -29,10 +29,10 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   animations: ^2.0.11
-  camera: ^0.10.5
-  cloud_firestore: ^4.17.2
-  firebase_auth: ^4.19.4
-  firebase_core: ^2.30.1
+  camera: ^0.10.6
+  cloud_firestore: ^4.17.3
+  firebase_auth: ^4.19.5
+  firebase_core: ^2.31.0
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -48,7 +48,7 @@ dependencies:
   uuid: ^4.4.0
   webcrypto: ^0.5.6
   equatable: ^2.0.5
-  drift: ^2.17.0
+  drift: ^2.18.0
   sqlite3_flutter_libs: ^0.5.21
   path: ^1.9.0
   local_auth: ^2.2.0
@@ -57,12 +57,12 @@ dependencies:
   qr_flutter: ^4.1.0
   flex_color_scheme: ^7.3.1
   intl: any
-  firebase_dynamic_links: ^5.5.4
+  firebase_dynamic_links: ^5.5.5
   sqlite3: ^2.4.2
   url_launcher: ^6.2.6
   firebase_app_check: ^0.2.2
   purchases_flutter: ^6.29.0
-  firebase_crashlytics: ^3.5.4
+  firebase_crashlytics: ^3.5.5
   window_manager: ^0.3.8
   slang: ^3.30.2
   slang_flutter: ^3.30.0
@@ -75,10 +75,12 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   build_runner: ^2.4.9
-  drift_dev: ^2.17.0
+  drift_dev: ^2.18.0
   flutter_lints: ^3.0.2
   msix: ^3.16.7
   slang_build_runner: ^3.30.0
+  custom_lint: ^0.6.4
+  riverpod_lint: ^2.3.10
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

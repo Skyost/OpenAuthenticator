@@ -30,8 +30,8 @@ class Totp extends Equatable implements Comparable<Totp> {
   /// The image URL key.
   static const String kImageUrlKey = 'imageUrl';
 
-  /// The encryption salt.
-  static const String kEncryptionSalt = 'encryptionSalt';
+  /// The encryption salt key.
+  static const String kEncryptionSaltKey = 'encryptionSalt';
 
   /// The default algorithm to use.
   static const Algorithm kDefaultAlgorithm = Algorithm.sha1;

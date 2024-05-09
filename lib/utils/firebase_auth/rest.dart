@@ -31,7 +31,7 @@ class FirebaseAuthRest extends FirebaseAuth {
   final StreamController<RestUser?> _controller = StreamController<RestUser?>.broadcast();
 
   /// The method channel.
-  /// This allow us to link our auth implementation to Firebase C++ SDK.
+  /// This allow us to link our auth implementation to the Firebase C++ SDK.
   final MethodChannel _methodChannel = const MethodChannel('app.openauthenticator');
 
   @override
@@ -39,15 +39,14 @@ class FirebaseAuthRest extends FirebaseAuth {
     super.initialize();
     _methodChannel.setMethodCallHandler(_handlePlatformCall);
     String? userData = await SimpleSecureStorage.read(_kUserData);
-    if (userData == null) {
-      _onUserChanged(methodChannelCall: _kCallInstall);
-      return;
+    if (userData != null) {
+      RestUser currentUser = RestUser.fromJson(jsonDecode(userData));
+      if (await currentUser.refreshUserInfo()) {
+        _currentUser = currentUser;
+        currentUser.addListener(_onUserChanged);
+      }
     }
-    RestUser currentUser = RestUser.fromJson(jsonDecode(userData));
-    currentUser.addListener(_onUserChanged);
-    _currentUser = currentUser;
     _onUserChanged(methodChannelCall: _kCallInstall);
-    await currentUser.refreshUserInfo();
   }
 
   @override

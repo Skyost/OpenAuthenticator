@@ -245,6 +245,9 @@ enum StorageMigrationDeletedTotpPolicy {
   ask;
 }
 
+/// Allows to listen to the stored TOTPs.
+typedef StorageListener = Function(List<Totp> totps);
+
 /// A common interface to store TOTPs either locally or remotely.
 mixin Storage {
   /// Returns the storage type.
@@ -252,6 +255,13 @@ mixin Storage {
 
   /// The time to wait between two operations.
   Duration get operationThreshold => Duration.zero;
+
+  /// Lists all TOTPs for the first read.
+  /// This should be fast. Typically cached.
+  Future<List<Totp>> firstRead() => listTotps();
+
+  /// Updates all TOTPs read using [firstRead].
+  Future<List<Totp>> getUpdatedTotpList() => listTotps();
 
   /// Stores the given [totp].
   Future<void> addTotp(Totp totp);

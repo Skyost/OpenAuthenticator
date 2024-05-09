@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,14 +26,17 @@ class OnlineStorage with Storage {
   /// The user data document.
   static const String _kUserDataDocument = 'userData';
 
-  /// The salt document.
+  /// The salt key.
   static const String _kSaltKey = 'salt';
 
   /// The user id.
   final String? _userId;
 
+  /// The stream subscriptions.
+  final List<StreamSubscription<List<Totp>>> _subscriptions = [];
+
   /// Creates a new online storage instance.
-  const OnlineStorage({
+  OnlineStorage({
     String? userId,
   }) : _userId = userId;
 
@@ -41,6 +45,47 @@ class OnlineStorage with Storage {
 
   @override
   Duration get operationThreshold => const Duration(seconds: 5);
+
+  @override
+  Future<List<Totp>> firstRead() async => await listTotps(
+        getOptions: const GetOptions(source: Source.cache),
+      );
+
+  @override
+  Future<List<Totp>> getUpdatedTotpList() async {
+    QuerySnapshot cacheResult = await _totpsCollection.get(const GetOptions(source: Source.cache));
+    DateTime? lastUpdated;
+    Map<String, Totp> result = {};
+    for (QueryDocumentSnapshot doc in cacheResult.docs) {
+      Totp? totp = _FirestoreTotp.fromFirestore(doc);
+      if (totp != null) {
+        Map<String, Object?> data = doc.data() as Map<String, Object?>;
+        if (data[_FirestoreTotp._kUpdatedKey] is! Timestamp) {
+          continue;
+        }
+        DateTime totpLastUpdated = (data[_FirestoreTotp._kUpdatedKey] as Timestamp).toDate();
+        if (lastUpdated == null || totpLastUpdated.isAfter(lastUpdated)) {
+          lastUpdated = totpLastUpdated;
+        }
+        result[totp.uuid] = totp;
+      }
+    }
+    Query serverQuery = _totpsCollection;
+    if (lastUpdated != null) {
+      serverQuery = serverQuery.where(
+        _FirestoreTotp._kUpdatedKey,
+        isGreaterThan: Timestamp.fromDate(lastUpdated),
+      );
+    }
+    QuerySnapshot serverResult = await serverQuery.get(const GetOptions(source: Source.server));
+    for (QueryDocumentSnapshot doc in serverResult.docs) {
+      Totp? totp = _FirestoreTotp.fromFirestore(doc);
+      if (totp != null) {
+        result[totp.uuid] = totp;
+      }
+    }
+    return result.values.toList()..sort();
+  }
 
   @override
   Future<void> addTotp(Totp totp) async {
@@ -73,9 +118,9 @@ class OnlineStorage with Storage {
 
   @override
   Future<void> clearTotps() async {
-    QuerySnapshot snapshots = await _totpsCollection.get();
+    QuerySnapshot snapshot = await _totpsCollection.get();
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    for (QueryDocumentSnapshot document in snapshots.docs) {
+    for (QueryDocumentSnapshot document in snapshot.docs) {
       batch.delete(document.reference);
     }
     await batch.commit();
@@ -93,15 +138,15 @@ class OnlineStorage with Storage {
     if (!result.exists) {
       return null;
     }
-    return await _FirestoreTotp.fromFirestore(result);
+    return _FirestoreTotp.fromFirestore(result);
   }
 
   @override
-  Future<List<Totp>> listTotps() async {
-    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get();
+  Future<List<Totp>> listTotps({GetOptions? getOptions}) async {
+    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get(getOptions);
     List<Totp> totps = [];
     for (QueryDocumentSnapshot doc in result.docs) {
-      Totp? totp = await _FirestoreTotp.fromFirestore(doc);
+      Totp? totp = _FirestoreTotp.fromFirestore(doc);
       if (totp != null) {
         totps.add(totp);
       }
@@ -153,6 +198,15 @@ class OnlineStorage with Storage {
   }
 
   @override
+  Future<void> onStorageTypeChanged({bool close = true}) async {
+    for (StreamSubscription<List<Totp>> subscription in _subscriptions) {
+      await subscription.cancel();
+    }
+    _subscriptions.clear();
+    await super.onStorageTypeChanged(close: close);
+  }
+
+  @override
   Future<void> close() async {
     // FirebaseFirestore.instance.terminate();
   }
@@ -179,14 +233,17 @@ class NotLoggedInException implements Exception {
 
 /// Allows to convert a TOTP to a Firestore map.
 extension _FirestoreTotp on Totp {
+  /// The last updated key.
+  static const String _kUpdatedKey = 'updated';
+
   /// Converts this TOTP to a Firestore map.
   Map<String, dynamic> toFirestore() => {
         ...toJson(),
-        'updated': FieldValue.serverTimestamp(),
+        _kUpdatedKey: FieldValue.serverTimestamp(),
       };
 
   /// Creates a new TOTP from the specified JSON data.
-  static Future<Totp?> fromFirestore(DocumentSnapshot snapshot) async {
+  static Totp? fromFirestore(DocumentSnapshot snapshot) {
     if (snapshot.data() is! Map<String, Object?>) {
       return null;
     }

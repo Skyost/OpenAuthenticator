@@ -49,12 +49,14 @@ class FirebaseUserId extends AsyncNotifier<String?> {
     } else {
       sharedPreferences.setString(_kUserIdKey, user.uid);
     }
-    state = AsyncData(user?.uid);
+    String? userId = await future;
+    if (userId != user?.uid) {
+      state = AsyncData(user?.uid);
+    }
   }
 
   /// Returns the user id from the current user or from the cache.
   Future<String?> _getFromUserOrCache(User? user) async {
-    print(user);
     if (user != null) {
       return user.uid;
     }

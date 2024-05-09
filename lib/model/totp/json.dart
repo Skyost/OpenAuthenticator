@@ -35,7 +35,7 @@ extension JsonTotp on Totp {
 extension JsonEncryptedData on EncryptedData {
   /// Creates a new encrypted data from the specified JSON data.
   static EncryptedData? fromJson(Map<String, dynamic> data) {
-    if (data[Totp.kSecretKey] is! List || data[Totp.kEncryptionSalt] is! List) {
+    if (data[Totp.kSecretKey] is! List || data[Totp.kEncryptionSaltKey] is! List) {
       return null;
     }
     return EncryptedData(
@@ -43,7 +43,7 @@ extension JsonEncryptedData on EncryptedData {
       encryptedLabel: data[Totp.kLabelKey] is! List ? null : Uint8List.fromList((data[Totp.kLabelKey] as List).cast<int>()),
       encryptedIssuer: data[Totp.kIssuerKey] is! List ? null : Uint8List.fromList((data[Totp.kIssuerKey] as List).cast<int>()),
       encryptedImageUrl: data[Totp.kImageUrlKey] is! List ? null : Uint8List.fromList((data[Totp.kImageUrlKey] as List).cast<int>()),
-      encryptionSalt: Salt.fromRawValue(value: Uint8List.fromList((data[Totp.kEncryptionSalt] as List).cast<int>())),
+      encryptionSalt: Salt.fromRawValue(value: Uint8List.fromList((data[Totp.kEncryptionSaltKey] as List).cast<int>())),
     );
   }
 
@@ -53,6 +53,6 @@ extension JsonEncryptedData on EncryptedData {
     if (encryptedLabel != null) Totp.kLabelKey: encryptedLabel,
     if (encryptedIssuer != null) Totp.kIssuerKey: encryptedIssuer,
     if (encryptedImageUrl != null) Totp.kImageUrlKey: encryptedImageUrl,
-    Totp.kEncryptionSalt: encryptionSalt.value,
+    Totp.kEncryptionSaltKey: encryptionSalt.value,
   };
 }

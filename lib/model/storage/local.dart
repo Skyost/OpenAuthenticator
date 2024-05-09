@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
@@ -125,7 +126,7 @@ class LocalStorage extends _$LocalStorage with Storage {
   Future<void> saveSecretsSalt(Salt salt) => salt.saveToLocalStorage();
 
   @override
-  Future<void> onStorageTypeChanged({bool close = false}) async {
+  Future<void> onStorageTypeChanged({bool close = true}) async {
     await clearTotps();
     await super.onStorageTypeChanged(close: close);
   }
