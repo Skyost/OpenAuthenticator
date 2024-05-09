@@ -39,14 +39,15 @@ class FirebaseAuthRest extends FirebaseAuth {
     super.initialize();
     _methodChannel.setMethodCallHandler(_handlePlatformCall);
     String? userData = await SimpleSecureStorage.read(_kUserData);
-    if (userData != null) {
-      RestUser currentUser = RestUser.fromJson(jsonDecode(userData));
-      if (await currentUser.refreshUserInfo()) {
-        _currentUser = currentUser;
-        currentUser.addListener(_onUserChanged);
-      }
+    if (userData == null) {
+      _onUserChanged(methodChannelCall: _kCallInstall);
+      return;
     }
+    RestUser currentUser = RestUser.fromJson(jsonDecode(userData));
+    _currentUser = currentUser;
+    currentUser.addListener(_onUserChanged);
     _onUserChanged(methodChannelCall: _kCallInstall);
+    await currentUser.refreshUserInfo();
   }
 
   @override
@@ -74,7 +75,9 @@ class FirebaseAuthRest extends FirebaseAuth {
 
   @override
   Future<SignInResult> unlinkFrom(String providerId) async {
-    assert(isLoggedIn, 'You must be logged-in to unlink a provider.');
+    if (!isLoggedIn) {
+      throw Exception('You must be logged-in to unlink a provider.');
+    }
     http.Response response = await http.post(
       Uri.https(
         'securetoken.googleapis.com',

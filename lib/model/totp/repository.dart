@@ -26,17 +26,16 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
   FutureOr<TotpList> build() async {
     Storage storage = await ref.watch(storageProvider.future);
     CryptoStore? cryptoStore = await ref.watch(cryptoStoreProvider.future);
-    TotpList totpList = TotpList._fromListAndStorage(
-      list: await (await storage.firstRead()).decrypt(cryptoStore),
-      storage: storage,
-    );
-    storage.getUpdatedTotpList().then((updatedTotps) async {
+    onUpdatedDataReceived(List<Totp> totps) async {
       state = AsyncData(TotpList._fromListAndStorage(
-        list: await updatedTotps.decrypt(cryptoStore),
+        list: await totps.decrypt(cryptoStore),
         storage: storage,
       ));
-    });
-    return totpList;
+    }
+    return TotpList._fromListAndStorage(
+      list: await (await storage.firstRead(onUpdatedDataReceived)).decrypt(cryptoStore),
+      storage: storage,
+    );
   }
 
   /// Tries to decrypt all TOTPs with the given [cryptoStore].

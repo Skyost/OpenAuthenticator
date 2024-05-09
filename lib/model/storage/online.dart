@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
+import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
@@ -12,8 +13,8 @@ import 'package:open_authenticator/model/totp/totp.dart';
 
 /// The online storage provider.
 final onlineStorageProvider = FutureProvider.autoDispose<OnlineStorage>((ref) async {
-  String? userId = await ref.watch(firebaseUserIdProvider.future);
-  OnlineStorage storage = OnlineStorage(userId: userId);
+  FirebaseAuthenticationState state = await ref.watch(firebaseAuthenticationProvider);
+  OnlineStorage storage = OnlineStorage(userId: state is FirebaseAuthenticationStateLoggedIn ? state.user.uid : null);
   ref.onDispose(storage.close);
   return storage;
 });
@@ -32,8 +33,8 @@ class OnlineStorage with Storage {
   /// The user id.
   final String? _userId;
 
-  /// The stream subscriptions.
-  final List<StreamSubscription<List<Totp>>> _subscriptions = [];
+  /// The first read updated data subscription.
+  StreamSubscription? _firstReadSubscription;
 
   /// Creates a new online storage instance.
   OnlineStorage({
@@ -47,28 +48,23 @@ class OnlineStorage with Storage {
   Duration get operationThreshold => const Duration(seconds: 5);
 
   @override
-  Future<List<Totp>> firstRead() async => await listTotps(
-        getOptions: const GetOptions(source: Source.cache),
-      );
-
-  @override
-  Future<List<Totp>> getUpdatedTotpList() async {
-    QuerySnapshot cacheResult = await _totpsCollection.get(const GetOptions(source: Source.cache));
+  Future<List<Totp>> firstRead(Function(List<Totp> updatedData) onUpdatedDataReceived) async {
+    QuerySnapshot cacheResult = await _totpsCollection.orderBy(Totp.kIssuerKey).get(const GetOptions(source: Source.cache));
     DateTime? lastUpdated;
     Map<String, Totp> result = {};
     for (QueryDocumentSnapshot doc in cacheResult.docs) {
       Totp? totp = _FirestoreTotp.fromFirestore(doc);
-      if (totp != null) {
-        Map<String, Object?> data = doc.data() as Map<String, Object?>;
-        if (data[_FirestoreTotp._kUpdatedKey] is! Timestamp) {
-          continue;
-        }
+      if (totp == null) {
+        continue;
+      }
+      Map<String, Object?> data = doc.data() as Map<String, Object?>;
+      if (data[_FirestoreTotp._kUpdatedKey] is Timestamp) {
         DateTime totpLastUpdated = (data[_FirestoreTotp._kUpdatedKey] as Timestamp).toDate();
         if (lastUpdated == null || totpLastUpdated.isAfter(lastUpdated)) {
           lastUpdated = totpLastUpdated;
         }
-        result[totp.uuid] = totp;
       }
+      result[totp.uuid] = totp;
     }
     Query serverQuery = _totpsCollection;
     if (lastUpdated != null) {
@@ -77,13 +73,34 @@ class OnlineStorage with Storage {
         isGreaterThan: Timestamp.fromDate(lastUpdated),
       );
     }
-    QuerySnapshot serverResult = await serverQuery.get(const GetOptions(source: Source.server));
-    for (QueryDocumentSnapshot doc in serverResult.docs) {
-      Totp? totp = _FirestoreTotp.fromFirestore(doc);
-      if (totp != null) {
-        result[totp.uuid] = totp;
-      }
-    }
+    _firstReadSubscription = serverQuery
+        .snapshots(
+          includeMetadataChanges: true,
+        )
+        .map(
+          (event) {
+            if (event.metadata.isFromCache) {
+              return null;
+            }
+            List<Totp> totps = [];
+            for (QueryDocumentSnapshot doc in event.docs) {
+              Totp? totp = _FirestoreTotp.fromFirestore(doc);
+              if (totp != null) {
+                totps.add(totp);
+              }
+            }
+            return totps;
+          },
+        )
+        .listen(
+          (totps) {
+            if (totps != null) {
+              _cancelSubscription();
+              onUpdatedDataReceived(totps);
+            }
+          },
+        );
+    Timer(const Duration(seconds: 30), _cancelSubscription);
     return result.values.toList()..sort();
   }
 
@@ -142,8 +159,8 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<List<Totp>> listTotps({GetOptions? getOptions}) async {
-    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get(getOptions);
+  Future<List<Totp>> listTotps() async {
+    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get();
     List<Totp> totps = [];
     for (QueryDocumentSnapshot doc in result.docs) {
       Totp? totp = _FirestoreTotp.fromFirestore(doc);
@@ -198,17 +215,15 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<void> onStorageTypeChanged({bool close = true}) async {
-    for (StreamSubscription<List<Totp>> subscription in _subscriptions) {
-      await subscription.cancel();
-    }
-    _subscriptions.clear();
-    await super.onStorageTypeChanged(close: close);
+  Future<void> close() async {
+    _cancelSubscription();
+    // FirebaseFirestore.instance.terminate();
   }
 
-  @override
-  Future<void> close() async {
-    // FirebaseFirestore.instance.terminate();
+  /// Cancels the subscription.
+  void _cancelSubscription() {
+    _firstReadSubscription?.cancel();
+    _firstReadSubscription = null;
   }
 
   /// Returns a reference to the current user document.

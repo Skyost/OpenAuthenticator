@@ -246,7 +246,16 @@ enum StorageMigrationDeletedTotpPolicy {
 }
 
 /// Allows to listen to the stored TOTPs.
-typedef StorageListener = Function(List<Totp> totps);
+mixin StorageListener {
+  /// Triggered when a TOTP has been added.
+  void onTotpAdded(Totp totp);
+
+  /// Triggered when a TOTP has been removed.
+  void onTotpRemoved(Totp totp);
+
+  /// Triggered when a TOTP has been updated.
+  void onTotpUpdated(Totp totp);
+}
 
 /// A common interface to store TOTPs either locally or remotely.
 mixin Storage {
@@ -258,10 +267,7 @@ mixin Storage {
 
   /// Lists all TOTPs for the first read.
   /// This should be fast. Typically cached.
-  Future<List<Totp>> firstRead() => listTotps();
-
-  /// Updates all TOTPs read using [firstRead].
-  Future<List<Totp>> getUpdatedTotpList() => listTotps();
+  Future<List<Totp>> firstRead(Function(List<Totp> updatedData) onUpdatedDataReceived) => listTotps();
 
   /// Stores the given [totp].
   Future<void> addTotp(Totp totp);
