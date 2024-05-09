@@ -15,9 +15,12 @@ import 'package:open_authenticator/model/totp/totp.dart';
 final onlineStorageProvider = FutureProvider.autoDispose<OnlineStorage>((ref) async {
   FirebaseAuthenticationState state = await ref.watch(firebaseAuthenticationProvider);
   OnlineStorage storage = OnlineStorage(userId: state is FirebaseAuthenticationStateLoggedIn ? state.user.uid : null);
+  storage._startCollectionListening();
   ref.onDispose(storage.close);
   return storage;
 });
+
+
 
 /// Stores TOTPs using Firebase Firestore.
 class OnlineStorage with Storage {
@@ -33,8 +36,8 @@ class OnlineStorage with Storage {
   /// The user id.
   final String? _userId;
 
-  /// The first read updated data subscription.
-  StreamSubscription? _firstReadSubscription;
+  /// The collection subscription.
+  StreamSubscription? _collectionSubscription;
 
   /// Creates a new online storage instance.
   OnlineStorage({
@@ -47,62 +50,47 @@ class OnlineStorage with Storage {
   @override
   Duration get operationThreshold => const Duration(seconds: 5);
 
-  @override
-  Future<List<Totp>> firstRead(Function(List<Totp> updatedData) onUpdatedDataReceived) async {
-    QuerySnapshot cacheResult = await _totpsCollection.orderBy(Totp.kIssuerKey).get(const GetOptions(source: Source.cache));
-    DateTime? lastUpdated;
-    Map<String, Totp> result = {};
-    for (QueryDocumentSnapshot doc in cacheResult.docs) {
-      Totp? totp = _FirestoreTotp.fromFirestore(doc);
-      if (totp == null) {
-        continue;
-      }
-      Map<String, Object?> data = doc.data() as Map<String, Object?>;
-      if (data[_FirestoreTotp._kUpdatedKey] is Timestamp) {
-        DateTime totpLastUpdated = (data[_FirestoreTotp._kUpdatedKey] as Timestamp).toDate();
-        if (lastUpdated == null || totpLastUpdated.isAfter(lastUpdated)) {
-          lastUpdated = totpLastUpdated;
-        }
-      }
-      result[totp.uuid] = totp;
+  /// Starts the collection listening, if possible.
+  void _startCollectionListening() {
+    if (_userId != null) {
+      _collectionSubscription = _totpsCollection.snapshots().listen(_onCollectionChange);
     }
-    Query serverQuery = _totpsCollection;
-    if (lastUpdated != null) {
-      serverQuery = serverQuery.where(
-        _FirestoreTotp._kUpdatedKey,
-        isGreaterThan: Timestamp.fromDate(lastUpdated),
-      );
-    }
-    _firstReadSubscription = serverQuery
-        .snapshots(
-          includeMetadataChanges: true,
-        )
-        .map(
-          (event) {
-            if (event.metadata.isFromCache) {
-              return null;
-            }
-            List<Totp> totps = [];
-            for (QueryDocumentSnapshot doc in event.docs) {
-              Totp? totp = _FirestoreTotp.fromFirestore(doc);
-              if (totp != null) {
-                totps.add(totp);
-              }
-            }
-            return totps;
-          },
-        )
-        .listen(
-          (totps) {
-            if (totps != null) {
-              _cancelSubscription();
-              onUpdatedDataReceived(totps);
-            }
-          },
-        );
-    Timer(const Duration(seconds: 30), _cancelSubscription);
-    return result.values.toList()..sort();
   }
+
+  /// Triggered when the collection has changed.
+  void _onCollectionChange(QuerySnapshot event) {
+    Map<DocumentChangeType, List<Totp>> changes = {};
+    for (DocumentChange change in event.docChanges) {
+      Totp? totp = _FirestoreTotp.fromFirestore(change.doc);
+      if (totp == null) {
+        return;
+      }
+      changes[change.type] = (changes[change.type] ?? [])..add(totp);
+    }
+    for (DocumentChangeType type in changes.keys) {
+      switch (type) {
+        case DocumentChangeType.added:
+          for (StorageListener listener in listeners) {
+            listener.onTotpsAdded(changes[type]!);
+          }
+          break;
+        case DocumentChangeType.modified:
+          for (StorageListener listener in listeners) {
+            listener.onTotpsUpdated(changes[type]!);
+          }
+          break;
+        case DocumentChangeType.removed:
+          List<String> uuids = changes[type]!.map((totp) => totp.uuid).toList();
+          for (StorageListener listener in listeners) {
+            listener.onTotpsDeleted(uuids);
+          }
+          break;
+      }
+    }
+  }
+
+  @override
+  Future<List<Totp>> firstRead() => Future.value([]);
 
   @override
   Future<void> addTotp(Totp totp) async {
@@ -216,14 +204,15 @@ class OnlineStorage with Storage {
 
   @override
   Future<void> close() async {
+    await super.close();
     _cancelSubscription();
     // FirebaseFirestore.instance.terminate();
   }
 
   /// Cancels the subscription.
   void _cancelSubscription() {
-    _firstReadSubscription?.cancel();
-    _firstReadSubscription = null;
+    _collectionSubscription?.cancel();
+    _collectionSubscription = null;
   }
 
   /// Returns a reference to the current user document.

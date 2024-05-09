@@ -72,12 +72,7 @@ extension TotpImageCache on Totp {
   }
 
   /// Deletes the cached image, if possible.
-  Future<void> deleteCachedImage() async {
-    File cachedImage = await getTotpCachedImage(uuid);
-    if (await cachedImage.exists()) {
-      await cachedImage.delete();
-    }
-  }
+  Future<void> deleteCachedImage() async => (await getTotpCachedImage(uuid)).deleteIfExists();
 
   /// Returns the TOTP cached image file.
   static Future<File> getTotpCachedImage(String uuid, {bool createDirectory = false}) async => File(join((await _getTotpImagesDirectory(create: createDirectory)).path, uuid));
@@ -89,5 +84,15 @@ extension TotpImageCache on Totp {
       directory.createSync(recursive: true);
     }
     return directory;
+  }
+}
+
+/// Allows to easily delete a file without checking if it exists.
+extension DeleteIfExists on File {
+  /// Deletes the current file if it exists.
+  Future<void> deleteIfExists() async {
+    if (await exists()) {
+    await delete();
+    }
   }
 }

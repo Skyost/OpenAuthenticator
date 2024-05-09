@@ -55,7 +55,7 @@ final localStorageProvider = FutureProvider.autoDispose<LocalStorage>((ref) asyn
 
 /// Stores TOTPs using Drift and SSS.
 @DriftDatabase(tables: [Totps])
-class LocalStorage extends _$LocalStorage with Storage {
+class LocalStorage extends _$LocalStorage with Storage, AutoTriggerListeners {
   /// The database file name.
   static const _kDbFileName = 'totps';
 
@@ -69,28 +69,48 @@ class LocalStorage extends _$LocalStorage with Storage {
   StorageType get type => StorageType.local;
 
   @override
-  Future<void> addTotp(Totp totp) => into(totps).insert(totp.asDriftTotp);
+  Future<void> addTotp(Totp totp) async {
+    await into(totps).insert(totp.asDriftTotp);
+    super.addTotp(totp);
+  }
 
   @override
-  Future<void> addTotps(List<Totp> totps) => batch((batch) {
-        batch.insertAll(
-          this.totps,
-          totps.map((totp) => totp.asDriftTotp),
-          mode: InsertMode.insertOrReplace,
-        );
-      });
+  Future<void> addTotps(List<Totp> totps) async {
+    await batch((batch) {
+      batch.insertAll(
+        this.totps,
+        totps.map((totp) => totp.asDriftTotp),
+        mode: InsertMode.insertOrReplace,
+      );
+    });
+    super.addTotps(totps);
+  }
 
   @override
-  Future<void> deleteTotp(String uuid) => (delete(totps)..where((totp) => totp.uuid.isValue(uuid))).go();
+  Future<void> deleteTotp(String uuid) async {
+    await (delete(totps)..where((totp) => totp.uuid.isValue(uuid))).go();
+    super.deleteTotp(uuid);
+  }
 
   @override
-  Future<void> deleteTotps(List<String> uuids) => (delete(totps)..where((totp) => totp.uuid.isIn(uuids))).go();
+  Future<void> deleteTotps(List<String> uuids) async {
+    await (delete(totps)..where((totp) => totp.uuid.isIn(uuids))).go();
+    super.deleteTotps(uuids);
+  }
 
   @override
-  Future<void> clearTotps() => (delete(totps)).go();
+  Future<void> clearTotps() async {
+    List<String> deleted = (await (delete(totps)).goAndReturn()).map((totp) => totp.uuid).toList();
+    for (StorageListener listener in listeners) {
+      listener.onTotpsDeleted(deleted);
+    }
+  }
 
   @override
-  Future<bool> updateTotp(String uuid, Totp totp) => update(totps).replace(totp.asDriftTotp);
+  Future<void> updateTotp(String uuid, Totp totp) async {
+    await update(totps).replace(totp.asDriftTotp);
+    super.updateTotp(uuid, totp);
+  }
 
   @override
   Future<Totp?> getTotp(String uuid) async {
@@ -113,11 +133,11 @@ class LocalStorage extends _$LocalStorage with Storage {
     return list.map((totp) => totp.uuid).toList();
   }
 
-  @override
-  Future<void> replaceTotps(List<Totp> newTotps) => batch((batch) {
-        batch.deleteAll(totps);
-        batch.insertAll(totps, newTotps.map((totp) => totp.asDriftTotp));
-      });
+  // @override
+  // Future<void> replaceTotps(List<Totp> newTotps) => batch((batch) {
+  //       batch.deleteAll(totps);
+  //       batch.insertAll(totps, newTotps.map((totp) => totp.asDriftTotp));
+  //     });
 
   @override
   Future<Salt?> readSecretsSalt() async => await Salt.readFromLocalStorage();

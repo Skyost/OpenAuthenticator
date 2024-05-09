@@ -247,27 +247,37 @@ enum StorageMigrationDeletedTotpPolicy {
 
 /// Allows to listen to the stored TOTPs.
 mixin StorageListener {
-  /// Triggered when a TOTP has been added.
-  void onTotpAdded(Totp totp);
+  /// Triggered when some TOTPs have been added.
+  void onTotpsAdded(List<Totp> totps);
 
-  /// Triggered when a TOTP has been removed.
-  void onTotpRemoved(Totp totp);
+  /// Triggered when some TOTPs have been removed.
+  void onTotpsDeleted(List<String> uuids);
 
-  /// Triggered when a TOTP has been updated.
-  void onTotpUpdated(Totp totp);
+  /// Triggered when some TOTPs have been updated.
+  void onTotpsUpdated(List<Totp> totps);
 }
 
 /// A common interface to store TOTPs either locally or remotely.
 mixin Storage {
+  /// Contains all [StorageListener].
+  @protected
+  final Set<StorageListener> listeners = {};
+
   /// Returns the storage type.
   StorageType get type;
 
   /// The time to wait between two operations.
   Duration get operationThreshold => Duration.zero;
 
+  /// Adds a [listener] to the list.
+  void addListener(StorageListener listener) => listeners.add(listener);
+
+  /// Remove a [listener] from the list.
+  void removeListener(StorageListener listener) => listeners.remove(listener);
+
   /// Lists all TOTPs for the first read.
   /// This should be fast. Typically cached.
-  Future<List<Totp>> firstRead(Function(List<Totp> updatedData) onUpdatedDataReceived) => listTotps();
+  Future<List<Totp>> firstRead() => listTotps();
 
   /// Stores the given [totp].
   Future<void> addTotp(Totp totp);
@@ -306,7 +316,10 @@ mixin Storage {
   Future<void> saveSecretsSalt(Salt salt);
 
   /// Closes this storage instance.
-  Future<void> close();
+  @mustCallSuper
+  Future<void> close() async {
+    listeners.clear();
+  }
 
   /// Ran when the user choose another storage method.
   @mustCallSuper
@@ -314,5 +327,57 @@ mixin Storage {
     if (close) {
       await this.close();
     }
+  }
+}
+
+/// A storage that automatically triggers its listeners.
+mixin AutoTriggerListeners on Storage {
+  @override
+  Future<void> addTotp(Totp totp) async {
+    for (StorageListener listener in listeners) {
+      listener.onTotpsAdded([totp]);
+    }
+  }
+
+  @override
+  Future<void> addTotps(List<Totp> totps) async {
+    for (StorageListener listener in listeners) {
+      listener.onTotpsAdded(totps);
+    }
+  }
+
+  @override
+  Future<void> updateTotp(String uuid, Totp totp) async {
+    for (StorageListener listener in listeners) {
+      listener.onTotpsUpdated([totp]);
+    }
+  }
+
+  @override
+  Future<void> deleteTotp(String uuid) async {
+    for (StorageListener listener in listeners) {
+      listener.onTotpsDeleted([uuid]);
+    }
+  }
+
+  @override
+  Future<void> deleteTotps(List<String> uuids) async {
+    for (StorageListener listener in listeners) {
+      listener.onTotpsDeleted(uuids);
+    }
+  }
+
+  @override
+  Future<void> clearTotps() async {
+    List<String> totps = (await listTotps()).map((totp) => totp.uuid).toList();
+    for (StorageListener listener in listeners) {
+      listener.onTotpsDeleted(totps);
+    }
+  }
+
+  @override
+  Future<void> replaceTotps(List<Totp> newTotps) async {
+    clearTotps();
+    addTotps(newTotps);
   }
 }
