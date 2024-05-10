@@ -201,10 +201,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
     CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
     state = AsyncData(
       TotpList._fromListAndStorage(
-        list: [
-          ...(await future),
-          ...(await totps.decrypt(cryptoStore)),
-        ],
+        list: await _mergeToCurrentList(await totps.decrypt(cryptoStore)),
         storage: await ref.read(storageProvider.future),
       ),
     );
@@ -226,28 +223,37 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
 
   @override
   Future<void> onTotpsUpdated(List<Totp> totps) async {
-    TotpList totpList = await future;
-    List<Totp> newTotps = List.of(totpList._list);
-    for (Totp totp in totps) {
-      for (int i = 0; i < totpList.length; i++) {
-        Totp currentTotp = totpList[i];
-        if (currentTotp.uuid != totp.uuid) {
-          continue;
-        }
-        if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
-          await totp.cacheImage(previousImageUrl: currentTotp.isDecrypted ? (currentTotp as DecryptedTotp).imageUrl : null);
-        }
-        newTotps[i] = totp;
+    CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
+    List<Totp> decrypted = await totps.decrypt(cryptoStore);
+    if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+      TotpList totpList = await future;
+      Map<String, String> previousImages = {
+        for (Totp currentTotp in totpList)
+          if (currentTotp.isDecrypted && (currentTotp as DecryptedTotp).imageUrl != null)
+            currentTotp.uuid: currentTotp.imageUrl!,
+      };
+      for (Totp updatedTotp in decrypted) {
+        await updatedTotp.cacheImage(previousImageUrl: previousImages[updatedTotp.uuid]);
       }
     }
 
-    CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
     state = AsyncData(
       TotpList._fromListAndStorage(
-        list: await newTotps.decrypt(cryptoStore),
+        list: await _mergeToCurrentList(decrypted),
         storage: await ref.read(storageProvider.future),
       ),
     );
+  }
+
+  /// Merges the [from] list to the current TOTP list.
+  Future<List<Totp>> _mergeToCurrentList(List<Totp> from) async {
+    Set<String> uuids = from.map((totp) => totp.uuid).toSet();
+    TotpList totpList = await future;
+    return [
+      ...from,
+      for (Totp totp in totpList._list)
+        if (!uuids.contains(totp.uuid)) totp,
+    ];
   }
 }
 

@@ -10,6 +10,7 @@ import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/json.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/utils.dart';
 
 /// The online storage provider.
 final onlineStorageProvider = FutureProvider.autoDispose<OnlineStorage>((ref) async {
@@ -19,8 +20,6 @@ final onlineStorageProvider = FutureProvider.autoDispose<OnlineStorage>((ref) as
   ref.onDispose(storage.close);
   return storage;
 });
-
-
 
 /// Stores TOTPs using Firebase Firestore.
 class OnlineStorage with Storage {
@@ -90,7 +89,14 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<List<Totp>> firstRead() => Future.value([]);
+  Future<List<Totp>> firstRead() async {
+    try {
+      return await listTotps(getOptions: const GetOptions(source: Source.cache));
+    } catch (ex, stacktrace) {
+      handleException(ex, stacktrace);
+      return [];
+    }
+  }
 
   @override
   Future<void> addTotp(Totp totp) async {
@@ -147,8 +153,8 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<List<Totp>> listTotps() async {
-    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get();
+  Future<List<Totp>> listTotps({ GetOptions? getOptions }) async {
+    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get(getOptions);
     List<Totp> totps = [];
     for (QueryDocumentSnapshot doc in result.docs) {
       Totp? totp = _FirestoreTotp.fromFirestore(doc);
