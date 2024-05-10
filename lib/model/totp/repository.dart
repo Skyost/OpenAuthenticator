@@ -234,12 +234,6 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
         if (currentTotp.uuid != totp.uuid) {
           continue;
         }
-        if (!totp.isDecrypted && currentTotp.isDecrypted) {
-          totp = DecryptedTotp.fromTotp(
-            totp: totp,
-            decryptedData: (currentTotp as DecryptedTotp).decryptedData,
-          );
-        }
         if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
           await totp.cacheImage(previousImageUrl: currentTotp.isDecrypted ? (currentTotp as DecryptedTotp).imageUrl : null);
         }
