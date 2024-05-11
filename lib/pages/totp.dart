@@ -384,7 +384,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
         cancelButton: true,
       ));
     }
-    if (!willExceed) {
+    if (willExceed) {
       return const ResultCancelled();
     }
 

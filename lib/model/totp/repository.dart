@@ -24,11 +24,11 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
   @override
   FutureOr<TotpList> build() async {
     Storage storage = await ref.watch(storageProvider.future);
-    await ref.watch(cryptoStoreProvider.future);
+    CryptoStore? cryptoStore = await ref.watch(cryptoStoreProvider.future);
     storage.addListener(this);
     ref.onDispose(() => storage.removeListener(this));
     return TotpList._fromListAndStorage(
-      list: await storage.firstRead(),
+      list: await (await storage.firstRead()).decrypt(cryptoStore),
       storage: storage,
     );
   }

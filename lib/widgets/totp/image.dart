@@ -164,11 +164,14 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
   @override
   void initState() {
     super.initState();
+    if (((DateTime.now().millisecondsSinceEpoch ~/ 1000) ~/ this.validity).isEven) {
+      changeColors();
+    }
     Duration validity = _validity;
     animationController = AnimationController(
       vsync: this,
       duration: validity,
-      upperBound: validity.inSeconds.toDouble(),
+      upperBound: this.validity.toDouble(),
     )
       ..addListener(() {
         setState(() {});
@@ -210,12 +213,17 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
         animationController.duration = _validity;
         animationController.forward(from: 0);
         if (changeColors) {
-          Color? temporary = color;
-          color = backgroundColor;
-          backgroundColor = temporary;
+          this.changeColors();
         }
       });
     }
+  }
+
+  /// Changes the colors.
+  void changeColors() {
+    Color? temporary = color;
+    color = backgroundColor;
+    backgroundColor = temporary;
   }
 
   /// Returns the TOTP validity.

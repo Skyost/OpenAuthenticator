@@ -169,10 +169,14 @@ class TotpWidget extends ConsumerWidget {
       title: translations.totp.actions.deleteConfirmationDialog.title,
       message: translations.totp.actions.deleteConfirmationDialog.message,
     );
-    if (!confirmation) {
+    if (!confirmation || !context.mounted) {
       return;
     }
-    if ((await ref.read(totpRepositoryProvider.notifier).deleteTotp(totp)) is ResultError && context.mounted) {
+    Result result = await showWaitingOverlay(
+      context,
+      future: ref.read(totpRepositoryProvider.notifier).deleteTotp(totp),
+    );
+    if (result is ResultError && context.mounted) {
       SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);
     }
   }
