@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
@@ -17,6 +18,7 @@ import 'package:open_authenticator/widgets/form/password_form_field.dart';
 import 'package:open_authenticator/widgets/list/expand_list_tile.dart';
 import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
 import 'package:open_authenticator/widgets/totp/image.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 /// Allows to edit a TOTP.
@@ -78,6 +80,9 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text(widget.add ? translations.totp.page.title.add : translations.totp.page.title.edit),
+          systemOverlayStyle: SystemUiOverlayStyle(
+            systemNavigationBarColor: Theme.of(context).colorScheme.secondaryContainer,
+          ),
           actions: [
             if (!widget.add)
               IconButton(
@@ -87,15 +92,19 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
                     title: translations.totp.actions.deleteConfirmationDialog.title,
                     message: translations.totp.actions.deleteConfirmationDialog.message,
                   );
-                  if (!confirmation) {
+                  if (!confirmation || !context.mounted) {
                     return;
                   }
-                  Result result = await ref.read(totpRepositoryProvider.notifier).deleteTotp(widget.totp!);
-                  if (context.mounted) {
-                    context.showSnackBarForResult(result);
-                    if (result is ResultSuccess) {
-                      Navigator.pop(context);
-                    }
+                  Result result = await showWaitingOverlay(
+                    context,
+                    future: ref.read(totpRepositoryProvider.notifier).deleteTotp(widget.totp!),
+                  );
+                  if (!context.mounted) {
+                    return;
+                  }
+                  context.showSnackBarForResult(result);
+                  if (result is ResultSuccess) {
+                    Navigator.pop(context);
                   }
                 },
                 icon: const Icon(Icons.delete),

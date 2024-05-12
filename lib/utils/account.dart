@@ -23,6 +23,7 @@ class AccountUtils {
       waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
       action: (context, provider) => provider.signIn(context),
       timeoutMessage: translations.error.timeout.authentication,
+      needConfirmation: provider is ConfirmationProvider,
     );
   }
 
@@ -62,6 +63,7 @@ class AccountUtils {
     required Future<Result<String>> Function(BuildContext, T) action,
     String? waitingDialogMessage,
     String? timeoutMessage,
+    bool needConfirmation = false,
   }) async {
     Result<String> result;
     if (provider.showLoadingDialog) {
@@ -81,6 +83,7 @@ class AccountUtils {
         ref,
         provider,
         result,
+        needConfirmation: needConfirmation,
         handleDifferentCredentialError: true,
       );
     }
@@ -92,6 +95,7 @@ class AccountUtils {
     WidgetRef ref,
     FirebaseAuthenticationProvider provider,
     Result<String> result, {
+    bool needConfirmation = false,
     bool handleDifferentCredentialError = false,
   }) async {
     switch (result) {
@@ -99,7 +103,7 @@ class AccountUtils {
         context.showSnackBarForResult(
           result,
           retryIfError: true,
-          successMessage: translations.authentication.logIn.successNeedConfirmation,
+          successMessage: needConfirmation ? translations.authentication.logIn.successNeedConfirmation : null,
         );
         break;
       case ResultCancelled(:final timedOut):

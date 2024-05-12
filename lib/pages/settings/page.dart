@@ -11,6 +11,7 @@ import 'package:open_authenticator/pages/settings/entries/contributor_plan.dart'
 import 'package:open_authenticator/pages/settings/entries/contributor_plan_state.dart';
 import 'package:open_authenticator/pages/settings/entries/enable_local_auth.dart';
 import 'package:open_authenticator/pages/settings/entries/link.dart';
+import 'package:open_authenticator/pages/settings/entries/locale.dart';
 import 'package:open_authenticator/pages/settings/entries/login.dart';
 import 'package:open_authenticator/pages/settings/entries/manage_backups.dart';
 import 'package:open_authenticator/pages/settings/entries/save_derived_key.dart';
@@ -44,6 +45,7 @@ class SettingsPage extends ConsumerWidget {
               const ContributorPlanEntryWidget(),
               const ContributorPlanStateEntryWidget(),
               const ThemeSettingsEntryWidget(),
+              const LocaleEntryWidget(),
               CacheTotpPicturesSettingsEntryWidget(),
               _SettingsPageSectionTitle(title: translations.settings.security.title),
               EnableLocalAuthSettingsEntryWidget(),
