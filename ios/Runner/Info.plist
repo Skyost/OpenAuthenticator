@@ -71,5 +71,9 @@
        <string>en</string>
        <string>fr</string>
     </array>
+    <key>NSCameraUsageDescription</key>
+    <string>Enable access to your camera to scan a QR code.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Enable access to your microphone to scan a QR code.</string>
 </dict>
 </plist>

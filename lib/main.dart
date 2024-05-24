@@ -118,6 +118,8 @@ class OpenAuthenticatorApp extends ConsumerWidget {
                 statusBarIconBrightness: Brightness.light,
                 systemNavigationBarColor: dark.surface,
               ),
+              shape: const RoundedRectangleBorder(),
+              surfaceTintColor: Colors.green,
             ),
             colorScheme: dark,
             // iconButtonTheme: IconButtonThemeData(
@@ -141,6 +143,7 @@ class OpenAuthenticatorApp extends ConsumerWidget {
                 statusBarIconBrightness: Brightness.dark,
                 systemNavigationBarColor: light.surface,
               ),
+              backgroundColor: const Color(0xfffcfdf6),
               shape: const RoundedRectangleBorder(),
             ),
             buttonTheme: const ButtonThemeData(
@@ -159,6 +162,7 @@ class OpenAuthenticatorApp extends ConsumerWidget {
             dividerTheme: const DividerThemeData(
               color: Colors.black12,
             ),
+            scaffoldBackgroundColor: const Color(0xfffcfdf6),
           ),
           routes: {
             IntroPage.name: (_) => _RouteWidget(
