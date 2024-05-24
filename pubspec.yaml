@@ -67,6 +67,7 @@ dependencies:
   slang: ^3.31.0
   slang_flutter: ^3.31.0
   purchases_ui_flutter: ^6.29.2
+  rate_my_app: ^2.2.0
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to

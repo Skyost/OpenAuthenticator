@@ -76,6 +76,18 @@ class App {
 
   /// The Apple sign in return URL.
   static const String appleSignInReturnUrl = '$appleSignInReturnUrl';
+
+  /// The Github repository URL.
+  static const String githubRepositoryUrl = 'https://github.com/Skyost/OpenAuthenticator';
+}
+
+/// The stores identifiers.
+class Stores {
+  /// The Google Play app identifier.
+  static const String googlePlayIdentifier = 'app.openauthenticator';
+
+  /// The Apple App Store app identifier.
+  static const String appStoreIdentifier = '6479272927';
 }
 
 /// Contains some credentials, required to use with some services.

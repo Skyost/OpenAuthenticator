@@ -136,6 +136,10 @@
   },
   "about": {
     "title": "About",
+    "github": {
+      "title": "Report bugs or suggest new features",
+      "subtitle": "Open the Github page of the app to report bugs or to suggest new features."
+    },
     "aboutApp": {
       "title": "$appName",
       "subtitle(rich)": "$appName v$appVersion, by $appAuthor.",

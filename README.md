@@ -119,9 +119,10 @@ You can translate the app into your language by submitting a pull request target
 in the `lib/i18n` folder (for the app) and `docs/locales` (for the website).
 Feel also free to submit a pull request for any typo you encounter.
 
-### Report bugs
+### Report bugs or suggest new features
 
-You can report bugs in the [issue tracker](https://github.com/Skyost/OpenAuthenticator/issues).
+You can report bugs or suggest new features in the [issue tracker](https://github.com/Skyost/OpenAuthenticator/issues).
+If you don't want to create a Github account, you can also [contact the developer](https://openauthenticator.app/contact) directly.
 
 ### Donate
 

@@ -23,10 +23,12 @@ import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/rate_my_app.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/totp_limit.dart';
 import 'package:open_authenticator/widgets/route/unlock_challenge.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -165,6 +167,7 @@ class OpenAuthenticatorApp extends ConsumerWidget {
                 ),
             HomePage.name: (_) => _RouteWidget(
                   listen: currentPlatform.isMobile || kDebugMode,
+                  rateMyApp: true,
                   child: const HomePage(),
                 ),
             ScanPage.name: (_) => const _RouteWidget(
@@ -202,11 +205,15 @@ class _RouteWidget extends ConsumerStatefulWidget {
   /// Whether to provide an [UnlockChallengeRouteWidget].
   final bool unlock;
 
+  /// Whether to initialize and run RateMyApp.
+  final bool rateMyApp;
+
   /// Creates a route widget instance.
   const _RouteWidget({
     required this.child,
     this.listen = false,
     this.unlock = true,
+    this.rateMyApp = false,
   });
 
   @override
@@ -217,6 +224,9 @@ class _RouteWidget extends ConsumerStatefulWidget {
 class _RouteWidgetState extends ConsumerState<_RouteWidget> {
   /// The dynamic links subscription.
   StreamSubscription<PendingDynamicLinkData>? dynamicLinksSubscription;
+
+  /// The [RateMyApp] instance.
+  RateMyApp? rateMyApp;
 
   @override
   void initState() {
@@ -234,6 +244,9 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
           result = await MandatoryTotpLimitDialog.show(context);
         }
       });
+    }
+    if (widget.rateMyApp) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => initializeRateMyApp());
     }
   }
 
@@ -268,5 +281,23 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
       return;
     }
     AccountUtils.handleAuthenticationResult(context, ref, emailAuthenticationProvider, result);
+  }
+
+  /// Initializes [RateMyApp] and shows the dialog, if needed.
+  Future<void> initializeRateMyApp() async {
+    if (rateMyApp == null) {
+      rateMyApp = RateMyApp.customConditions(
+        appStoreIdentifier: Stores.appStoreIdentifier,
+        googlePlayIdentifier: Stores.googlePlayIdentifier,
+        conditions: [
+          SupportedPlatformsCondition(),
+        ],
+      );
+      rateMyApp!.populateWithDefaultConditions();
+      await rateMyApp!.init();
+    }
+    if (rateMyApp!.shouldOpenDialog && mounted) {
+      rateMyApp!.showRateDialog(context);
+    }
   }
 }

@@ -10,6 +10,7 @@ import 'package:open_authenticator/pages/settings/entries/confirm_email.dart';
 import 'package:open_authenticator/pages/settings/entries/contributor_plan.dart';
 import 'package:open_authenticator/pages/settings/entries/contributor_plan_state.dart';
 import 'package:open_authenticator/pages/settings/entries/enable_local_auth.dart';
+import 'package:open_authenticator/pages/settings/entries/github.dart';
 import 'package:open_authenticator/pages/settings/entries/link.dart';
 import 'package:open_authenticator/pages/settings/entries/locale.dart';
 import 'package:open_authenticator/pages/settings/entries/login.dart';
@@ -60,6 +61,7 @@ class SettingsPage extends ConsumerWidget {
               const BackupNowSettingsEntryWidget(),
               const ManageBackupSettingsEntryWidget(),
               _SettingsPageSectionTitle(title: translations.settings.about.title),
+              const GithubSettingsEntryWidget(),
               const AboutSettingsEntryWidget(),
             ],
           ),
