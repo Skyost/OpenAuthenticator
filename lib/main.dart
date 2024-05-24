@@ -114,9 +114,8 @@ class OpenAuthenticatorApp extends ConsumerWidget {
             appBarTheme: AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
                 statusBarIconBrightness: Brightness.light,
-                systemNavigationBarColor: dark.background,
+                systemNavigationBarColor: dark.surface,
               ),
-              shape: const RoundedRectangleBorder(), // TODO: Will not be needed in the future : https://github.com/flutter/flutter/issues/131042#issuecomment-2075381623.
             ),
             colorScheme: dark,
             // iconButtonTheme: IconButtonThemeData(
@@ -138,7 +137,7 @@ class OpenAuthenticatorApp extends ConsumerWidget {
             appBarTheme: AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
                 statusBarIconBrightness: Brightness.dark,
-                systemNavigationBarColor: light.background,
+                systemNavigationBarColor: light.surface,
               ),
               shape: const RoundedRectangleBorder(),
             ),
