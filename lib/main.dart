@@ -110,7 +110,6 @@ class OpenAuthenticatorApp extends ConsumerWidget {
           ],
           supportedLocales: AppLocaleUtils.supportedLocales,
           themeMode: theme.value,
-          debugShowCheckedModeBanner: false,
           darkTheme: ThemeData(
             brightness: Brightness.dark,
             appBarTheme: AppBarTheme(

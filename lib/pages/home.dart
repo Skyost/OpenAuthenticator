@@ -28,7 +28,7 @@ class HomePage extends ConsumerWidget {
         appBar: AppBar(
           title: const TitleWidget(),
           actions: [
-            if (currentPlatform != Platform.android)
+            if (kDebugMode || currentPlatform != Platform.android)
               IconButton(
                 onPressed: () => _onAddButtonPressed(context),
                 icon: const Icon(Icons.add),

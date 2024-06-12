@@ -30,9 +30,9 @@ environment:
 dependencies:
   animations: ^2.0.11
   camera: ^0.11.0
-  cloud_firestore: ^4.17.4
-  firebase_auth: ^4.19.6
-  firebase_core: ^2.31.1
+  cloud_firestore: ^5.0.1
+  firebase_auth: ^5.1.0
+  firebase_core: ^3.1.0
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -49,7 +49,7 @@ dependencies:
   webcrypto: ^0.5.6
   equatable: ^2.0.5
   drift: ^2.18.0
-  sqlite3_flutter_libs: ^0.5.22
+  sqlite3_flutter_libs: ^0.5.23
   path: ^1.9.0
   local_auth: ^2.2.0
   package_info_plus: ^8.0.0
@@ -57,16 +57,16 @@ dependencies:
   qr_flutter: ^4.1.0
   flex_color_scheme: ^7.3.1
   intl: any
-  firebase_dynamic_links: ^5.5.6
+  firebase_dynamic_links: ^6.0.1
   sqlite3: ^2.4.3
-  url_launcher: ^6.2.6
-  firebase_app_check: ^0.2.2
-  purchases_flutter: ^6.29.2
-  firebase_crashlytics: ^3.5.6
+  url_launcher: ^6.3.0
+  firebase_app_check: ^0.3.0
+  purchases_flutter: ^6.29.3
+  firebase_crashlytics: ^4.0.1
   window_manager: ^0.3.9
   slang: ^3.31.0
   slang_flutter: ^3.31.0
-  purchases_ui_flutter: ^6.29.2
+  purchases_ui_flutter: ^6.29.3
   rate_my_app: ^2.2.0
 
 dev_dependencies:
@@ -75,7 +75,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  build_runner: ^2.4.10
+  build_runner: ^2.4.11
   drift_dev: ^2.18.0
   flutter_lints: ^4.0.0
   msix: ^3.16.7
