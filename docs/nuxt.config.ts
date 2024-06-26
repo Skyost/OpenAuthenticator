@@ -40,6 +40,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
+    '@nuxt/eslint',
     'nuxt-cname-generator',
     '@nuxtjs/i18n',
     'nuxt-icon',

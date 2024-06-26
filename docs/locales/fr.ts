@@ -279,14 +279,35 @@ n'hésitez pas à <nuxt-link to="/contact">nous contacter</nuxt-link>.`
   },
   contact: {
     title: 'Contact',
-    description: `Si vous souhaitez me contacter à propos d'Open Authenticator
-(par exemple, pour rapporter un bug), veuillez ouvrir une issue sur <strong>Github</strong>.
+    description: `Si vous souhaitez me contacter à propos du développement d'Open Authenticator ou un autre sujet en rapport
+(par exemple, pour rapporter un bug), veuillez ouvrir une issue sur <a href="https://github.com/Skyost/OpenAuthenticator">Github</a>.
 Si vous souhaitez me contacter pour n'importe quelle autre raison, vous pouvez utiliser le formulaire de contact
-présent sur <strong>mon site web</strong>.`,
-    contactButtons:
-      {
-        github: 'Ouvrir une issue',
-        website: 'Formulaire'
-      }
+ci-dessous.`,
+    form: {
+      name: {
+        label: 'Votre nom',
+        placeholder: 'Entrez votre nom ici'
+      },
+      email: {
+        label: 'Votre e-mail',
+        placeholder: 'Entrez votre adresse e-mail ici'
+      },
+      subject: {
+        label: 'Sujet de votre message',
+        options: {
+          accountDeletion: 'Suppression de mon compte',
+          moreInfoNeeded: 'Demande d\'informations complémentaires',
+          commercial: 'Commercial',
+          other: 'Autre'
+        }
+      },
+      message: {
+        label: 'Contenu de votre message',
+        placeholder: 'Entrez votre message ici'
+      },
+      success: 'Votre requête a été transmise avec succès.',
+      error: 'Une erreur est survenue pendant l\'envoi de votre message.',
+      send: 'Envoyer'
+    }
   }
 }
