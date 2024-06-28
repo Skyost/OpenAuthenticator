@@ -279,7 +279,7 @@ please do not hesitate to <nuxt-link to="/contact">contact</nuxt-link> the Servi
     title: 'Contact',
     description: `If you want to contact me for Open Authenticator development and related subjects
 (eg. you want to report a bug), please open a new issue on <a href="https://github.com/Skyost/OpenAuthenticator">Github</a>.
-If you want to contact me for anything else, please use the contact form below.`,
+If you want to contact me for anything else or for deleting your account, please use the contact form below.`,
     form: {
       name: {
         label: 'Your name',

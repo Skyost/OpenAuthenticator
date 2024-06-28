@@ -281,7 +281,7 @@ n'hésitez pas à <nuxt-link to="/contact">nous contacter</nuxt-link>.`
     title: 'Contact',
     description: `Si vous souhaitez me contacter à propos du développement d'Open Authenticator ou un autre sujet en rapport
 (par exemple, pour rapporter un bug), veuillez ouvrir une issue sur <a href="https://github.com/Skyost/OpenAuthenticator">Github</a>.
-Si vous souhaitez me contacter pour n'importe quelle autre raison, vous pouvez utiliser le formulaire de contact
+Si vous souhaitez me contacter pour n'importe quelle autre raison ou pour supprimer votre compte, vous pouvez utiliser le formulaire de contact
 ci-dessous.`,
     form: {
       name: {
