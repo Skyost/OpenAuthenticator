@@ -16,60 +16,166 @@ const getFlagUrl = (locale: LocaleObject) => {
 </script>
 
 <template>
-  <div>
-    <footer class="footer p-10 bg-base-200 text-base-content">
-      <nav>
-        <h2 class="footer-title">{{ $t('footer.app.title') }}</h2>
-        <nuxt-link to="/" class="link link-hover">{{ $t('footer.app.index') }}</nuxt-link>
-        <nuxt-link to="/#download" class="link link-hover">{{ $t('footer.app.download') }}</nuxt-link>
-      </nav>
-      <nav>
-        <h2 class="footer-title">{{ $t('footer.legal.title') }}</h2>
-        <nuxt-link :to="`${siteMeta.github}/blob/master/LICENSE`" class="link link-hover">{{ $t('footer.legal.license') }}</nuxt-link>
-        <nuxt-link to="/privacy-policy" class="link link-hover">{{ $t('footer.legal.privacyPolicy') }}</nuxt-link>
-        <nuxt-link to="/terms-of-service" class="link link-hover">{{ $t('footer.legal.termsOfService') }}</nuxt-link>
-        <nuxt-link to="/contact" class="link link-hover">{{ $t('footer.legal.contact') }}</nuxt-link>
-      </nav>
-      <nav>
-        <h2 class="footer-title">{{ $t('footer.language') }}</h2>
-        <div class="flex items-center gap-1">
-          <a
-            v-for="locale in locales"
-            :key="locale.code"
-            href="#"
-            @click.prevent="setLocale(locale.code)"
-          >
-            <img :src="getFlagUrl(locale)" :alt="locale.code" width="20">
-          </a>
-        </div>
-      </nav>
-    </footer>
-    <footer class="footer px-10 py-4 border-t bg-base-200 text-base-content border-base-300">
-      <aside class="items-center grid-flow-col">
-        <div class="avatar">
-          <div class="w-10 rounded-full">
-            <img
-              src="https://skyost.eu/images/skyost.png"
-              class="fill-current"
-              alt="Skyost"
+  <footer class="bg-light">
+    <b-container class="pt-5 pb-5">
+      <b-row>
+        <b-col
+          sm="12"
+          md="4"
+          class="mb-4 mb-md-0"
+        >
+          <h2>{{ $t('footer.app.title') }}</h2>
+          <ul>
+            <li>
+              <nuxt-link to="/">
+                {{ $t('footer.app.index') }}
+              </nuxt-link>
+            </li>
+            <li>
+              <nuxt-link to="/#download">
+                {{ $t('footer.app.download') }}
+              </nuxt-link>
+            </li>
+          </ul>
+        </b-col>
+        <b-col
+          sm="12"
+          md="4"
+          class="mb-4 mb-md-0"
+        >
+          <h2>
+            {{ $t('footer.legal.title') }}
+          </h2>
+          <ul>
+            <li>
+              <nuxt-link :to="`${siteMeta.github}/blob/master/LICENSE`">
+                {{ $t('footer.legal.license') }}
+              </nuxt-link>
+            </li>
+            <li>
+              <nuxt-link to="/privacy-policy">
+                {{ $t('footer.legal.privacyPolicy') }}
+              </nuxt-link>
+            </li>
+            <li>
+              <nuxt-link to="/terms-of-service">
+                {{ $t('footer.legal.termsOfService') }}
+              </nuxt-link>
+            </li>
+            <li>
+              <nuxt-link to="/contact">
+                {{ $t('footer.legal.contact') }}
+              </nuxt-link>
+            </li>
+          </ul>
+        </b-col>
+        <b-col
+          sm="12"
+          md="4"
+        >
+          <h2>
+            {{ $t('footer.language') }}
+          </h2>
+          <ul class="icon-list">
+            <li
+              v-for="locale in locales"
+              :key="locale.code"
             >
-          </div>
+              <a
+                href="#"
+                @click.prevent="setLocale(locale.code)"
+              >
+                <img
+                  :src="getFlagUrl(locale)"
+                  :alt="locale.code"
+                  width="20"
+                >
+              </a>
+            </li>
+          </ul>
+        </b-col>
+      </b-row>
+    </b-container>
+    <div class="bg-dark-subtle pt-3 pb-3">
+      <b-container class="d-flex align-items-center justify-content-between flex-column flex-md-row">
+        <div class="d-flex align-items-center">
+          <img
+            class="avatar me-3"
+            src="https://skyost.eu/images/skyost.png"
+            alt="Skyost"
+          >
+          <p class="mb-0">
+            Copyright &copy; {{ year }} Skyost<br>Yet another developer
+          </p>
         </div>
-        <p>Copyright &copy; {{ year }} Skyost<br>Yet another developer</p>
-      </aside>
-      <nav class="md:place-self-center md:justify-self-end">
-        <div class="grid grid-flow-col gap-4">
-          <a href="https://skyost.eu">
-            <icon name="bi:globe-europe-africa" class="h-6 w-6" />
-          </a>
-          <a href="https://twitter.com/Skyost">
-            <icon name="bi:twitter-x" class="h-6 w-6" />
-          </a>
-          <a href="https://github.com/Skyost">
-            <icon name="bi:github" class="h-6 w-6" />
-          </a>
-        </div>
-      </nav>
-    </footer>
-  </div>
+        <ul class="icon-list">
+          <li>
+            <a href="https://skyost.eu">
+              <icon
+                name="bi:globe-europe-africa"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://twitter.com/Skyost">
+              <icon
+                name="bi:twitter-x"
+              />
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/Skyost">
+              <icon
+                name="bi:github"
+              />
+            </a>
+          </li>
+        </ul>
+      </b-container>
+    </div>
+  </footer>
 </template>
+
+<style lang="scss" scoped>
+h2 {
+  font-size: 1.25rem;
+  text-transform: uppercase;
+}
+
+a {
+  color: var(--bs-body-color);
+  opacity: 0.8;
+  text-decoration: none;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.avatar {
+  height: 2em;
+  border-radius: 50%;
+}
+
+ul {
+  margin-bottom: 0;
+
+  &.icon-list {
+    padding-left: 0;
+
+    li {
+      display: inline-block;
+      margin-left: 0.2em;
+      margin-right: 0.2em;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
+</style>

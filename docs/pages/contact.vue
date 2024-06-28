@@ -7,7 +7,7 @@ enum FormState {
   complete,
   sending,
   error,
-  success
+  success,
 }
 
 const accountDeletion = 'accountDeletion'
@@ -37,13 +37,13 @@ const isValid = () => {
   if (subjects.indexOf(currentSubject.value) === -1) {
     return false
   }
-  return currentSubject.value === accountDeletion || (currentMessage.value && currentMessage.value.length > 0);
+  return currentSubject.value === accountDeletion || (currentMessage.value && currentMessage.value.length > 0)
 }
 
 const onFormSubmit = async () => {
   currentState.value = FormState.sending
   try {
-    const recaptcha = await load(recaptchaKey, {autoHideBadge: true})
+    const recaptcha = await load(recaptchaKey, { autoHideBadge: true })
     const token = await recaptcha.execute('contact')
     await fetch(
       contactPostUrl,
@@ -57,131 +57,150 @@ const onFormSubmit = async () => {
           email: currentEmail.value,
           subject: currentSubject.value,
           message: currentSubject.value === accountDeletion ? '' : currentMessage.value,
-          gCaptchaResponse: token
-        })
-      }
+          gCaptchaResponse: token,
+        }),
+      },
     )
     currentState.value = FormState.success
-  } catch (_) {
+  }
+  catch (_) {
     currentState.value = FormState.error
   }
 }
 </script>
 
 <template>
-  <article>
+  <b-container class="pt-5 pb-5">
     <page-head :title="$t('contact.title')" />
-    <div class="relative flex max-w-[100vw] items-center justify-center overflow-hidden p-10 md:p-20 pb-0 md:pb-0">
-      <div class="relative flex max-w-[100rem] flex-col items-center justify-center xl:flex-row xl:gap-20">
-        <div class="relative z-[1] w-full py-10 prose max-w-none">
-          <h1 class="text-center leading-none xl:text-start">
-            {{ $t('contact.title') }}
-          </h1>
-          <p class="text-base-content/70 text-center xl:text-start my-10" v-html="$t('contact.description')" />
-        </div>
-        <div>
-          <img
-            src="/images/contact/plane.svg"
-            alt="Paper plan"
-            class="min-w-48 max-w-96"
-            title="Image credit : juicy_fish (freepik.com/author/juicy-fish)"
-          >
-        </div>
-      </div>
-    </div>
-    <div class="relative flex max-w-[100vw] items-center justify-center overflow-hidden p-10 md:p-20 xl:pt-0">
-      <form
-        class="max-w-[100rem] w-full space-y-8"
+    <b-row>
+      <b-col
+        sm="12"
+        md="7"
+        lg="9"
+      >
+        <h1>{{ $t('contact.title') }}</h1>
+        <p v-html="$t('contact.description')" />
+      </b-col>
+      <b-col
+        sm="12"
+        md="5"
+        lg="3"
+        class="d-flex align-items-center"
+      >
+        <img
+          class="plane-icon"
+          src="/images/contact/plane.svg"
+          alt="Paper plan"
+          title="Image credit : juicy_fish (freepik.com/author/juicy-fish)"
+        >
+      </b-col>
+    </b-row>
+    <client-only
+      fallback-tag="em"
+      fallback="Loading form..."
+    >
+      <b-form
         :action="contactPostUrl"
+        class="pt-3 pb-3"
         method="post"
         @submit.prevent="onFormSubmit"
       >
-        <div>
-          <label
-            for="name"
-            class="block mb-2 text-sm font-medium text-gray-900"
-          >
-            {{ $t('contact.form.name.label') }}
-          </label>
-          <input
+        <b-form-group
+          class="form-group"
+          :label="$t('contact.form.name.label')"
+          label-for="name"
+        >
+          <b-form-input
             id="name"
             v-model="currentName"
             type="text"
-            class="shadow-sm bg-gray-50 border border-primary-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
             :placeholder="$t('contact.form.name.placeholder')"
             :disabled="!formEnabled"
             required
-          >
-        </div>
-        <div>
-          <label
-            for="email"
-            class="block mb-2 text-sm font-medium text-gray-900"
-          >
-            {{ $t('contact.form.email.label') }}
-          </label>
-          <input
+          />
+        </b-form-group>
+        <b-form-group
+          class="form-group"
+          :label="$t('contact.form.email.label')"
+          label-for="name"
+        >
+          <b-form-input
             id="email"
             v-model="currentEmail"
             type="email"
-            class="shadow-sm bg-gray-50 border border-primary-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
             :placeholder="$t('contact.form.email.placeholder')"
             :disabled="!formEnabled"
             required
-          >
-        </div>
-        <div>
-          <label for="subject" class="block mb-2 text-sm font-medium text-gray-900">
-            {{ $t('contact.form.subject.label') }}
-          </label>
-          <select
+          />
+        </b-form-group>
+        <b-form-group
+          class="form-group"
+          :label="$t('contact.form.subject.label')"
+          label-for="subject"
+        >
+          <b-form-select
             id="subject"
             v-model="currentSubject"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
             :disabled="!formEnabled"
             required
           >
-            <option
+            <b-form-select-option
               v-for="(subject, index) in subjects"
               :key="`contact-subject-${index}`"
               :value="subject"
             >
               {{ $t(`contact.form.subject.options.${subject}`) }}
-            </option>
-          </select>
-        </div>
-        <div
+            </b-form-select-option>
+          </b-form-select>
+        </b-form-group>
+        <b-form-group
           v-if="currentSubject !== accountDeletion"
-          class="sm:col-span-2"
+          class="form-group"
+          :label="$t('contact.form.message.label')"
+          label-for="message"
         >
-          <label for="message" class="block mb-2 text-sm font-medium text-gray-900">
-            {{ $t('contact.form.message.label') }}
-          </label>
-          <textarea
+          <b-form-textarea
             id="message"
             v-model="currentMessage"
             rows="6"
-            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300"
             :placeholder="$t('contact.form.message.placeholder')"
             :disabled="!formEnabled"
           />
-        </div>
-        <p
-          v-if="currentState === FormState.success || currentState === FormState.error"
-          class="mb-0 text-sm"
-          :class="{'text-red-700': currentState === FormState.error, 'text-green-700': currentState === FormState.success }"
-        >
-          {{ $t(`contact.form.${currentState === FormState.error ? "error" : "success"}`) }}
-        </p>
-        <button
+        </b-form-group>
+        <b-button
+          class="mt-2"
+          variant="primary"
           type="submit"
-          class="btn btn-primary"
-          :class="{ 'cursor-not-allowed': !formSubmitEnabled }"
           :disabled="!formSubmitEnabled"
         >
-          <icon name="bi:send" class="h-6 w-6" /> {{ $t('contact.form.send') }}
-        </button>
-      </form>
-    </div>
-  </article>
+          <icon name="bi:send" /> {{ $t('contact.form.send') }}
+        </b-button>
+      </b-form>
+    </client-only>
+    <b-alert
+      :model-value="currentState === FormState.error"
+      class="mb-5"
+      variant="danger"
+    >
+      {{ $t('contact.form.error') }}
+    </b-alert>
+    <b-alert
+      :model-value="currentState === FormState.success"
+      class="mb-5"
+      variant="success"
+    >
+      {{ $t('contact.form.success') }}
+    </b-alert>
+  </b-container>
 </template>
+
+<style lang="scss" scoped>
+.plane-icon {
+  max-width: 100%;
+}
+
+.form-group {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+</style>

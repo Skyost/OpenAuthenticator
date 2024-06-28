@@ -17,102 +17,172 @@ const features = computed(() => {
 <template>
   <div>
     <page-head />
-    <header class="hero">
-      <div class="hero-content flex-col lg:flex-row-reverse">
-        <div class="max-w-sm relative">
-          <blurred-stain />
-          <div class="mockup-phone">
-            <div class="camera" />
-            <div class="display">
-              <div class="artboard phone">
-                <img src="/images/screenshots/home.png" alt="Screenshot">
-              </div>
+    <header class="pt-5 pb-5">
+      <b-container>
+        <b-row>
+          <b-col
+            sm="12"
+            md="7"
+            lg="8"
+            class="d-flex align-items-center"
+          >
+            <div class="text-center text-md-start mb-5 mb-md-0">
+              <h1>
+                <span class="d-block">{{ t('index.main.title.1') }}</span>
+                <span v-html="t('index.main.title.2')" />
+              </h1>
+              <ul class="list-unstyled text-start mt-3 mb-5">
+                <li
+                  v-for="(feature, index) in features"
+                  :key="`feature-${index}`"
+                >
+                  <icon
+                    name="heroicons:check"
+                    class="me-2 text-primary"
+                  />
+                  <span v-html="feature" />
+                </li>
+              </ul>
+              <b-button
+                variant="primary"
+                to="/#download"
+                size="lg"
+              >
+                <icon
+                  name="heroicons:arrow-down-tray"
+                  class="h-6 w-6"
+                /> {{ t('index.main.downloadButton') }}
+              </b-button>
             </div>
-          </div>
-        </div>
-        <div>
-          <h1 class="title text-5xl">
-            <span class="d-block">{{ t('index.main.title.1') }}</span>
-            <br><span v-html="t('index.main.title.2')" />
-          </h1>
-          <ul class="features py-6">
-            <li v-for="(feature, index) in features" :key="`feature-${index}`">
-              <icon name="heroicons:check" class="h-6 w-6 me-2" color="oklch(var(--p))" />
-              <span v-html="feature" />
-            </li>
-          </ul>
-          <nuxt-link class="btn btn-primary btn-lg btn-wide" to="/#download">
-            <icon name="heroicons:arrow-down-tray" class="h-6 w-6" /> {{ t('index.main.downloadButton') }}
-          </nuxt-link>
-        </div>
-      </div>
+          </b-col>
+          <b-col
+            sm="12"
+            md="5"
+            lg="4"
+            class="position-relative"
+          >
+            <blurred-stain :center="true" />
+            <mobile-phone class="phone">
+              <img
+                class="mw-100"
+                src="/images/screenshots/home.png"
+                alt="Screenshot"
+              >
+            </mobile-phone>
+          </b-col>
+        </b-row>
+      </b-container>
     </header>
-    <div class="bg-neutral text-neutral-content relative flex max-w-[100vw] items-center justify-center overflow-hidden p-10 md:p-20">
-      <div class="relative flex max-w-[100rem] flex-col items-center justify-center xl:flex-row xl:gap-20">
-        <div class="relative z-[1] w-full py-10">
-          <h2 id="download" class="title text-center xl:text-start text-5xl" v-html="t('index.download.title')" />
-          <p class="text-center xl:text-start my-10" v-html="t('index.download.description')" />
-          <auto-detect-button
-            :available-soon-template="t('index.download.storeButtons.availableSoonTemplate')"
-            :available-on-template="t('index.download.storeButtons.availableOnTemplate')"
-            :loading-text="t('index.download.storeButtons.loading')"
-            :more-button="t('index.download.storeButtons.morePlatformsButton')"
-          />
-        </div>
-        <div class="flex flex-col">
-          <qrcode-vue
-            :value="`${siteMeta.url}/#download`"
-            :size="200"
-            foreground="oklch(var(--btn-color, var(--b2)) / var(--tw-bg-opacity))"
-            background="transparent"
-            render-as="svg"
-          />
-        </div>
-      </div>
-    </div>
-    <div class="relative flex max-w-[100vw] items-center justify-center overflow-hidden p-10 md:p-20">
-      <div class="relative flex max-w-[100rem] flex-col items-center justify-center xl:flex-row-reverse xl:gap-20">
-        <div>
-          <h2 class="text-center title text-5xl leading-none xl:text-start" v-html="t('index.openSource.title')" />
-          <div class="text-base-content/70 text-center xl:text-start my-10">
-            <p class="mb-6" v-html="t('index.openSource.description.1')" />
-            <p v-html="t('index.openSource.description.2')" />
-          </div>
-          <div class="inline-flex w-full flex-col items-stretch justify-center gap-2 px-4 md:flex-row xl:justify-start xl:px-0">
-            <a :href="siteMeta.github" class="btn btn-lg btn-primary btn-wide">
-              <icon name="bi:github" class="h-6 w-6" /> {{ t('index.openSource.linkButtons.github') }}
-            </a>
-            <a href="https://paypal.me/Skyost" class="btn btn-lg btn-wide">
-              <icon name="bi:paypal" class="h-6 w-6" /> {{ t('index.openSource.linkButtons.paypal') }}
-            </a>
-          </div>
-        </div>
-        <div class="relative shrink-0 pt-10 w-full xl:pt-0 xl:w-1/3">
-          <blurred-stain />
-          <div class="mockup-window border bg-base-300">
-            <div class="flex items-center justify-evenly px-4 py-32 bg-base-100">
-              <img class="max-w-20" src="/images/logo.svg" alt="Logo">
-              <span class="font-bold text-base-content/70">x</span>
-              <img class="max-w-20" src="/images/home/github.svg" alt="Github">
+    <div class="bg-dark text-light pt-5 pb-5">
+      <b-container>
+        <b-row>
+          <b-col
+            sm="12"
+            lg="9"
+          >
+            <div class="text-center text-lg-start">
+              <h2
+                id="download"
+                v-html="t('index.download.title')"
+              />
+              <p
+                class="mt-3 mb-3"
+                v-html="t('index.download.description')"
+              />
             </div>
-          </div>
-        </div>
-      </div>
+            <auto-detect-button
+              :available-soon-template="t('index.download.storeButtons.availableSoonTemplate')"
+              :available-on-template="t('index.download.storeButtons.availableOnTemplate')"
+              :loading-text="t('index.download.storeButtons.loading')"
+              :more-button="t('index.download.storeButtons.morePlatformsButton')"
+            />
+          </b-col>
+          <b-col class="align-items-center justify-content-center d-none d-lg-flex">
+            <qrcode-vue
+              :value="`${siteMeta.url}/#download`"
+              :size="200"
+              foreground="var(--bs-light)"
+              background="transparent"
+              render-as="svg"
+            />
+          </b-col>
+        </b-row>
+      </b-container>
     </div>
+    <b-container class="pt-5 pb-5">
+      <b-row>
+        <b-col
+          class="d-none d-md-block position-relative"
+          md="6"
+          lg="5"
+        >
+          <blurred-stain />
+          <window>
+            <div class="os-window">
+              <img
+                class="os-logo"
+                src="/images/logo.svg"
+                alt="Logo"
+              >
+              <span class="font-bold text-base-content/70">x</span>
+              <img
+                class="os-logo"
+                src="/images/home/github.svg"
+                alt="Github"
+              >
+            </div>
+          </window>
+        </b-col>
+        <b-col class="d-flex align-items-center">
+          <div class="text-center text-md-start">
+            <h2 v-html="t('index.openSource.title')" />
+            <div class="mt-3 mb-3">
+              <p v-html="t('index.openSource.description.1')" />
+              <p v-html="t('index.openSource.description.2')" />
+            </div>
+            <b-row>
+              <b-col
+                sm="12"
+                lg="6"
+                class="mb-2 mb-lg-0"
+              >
+                <b-button
+                  class="w-100"
+                  variant="primary"
+                  :href="siteMeta.github"
+                >
+                  <icon name="bi:github" /> {{ t('index.openSource.linkButtons.github') }}
+                </b-button>
+              </b-col>
+              <b-col
+                sm="12"
+                lg="6"
+              >
+                <b-button
+                  class="w-100"
+                  variant="light"
+                  href="https://paypal.me/Skyost"
+                >
+                  <icon name="bi:paypal" /> {{ t('index.openSource.linkButtons.paypal') }}
+                </b-button>
+              </b-col>
+            </b-row>
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.title {
-  font-weight: lighter;
+.os-window {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  min-height: 250px;
 
-  strong {
-    font-weight: bold;
+  .os-logo {
+    max-width: 20%;
   }
-}
-
-.artboard.phone {
-  width: 320px;
-  height: 710px;
 }
 </style>

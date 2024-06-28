@@ -2,13 +2,13 @@
 import { storesLink, type StoreInfo, type OS } from '~/site'
 
 const props = defineProps<{
-  os: OS,
-  availableSoonTemplate?: string,
+  os: OS
+  availableSoonTemplate?: string
   availableOnTemplate?: string
 }>()
 
 interface ExtendedStoreInfo extends StoreInfo {
-  image: string,
+  image: string
   target: string
 }
 
@@ -18,25 +18,25 @@ const store = computed<ExtendedStoreInfo>(() => {
       return {
         ...storesLink.android,
         image: '/images/stores/google-play.svg',
-        target: 'Android'
+        target: 'Android',
       }
     case 'darwin':
       return {
         ...storesLink.darwin,
         image: '/images/stores/app-store.svg',
-        target: 'iOS / macOS'
+        target: 'iOS / macOS',
       }
     case 'windows':
       return {
         ...storesLink.windows,
         image: '/images/stores/microsoft-store.svg',
-        target: 'Windows'
+        target: 'Windows',
       }
     case 'linux':
       return {
         ...storesLink.linux,
         image: '/images/stores/snapcraft.svg',
-        target: 'Linux'
+        target: 'Linux',
       }
   }
 })
@@ -50,22 +50,43 @@ const tip = computed(() => {
 </script>
 
 <template>
-  <div class="tooltip" :data-tip="tip">
-    <a
+  <b-card
+    v-b-tooltip="tip"
+    class="d-inline-block"
+  >
+    <b-button
       :href="store.url ?? '#download'"
-      class="btn btn-lg btn-wide"
-      :class="{'btn-disabled': store.url ? null : true}"
-      role="button"
+      :size="'lg'"
+      class="store-button"
+      :class="{ disabled: store.url ? null : true }"
+      variant="light"
     >
-      <img :src="store.image" :alt="store.name" class="h-6 w-6">
-      {{ store.name }}
-    </a>
-  </div>
+      <div>
+        <img
+          :src="store.image"
+          :alt="store.name"
+          class="me-1"
+        >
+        {{ store.name }}
+      </div>
+    </b-button>
+  </b-card>
 </template>
 
 <style lang="scss" scoped>
-.btn-disabled {
-  color: rgba(black, 0.3);
-  background-color: oklch(var(--b3));
+.store-button {
+  min-height: 3em;
+  display: flex;
+  align-items: center;
+
+  img {
+    height: 1em;
+    vertical-align: -0.1em;
+    padding-right: 0.2em;
+  }
+
+  &.disabled {
+    color: rgba(black, 0.3);
+  }
 }
 </style>

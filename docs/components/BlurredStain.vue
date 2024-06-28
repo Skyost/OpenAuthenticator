@@ -2,24 +2,40 @@
 withDefaults(defineProps<{
   center?: boolean
 }>(), {
-  center: true
+  center: true,
 })
 </script>
 
 <template>
   <div
-    class="bg-primary pointer-events-none aspect-square rounded-full opacity-20 blur-3xl"
-    :class="{'center': center}"
+    class="blurred-stain"
+    :class="{ center: center }"
   />
 </template>
 
 <style lang="scss" scoped>
-.center {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  transform: translateY(-50%);
-  z-index: -1;
+@use 'sass:math';
+
+// noinspection Stylelint
+@import 'assets/colors';
+
+.blurred-stain {
+  $size: 200px;
+
+  height: $size;
+  width: $size;
+  background-color: rgba($primary, 0.5);
+  border-radius: 50%;
+  filter: blur(math.div($size, 2));
+
+  &.center {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    z-index: -1;
+  }
 }
 </style>

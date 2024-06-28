@@ -32,13 +32,6 @@ export default defineNuxtConfig({
     }
   },
 
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {}
-    }
-  },
-
   modules: [
     '@nuxt/eslint',
     'nuxt-cname-generator',
@@ -46,7 +39,8 @@ export default defineNuxtConfig({
     'nuxt-icon',
     'nuxt-link-checker',
     '@nuxtjs/sitemap',
-    'nuxt-simple-robots'
+    'nuxt-simple-robots',
+    '@bootstrap-vue-next/nuxt'
   ],
 
   vite: {
@@ -68,5 +62,11 @@ export default defineNuxtConfig({
 
   cname: {
     host: siteMeta.url
+  },
+
+  eslint: {
+    config: {
+      stylistic: true
+    }
   }
 })
