@@ -4,36 +4,36 @@ export default {
     privacyPolicy: 'Privacy policy',
     termsOfService: 'Terms of services',
     contact: 'Contact',
-    downloadButton: 'Download'
+    downloadButton: 'Download',
   },
   footer: {
     app: {
       title: 'App',
       index: 'Home',
-      download: 'Download'
+      download: 'Download',
     },
     legal: {
       title: 'Legal',
       license: 'License',
       privacyPolicy: 'Privacy policy',
       termsOfService: 'Terms of services',
-      contact: 'Contact'
+      contact: 'Contact',
     },
-    language: 'Language'
+    language: 'Language',
   },
   index: {
     main: {
       title: {
         1: 'Secure your online accounts',
-        2: 'with a <strong>free</strong>, <strong>open-source</strong> and <strong>lovely-crafted</strong> app'
+        2: 'with a <strong>free</strong>, <strong>open-source</strong> and <strong>lovely-crafted</strong> app',
       },
       features: {
         1: '<strong>Free</strong> & <strong>open-source</strong>.',
         2: 'Easily <strong>synchronize</strong> your TOTPs (<em>Time-based One-Time Password</em>).',
         3: '<strong>Protect</strong> your data.',
-        4: 'Use it on (almost) <strong>any platform</strong>.'
+        4: 'Use it on (almost) <strong>any platform</strong>.',
       },
-      downloadButton: 'Download now'
+      downloadButton: 'Download now',
     },
     download: {
       title: '<strong>Download</strong> the app',
@@ -43,8 +43,8 @@ and <strong>iOS</strong>, but also on <strong>macOS</strong>, <strong>Windows</s
         loading: 'Loading links...',
         availableSoonTemplate: 'Available for %s soon !',
         availableOnTemplate: 'Download for %s',
-        morePlatformsButton: 'Want another platform ?'
-      }
+        morePlatformsButton: 'Want another platform ?',
+      },
     },
     openSource: {
       title: 'Open-source',
@@ -53,12 +53,12 @@ and <strong>iOS</strong>, but also on <strong>macOS</strong>, <strong>Windows</s
 It's licensed under <a class="underline" href="https://github.com/Skyost/OpenAuthenticator">GNU GPL v3</a>.
 Feel free to contribute to the project by submitting your <strong>pull requests</strong> on Github,
 by <strong>donating</strong> or just by <strong>starring it</strong> on Github !`,
-        2: 'Thanks a lot to <a class="underline" href="https://github.com/Skyost/OpenAuthenticator/contributors">all contributors</a> !'
+        2: 'Thanks a lot to <a class="underline" href="https://github.com/Skyost/OpenAuthenticator/contributors">all contributors</a> !',
       },
       linkButtons: {
         github: 'Github',
-        paypal: 'Donate'
-      }
+        paypal: 'Donate',
+      },
     },
   },
   privacyPolicy: {
@@ -72,7 +72,7 @@ Application. Registration with the Service Provider is not mandatory.
 However, bear in mind that you might not be able to utilize some of the features offered by the
 Application unless you register with them. The Service Provider may also use the information you provided
 them to contact you from time to time to provide you with important information, required notices,
-and marketing promotions.`
+and marketing promotions.`,
     },
     automaticallyCollectedInfo: {
       title: 'Automatically Collected Information',
@@ -80,17 +80,17 @@ and marketing promotions.`
 but not limited to, the type of mobile device you use, your mobile device\`s unique device ID, the IP address
 of your mobile device, your mobile operating system, the type of mobile Internet browsers you use,
 and information about the way you use the Application.
-This data collection is needed in order to better understand crash logs.`
+This data collection is needed in order to better understand crash logs.`,
     },
     locationInfo: {
       title: 'Does the Application collect precise real-time location information of the device ?',
-      content: 'This Application does not gather precise information about the location of your mobile device.'
+      content: 'This Application does not gather precise information about the location of your mobile device.',
     },
     thirdPartyAccess: {
       title: 'Do third parties see and/or have access to information obtained by the Application ?',
       content: `Only aggregated, anonymized data is periodically transmitted to external services to aid the
 Service Provider in improving the Application and their service. The Service Provider may share your
-information with third parties in the ways that are described in this privacy statement.`
+information with third parties in the ways that are described in this privacy statement.`,
     },
     thirdPartyProviders: {
       title: 'Third-Party Providers',
@@ -100,8 +100,8 @@ third-party service providers used by the Application :`,
       list: {
         googlePlayServices: '<a href="https://www.google.com/policies/privacy/" target="_blank">Google Play Services</a>',
         firebase: '<a href="https://firebase.google.com/support/privacy/" target="_blank">Firebase (including but not limited to Crashlytics, Cloud Firestore, ...)</a>',
-        revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>'
-      }
+        revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>',
+      },
     },
     disclosure: {
       title: 'Disclosure of Information',
@@ -109,14 +109,14 @@ third-party service providers used by the Application :`,
       list: {
         1: 'as required by law, such as to comply with a subpoena, or similar legal process;',
         2: 'when they believe in good faith that disclosure is necessary to protect their rights, protect your safety or the safety of others, investigate fraud, or respond to a government request;',
-        3: 'with their trusted services providers who work on their behalf, do not have an independent use of the information we disclose to them, and have agreed to adhere to the rules set forth in this privacy statement.'
-      }
+        3: 'with their trusted services providers who work on their behalf, do not have an independent use of the information we disclose to them, and have agreed to adhere to the rules set forth in this privacy statement.',
+      },
     },
     optOut: {
       title: 'What are my opt-out rights?',
       content: `You can halt all collection of information by the Application easily by uninstalling the
 Application. You may use the standard uninstall processes as may be available as part of your mobile device
-or via the mobile application marketplace or network.`
+or via the mobile application marketplace or network.`,
     },
     dataRetention: {
       title: 'Data Retention Policy, Managing Your Information',
@@ -130,14 +130,14 @@ to function properly.
 Your master password is not transmitted to any remote server.
 <strong>If you forget it, we cannot help your recovering it.</strong>
 Please be aware that, although we endeavor provide reasonable security for
-information we process and maintain, no security system can prevent all potential security breaches.`
+information we process and maintain, no security system can prevent all potential security breaches.`,
     },
     children: {
       title: 'Children',
       content: `The Service Provider does not use the Application to knowingly solicit data from or market
 to children under the age of 13. The Application does not address anyone under the age of 13.
 The Service Provider does not knowingly collect personally identifiable information from children under
-13 years of age.`
+13 years of age.`,
     },
     security: {
       title: 'Security',
@@ -147,21 +147,21 @@ process and maintain. For example, if you choose to synchronize your data betwee
 we use Firebase Cloud Firestore to store your TOTPs.
 Their <a href="https://en.wikipedia.org/wiki/Time-based_one-time_password#Security">secret & metadata</a> are
 encrypted using an <a href="https://en.wikipedia.org/wiki/Galois/Counter_Mode">AES-GCM</a> algorithm with an
-<a href="https://en.wikipedia.org/wiki/Argon2">Argon2</a> derived key based on your master password and a random salt.`
+<a href="https://en.wikipedia.org/wiki/Argon2">Argon2</a> derived key based on your master password and a random salt.`,
     },
     changes: {
       title: 'Changes',
       content: `This Privacy Policy may be updated from time to time for any reason.
 The Service Provider will notify you of any changes to the Privacy Policy by updating this page with the new
 Privacy Policy.`,
-      effectiveDate: 'This privacy policy is effective as of 2024-04-01.'
+      effectiveDate: 'This privacy policy is effective as of 2024-04-01.',
     },
     contact: {
       title: 'Contact Us',
       content: `If you have any questions regarding privacy while using the Application, or
-have questions about the practices, please <a href="/contact">contact</a> the Service Provider.`
+have questions about the practices, please <a href="/contact">contact</a> the Service Provider.`,
     },
-    credit: 'Thanks to <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> for this privacy policy.'
+    credit: 'Thanks to <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> for this privacy policy.',
   },
   termsOfService: {
     title: 'Terms & Conditions',
@@ -193,7 +193,7 @@ Application :`,
     thirdPartyTermsList: {
       googlePlayServices: '<a href="https://www.google.com/policies/privacy/" target="_blank">Google Play Services</a>',
       firebase: '<a href="https://firebase.google.com/support/privacy/" target="_blank">Firebase (including but not limited to Crashlytics, Cloud Firestore, ...)</a>',
-      revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>'
+      revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>',
     },
     responsibility: `Please be aware that the Service Provider does not assume responsibility for certain aspects.
 Some functions of the Application require an active internet connection, which can be Wi-Fi or provided
@@ -228,7 +228,7 @@ and (if necessary) delete it from your device.`,
         title: 'No warranty',
         content: `All Content (including but not limited to your TOTPs) is made available AS IS and the Service Provider
 does not offer any warranty of any kind, or represent that the Content will be accurate, complete,
-or error-free.`
+or error-free.`,
       },
       synchronizationSecurity: {
         title: 'Synchronization and security',
@@ -238,7 +238,7 @@ that it will be stored on Firebase servers.
 Please be aware that, although we endeavor provide reasonable security for information we process and
 maintain, no security system can prevent all potential security breaches.
 Therefore, we are not liable for any data loss, any leak or any damage resulting from the use of
-the application.`
+the application.`,
       },
       releaseIndemnity: {
         title: 'Release and indemnity',
@@ -249,7 +249,7 @@ the Service Provider, officers, directors, employees, partners, contributors, or
 against any and all claims, damages, obligations, losses, liabilities, (including but not limited to
 attorney's fees) arising from : (i) your use of and access to the Application; (ii) your violation of any
 term of these terms of use; and (iii) your violation of any third party right, including without limitation
-any copyright, property, or privacy right.`
+any copyright, property, or privacy right.`,
       },
       limitationOfLiability: {
         title: 'Limitation of Liability',
@@ -258,22 +258,22 @@ employees, partners, contributors, or licensors be liable for any direct, indire
 punitive or consequential damages that may result from the access of, use or inability to use the Application content,
 including without limitation, use of or reliance on information, interruptions, errors, defects, mistakes,
 omissions, deletions of files, delays in operations or transmission, non-delivery of information, disclosure of
-communications, or any other failure of performance.`
-      }
+communications, or any other failure of performance.`,
+      },
     },
     changes: {
       title: 'Changes to These Terms and Conditions',
       content: `The Service Provider may periodically update their Terms and Conditions.
 Therefore, you are advised to review this page regularly for any changes.
 The Service Provider will notify you of any changes by posting the new Terms and Conditions on this page.`,
-      effectiveDate: 'These terms and conditions are effective as of 2024-04-01.'
+      effectiveDate: 'These terms and conditions are effective as of 2024-04-01.',
     },
     contact: {
       title: 'Contact Us',
       content: `If you have any questions or suggestions about the Terms and Conditions,
-please do not hesitate to <nuxt-link to="/contact">contact</nuxt-link> the Service Provider.`
+please do not hesitate to <nuxt-link to="/contact">contact</nuxt-link> the Service Provider.`,
     },
-    credit: 'Thanks to <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> for these terms of service.'
+    credit: 'Thanks to <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> for these terms of service.',
   },
   contact: {
     title: 'Contact',
@@ -283,11 +283,11 @@ If you want to contact me for anything else or for deleting your account, please
     form: {
       name: {
         label: 'Your name',
-        placeholder: 'Input your name here'
+        placeholder: 'Input your name here',
       },
       email: {
         label: 'Your email',
-        placeholder: 'Input your email here'
+        placeholder: 'Input your email here',
       },
       subject: {
         label: 'Your message subject',
@@ -295,16 +295,16 @@ If you want to contact me for anything else or for deleting your account, please
           accountDeletion: 'Account deletion',
           moreInfoNeeded: 'More info needed',
           commercial: 'Commercial',
-          other: 'Other'
-        }
+          other: 'Other',
+        },
       },
       message: {
         label: 'Your message content',
-        placeholder: 'Input your message here'
+        placeholder: 'Input your message here',
       },
       success: 'Your request has been sent with success.',
       error: 'An error occurred while sending your request.',
-      send: 'Send'
-    }
-  }
+      send: 'Send',
+    },
+  },
 }

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
+import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/utils.dart';
 
 /// The Firebase authenticate state provider.
 final firebaseAuthenticationProvider = NotifierProvider<FirebaseAuthentication, FirebaseAuthenticationState>(FirebaseAuthentication.new);
@@ -20,5 +22,30 @@ class FirebaseAuthentication extends Notifier<FirebaseAuthenticationState> {
   FirebaseAuthenticationState _getState({User? user}) => user == null ? FirebaseAuthenticationStateLoggedOut() : FirebaseAuthenticationStateLoggedIn(user: user);
 
   /// Logouts the user.
-  Future<void> logout() => FirebaseAuth.instance.signOut();
+  Future<Result> logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      return const ResultSuccess();
+    } catch (ex, stacktrace) {
+      handleException(ex, stacktrace);
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
+    }
+  }
+
+  /// Deletes the user.
+  Future<Result> deleteUser() async {
+    try {
+      await FirebaseAuth.instance.currentUser?.delete();
+      return const ResultSuccess();
+    } catch (ex, stacktrace) {
+      handleException(ex, stacktrace);
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/authentication_provider_picker.dart';
@@ -16,7 +17,7 @@ class AccountUtils {
     if (provider == null || !context.mounted) {
       return;
     }
-    return await _tryTo(
+    await _tryTo(
       context,
       ref,
       provider,
@@ -29,7 +30,7 @@ class AccountUtils {
 
   /// Prompts the user to choose an authentication provider, and use it to link or unlink its current account.
   static Future<void> tryToggleLink(BuildContext context, WidgetRef ref) async {
-    LinkProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context, link: true) as LinkProvider?;
+    LinkProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.link) as LinkProvider?;
     if (provider == null || !context.mounted) {
       return;
     }
@@ -45,7 +46,7 @@ class AccountUtils {
     if (!context.mounted) {
       return;
     }
-    return await _tryTo<LinkProvider>(
+    await _tryTo<LinkProvider>(
       context,
       ref,
       provider,
@@ -55,8 +56,32 @@ class AccountUtils {
     );
   }
 
+  /// Prompts the user to choose an authentication provider, use it to re-authenticate and delete its account.
+  static Future<void> tryDeleteAccount(BuildContext context, WidgetRef ref) async {
+    FirebaseAuthenticationProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.reAuthenticate);
+    if (provider == null || !context.mounted) {
+      return;
+    }
+    Result<String> result = await _tryTo(
+      context,
+      ref,
+      provider,
+      waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
+      action: (context, provider) => provider.reAuthenticate(context),
+      timeoutMessage: translations.error.timeout.authentication,
+      needConfirmation: provider is ConfirmationProvider,
+    );
+    if (result is! ResultSuccess<String>) {
+      return;
+    }
+    Result deleteResult = await ref.read(firebaseAuthenticationProvider.notifier).deleteUser();
+    if (context.mounted) {
+      context.showSnackBarForResult(deleteResult, retryIfError: true);
+    }
+  }
+
   /// Tries to do the specified [action].
-  static Future<void> _tryTo<T extends FirebaseAuthenticationProvider>(
+  static Future<Result<String>> _tryTo<T extends FirebaseAuthenticationProvider>(
     BuildContext context,
     WidgetRef ref,
     T provider, {
@@ -87,6 +112,7 @@ class AccountUtils {
         handleDifferentCredentialError: true,
       );
     }
+    return result;
   }
 
   /// Handles the [result].

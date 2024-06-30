@@ -32,9 +32,15 @@ abstract class FirebaseAuth {
   /// Sign-ins the user with a given method.
   Future<SignInResult> signInWith(FirebaseAuthMethod method) => method.signIn();
 
+  /// Re-authenticates the user with a given method.
+  Future<SignInResult> reAuthenticateWith(FirebaseAuthMethod method) async {
+    assert(isLoggedIn, 'You must be logged-in to re-authenticate.');
+    return await method.reAuthenticates(currentUser!);
+  }
+
   /// Links the user to a given method.
   Future<SignInResult> linkTo(CanLinkTo method) async {
-    assert(isLoggedIn, 'You must be logged-in to link a provider.');
+    assert(isLoggedIn, 'You must be logged-in to link a method.');
     return await method.linkTo(currentUser!);
   }
 
@@ -58,6 +64,10 @@ abstract class User {
 
   /// Should return the user id token.
   Future<String?> getIdToken({bool forceRefresh = false});
+
+  /// Deletes the user.
+  /// He may need to be recently authenticated.
+  Future<void> delete();
 }
 
 /// A Firebase authentication method.
@@ -65,6 +75,10 @@ mixin FirebaseAuthMethod {
   /// Sign-ins using this method.
   @protected
   Future<SignInResult> signIn();
+
+  /// Reauthenticates the current user.
+  @protected
+  Future<SignInResult> reAuthenticates(User user);
 }
 
 /// A [FirebaseAuthMethod] that an user can links its account to.

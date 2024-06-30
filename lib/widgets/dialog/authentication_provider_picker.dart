@@ -16,13 +16,13 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
   /// The default icon size.
   static const double _kDefaultIconSize = 32;
 
-  /// Whether to link instead of login using the provider.
-  final bool link;
+  /// The dialog mode.
+  final DialogMode dialogMode;
 
   /// Creates a new Wikimedia logo picker dialog instance.
   const AuthenticationProviderPickerDialog({
     super.key,
-    this.link = false,
+    this.dialogMode = DialogMode.authenticate,
   });
 
   @override
@@ -35,19 +35,11 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           for (FirebaseAuthenticationProvider provider in ref.read(userAuthenticationProviders.notifier).availableProviders)
-            if (link) ...[
-              if (provider is LinkProvider)
-                _createListTile(
-                  provider,
-                  currentProviders,
-                ),
-            ] else ...[
-              if (!currentProviders.contains(provider))
-                _createListTile(
-                  provider,
-                  currentProviders,
-                ),
-            ]
+            if (dialogMode._shouldDisplay(currentProviders, provider))
+              _createListTile(
+                provider,
+                currentProviders,
+              ),
         ],
       ),
       actions: [
@@ -61,11 +53,11 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
 
   /// Creates the button that corresponds to the [provider].
   Widget _createListTile(FirebaseAuthenticationProvider provider, List<FirebaseAuthenticationProvider> currentProviders) {
-    IconData? unlinkIcon = link && currentProviders.contains(provider) ? Icons.link_off : null;
+    IconData? trailingIcon = dialogMode._getTrailingIcon?.call(currentProviders, provider);
     if (provider is EmailLinkAuthenticationProvider) {
       return _ProviderTile(
         provider: provider,
-        unlinkIcon: unlinkIcon,
+        trailingIcon: trailingIcon,
         name: translations.authentication.providerPickerDialog.email.title,
         subtitle: translations.authentication.providerPickerDialog.email.subtitle,
         invertIconOnBrightnessChange: true,
@@ -74,7 +66,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
     if (provider is GoogleAuthenticationProvider) {
       return _ProviderTile(
         provider: provider,
-        unlinkIcon: unlinkIcon,
+        trailingIcon: trailingIcon,
         name: translations.authentication.providerPickerDialog.google.title,
         subtitle: translations.authentication.providerPickerDialog.google.subtitle,
       );
@@ -82,7 +74,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
     if (provider is AppleAuthenticationProvider) {
       return _ProviderTile(
         provider: provider,
-        unlinkIcon: unlinkIcon,
+        trailingIcon: trailingIcon,
         name: translations.authentication.providerPickerDialog.apple.title,
         subtitle: translations.authentication.providerPickerDialog.apple.subtitle,
         invertIconOnBrightnessChange: true,
@@ -91,7 +83,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
     if (provider is MicrosoftAuthenticationProvider) {
       return _ProviderTile(
         provider: provider,
-        unlinkIcon: unlinkIcon,
+        trailingIcon: trailingIcon,
         name: translations.authentication.providerPickerDialog.microsoft.title,
         subtitle: translations.authentication.providerPickerDialog.microsoft.subtitle,
       );
@@ -99,7 +91,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
     if (provider is TwitterAuthenticationProvider) {
       return _ProviderTile(
         provider: provider,
-        unlinkIcon: unlinkIcon,
+        trailingIcon: trailingIcon,
         name: translations.authentication.providerPickerDialog.twitter.title,
         subtitle: translations.authentication.providerPickerDialog.twitter.subtitle,
         invertIconOnBrightnessChange: true,
@@ -108,7 +100,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
     if (provider is GithubAuthenticationProvider) {
       return _ProviderTile(
         provider: provider,
-        unlinkIcon: unlinkIcon,
+        trailingIcon: trailingIcon,
         name: translations.authentication.providerPickerDialog.github.title,
         subtitle: translations.authentication.providerPickerDialog.github.subtitle,
         invertIconOnBrightnessChange: true,
@@ -120,12 +112,12 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
   /// Opens the dialog.
   static Future<FirebaseAuthenticationProvider?> openDialog(
     BuildContext context, {
-    bool link = false,
+    DialogMode dialogMode = DialogMode.authenticate,
   }) =>
       showAdaptiveDialog<FirebaseAuthenticationProvider>(
         context: context,
         builder: (context) => AuthenticationProviderPickerDialog(
-          link: link,
+          dialogMode: dialogMode,
         ),
       );
 }
@@ -138,8 +130,8 @@ class _ProviderTile extends StatefulWidget {
   /// The icon size.
   final double size;
 
-  /// The icon to append when linked.
-  final IconData? unlinkIcon;
+  /// The icon to append when needed.
+  final IconData? trailingIcon;
 
   /// The provider name.
   final String name;
@@ -154,7 +146,7 @@ class _ProviderTile extends StatefulWidget {
   const _ProviderTile({
     required this.provider,
     this.size = AuthenticationProviderPickerDialog._kDefaultIconSize,
-    this.unlinkIcon,
+    this.trailingIcon,
     required this.name,
     required this.subtitle,
     this.invertIconOnBrightnessChange = false,
@@ -186,6 +178,50 @@ class _ProviderTileState extends State<_ProviderTile> with BrightnessListener {
         title: Text(widget.name),
         subtitle: Text(widget.subtitle),
         onTap: () => Navigator.pop(context, widget.provider),
-        trailing: widget.unlinkIcon == null ? null : Icon(widget.unlinkIcon),
+        trailing: widget.trailingIcon == null ? null : Icon(widget.trailingIcon),
       );
+}
+
+/// Allows to change the dialog behavior.
+enum DialogMode {
+  /// Whether the user is trying to authenticate himself.
+  authenticate(
+    shouldDisplay: _shouldDisplayInAuthenticateMode,
+  ),
+
+  /// Whether the user is trying to link an authentication provider.
+  link(
+    shouldDisplay: _shouldDisplayInLinkMode,
+  ),
+
+  /// Whether the user is trying to reauthenticate.
+  reAuthenticate(
+    shouldDisplay: _shouldDisplayInReAuthenticateMode,
+    getTrailingIcon: _getLinkModeTrailingIcon,
+  );
+
+  /// Whether the [provider] should be displayed.
+  final bool Function(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) _shouldDisplay;
+
+  /// The trailing icon to display.
+  final IconData? Function(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider)? _getTrailingIcon;
+
+  /// Creates a new dialog mode instance.
+  const DialogMode({
+    required bool Function(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) shouldDisplay,
+    IconData? Function(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider)? getTrailingIcon,
+  })  : _shouldDisplay = shouldDisplay,
+        _getTrailingIcon = getTrailingIcon;
+
+  /// Whether the [provider] should be displayed in [authenticate] mode.
+  static bool _shouldDisplayInAuthenticateMode(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) => !currentProviders.contains(provider);
+
+  /// Whether the [provider] should be displayed in [link] mode.
+  static bool _shouldDisplayInLinkMode(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) => provider is LinkProvider;
+
+  /// Whether the [provider] should be displayed in [reAuthenticate] mode.
+  static bool _shouldDisplayInReAuthenticateMode(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) => currentProviders.contains(provider);
+
+  /// Returns the [link] mode trailing icon.
+  static IconData? _getLinkModeTrailingIcon(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) => currentProviders.contains(provider) ? Icons.link_off : null;
 }

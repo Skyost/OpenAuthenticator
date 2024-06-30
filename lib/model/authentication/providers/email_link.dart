@@ -46,9 +46,29 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
       validator: TextInputDialog.validateEmail,
       keyboardType: TextInputType.emailAddress,
     );
-    if (email == null) {
+    if (email == null || !context.mounted) {
       return const ResultCancelled();
     }
+    return await _tryAuthenticate(context, email);
+  }
+
+  @override
+  Future<Result<String>> tryReAuthenticate(BuildContext context) async {
+    if (await isWaitingForConfirmation()) {
+      throw _ReAuthenticateException(message: 'Account needs to be confirmed in order to proceed.');
+    }
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null || user.email == null) {
+      throw _ReAuthenticateException(message: 'User must be logged in before re-authenticating.');
+    }
+    if (!context.mounted) {
+      return const ResultCancelled();
+    }
+    return _tryAuthenticate(context, user.email!);
+  }
+
+  /// Tries to authenticate the user with the given [email].
+  Future<Result<String>> _tryAuthenticate(BuildContext context, String email) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     ActionCodeSettings actionCodeSettings = ActionCodeSettings(
       url: App.firebaseLoginUrl,
@@ -157,4 +177,18 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
 
   @override
   String get providerId => EmailLinkAuthMethod.providerId;
+}
+
+/// Triggered when an error occurs while re-authenticating the user.
+class _ReAuthenticateException implements Exception {
+  /// The error message.
+  final String message;
+
+  /// Creates a new re-authentication exception instance.
+  _ReAuthenticateException({
+    required this.message,
+  });
+
+  @override
+  String toString() => message;
 }

@@ -12,6 +12,10 @@
     "title": "Unlink provider",
     "message": "Are you sure you want to unlink this authentication provider from your account ?"
   },
+  "deleteConfirmationDialog": {
+    "title": "Delete account",
+    "message": "Do you really want to delete your account ? Note that, because it is a sensitive action, we require you to reauthenticate before proceeding."
+  },
   "providerPickerDialog": {
     "title": "Pick a login method",
     "email": {

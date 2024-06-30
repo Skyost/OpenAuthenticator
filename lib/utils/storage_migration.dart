@@ -85,15 +85,20 @@ class StorageMigrationUtils {
     switch (result) {
       case ResultSuccess():
         if (logout) {
-          await showWaitingOverlay(
+          Result logoutResult = await showWaitingOverlay(
             context,
             future: ref.read(firebaseAuthenticationProvider.notifier).logout(),
           );
+          if (context.mounted) {
+            context.showSnackBarForResult(logoutResult, retryIfError: true);
+          }
+          return logoutResult is ResultSuccess;
+        } else {
+          if (context.mounted) {
+            context.showSnackBarForResult(result);
+          }
+          return true;
         }
-        if (context.mounted) {
-          SnackBarIcon.showSuccessSnackBar(context, text: translations.error.noError);
-        }
-        return true;
       case ResultError(:final exception):
         if (exception is! StorageMigrationException) {
           context.showSnackBarForResult(result, retryIfError: true);
@@ -133,13 +138,13 @@ class StorageMigrationUtils {
 
 /// The dialog that allows to confirm the operation.
 class _ConfirmationDialog extends StatefulWidget {
-
   /// Whether the user wants to enable the data synchronization.
   final bool enable;
 
-
   /// Creates a new confirmation dialog instance.
-  const _ConfirmationDialog({required this.enable,});
+  const _ConfirmationDialog({
+    required this.enable,
+  });
 
   @override
   State<StatefulWidget> createState() => _ConfirmationDialogState();
@@ -147,7 +152,9 @@ class _ConfirmationDialog extends StatefulWidget {
   /// Asks for the confirmation.
   static Future<_ConfirmationResult?> ask(BuildContext context, bool enable) => showAdaptiveDialog<_ConfirmationResult>(
         context: context,
-        builder: (context) => _ConfirmationDialog(enable: enable,),
+        builder: (context) => _ConfirmationDialog(
+          enable: enable,
+        ),
       );
 }
 

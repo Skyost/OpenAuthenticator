@@ -4,36 +4,36 @@ export default {
     privacyPolicy: 'Politique de confidentialité',
     termsOfService: 'Conditions d\'utilisation',
     contact: 'Contact',
-    downloadButton: 'Télécharger'
+    downloadButton: 'Télécharger',
   },
   footer: {
     app: {
       title: 'Application',
       index: 'Accueil',
-      download: 'Téléchargement'
+      download: 'Téléchargement',
     },
     legal: {
       title: 'Légal',
       license: 'Licence',
       privacyPolicy: 'Politique de confidentialité',
       termsOfService: 'Conditions d\'utilisation',
-      contact: 'Contact'
+      contact: 'Contact',
     },
-    language: 'Langage'
+    language: 'Langage',
   },
   index: {
     main: {
       title: {
         1: 'Sécurisez vos comptes',
-        2: 'avec une appli <strong>gratuite</strong>, <strong>open-source</strong> et <strong>faîte avec amour</strong>'
+        2: 'avec une appli <strong>gratuite</strong>, <strong>open-source</strong> et <strong>faîte avec amour</strong>',
       },
       features: {
         1: '<strong>Gratuit</strong> & <strong>open-source</strong>.',
         2: '<strong>Synchronisez</strong> facilement vos TOTPs (<em>Time-based One-Time Password</em>).',
         3: '<strong>Protégez</strong> vos données.',
-        4: 'Utilisable sur (presque) <strong>toutes les plateformes</strong>.'
+        4: 'Utilisable sur (presque) <strong>toutes les plateformes</strong>.',
       },
-      downloadButton: 'Télécharger'
+      downloadButton: 'Télécharger',
     },
     download: {
       title: '<strong>Télécharger</strong> l\'appli',
@@ -43,8 +43,8 @@ que sur <strong>iOS</strong>, ou encore <strong>macOS</strong>, <strong>Windows<
         loading: 'Chargement des liens...',
         availableSoonTemplate: 'Bientôt disponible pour %s !',
         availableOnTemplate: 'Télécharger pour %s',
-        morePlatformsButton: 'Une autre plateforme ?'
-      }
+        morePlatformsButton: 'Une autre plateforme ?',
+      },
     },
     openSource: {
       title: 'Open-source',
@@ -53,13 +53,13 @@ que sur <strong>iOS</strong>, ou encore <strong>macOS</strong>, <strong>Windows<
 Elle est disponible sous licence <a class="underline" href="https://github.com/Skyost/OpenAuthenticator">GNU GPL v3</a>.
 Vous pouvez contribuer au projet en soumettant vos <strong>pull requests</strong> sur Github,
 en <strong>faisant un don</strong> ou tout simplement en lui <strong>attribuant une étoile</strong> sur Github !`,
-        2: 'Un grand merci à <a class="underline" href="https://github.com/Skyost/OpenAuthenticator/contributors">tous les contributeurs</a> !'
+        2: 'Un grand merci à <a class="underline" href="https://github.com/Skyost/OpenAuthenticator/contributors">tous les contributeurs</a> !',
       },
       linkButtons: {
         github: 'Github',
-        paypal: 'Faire un don'
-      }
-    }
+        paypal: 'Faire un don',
+      },
+    },
   },
   privacyPolicy: {
     title: 'Politique de confidentialité',
@@ -75,7 +75,7 @@ et de l'enregistrement de l'Application. L'inscription auprès du Fournisseur de
 Cependant, veuillez noter que vous pourriez ne pas pouvoir utiliser certaines fonctionnalités proposées
 par l'Application à moins de vous inscrire auprès d'eux. Le Fournisseur de services peut également
 utiliser les informations que vous lui avez fournies pour vous contacter de temps en temps afin de vous
-fournir des informations importantes, des avis nécessaires et des promotions marketing.`
+fournir des informations importantes, des avis nécessaires et des promotions marketing.`,
     },
     automaticallyCollectedInfo: {
       title: 'Informations collectées automatiquement',
@@ -83,19 +83,19 @@ fournir des informations importantes, des avis nécessaires et des promotions ma
 mais sans s'y limiter, le type d'appareil mobile que vous utilisez, l'identifiant unique de votre appareil
 mobile, l'adresse IP de votre appareil mobile, votre système d'exploitation mobile, le type de navigateurs
 Internet mobiles que vous utilisez, et des informations sur la manière dont vous utilisez l'Application.
-Cette collecte de données est nécessaire pour mieux comprendre les journaux d'erreurs.`
+Cette collecte de données est nécessaire pour mieux comprendre les journaux d'erreurs.`,
     },
     locationInfo: {
       title: 'L\'Application collecte-t-elle des informations sur la localisation en temps réel précise de l\'appareil ?',
       content: `Cette Application ne recueille pas d'informations précises sur la localisation de votre
-appareil mobile.`
+appareil mobile.`,
     },
     thirdPartyAccess: {
       title: 'Les tiers voient-ils et/ou ont-ils accès aux informations obtenues par l\'Application ?',
       content: `Seules les données agrégées et anonymisées sont périodiquement transmises à des services
 externes pour aider le Fournisseur de services à améliorer l'Application et leur service.
 Le Fournisseur de services peut partager vos informations avec des tiers de la manière décrite dans cette
-déclaration de confidentialité.`
+déclaration de confidentialité.`,
     },
     thirdPartyProviders: {
       title: 'Fournisseurs tiers',
@@ -103,8 +103,8 @@ déclaration de confidentialité.`
       list: {
         googlePlayServices: '<a href="https://www.google.com/policies/privacy/" target="_blank">Services Google Play</a>',
         firebase: '<a href="https://firebase.google.com/support/privacy/" target="_blank">Firebase (y compris, mais sans s\'y limiter, Crashlytics, Cloud Firestore, ...)</a>',
-        revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>'
-      }
+        revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>',
+      },
     },
     disclosure: {
       title: 'Divulgation des informations',
@@ -117,14 +117,14 @@ assurer votre sécurité ou celle des autres, enquêter sur la fraude ou répond
 gouvernement ;`,
         3: `avec leurs fournisseurs de services de confiance qui travaillent en leur nom,
 n'ont pas d'utilisation indépendante des informations que nous leur divulguons et ont accepté de respecter
-les règles énoncées dans cette déclaration de confidentialité.`
-      }
+les règles énoncées dans cette déclaration de confidentialité.`,
+      },
     },
     optOut: {
       title: 'Quels sont mes droits de désinscription ?',
       content: `Vous pouvez arrêter toute collecte d'informations par l'Application facilement en
 désinstallant l'Application. Vous pouvez utiliser les processus de désinstallation standard disponibles
-dans le cadre de votre appareil mobile ou via le marché ou le réseau d'applications mobiles.`
+dans le cadre de votre appareil mobile ou via le marché ou le réseau d'applications mobiles.`,
     },
     dataRetention: {
       title: 'Politique de conservation des données, Gestion de vos informations',
@@ -140,14 +140,14 @@ Votre mot de passe maître n'est pas transmis à un serveur distant.
 <strong>Si vous l'oubliez, nous ne pouvons pas vous aider à le récupérer.</strong>
 Veuillez noter que, bien que nous nous efforcions de fournir une sécurité raisonnable
 pour les informations que nous traitons et que nous conservons, aucun système de sécurité ne peut
-empêcher toutes les violations de sécurité potentielles.`
+empêcher toutes les violations de sécurité potentielles.`,
     },
     children: {
       title: 'Enfants',
       content: `Le Fournisseur de services n'utilise pas l'Application pour solliciter sciemment
 des données auprès d'enfants de moins de 13 ans. L'Application ne s'adresse à personne de moins de 13 ans.
 Le Fournisseur de services ne collecte sciemment aucune information d'identification personnelle auprès
-d'enfants de moins de 13 ans.`
+d'enfants de moins de 13 ans.`,
     },
     security: {
       title: 'Sécurité',
@@ -158,19 +158,19 @@ données entre vos appareils, nous utilisons Firebase Cloud Firestore pour stock
 Leur <a href="https://en.wikipedia.org/wiki/Time-based_one-time_password#Security">secret et métadonnées</a>
 sont cryptés à l'aide d'un algorithme <a href="https://en.wikipedia.org/wiki/Galois/Counter_Mode">AES-GCM</a>
 avec une clé dérivée <a href="https://en.wikipedia.org/wiki/Argon2">Argon2</a> basée sur votre mot de
-passe maître et un sel aléatoire.`
+passe maître et un sel aléatoire.`,
     },
     changes: {
       title: 'Changements',
       content: 'Cette politique de confidentialité peut être mise à jour de temps à autre pour quelque raison que ce soit. Le Fournisseur de services vous informera de tout changement apporté à la politique de confidentialité en mettant à jour cette page avec la nouvelle politique de confidentialité.',
-      effectiveDate: 'Cette politique de confidentialité est en vigueur à compter du 01 avril 2024.'
+      effectiveDate: 'Cette politique de confidentialité est en vigueur à compter du 01 avril 2024.',
     },
     contact: {
       title: 'Contactez-nous',
       content: `Si vous avez des questions concernant la confidentialité lors de l'utilisation de
-l'Application, ou si vous avez des questions sur les pratiques, veuillez <a href="/contact">nous contacter</a>.`
+l'Application, ou si vous avez des questions sur les pratiques, veuillez <a href="/contact">nous contacter</a>.`,
     },
-    credit: 'Merci à <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> pour cette politique de confidentialité.'
+    credit: 'Merci à <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> pour cette politique de confidentialité.',
   },
   termsOfService: {
     title: 'Conditions générales d\'utilisation',
@@ -200,7 +200,7 @@ Ci-dessous sont les liens vers les conditions générales des fournisseurs de se
     thirdPartyTermsList: {
       googlePlayServices: '<a href="https://www.google.com/policies/privacy/" target="_blank">Services Google Play</a>',
       firebase: '<a href="https://firebase.google.com/support/privacy/" target="_blank">Firebase (y compris, mais sans s\'y limiter, Crashlytics, Cloud Firestore, ...)</a>',
-      revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>'
+      revenueCat: '<a href="https://www.revenuecat.com/privacy" target="_blank">RevenueCat</a>',
     },
     responsibility: `Veuillez noter que le Fournisseur de services ne assume pas la responsabilité pour certains aspects.
 Certaines fonctions de l'Application nécessitent une connexion Internet active, qui peut être Wi-Fi ou fournie
@@ -232,7 +232,7 @@ et (si nécessaire) le supprimer de votre appareil.`,
       noWarranty: {
         title: 'Aucune garantie',
         content: `Tout le contenu (y compris, mais sans s'y limiter, vos TOTP) est mis à disposition TEL QUEL et le Fournisseur de services
-ne propose aucune garantie d'aucune sorte, ou ne garantit que le Contenu sera exact, complet ou exempt d'erreurs.`
+ne propose aucune garantie d'aucune sorte, ou ne garantit que le Contenu sera exact, complet ou exempt d'erreurs.`,
       },
       synchronizationSecurity: {
         title: 'Synchronisation et sécurité',
@@ -242,7 +242,7 @@ qu'elles seront stockées sur les serveurs Firebase.
 Veuillez noter que, bien que nous nous efforcions de fournir une sécurité raisonnable pour les informations que nous traitons et
 maintenons, aucun système de sécurité ne peut prévenir toutes les violations potentielles de la sécurité.
 Par conséquent, nous ne sommes pas responsables de toute perte de données, de toute fuite ou de tout dommage résultant de l'utilisation de
-l'application.`
+l'application.`,
       },
       releaseIndemnity: {
         title: 'Délivrance et indemnisation',
@@ -251,7 +251,7 @@ le Fournisseur de services découlant de votre utilisation de l'Application ou d
 indemniser et dégager de toute responsabilité le Fournisseur de services, ses dirigeants, directeurs, employés, partenaires, contributeurs ou concédants de licence de et
 contre toute réclamation, dommage, obligation, perte, responsabilité, (y compris, mais sans s'y limiter, les honoraires d'avocat) découlant de : (i) votre utilisation de et
 accès à l'Application ; (ii) votre violation de l'une quelconque des conditions de ces conditions d'utilisation ; et (iii) votre violation de tout droit de tiers, y compris, sans limitation,
-tout droit d'auteur, de propriété ou de confidentialité.`
+tout droit d'auteur, de propriété ou de confidentialité.`,
       },
       limitationOfLiability: {
         title: 'Limitation de responsabilité',
@@ -260,22 +260,22 @@ employés, partenaires, contributeurs ou concédants de licence ne peuvent être
 punitif ou consécutif pouvant résulter de l'accès, de l'utilisation ou de l'incapacité d'accéder au contenu de l'Application, y compris, sans limitation,
 l'utilisation ou la confiance en les informations, les interruptions, les erreurs, les défauts, les erreurs,
 omissions, suppressions de fichiers, retards dans les opérations ou la transmission, non-livraison d'informations, divulgation de
-communications, ou tout autre défaillance de performance.`
-      }
+communications, ou tout autre défaillance de performance.`,
+      },
     },
     changes: {
       title: 'Modifications de ces conditions générales d\'utilisation',
       content: `Le Fournisseur de services peut mettre périodiquement à jour ses conditions générales.
 Par conséquent, il est conseillé de consulter régulièrement cette page pour connaître les changements éventuels.
 Le Fournisseur de services vous informera de tout changement en publiant les nouvelles conditions générales sur cette page.`,
-      effectiveDate: 'Ces conditions générales sont en vigueur à compter du 01 avril 2024.'
+      effectiveDate: 'Ces conditions générales sont en vigueur à compter du 01 avril 2024.',
     },
     contact: {
       title: 'Contactez-nous',
       content: `Si vous avez des questions ou des suggestions concernant les Conditions générales d'utilisation,
-n'hésitez pas à <nuxt-link to="/contact">nous contacter</nuxt-link>.`
+n'hésitez pas à <nuxt-link to="/contact">nous contacter</nuxt-link>.`,
     },
-    credit: 'Merci à <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> pour ces conditions générales d\'utilisation.'
+    credit: 'Merci à <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> pour ces conditions générales d\'utilisation.',
   },
   contact: {
     title: 'Contact',
@@ -286,11 +286,11 @@ ci-dessous.`,
     form: {
       name: {
         label: 'Votre nom',
-        placeholder: 'Entrez votre nom ici'
+        placeholder: 'Entrez votre nom ici',
       },
       email: {
         label: 'Votre e-mail',
-        placeholder: 'Entrez votre adresse e-mail ici'
+        placeholder: 'Entrez votre adresse e-mail ici',
       },
       subject: {
         label: 'Sujet de votre message',
@@ -298,16 +298,16 @@ ci-dessous.`,
           accountDeletion: 'Suppression de mon compte',
           moreInfoNeeded: 'Demande d\'informations complémentaires',
           commercial: 'Commercial',
-          other: 'Autre'
-        }
+          other: 'Autre',
+        },
       },
       message: {
         label: 'Contenu de votre message',
-        placeholder: 'Entrez votre message ici'
+        placeholder: 'Entrez votre message ici',
       },
       success: 'Votre requête a été transmise avec succès.',
       error: 'Une erreur est survenue pendant l\'envoi de votre message.',
-      send: 'Envoyer'
-    }
-  }
+      send: 'Envoyer',
+    },
+  },
 }

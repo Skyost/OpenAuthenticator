@@ -63,8 +63,14 @@ class FirebaseAuthUser extends User {
   @override
   Future<String?> getIdToken({bool forceRefresh = false}) async => await _firebaseUser.getIdToken(forceRefresh);
 
+  @override
+  Future<void> delete() async => await _firebaseUser.delete();
+
   /// Links the current user to the given [provider].
   Future<firebase_auth.UserCredential> linkWithProvider(firebase_auth.AuthProvider provider) => _firebaseUser.linkWithProvider(provider);
+
+  /// Re-authenticates the current user using the given [provider].
+  Future<firebase_auth.UserCredential> reAuthenticateWithProvider(firebase_auth.AuthProvider provider) => _firebaseUser.reauthenticateWithProvider(provider);
 
   /// Unlinks the current user from the given [providerId].
   Future<firebase_auth.User> unlinkFromProvider(String providerId) => _firebaseUser.unlink(providerId);
@@ -76,6 +82,13 @@ mixin _ProviderAuthMethod on FirebaseAuthMethod, CanLinkTo {
   @protected
   Future<SignInResult> signIn() async {
     firebase_auth.UserCredential credential = await firebase_auth.FirebaseAuth.instance.signInWithProvider(_createAuthProvider());
+    return await credentialToResult(credential);
+  }
+
+  @override
+  Future<SignInResult> reAuthenticates(User user) async {
+    assert(user is FirebaseAuthUser, 'You must use this class with FirebaseAuthDefault.');
+    firebase_auth.UserCredential credential = await (user as FirebaseAuthUser).reAuthenticateWithProvider(_createAuthProvider());
     return await credentialToResult(credential);
   }
 
@@ -154,6 +167,9 @@ class EmailLinkAuthMethodDefault extends EmailLinkAuthMethod {
       refreshToken: credential.user?.refreshToken,
     );
   }
+
+  @override
+  Future<SignInResult> reAuthenticates(User user) async => await signIn();
 
   /// Sends a sign-in link to the email.
   static Future<void> sendSignInLink(String email, ActionCodeSettings settings) => firebase_auth.FirebaseAuth.instance.sendSignInLinkToEmail(

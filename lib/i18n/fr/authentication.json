@@ -12,6 +12,10 @@
     "title": "Supprimer la liaison au fournisseur",
     "message": "Voulez-vous vraiment supprimer la liaison e votre compte à ce fournisseur d'authentification ?"
   },
+  "deleteConfirmationDialog": {
+    "title": "Supprimer votre compte",
+    "message": "Voulez-vous vraiment supprimer votre compte ? Veuillez noter que, parce qu'il s'agit d'une action sensible, vous devez vous réautentifier avant de continuer."
+  },
   "providerPickerDialog": {
     "title": "Choisissez une méthode de connexion",
     "email": {

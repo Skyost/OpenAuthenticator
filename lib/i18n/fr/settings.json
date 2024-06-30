@@ -104,6 +104,10 @@
           "enabled": "Souscrivez à l'Abonnement Contributeur pour en synchroniser plus !"
         }
       }
+    },
+    "deleteAccount": {
+      "title": "Supprimer votre compte",
+      "subtitle": "Supprime votre compte ainsi que vos données synchronisées en ligne."
     }
   },
   "backups": {

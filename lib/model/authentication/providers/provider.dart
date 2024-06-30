@@ -99,9 +99,25 @@ abstract class FirebaseAuthenticationProvider extends Notifier<FirebaseAuthentic
     }
   }
 
-  /// Tries to log in.
+  /// Tries to log-in.
   @protected
   Future<Result<String>> trySignIn(BuildContext context);
+
+  /// Re-authenticates the current user.
+  Future<Result<String>> reAuthenticate(BuildContext context) async {
+    try {
+      return await tryReAuthenticate(context);
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: FirebaseAuthenticationException(ex),
+        stacktrace: stacktrace,
+      );
+    }
+  }
+
+  /// Tries to re-authenticate.
+  @protected
+  Future<Result<String>> tryReAuthenticate(BuildContext context);
 
   /// Whether to show the loading dialog.
   bool get showLoadingDialog => true;
@@ -134,13 +150,6 @@ mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
 
 /// Allows to link an account.
 mixin LinkProvider on FirebaseAuthenticationProvider {
-  @override
-  @protected
-  Future<Result<String>> trySignIn(BuildContext context) => tryTo(
-        context,
-        action: FirebaseAuth.instance.signInWith,
-      );
-
   /// Links the current provider.
   Future<Result<String>> link(BuildContext context) async {
     try {
@@ -155,27 +164,11 @@ mixin LinkProvider on FirebaseAuthenticationProvider {
 
   /// Tries to link the current provider.
   @protected
-  Future<Result<String>> tryLink(BuildContext context) => tryTo(
-        context,
-        action: FirebaseAuth.instance.linkTo,
-      );
+  Future<Result<String>> tryLink(BuildContext context);
 
   /// Tries to unlink the current provider.
   Future<Result<String>> unlink(BuildContext context) async {
     SignInResult result = await FirebaseAuth.instance.unlinkFrom(providerId);
-    return ResultSuccess(value: result.email);
-  }
-
-  /// Creates the default auth method instance.
-  CanLinkTo createDefaultAuthMethod(BuildContext context);
-
-  /// Tries to do the specified [credentialAction] or [providerAction].
-  @protected
-  Future<Result<String>> tryTo(
-    BuildContext context, {
-    required Future<SignInResult> Function(CanLinkTo) action,
-  }) async {
-    SignInResult result = await action(createDefaultAuthMethod(context));
     return ResultSuccess(value: result.email);
   }
 }
@@ -191,13 +184,33 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
   /// Whether we should use a [T] instead of directly calling `method.signIn`.
   bool get shouldFallback => currentPlatform == Platform.windows || currentPlatform == Platform.linux;
 
-  @override
+  /// Creates the default auth method instance.
   CanLinkTo createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []});
 
   /// Creates the auth method from the [response].
   CanLinkTo createRestAuthMethod(BuildContext context, OAuth2Response response);
 
   @override
+  @protected
+  Future<Result<String>> trySignIn(BuildContext context) => tryTo(
+    context,
+    action: FirebaseAuth.instance.signInWith,
+  );
+
+  @override
+  @protected
+  Future<Result<String>> tryLink(BuildContext context) => tryTo(
+    context,
+    action: FirebaseAuth.instance.linkTo,
+  );
+
+  @override
+  Future<Result<String>> tryReAuthenticate(BuildContext context) => tryTo(
+    context,
+    action: FirebaseAuth.instance.reAuthenticateWith,
+  );
+
+  /// Tries to do the specified [action].
   @protected
   Future<Result<String>> tryTo(
     BuildContext context, {

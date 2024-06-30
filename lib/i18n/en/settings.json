@@ -104,6 +104,10 @@
           "enabled": "Subscribe to the Contributor Plan to synchronize more !"
         }
       }
+    },
+    "deleteAccount": {
+      "title": "Delete your account",
+      "subtitle": "Delete your account and all your synchronized data."
     }
   },
   "backups": {

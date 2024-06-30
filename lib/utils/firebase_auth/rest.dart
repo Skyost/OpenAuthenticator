@@ -115,6 +115,9 @@ class FirebaseAuthRest extends FirebaseAuth {
 
   /// Triggered when the current user has changed.
   void _onUserChanged({String methodChannelCall = _kCallUserChanged}) {
+    if (_currentUser != null && _currentUser!._deleted) {
+      _currentUser = null;
+    }
     _controller.add(_currentUser);
     if (_currentUser == null) {
       SimpleSecureStorage.delete(_kUserData);
@@ -184,6 +187,9 @@ class RestUser extends User with ChangeNotifier {
 
   /// The expiration date.
   DateTime expirationDate;
+
+  /// Whether the user is deleted.
+  bool _deleted = false;
 
   /// Creates a new REST user instance.
   RestUser._({
@@ -308,6 +314,32 @@ class RestUser extends User with ChangeNotifier {
     return true;
   }
 
+  @override
+  Future<bool> delete() async {
+    String idToken = await getIdToken();
+    http.Response response = await http.post(
+      Uri.https(
+        'identitytoolkit.googleapis.com',
+        '/v1/accounts:delete',
+        {
+          'key': DefaultFirebaseOptions.currentPlatform.apiKey,
+        },
+      ),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      body: jsonEncode({
+        'idToken': idToken,
+      }),
+    );
+    if (response.statusCode != 200) {
+      return false;
+    }
+    _deleted = true;
+    notifyListeners();
+    return true;
+  }
+
   /// Refreshes the user data from the [data].
   void _refreshFromResponse(Map<String, dynamic> data) {
     _email ??= data['email'];
@@ -327,6 +359,9 @@ class RestUser extends User with ChangeNotifier {
 mixin _RestIdpAuthMethod on FirebaseAuthMethod, CanLinkTo {
   @override
   Future<SignInResult> signIn() => _doAction();
+
+  @override
+  Future<SignInResult> reAuthenticates(User user) async => await signIn();
 
   @override
   Future<SignInResult> linkTo(User user) async {
@@ -464,6 +499,9 @@ class EmailLinkAuthMethodRest extends EmailLinkAuthMethod {
       expiresIn: int.tryParse(data['expiresIn'] ?? ''),
     );
   }
+
+  @override
+  Future<SignInResult> reAuthenticates(User user) async => await signIn();
 }
 
 /// Authenticates using Github with an HTTP client.
