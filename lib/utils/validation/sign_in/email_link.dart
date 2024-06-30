@@ -65,8 +65,7 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInR
     Uri? uri = Uri.tryParse(url);
     String? apiKey = uri?.queryParameters['apiKey'];
     String? oobCode = uri?.queryParameters['oobCode'];
-    String? email = uri?.queryParameters['email'];
-    if (apiKey == null || oobCode == null || email == null) {
+    if (apiKey == null || oobCode == null) {
       return ResultError(
         exception: ValidationException(code: _kErrorInvalidUrl),
       );

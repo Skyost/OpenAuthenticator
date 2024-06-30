@@ -58,6 +58,14 @@ class AccountUtils {
 
   /// Prompts the user to choose an authentication provider, use it to re-authenticate and delete its account.
   static Future<void> tryDeleteAccount(BuildContext context, WidgetRef ref) async {
+    bool confirm = await ConfirmationDialog.ask(
+      context,
+      title: translations.authentication.deleteConfirmationDialog.title,
+      message: translations.authentication.deleteConfirmationDialog.message,
+    );
+    if (!confirm || !context.mounted) {
+      return;
+    }
     FirebaseAuthenticationProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.reAuthenticate);
     if (provider == null || !context.mounted) {
       return;

@@ -192,12 +192,12 @@ enum DialogMode {
   /// Whether the user is trying to link an authentication provider.
   link(
     shouldDisplay: _shouldDisplayInLinkMode,
+    getTrailingIcon: _getLinkModeTrailingIcon,
   ),
 
   /// Whether the user is trying to reauthenticate.
   reAuthenticate(
     shouldDisplay: _shouldDisplayInReAuthenticateMode,
-    getTrailingIcon: _getLinkModeTrailingIcon,
   );
 
   /// Whether the [provider] should be displayed.
