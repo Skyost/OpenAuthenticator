@@ -78,8 +78,20 @@ class AccountUtils {
       action: (context, provider) => provider.reAuthenticate(context),
       timeoutMessage: translations.error.timeout.authentication,
       needConfirmation: provider is ConfirmationProvider,
+      handleResult: false,
     );
-    if (result is! ResultSuccess<String> || !context.mounted) {
+    if (!context.mounted) {
+      return;
+    }
+    if (result is! ResultSuccess<String>) {
+      handleAuthenticationResult(
+        context,
+        ref,
+        provider,
+        result,
+        needConfirmation: provider is ConfirmationProvider,
+        handleDifferentCredentialError: true,
+      );
       return;
     }
     Result deleteResult = await showWaitingOverlay(
@@ -100,6 +112,7 @@ class AccountUtils {
     String? waitingDialogMessage,
     String? timeoutMessage,
     bool needConfirmation = false,
+    bool handleResult = true,
   }) async {
     Result<String> result;
     if (provider.showLoadingDialog) {
@@ -113,7 +126,7 @@ class AccountUtils {
     } else {
       result = await action(context, provider);
     }
-    if (context.mounted) {
+    if (context.mounted && handleResult) {
       handleAuthenticationResult(
         context,
         ref,
@@ -180,15 +193,8 @@ class AccountUtils {
                   content: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message),
                   actions: [
                     TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        trySignIn(context, ref);
-                      },
-                      child: Text(MaterialLocalizations.of(context).okButtonLabel),
-                    ),
-                    TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+                      child: Text(MaterialLocalizations.of(context).closeButtonLabel),
                     ),
                   ],
                 ),

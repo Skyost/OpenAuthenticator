@@ -146,6 +146,9 @@ class LocalStorage extends _$LocalStorage with Storage, AutoTriggerListeners {
   Future<void> saveSecretsSalt(Salt salt) => salt.saveToLocalStorage();
 
   @override
+  Future<void> deleteSecretsSalt() => Salt.deleteFromLocalStorage();
+
+  @override
   Future<void> onStorageTypeChanged({bool close = true}) async {
     await clearTotps();
     await super.onStorageTypeChanged(close: close);

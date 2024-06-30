@@ -36,7 +36,7 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
   Future<void> deleteFromLocalStorage({bool deleteSalt = false}) async {
     await SimpleSecureStorage.delete(_kPasswordDerivedKeyKey);
     if (deleteSalt) {
-      await Salt._deleteFromLocalStorage();
+      await Salt.deleteFromLocalStorage();
     }
   }
 
@@ -193,11 +193,11 @@ class Salt {
   }
 
   /// Deletes the salt from local storage.
-  static Future<void> _deleteFromLocalStorage() async => await SimpleSecureStorage.delete(_kPasswordDerivedKeySaltKey);
+  static Future<void> deleteFromLocalStorage() async => await SimpleSecureStorage.delete(_kPasswordDerivedKeySaltKey);
 
   /// Writes the salt to the secure storage.
   Future<void> saveToLocalStorage() async => await SimpleSecureStorage.write(_kPasswordDerivedKeySaltKey, base64.encode(value));
 
   @override
-  String toString() => base64Encode(value);
+  String toString() => base64.encode(value);
 }

@@ -67,13 +67,6 @@ class FirebaseAuthRest extends FirebaseAuth {
   }
 
   @override
-  Future<SignInResult> linkTo(CanLinkTo method) async {
-    SignInResult signInResult = await super.linkTo(method);
-    await _currentUser?.refreshUserInfo();
-    return signInResult;
-  }
-
-  @override
   Future<SignInResult> unlinkFrom(String providerId) async {
     if (!isLoggedIn) {
       throw Exception('You must be logged-in to unlink a provider.');
@@ -340,6 +333,20 @@ class RestUser extends User with ChangeNotifier {
     return true;
   }
 
+  @override
+  Future<SignInResult> reAuthenticateWith(FirebaseAuthMethod method) async {
+    SignInResult signInResult = await super.reAuthenticateWith(method);
+    await refreshUserInfo();
+    return signInResult;
+  }
+
+  @override
+  Future<SignInResult> linkTo(CanLinkTo method) async {
+    SignInResult signInResult = await super.linkTo(method);
+    await refreshUserInfo();
+    return signInResult;
+  }
+
   /// Refreshes the user data from the [data].
   void _refreshFromResponse(Map<String, dynamic> data) {
     _email ??= data['email'];
@@ -361,7 +368,7 @@ mixin _RestIdpAuthMethod on FirebaseAuthMethod, CanLinkTo {
   Future<SignInResult> signIn() => _doAction();
 
   @override
-  Future<SignInResult> reAuthenticates(User user) async => await signIn();
+  Future<SignInResult> reAuthenticate(User user) async => await signIn();
 
   @override
   Future<SignInResult> linkTo(User user) async {
@@ -501,7 +508,7 @@ class EmailLinkAuthMethodRest extends EmailLinkAuthMethod {
   }
 
   @override
-  Future<SignInResult> reAuthenticates(User user) async => await signIn();
+  Future<SignInResult> reAuthenticate(User user) async => await signIn();
 }
 
 /// Authenticates using Github with an HTTP client.

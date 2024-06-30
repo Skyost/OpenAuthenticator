@@ -199,16 +199,26 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
 
   @override
   @protected
-  Future<Result<String>> tryLink(BuildContext context) => tryTo(
-    context,
-    action: FirebaseAuth.instance.linkTo,
-  );
+  Future<Result<String>> tryLink(BuildContext context) async {
+    if (!FirebaseAuth.instance.isLoggedIn) {
+      return const ResultCancelled();
+    }
+    return await tryTo(
+      context,
+      action: FirebaseAuth.instance.currentUser!.linkTo,
+    );
+  }
 
   @override
-  Future<Result<String>> tryReAuthenticate(BuildContext context) => tryTo(
-    context,
-    action: FirebaseAuth.instance.reAuthenticateWith,
-  );
+  Future<Result<String>> tryReAuthenticate(BuildContext context) async {
+    if (!FirebaseAuth.instance.isLoggedIn) {
+      return const ResultCancelled();
+    }
+    return await tryTo(
+      context,
+      action: FirebaseAuth.instance.currentUser!.reAuthenticateWith,
+    );
+  }
 
   /// Tries to do the specified [action].
   @protected

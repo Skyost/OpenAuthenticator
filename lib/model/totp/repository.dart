@@ -148,12 +148,15 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
   }
 
   /// Clears all TOTPs.
-  Future<Result> clearTotps() async {
+  Future<Result> clearTotps({ bool deleteSalt = false }) async {
     try {
       TotpList totpList = await future;
       await totpList.waitBeforeNextOperation();
       Storage storage = await ref.read(storageProvider.future);
       await storage.clearTotps();
+      if (deleteSalt) {
+        await storage.deleteSecretsSalt();
+      }
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(

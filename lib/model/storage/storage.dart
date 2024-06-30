@@ -315,6 +315,9 @@ mixin Storage {
   /// Saves the salt that allows to encrypt secrets.
   Future<void> saveSecretsSalt(Salt salt);
 
+  /// Deletes the salt that allows to encrypt secrets.
+  Future<void> deleteSecretsSalt();
+
   /// Closes this storage instance.
   @mustCallSuper
   Future<void> close() async {

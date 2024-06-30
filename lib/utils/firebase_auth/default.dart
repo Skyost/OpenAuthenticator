@@ -86,7 +86,7 @@ mixin _ProviderAuthMethod on FirebaseAuthMethod, CanLinkTo {
   }
 
   @override
-  Future<SignInResult> reAuthenticates(User user) async {
+  Future<SignInResult> reAuthenticate(User user) async {
     assert(user is FirebaseAuthUser, 'You must use this class with FirebaseAuthDefault.');
     firebase_auth.UserCredential credential = await (user as FirebaseAuthUser).reAuthenticateWithProvider(_createAuthProvider());
     return await credentialToResult(credential);
@@ -169,7 +169,7 @@ class EmailLinkAuthMethodDefault extends EmailLinkAuthMethod {
   }
 
   @override
-  Future<SignInResult> reAuthenticates(User user) async => await signIn();
+  Future<SignInResult> reAuthenticate(User user) async => await signIn();
 
   /// Sends a sign-in link to the email.
   static Future<void> sendSignInLink(String email, ActionCodeSettings settings) => firebase_auth.FirebaseAuth.instance.sendSignInLinkToEmail(

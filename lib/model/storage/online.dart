@@ -29,6 +29,9 @@ class OnlineStorage with Storage {
   /// The user data document.
   static const String _kUserDataDocument = 'userData';
 
+  /// The last updated key.
+  static const String _kUpdatedKey = 'updated';
+
   /// The salt key.
   static const String _kSaltKey = 'salt';
 
@@ -153,7 +156,7 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<List<Totp>> listTotps({ GetOptions? getOptions }) async {
+  Future<List<Totp>> listTotps({GetOptions? getOptions}) async {
     QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get(getOptions);
     List<Totp> totps = [];
     for (QueryDocumentSnapshot doc in result.docs) {
@@ -205,7 +208,28 @@ class OnlineStorage with Storage {
   @override
   Future<void> saveSecretsSalt(Salt salt) async {
     DocumentReference<Map<String, dynamic>> userDoc = _userDocument;
-    await userDoc.set({_kSaltKey: salt.value}, SetOptions(merge: true));
+    await userDoc.set(
+      {
+        _kSaltKey: salt.value,
+        _kUpdatedKey: FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  @override
+  Future<void> deleteSecretsSalt() async {
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await _userDocument.get();
+    if (!userDoc.exists) {
+      return;
+    }
+    Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
+    data.remove(_kSaltKey);
+    if (data.isEmpty || (data.keys.length == 1 && data.keys.first == _kUpdatedKey)) {
+      await _userDocument.delete();
+    } else {
+      await _userDocument.set(data);
+    }
   }
 
   @override
@@ -243,13 +267,10 @@ class NotLoggedInException implements Exception {
 
 /// Allows to convert a TOTP to a Firestore map.
 extension _FirestoreTotp on Totp {
-  /// The last updated key.
-  static const String _kUpdatedKey = 'updated';
-
   /// Converts this TOTP to a Firestore map.
   Map<String, dynamic> toFirestore() => {
         ...toJson(),
-        _kUpdatedKey: FieldValue.serverTimestamp(),
+        OnlineStorage._kUpdatedKey: FieldValue.serverTimestamp(),
       };
 
   /// Creates a new TOTP from the specified JSON data.

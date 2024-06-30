@@ -39,14 +39,13 @@ class FirebaseAuthentication extends Notifier<FirebaseAuthenticationState> {
   /// Deletes the user.
   Future<Result> deleteUser() async {
     try {
-      Result result = await ref.read(totpRepositoryProvider.notifier).clearTotps();
+      Result result = await ref.read(totpRepositoryProvider.notifier).clearTotps(deleteSalt: true);
       if (result is! ResultSuccess) {
         return result;
       }
       await FirebaseAuth.instance.currentUser?.delete();
       return const ResultSuccess();
     } catch (ex, stacktrace) {
-      handleException(ex, stacktrace);
       return ResultError(
         exception: ex,
         stacktrace: stacktrace,
