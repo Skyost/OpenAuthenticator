@@ -79,10 +79,13 @@ class AccountUtils {
       timeoutMessage: translations.error.timeout.authentication,
       needConfirmation: provider is ConfirmationProvider,
     );
-    if (result is! ResultSuccess<String>) {
+    if (result is! ResultSuccess<String> || !context.mounted) {
       return;
     }
-    Result deleteResult = await ref.read(firebaseAuthenticationProvider.notifier).deleteUser();
+    Result deleteResult = await showWaitingOverlay(
+      context,
+      future: ref.read(firebaseAuthenticationProvider.notifier).deleteUser(),
+    );
     if (context.mounted) {
       context.showSnackBarForResult(deleteResult, retryIfError: true);
     }

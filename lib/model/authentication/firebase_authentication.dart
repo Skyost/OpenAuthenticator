@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
+import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
@@ -38,6 +39,10 @@ class FirebaseAuthentication extends Notifier<FirebaseAuthenticationState> {
   /// Deletes the user.
   Future<Result> deleteUser() async {
     try {
+      Result result = await ref.read(totpRepositoryProvider.notifier).clearTotps();
+      if (result is! ResultSuccess) {
+        return result;
+      }
       await FirebaseAuth.instance.currentUser?.delete();
       return const ResultSuccess();
     } catch (ex, stacktrace) {
