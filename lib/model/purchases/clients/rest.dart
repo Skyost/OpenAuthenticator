@@ -13,6 +13,7 @@ import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 /// Allows to communicate with RevenueCat thanks to its REST api.
 class RevenueCatRestClient extends RevenueCatClient {
@@ -194,7 +195,12 @@ class RevenueCatRestClient extends RevenueCatClient {
   }
 
   @override
-  Future<void> restorePurchases() => Future.value();
+  Future<Result> restorePurchases() async {
+    if (await canLaunchUrlString(AppContributorPlan.restRestorePurchasesLink)) {
+      await launchUrlString(AppContributorPlan.restRestorePurchasesLink);
+    }
+    return const ResultCancelled();
+  }
 
   @override
   Future<String> getManagementUrl() => Future.value(AppContributorPlan.stripeCustomerPortalLink);

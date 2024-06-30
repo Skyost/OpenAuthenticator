@@ -143,6 +143,9 @@ class AppContributorPlan {
     PackageType.monthly: kDebugMode ? 'price_1OxH1yA6p1nUn9O04XyDgF76' : 'price_1P2V0EA6p1nUn9O0DgwzkTfj',
   };
 
+  /// The link to restore purchases, using REST.
+  static const String restRestorePurchasesLink = 'https://openauthenticator.app/contact';
+
   /// The Stripe customer portal link.
   static const String stripeCustomerPortalLink = kDebugMode ? 'https://billing.stripe.com/p/login/test_28o5mbdMd6K5dQAcMM' : 'https://billing.stripe.com/p/login/dR65lCdFwb7d7ledQQ';
 }

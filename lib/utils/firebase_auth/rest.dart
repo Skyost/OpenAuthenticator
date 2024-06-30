@@ -336,7 +336,13 @@ class RestUser extends User with ChangeNotifier {
   @override
   Future<SignInResult> reAuthenticateWith(FirebaseAuthMethod method) async {
     SignInResult signInResult = await super.reAuthenticateWith(method);
-    await refreshUserInfo();
+    if (_uid != signInResult.localId) {
+      return signInResult;
+    }
+    if (signInResult.idToken != null && signInResult.refreshToken != null) {
+      _idToken = signInResult.idToken!;
+      refreshToken = signInResult.refreshToken!;
+    }
     return signInResult;
   }
 

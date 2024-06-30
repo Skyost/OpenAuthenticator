@@ -1,4 +1,5 @@
 import 'package:open_authenticator/model/purchases/clients/client.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
@@ -73,7 +74,10 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
   }
 
   @override
-  Future<CustomerInfo> restorePurchases() => Purchases.restorePurchases();
+  Future<Result> restorePurchases() async {
+    await Purchases.restorePurchases();
+    return const ResultSuccess();
+  }
 
   @override
   Future<String?> getManagementUrl() async {

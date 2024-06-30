@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
+import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/dialog/authentication_provider_picker.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
@@ -58,6 +60,15 @@ class AccountUtils {
 
   /// Prompts the user to choose an authentication provider, use it to re-authenticate and delete its account.
   static Future<void> tryDeleteAccount(BuildContext context, WidgetRef ref) async {
+    bool storageTypeChangeResult = await StorageMigrationUtils.changeStorageType(
+      context,
+      ref,
+      StorageType.local,
+    );
+    if (!storageTypeChangeResult || !context.mounted) {
+      return;
+    }
+
     bool confirm = await ConfirmationDialog.ask(
       context,
       title: translations.authentication.deleteConfirmationDialog.title,
@@ -66,11 +77,12 @@ class AccountUtils {
     if (!confirm || !context.mounted) {
       return;
     }
+
     FirebaseAuthenticationProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.reAuthenticate);
     if (provider == null || !context.mounted) {
       return;
     }
-    Result<String> result = await _tryTo(
+    Result<String> reAuthenticationResult = await _tryTo(
       context,
       ref,
       provider,
@@ -83,12 +95,12 @@ class AccountUtils {
     if (!context.mounted) {
       return;
     }
-    if (result is! ResultSuccess<String>) {
+    if (reAuthenticationResult is! ResultSuccess<String>) {
       handleAuthenticationResult(
         context,
         ref,
         provider,
-        result,
+        reAuthenticationResult,
         needConfirmation: provider is ConfirmationProvider,
         handleDifferentCredentialError: true,
       );

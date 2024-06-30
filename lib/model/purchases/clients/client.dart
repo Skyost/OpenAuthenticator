@@ -5,6 +5,7 @@ import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/purchases/clients/method_channel.dart';
 import 'package:open_authenticator/model/purchases/clients/rest.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:purchases_flutter/models/package_wrapper.dart';
 import 'package:purchases_flutter/models/purchases_configuration.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
@@ -79,7 +80,7 @@ abstract class RevenueCatClient {
   Future<Map<PackageType, String>> getPrices(Purchasable purchasable);
 
   /// Restores the user purchases, if possible.
-  Future<void> restorePurchases();
+  Future<Result> restorePurchases();
 
   /// Returns the user management URL.
   Future<String?> getManagementUrl();

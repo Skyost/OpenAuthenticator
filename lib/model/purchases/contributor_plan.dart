@@ -56,7 +56,10 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
       if (revenueCatClient == null) {
         throw _NoRevenueCatClientException();
       }
-      await revenueCatClient.restorePurchases();
+      Result result = await revenueCatClient.restorePurchases();
+      if (result is! ResultSuccess) {
+        return result;
+      }
       state = AsyncData(await revenueCatClient.hasEntitlement(AppContributorPlan.entitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive);
       return const ResultSuccess();
     } catch (ex, stacktrace) {
