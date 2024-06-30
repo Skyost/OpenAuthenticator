@@ -7,7 +7,7 @@ import 'package:open_authenticator/model/purchases/clients/rest.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:purchases_flutter/models/package_wrapper.dart';
-import 'package:purchases_flutter/models/purchases_configuration.dart';
+import 'package:purchases_flutter/models/purchases_configuration.dart' as rc_purchases_configuration;
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 /// The RevenueCat client provider.
@@ -17,16 +17,18 @@ final revenueCatClientProvider = Provider((ref) {
     return null;
   }
   PurchasesConfiguration? configuration = switch (currentPlatform) {
-    Platform.android => PurchasesConfiguration(AppCredentials.revenueCatPublicKeyAndroid),
-    Platform.iOS || Platform.macOS => PurchasesConfiguration(AppCredentials.revenueCatPublicKeyDarwin),
-    Platform.windows => PurchasesConfiguration(AppCredentials.revenueCatPublicKeyWindows),
-    Platform.linux => PurchasesConfiguration(AppCredentials.revenueCatPublicKeyLinux),
+    Platform.android => PurchasesConfiguration(apiKey: AppCredentials.revenueCatPublicKeyAndroid),
+    Platform.iOS || Platform.macOS => PurchasesConfiguration(apiKey: AppCredentials.revenueCatPublicKeyDarwin),
+    Platform.windows => PurchasesConfiguration(apiKey: AppCredentials.revenueCatPublicKeyWindows),
+    Platform.linux => PurchasesConfiguration(apiKey: AppCredentials.revenueCatPublicKeyLinux),
     _ => null,
   };
   if (configuration == null) {
     return null;
   }
-  configuration = configuration..appUserID = authenticationState.user.uid;
+  configuration = configuration
+    ..appUserID = authenticationState.user.uid
+    ..email = authenticationState.user.email;
   return RevenueCatClient.fromPlatform(purchasesConfiguration: configuration);
 });
 
@@ -113,4 +115,16 @@ enum Purchasable {
 
   /// Returns the Stripe "buy" URL corresponding to the [packageType].
   Uri? getStripeBuyUrl(PackageType packageType) => stripeBuyUrls.containsKey(packageType) ? Uri.https('buy.stripe.com', stripeBuyUrls[packageType]!) : null;
+}
+
+/// The purchases configuration object.
+class PurchasesConfiguration extends rc_purchases_configuration.PurchasesConfiguration {
+  /// The user email.
+  String? email;
+
+  /// Creates a new purchases configuration instance.
+  PurchasesConfiguration({
+    required String apiKey,
+    this.email,
+  }) : super(apiKey);
 }

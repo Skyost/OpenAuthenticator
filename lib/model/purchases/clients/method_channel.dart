@@ -53,6 +53,7 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
 
     Package? package = offering.availablePackages.firstWhereOrNull((package) => package.packageType == packageType);
     if (package != null) {
+      await Purchases.setEmail(purchasesConfiguration.email!);
       CustomerInfo customerInfo = await Purchases.purchasePackage(package);
       return List.of(customerInfo.entitlements.active.keys).cast<String>();
     }

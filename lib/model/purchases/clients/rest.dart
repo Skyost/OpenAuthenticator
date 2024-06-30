@@ -43,7 +43,7 @@ class RevenueCatRestClient extends RevenueCatClient {
         ..._revenueCatHeaders,
       },
     );
-    if (response.statusCode != 200) {
+    if (response.statusCode != 200 || response.statusCode != 201) {
       throw _InvalidResponseCodeException(code: response.statusCode);
     }
     Map<String, dynamic> json = jsonDecode(response.body);
@@ -60,7 +60,7 @@ class RevenueCatRestClient extends RevenueCatClient {
       headers: _revenueCatHeaders,
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode != 200 || response.statusCode != 201) {
       throw _InvalidResponseCodeException(code: response.statusCode);
     }
 
@@ -135,9 +135,12 @@ class RevenueCatRestClient extends RevenueCatClient {
         'app_user_id': purchasesConfiguration.appUserID!,
         'fetch_token': token,
         'product_id': packageType.defaultIdentifier,
+        'attributes': {
+          '\$email': purchasesConfiguration.email!,
+        }
       }),
     );
-    if (response.statusCode != 200) {
+    if (response.statusCode != 200 || response.statusCode != 201) {
       throw _InvalidResponseCodeException(code: response.statusCode);
     }
     Map<String, dynamic> json = jsonDecode(response.body);
@@ -164,7 +167,7 @@ class RevenueCatRestClient extends RevenueCatClient {
           // HttpHeaders.contentTypeHeader: 'application/x-www-form-urlencoded',
         },
       );
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 || response.statusCode != 201) {
         continue;
       }
       Map<String, dynamic> json = jsonDecode(response.body);
@@ -233,7 +236,9 @@ class _InvalidResponseCodeException implements Exception {
   final int code;
 
   /// Creates a new invalid response code exception instance.
-  _InvalidResponseCodeException({required this.code,});
+  _InvalidResponseCodeException({
+    required this.code,
+  });
 
   @override
   String toString() => 'Invalid status code : $code';
