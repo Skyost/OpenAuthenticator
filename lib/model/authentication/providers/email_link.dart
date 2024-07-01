@@ -9,7 +9,7 @@ import 'package:open_authenticator/utils/firebase_auth/default.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/utils/validation/sign_in/email_link.dart';
+import 'package:open_authenticator/utils/validation/email_confirmation.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -77,8 +77,8 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
       iOSBundleId: packageInfo.packageName,
     );
     if (currentPlatform == Platform.windows) {
-      EmailLinkSignIn emailLinkSignIn = EmailLinkSignIn(email: email);
-      Result<EmailLinkSignInResponse> result;
+      EmailConfirmation emailLinkSignIn = EmailConfirmation(email: email);
+      Result<EmailConfirmationResponse> result;
       if (context.mounted) {
         result = await showWaitingOverlay(
           context,
@@ -147,7 +147,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     SignInResult signInResult;
     String email = preferences.getString(_kFirebaseAuthenticationEmailKey)!;
     if (currentPlatform == Platform.windows) {
-      Result<EmailLinkSignInResponse> result = await EmailLinkSignIn(email: email).validateUrl(emailLink);
+      Result<EmailConfirmationResponse> result = await EmailConfirmation(email: email).validateUrl(emailLink);
       switch (result) {
         case ResultSuccess(:final value):
           signInResult = await FirebaseAuth.instance.signInWith(

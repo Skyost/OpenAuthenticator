@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:open_authenticator/utils/firebase_auth/default.dart';
 import 'package:open_authenticator/utils/firebase_auth/rest.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/validation/server.dart';
 
 /// Allows to either use FlutterFire's Firebase implementation or fallback to the REST API if needed.
 abstract class FirebaseAuth {
@@ -47,6 +48,9 @@ abstract class User {
   /// The user email.
   String? get email;
 
+  /// Whether the email is verified.
+  bool get emailVerified;
+
   /// The user providers list.
   List<String> get providers;
 
@@ -62,6 +66,13 @@ abstract class User {
 
   /// Links the user to a given method.
   Future<SignInResult> linkTo(CanLinkTo method) async => await method.linkTo(this);
+
+  /// Sends a verification email.
+  /// Should return the validation server that is being used, if any.
+  Future<ValidationServer?> sendEmailVerification();
+
+  /// Verifies the user's email.
+  Future<bool> verifyEmail(String oobCode);
 }
 
 /// A Firebase authentication method.
@@ -258,6 +269,9 @@ class SignInResult {
   /// The user email.
   final String? email;
 
+  /// Whether the email is verified.
+  final bool? emailVerified;
+
   /// The user unique id.
   final String? localId;
 
@@ -276,6 +290,7 @@ class SignInResult {
   /// Creates a new Sign-In result instance.
   const SignInResult({
     this.email,
+    this.emailVerified,
     this.localId,
     this.providerId,
     this.idToken,

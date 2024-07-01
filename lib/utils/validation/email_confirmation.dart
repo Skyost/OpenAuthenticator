@@ -8,7 +8,7 @@ import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 
 /// Allows to sign in using an email link.
-class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInResponse> {
+class EmailConfirmation extends CompleterAbstractValidationServer<EmailConfirmationResponse> {
   /// Triggered when the validation URL is invalid.
   static const String _kErrorInvalidUrl = 'invalid_url';
 
@@ -22,12 +22,14 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInR
   String? _idToken;
 
   /// Creates a new email link sign in instance.
-  EmailLinkSignIn({
+  EmailConfirmation({
     required this.email,
-  }) : super(path: 'email-link');
+  }) : super(path: 'email-confirmation');
 
   /// Sends a sign-in link to the [email].
-  Future<Result<EmailLinkSignInResponse>> sendSignInLinkToEmailAndWaitForConfirmation() async {
+  Future<Result<EmailConfirmationResponse>> sendSignInLinkToEmailAndWaitForConfirmation({
+    String requestType = 'EMAIL_SIGNIN',
+  }) async {
     _idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
     http.Response response = await http.post(
       Uri.https(
@@ -37,7 +39,7 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInR
           'key': DefaultFirebaseOptions.currentPlatform.apiKey,
           'continueUrl': url,
           'canHandleCodeInApp': true.toString(),
-          'requestType': 'EMAIL_SIGNIN',
+          'requestType': requestType,
           'email': email,
           if (_idToken != null) 'idToken': _idToken,
         },
@@ -56,12 +58,12 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInR
   }
 
   @override
-  FutureOr<Result<EmailLinkSignInResponse>> validate(HttpRequest request) async {
+  FutureOr<Result<EmailConfirmationResponse>> validate(HttpRequest request) async {
     return await validateUrl(request.uri.toString());
   }
 
   /// Validates the [url] as a sign-in link.
-  FutureOr<Result<EmailLinkSignInResponse>> validateUrl(String url) async {
+  FutureOr<Result<EmailConfirmationResponse>> validateUrl(String url) async {
     Uri? uri = Uri.tryParse(url);
     String? apiKey = uri?.queryParameters['apiKey'];
     String? oobCode = uri?.queryParameters['oobCode'];
@@ -71,7 +73,7 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInR
       );
     }
     return ResultSuccess(
-      value: EmailLinkSignInResponse(
+      value: EmailConfirmationResponse(
         email: email,
         oobCode: oobCode,
       ),
@@ -80,7 +82,7 @@ class EmailLinkSignIn extends CompleterAbstractValidationServer<EmailLinkSignInR
 }
 
 /// Contains the sign-in response.
-class EmailLinkSignInResponse {
+class EmailConfirmationResponse {
   /// The user email.
   final String email;
 
@@ -88,7 +90,7 @@ class EmailLinkSignInResponse {
   final String oobCode;
 
   /// Creates a new email link sign-in response instance.
-  const EmailLinkSignInResponse({
+  const EmailConfirmationResponse({
     required this.email,
     required this.oobCode,
   });

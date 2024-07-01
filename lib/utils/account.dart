@@ -64,6 +64,7 @@ class AccountUtils {
       context,
       ref,
       StorageType.local,
+      showConfirmation: false,
     );
     if (!storageTypeChangeResult || !context.mounted) {
       return;

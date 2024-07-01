@@ -44,4 +44,7 @@ class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with L
 
   @override
   bool get showLoadingDialog => false;
+
+  @override
+  bool get isTrusted => false;
 }

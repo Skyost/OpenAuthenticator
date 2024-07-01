@@ -26,14 +26,6 @@ class StorageMigrationUtils {
     String currentStorageMasterPassword = '',
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
-    Storage storage = await ref.read(storageProvider.future);
-    if (storage.type == newType) {
-      return true;
-    }
-    if (!context.mounted) {
-      return false;
-    }
-
     if (showConfirmation) {
       _ConfirmationResult? result = await _ConfirmationDialog.ask(context, newType == StorageType.online);
       if (result == null || !result.confirm || !context.mounted) {

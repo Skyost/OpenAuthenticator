@@ -104,6 +104,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
 
       await currentStorage.onStorageTypeChanged(close: false);
       await ref.read(storageTypeSettingsEntryProvider.notifier).changeValue(newType);
+      ref.invalidate(currentStorage.type.provider);
 
       return const ResultSuccess();
     } catch (ex, stacktrace) {

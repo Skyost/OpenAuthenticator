@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
+import 'package:open_authenticator/utils/validation/server.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Uses FlutterFire's Firebase implementation.
 class FirebaseAuthDefault extends FirebaseAuth {
@@ -58,6 +61,9 @@ class FirebaseAuthUser extends User {
   String? get email => _firebaseUser.email;
 
   @override
+  bool get emailVerified => _firebaseUser.emailVerified;
+
+  @override
   List<String> get providers => _firebaseUser.providerData.map((info) => info.providerId).toList();
 
   @override
@@ -74,6 +80,26 @@ class FirebaseAuthUser extends User {
 
   /// Unlinks the current user from the given [providerId].
   Future<firebase_auth.User> unlinkFromProvider(String providerId) => _firebaseUser.unlink(providerId);
+
+  @override
+  Future<ValidationServer?> sendEmailVerification() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    ActionCodeSettings actionCodeSettings = ActionCodeSettings(
+      url: App.firebaseLoginUrl,
+      handleCodeInApp: true,
+      androidPackageName: packageInfo.packageName,
+      iOSBundleId: packageInfo.packageName,
+    );
+    await _firebaseUser.sendEmailVerification(actionCodeSettings);
+    return null;
+  }
+
+  @override
+  Future<bool> verifyEmail(String oobCode) async {
+    firebase_auth.FirebaseAuth.instance.applyActionCode(oobCode);
+    await _firebaseUser.reload();
+    return _firebaseUser.emailVerified;
+  }
 }
 
 /// Authenticates using a [firebase_auth.AuthProvider].

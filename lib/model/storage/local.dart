@@ -47,7 +47,7 @@ class Totps extends Table {
 }
 
 /// The local storage provider.
-final localStorageProvider = FutureProvider.autoDispose<LocalStorage>((ref) async {
+final localStorageProvider = FutureProvider<LocalStorage>((ref) async {
   LocalStorage storage = LocalStorage();
   ref.onDispose(storage.close);
   return storage;
@@ -101,9 +101,7 @@ class LocalStorage extends _$LocalStorage with Storage, AutoTriggerListeners {
   @override
   Future<void> clearTotps() async {
     List<String> deleted = (await (delete(totps)).goAndReturn()).map((totp) => totp.uuid).toList();
-    for (StorageListener listener in listeners) {
-      listener.onTotpsDeleted(deleted);
-    }
+    super.deleteTotps(deleted);
   }
 
   @override

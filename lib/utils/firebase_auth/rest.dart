@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
+import 'package:open_authenticator/utils/validation/email_confirmation.dart';
+import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 
 /// The error message thrown when an invalid response is returned.
@@ -148,6 +150,9 @@ class RestUser extends User with ChangeNotifier {
   /// The "email" key.
   static const String _kEmail = 'email';
 
+  /// The "emailVerified" key.
+  static const String _kEmailVerified = 'emailVerified';
+
   /// The "providers" key.
   static const String _kProviders = 'providers';
 
@@ -169,6 +174,9 @@ class RestUser extends User with ChangeNotifier {
   /// Matches [User.email].
   String? _email;
 
+  /// Matches [User.emailVerified].
+  bool _emailVerified;
+
   /// Matches [User.providers].
   List<String> _providers;
 
@@ -188,12 +196,14 @@ class RestUser extends User with ChangeNotifier {
   RestUser._({
     required String uid,
     required String? email,
+    required bool emailVerified,
     required List<String> providers,
     required String idToken,
     required this.refreshToken,
     required this.expirationDate,
   })  : _uid = uid,
         _email = email,
+        _emailVerified = emailVerified,
         _providers = providers,
         _idToken = idToken;
 
@@ -202,6 +212,7 @@ class RestUser extends User with ChangeNotifier {
     RestUser user = RestUser._(
       uid: signInResult.localId!,
       email: signInResult.email,
+      emailVerified: signInResult.emailVerified ?? false,
       providers: [],
       idToken: signInResult.idToken!,
       refreshToken: signInResult.refreshToken!,
@@ -218,6 +229,7 @@ class RestUser extends User with ChangeNotifier {
       : this._(
           uid: json[RestUser._kUid],
           email: json[RestUser._kEmail],
+          emailVerified: json[RestUser._kEmailVerified],
           providers: (json[RestUser._kProviders] as List).cast<String>(),
           idToken: json[RestUser._kIdToken],
           refreshToken: json[RestUser._kRefreshToken],
@@ -231,13 +243,17 @@ class RestUser extends User with ChangeNotifier {
   String? get email => _email;
 
   @override
+  bool get emailVerified => _emailVerified;
+
+  @override
   List<String> get providers => _providers;
 
   /// Converts this user to a JSON map.
   Map<String, dynamic> toJson() => {
-        _kUid: uid,
-        _kEmail: email,
-        _kProviders: providers,
+        _kUid: _uid,
+        _kEmail: _email,
+        _kEmailVerified: _emailVerified,
+        _kProviders: _providers,
         _kIdToken: _idToken,
         _kRefreshToken: refreshToken,
         _kExpirationDate: expirationDate.millisecondsSinceEpoch,
@@ -353,9 +369,48 @@ class RestUser extends User with ChangeNotifier {
     return signInResult;
   }
 
+  @override
+  Future<ValidationServer?> sendEmailVerification() async {
+    EmailConfirmation emailConfirmation = EmailConfirmation(
+      email: _email!,
+    );
+    emailConfirmation.sendSignInLinkToEmailAndWaitForConfirmation(
+      requestType: 'VERIFY_EMAIL',
+    );
+    return emailConfirmation;
+  }
+
+  @override
+  Future<bool> verifyEmail(String oobCode) async {
+    String idToken = await getIdToken();
+    http.Response response = await http.post(
+      Uri.https(
+        'identitytoolkit.googleapis.com',
+        '/v1/accounts:update',
+        {
+          'key': DefaultFirebaseOptions.currentPlatform.apiKey,
+        },
+      ),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      body: jsonEncode({
+        'idToken': idToken,
+        'oobCode': oobCode,
+      }),
+    );
+    if (response.statusCode != 200) {
+      return false;
+    }
+
+    await refreshUserInfo();
+    return _emailVerified;
+  }
+
   /// Refreshes the user data from the [data].
   void _refreshFromResponse(Map<String, dynamic> data) {
     _email ??= data['email'];
+    _emailVerified = data['emailVerified'];
     List providerUserInfo = data['providerUserInfo'];
     if (providerUserInfo.isNotEmpty) {
       List<String> providers = [];

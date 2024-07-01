@@ -45,4 +45,7 @@ class TwitterAuthenticationProvider extends FirebaseAuthenticationProvider with 
     clientId: AppCredentials.twitterSignInClientId,
     timeout: fallbackTimeout,
   );
+
+  @override
+  bool get isTrusted => false;
 }

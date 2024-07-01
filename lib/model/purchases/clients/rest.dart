@@ -43,7 +43,7 @@ class RevenueCatRestClient extends RevenueCatClient {
         ..._revenueCatHeaders,
       },
     );
-    if (response.statusCode != 200 || response.statusCode != 201) {
+    if (response.statusCode != 200 && response.statusCode != 201) {
       throw _InvalidResponseCodeException(code: response.statusCode);
     }
     Map<String, dynamic> json = jsonDecode(response.body);
@@ -60,7 +60,7 @@ class RevenueCatRestClient extends RevenueCatClient {
       headers: _revenueCatHeaders,
     );
 
-    if (response.statusCode != 200 || response.statusCode != 201) {
+    if (response.statusCode != 200 && response.statusCode != 201) {
       throw _InvalidResponseCodeException(code: response.statusCode);
     }
 
@@ -140,7 +140,7 @@ class RevenueCatRestClient extends RevenueCatClient {
         }
       }),
     );
-    if (response.statusCode != 200 || response.statusCode != 201) {
+    if (response.statusCode != 200 && response.statusCode != 201) {
       throw _InvalidResponseCodeException(code: response.statusCode);
     }
     Map<String, dynamic> json = jsonDecode(response.body);
@@ -167,7 +167,7 @@ class RevenueCatRestClient extends RevenueCatClient {
           // HttpHeaders.contentTypeHeader: 'application/x-www-form-urlencoded',
         },
       );
-      if (response.statusCode != 200 || response.statusCode != 201) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
         continue;
       }
       Map<String, dynamic> json = jsonDecode(response.body);

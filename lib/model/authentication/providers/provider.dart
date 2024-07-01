@@ -121,6 +121,9 @@ abstract class FirebaseAuthenticationProvider extends Notifier<FirebaseAuthentic
 
   /// Whether to show the loading dialog.
   bool get showLoadingDialog => true;
+
+  /// Whether this provider should be trusted for a first login.
+  bool get isTrusted => true;
 }
 
 /// Allows to confirm a login.

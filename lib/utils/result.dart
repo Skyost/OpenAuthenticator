@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 
 /// Used all around the project to either return a success, a failure or a cancellation.
@@ -43,7 +44,9 @@ class ResultError<T> extends Result<T> {
   ResultError({
     this.exception,
     StackTrace? stacktrace,
-  }) : stacktrace = stacktrace ?? StackTrace.current;
+  }) : stacktrace = stacktrace ?? StackTrace.current {
+    handleException(exception, stacktrace);
+  }
 
   /// Creates a new result error instance from another [result].
   ResultError.fromAnother(ResultError result)
