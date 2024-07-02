@@ -37,6 +37,10 @@ abstract class FirebaseAuth {
 
   /// Sign-outs the current user.
   Future<void> signOut();
+
+  /// Deletes the user.
+  /// He may need to be recently authenticated.
+  Future<void> deleteUser();
 }
 
 /// Holds some info about the current user.
@@ -53,10 +57,6 @@ abstract class User {
   /// Should return the user id token.
   Future<String?> getIdToken({bool forceRefresh = false});
 
-  /// Deletes the user.
-  /// He may need to be recently authenticated.
-  Future<void> delete();
-
   /// Reloads the current user.
   Future<void> reload();
 
@@ -65,9 +65,6 @@ abstract class User {
 
   /// Links the user to a given method.
   Future<SignInResult> linkTo(CanLinkTo method) async => await method.linkTo(this);
-
-  /// Verifies the user email thanks to the given [oobCode].
-  Future<bool> verifyEmail(String oobCode);
 }
 
 /// A Firebase authentication method.

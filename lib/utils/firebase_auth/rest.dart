@@ -47,7 +47,9 @@ class FirebaseAuthRest extends FirebaseAuth {
     _currentUser = currentUser;
     currentUser.addListener(_onUserChanged);
     _onUserChanged(methodChannelCall: _kCallInstall);
-    await currentUser.reload();
+    if (!await currentUser.reload()) {
+      await signOut();
+    }
   }
 
   @override
@@ -100,41 +102,21 @@ class FirebaseAuthRest extends FirebaseAuth {
     await SimpleSecureStorage.delete(_kUserData);
     _currentUser?.dispose();
     _currentUser = null;
-    _controller.add(_currentUser);
+    _onUserChanged();
+  }
+
+  @override
+  Future<void> deleteUser() async {
+    if (_currentUser != null && await _currentUser!._sendDeleteRequest()) {
+      await signOut();
+    }
   }
 
   @override
   Stream<RestUser?> get userChanges => _controller.stream;
 
-
-  @override
-  Future<void> forceSendVerificationEmail() async {
-    String idToken = await _currentUser!.getIdToken();
-    await http.post(
-      Uri.https(
-        'identitytoolkit.googleapis.com',
-        '/v1/accounts:sendOobCode',
-        {
-          'key': DefaultFirebaseOptions.currentPlatform.apiKey,
-        },
-      ),
-      headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
-      },
-      body: jsonEncode({
-        'canHandleCodeInApp': false,
-        'requestType': 'VERIFY_EMAIL',
-        'email': _currentUser!._email,
-        'idToken': idToken,
-      }),
-    );
-  }
-
   /// Triggered when the current user has changed.
   void _onUserChanged({String methodChannelCall = _kCallUserChanged}) {
-    if (_currentUser != null && _currentUser!._deleted) {
-      _currentUser = null;
-    }
     _controller.add(_currentUser);
     if (_currentUser == null) {
       SimpleSecureStorage.delete(_kUserData);
@@ -172,9 +154,6 @@ class RestUser extends User with ChangeNotifier {
   /// The "email" key.
   static const String _kEmail = 'email';
 
-  /// The "emailVerified" key.
-  static const String _kEmailVerified = 'emailVerified';
-
   /// The "providers" key.
   static const String _kProviders = 'providers';
 
@@ -196,9 +175,6 @@ class RestUser extends User with ChangeNotifier {
   /// Matches [User.email].
   String _email;
 
-  /// Matches [User.emailVerified].
-  bool _emailVerified;
-
   /// Matches [User.providers].
   List<String> _providers;
 
@@ -211,21 +187,16 @@ class RestUser extends User with ChangeNotifier {
   /// The expiration date.
   DateTime expirationDate;
 
-  /// Whether the user is deleted.
-  bool _deleted = false;
-
   /// Creates a new REST user instance.
   RestUser._({
     required String uid,
     required String email,
-    required bool emailVerified,
     required List<String> providers,
     required String idToken,
     required this.refreshToken,
     required this.expirationDate,
   })  : _uid = uid,
         _email = email,
-        _emailVerified = emailVerified,
         _providers = providers,
         _idToken = idToken;
 
@@ -234,7 +205,6 @@ class RestUser extends User with ChangeNotifier {
     RestUser user = RestUser._(
       uid: signInResult.localId!,
       email: signInResult.email!,
-      emailVerified: signInResult.emailVerified ?? false,
       providers: [],
       idToken: signInResult.idToken!,
       refreshToken: signInResult.refreshToken!,
@@ -251,7 +221,6 @@ class RestUser extends User with ChangeNotifier {
       : this._(
           uid: json[RestUser._kUid],
           email: json[RestUser._kEmail],
-          emailVerified: json[RestUser._kEmailVerified],
           providers: (json[RestUser._kProviders] as List).cast<String>(),
           idToken: json[RestUser._kIdToken],
           refreshToken: json[RestUser._kRefreshToken],
@@ -265,16 +234,12 @@ class RestUser extends User with ChangeNotifier {
   String get email => _email;
 
   @override
-  bool get emailVerified => _emailVerified;
-
-  @override
   List<String> get providers => _providers;
 
   /// Converts this user to a JSON map.
   Map<String, dynamic> toJson() => {
         _kUid: _uid,
         _kEmail: _email,
-        _kEmailVerified: _emailVerified,
         _kProviders: _providers,
         _kIdToken: _idToken,
         _kRefreshToken: refreshToken,
@@ -335,12 +300,6 @@ class RestUser extends User with ChangeNotifier {
       }),
     );
     if (response.statusCode != 200) {
-      switch (response.statusCode) {
-        case 400:
-          _deleted = true;
-          break;
-      }
-      notifyListeners();
       return false;
     }
     Map<String, dynamic> data = jsonDecode(response.body);
@@ -351,8 +310,8 @@ class RestUser extends User with ChangeNotifier {
     return true;
   }
 
-  @override
-  Future<bool> delete() async {
+  /// Sends a delete request for the user.
+  Future<bool> _sendDeleteRequest() async {
     String idToken = await getIdToken();
     http.Response response = await http.post(
       Uri.https(
@@ -369,12 +328,7 @@ class RestUser extends User with ChangeNotifier {
         'idToken': idToken,
       }),
     );
-    if (response.statusCode != 200) {
-      return false;
-    }
-    _deleted = true;
-    notifyListeners();
-    return true;
+    return response.statusCode == 200;
   }
 
   @override
@@ -397,37 +351,9 @@ class RestUser extends User with ChangeNotifier {
     return signInResult;
   }
 
-  @override
-  Future<bool> verifyEmail(String oobCode) async {
-    String idToken = await getIdToken();
-    http.Response response = await http.post(
-      Uri.https(
-        'identitytoolkit.googleapis.com',
-        '/v1/accounts:update',
-        {
-          'key': DefaultFirebaseOptions.currentPlatform.apiKey,
-        },
-      ),
-      headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
-      },
-      body: jsonEncode({
-        'idToken': idToken,
-        'oobCode': oobCode,
-      }),
-    );
-    if (response.statusCode != 200) {
-      return false;
-    }
-
-    await reload();
-    return _emailVerified;
-  }
-
   /// Refreshes the user data from the [data].
   void _refreshFromResponse(Map<String, dynamic> data) {
     _email = data['email'];
-    _emailVerified = data['emailVerified'];
     List providerUserInfo = data['providerUserInfo'];
     if (providerUserInfo.isNotEmpty) {
       List<String> providers = [];

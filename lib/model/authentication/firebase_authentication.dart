@@ -48,7 +48,7 @@ class FirebaseAuthentication extends Notifier<FirebaseAuthenticationState> {
       if (state is FirebaseAuthenticationStateLoggedOut) {
         return const ResultCancelled();
       }
-      await FirebaseAuth.instance.currentUser?.delete();
+      await FirebaseAuth.instance.deleteUser();
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(

@@ -52,6 +52,8 @@ bool FlutterWindow::OnCreate() {
       auto userIdValue = arguments->find(flutter::EncodableValue("userUid"));
       if (userIdValue != arguments->end()) {
         user_uid = std::get<std::string>(userIdValue->second);
+      } else {
+        user_uid = std::optional<std::string>();
       }
       if (call.method_name() == "auth.install") {
         const std::string appName = std::get<std::string>(arguments->find(flutter::EncodableValue("appName"))->second);
@@ -165,7 +167,11 @@ bool FlutterWindow::GetCurrentUserIdToken(firebase::App* app, void* force_refres
 
   std::unique_ptr<flutter::MethodResultFunctions<>> result_handler = std::make_unique<flutter::MethodResultFunctions<>>(
     [handle](const flutter::EncodableValue* value) {
-      instance->future()->CompleteWithResult(handle, 0, std::get<std::string>(*value));
+      if (value == nullptr) {
+        instance->future()->Complete(handle, 0);
+      } else {
+        instance->future()->CompleteWithResult(handle, 0, std::get<std::string>(*value));
+      }
     },
     [handle](const std::string& error_code, const std::string& error_message, const void* error_details) {
       instance->future()->Complete(handle, -1, error_message.c_str());
