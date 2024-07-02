@@ -12,7 +12,7 @@
     "fourthParagraph": "Cette limite peut être supprimée à tout moment en souscrivant à l'Abonnement Contributeur dans les paramètres d'$app.",
     "button": {
       "loggedOut": "Connexion",
-      "waitingForConfirmation": "En attente de confirmation",
+      "verifyEmail": "Confirmer adresse mail",
       "loggedIn": "Connecté avec succès",
       "error": "Impossible de se connecter"
     }

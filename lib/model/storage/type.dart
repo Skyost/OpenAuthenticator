@@ -12,7 +12,7 @@ enum StorageType {
   online;
 
   /// Returns the provider associated with the storage type.
-  FutureProvider<Storage> get provider {
+  Provider<Storage> get provider {
     switch (this) {
       case StorageType.local:
         return localStorageProvider;

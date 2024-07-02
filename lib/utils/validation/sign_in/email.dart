@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -8,7 +9,7 @@ import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 
 /// Allows to sign in using an email link.
-class EmailConfirmation extends CompleterAbstractValidationServer<EmailConfirmationResponse> {
+class EmailSignIn extends CompleterAbstractValidationServer<EmailSignInResponse> {
   /// Triggered when the validation URL is invalid.
   static const String _kErrorInvalidUrl = 'invalid_url';
 
@@ -22,14 +23,24 @@ class EmailConfirmation extends CompleterAbstractValidationServer<EmailConfirmat
   String? _idToken;
 
   /// Creates a new email link sign in instance.
-  EmailConfirmation({
+  EmailSignIn({
     required this.email,
-  }) : super(path: 'email-confirmation');
+  }) : super(
+          path: 'email-login',
+        );
 
   /// Sends a sign-in link to the [email].
-  Future<Result<EmailConfirmationResponse>> sendSignInLinkToEmailAndWaitForConfirmation({
-    String requestType = 'EMAIL_SIGNIN',
-  }) async {
+  Future<Result<EmailSignInResponse>> sendLinkToEmailAndWaitForConfirmation() async {
+    Result<EmailSignInResponse>? result = await _sendLinkToEmail();
+    if (result != null) {
+      return result;
+    }
+    await start();
+    return await future;
+  }
+
+  /// Sends a sign-in link to the [email].
+  Future<Result<EmailSignInResponse>?> _sendLinkToEmail() async {
     _idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
     http.Response response = await http.post(
       Uri.https(
@@ -37,33 +48,32 @@ class EmailConfirmation extends CompleterAbstractValidationServer<EmailConfirmat
         '/v1/accounts:sendOobCode',
         {
           'key': DefaultFirebaseOptions.currentPlatform.apiKey,
-          'continueUrl': url,
-          'canHandleCodeInApp': true.toString(),
-          'requestType': requestType,
-          'email': email,
-          if (_idToken != null) 'idToken': _idToken,
         },
       ),
       headers: {
-        HttpHeaders.acceptHeader: 'application/json',
+        HttpHeaders.contentTypeHeader: 'application/json',
       },
+      body: jsonEncode({
+        'continueUrl': url,
+        'canHandleCodeInApp': true,
+        'requestType': 'EMAIL_SIGNIN',
+        'email': email,
+        if (_idToken != null) 'idToken': _idToken,
+      }),
     );
     if (response.statusCode != 200) {
       return ResultError(
         exception: ValidationException(code: _kErrorInvalidResponse),
       );
     }
-    await start();
-    return await completer!.future;
+    return null;
   }
 
   @override
-  FutureOr<Result<EmailConfirmationResponse>> validate(HttpRequest request) async {
-    return await validateUrl(request.uri.toString());
-  }
+  FutureOr<Result<EmailSignInResponse>> validate(HttpRequest request) async => await validateUrl(request.uri.toString());
 
-  /// Validates the [url] as a sign-in link.
-  FutureOr<Result<EmailConfirmationResponse>> validateUrl(String url) async {
+  /// Validates the [url].
+  FutureOr<Result<EmailSignInResponse>> validateUrl(String url) async {
     Uri? uri = Uri.tryParse(url);
     String? apiKey = uri?.queryParameters['apiKey'];
     String? oobCode = uri?.queryParameters['oobCode'];
@@ -73,7 +83,7 @@ class EmailConfirmation extends CompleterAbstractValidationServer<EmailConfirmat
       );
     }
     return ResultSuccess(
-      value: EmailConfirmationResponse(
+      value: EmailSignInResponse(
         email: email,
         oobCode: oobCode,
       ),
@@ -82,7 +92,7 @@ class EmailConfirmation extends CompleterAbstractValidationServer<EmailConfirmat
 }
 
 /// Contains the sign-in response.
-class EmailConfirmationResponse {
+class EmailSignInResponse {
   /// The user email.
   final String email;
 
@@ -90,7 +100,7 @@ class EmailConfirmationResponse {
   final String oobCode;
 
   /// Creates a new email link sign-in response instance.
-  const EmailConfirmationResponse({
+  const EmailSignInResponse({
     required this.email,
     required this.oobCode,
   });

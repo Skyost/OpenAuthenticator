@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
@@ -284,7 +285,13 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
         Result<String> result = await emailAuthenticationProvider.confirm(link.link.toString());
         if (mounted) {
-          AccountUtils.handleAuthenticationResult(context, ref, emailAuthenticationProvider, result);
+          AccountUtils.handleAuthenticationResult(context, ref, result);
+        }
+        break;
+      case 'verifyEmail':
+        Result<String> result = await ref.read(firebaseAuthenticationProvider.notifier).verifyEmail(link.link.queryParameters['oobCode'] ?? '');
+        if (mounted) {
+          AccountUtils.handleAuthenticationResult(context, ref, result);
         }
         break;
     }

@@ -20,7 +20,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
   @override
   FutureOr<Storage> build() async {
     StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
-    Storage storage = await ref.watch(storageType.provider.future);
+    Storage storage = ref.watch(storageType.provider);
     return storage;
   }
 
@@ -56,7 +56,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
         }
       }
 
-      Storage newStorage = await ref.read(newType.provider.future);
+      Storage newStorage = ref.read(newType.provider);
       DeletedTotpsDatabase deletedTotpsDatabase = ref.read(deletedTotpsProvider);
       close = () async {
         await newStorage.close();

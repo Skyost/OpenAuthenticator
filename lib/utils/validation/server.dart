@@ -106,7 +106,7 @@ abstract class AbstractValidationServer<T> {
 abstract class CompleterAbstractValidationServer<T> extends AbstractValidationServer<T> {
   /// The Future completer.
   @protected
-  Completer<Result<T>>? completer;
+  Completer<Result<T>>? _completer;
 
   /// Creates a new completer abstract validation server instance.
   CompleterAbstractValidationServer({
@@ -115,11 +115,14 @@ abstract class CompleterAbstractValidationServer<T> extends AbstractValidationSe
     super.timeout,
   });
 
+  /// Returns the [_completer.future].
+  Future<Result<T>> get future => _completer!.future;
+
   @override
   @mustCallSuper
   Future<void> start() async {
     await super.start();
-    completer = Completer();
+    _completer = Completer();
   }
 
   @override
@@ -127,10 +130,10 @@ abstract class CompleterAbstractValidationServer<T> extends AbstractValidationSe
     switch (object) {
       case ResultSuccess<T>():
       case ResultCancelled<T>():
-        completer?.complete(object);
+        _completer?.complete(object);
         break;
       case ResultError<T>(:final exception):
-        completer?.completeError(exception ?? ValidationException());
+        _completer?.completeError(exception ?? ValidationException());
         break;
     }
     return true;

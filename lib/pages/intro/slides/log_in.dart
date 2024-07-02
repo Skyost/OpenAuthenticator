@@ -9,18 +9,18 @@ import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/utils/account.dart';
+import 'package:open_authenticator/widgets/dialog/verify_email.dart';
 
 /// The slide that allows the user to login to Firebase.
-class LoginIntroPageSlide extends IntroPageSlide {
+class LogInIntroPageSlide extends IntroPageSlide {
   /// Creates a new login intro page content instance.
-  LoginIntroPageSlide()
+  LogInIntroPageSlide()
       : super(
-    name: 'logIn',
-  );
+          name: 'logIn',
+        );
 
   @override
-  Widget createWidget(BuildContext context, int remainingSteps) =>
-      IntroPageSlideWidget(
+  Widget createWidget(BuildContext context, int remainingSteps) => IntroPageSlideWidget(
         titleWidget: Text(translations.intro.logIn.title),
         slide: this,
         children: [
@@ -44,10 +44,7 @@ class LoginIntroPageSlide extends IntroPageSlide {
 
   @override
   Future<bool> shouldSkip(WidgetRef ref) async {
-    if (ref
-        .read(userAuthenticationProviders.notifier)
-        .availableProviders
-        .isEmpty) {
+    if (ref.read(userAuthenticationProviders.notifier).availableProviders.isEmpty) {
       return true;
     }
     TotpList totps = await ref.read(totpRepositoryProvider.future);
@@ -69,6 +66,12 @@ class _LogInButton extends ConsumerWidget {
           onPressed: () => AccountUtils.trySignIn(context, ref),
           icon: const Icon(Icons.login),
           label: Text(translations.intro.logIn.button.loggedOut),
+        );
+      case FirebaseAuthenticationStateEmailNeedsVerification():
+        return FilledButton.icon(
+          onPressed: () => VerifyEmailDialog.show(context),
+          icon: const Icon(Icons.mark_email_read),
+          label: Text(translations.intro.logIn.button.verifyEmail),
         );
       case FirebaseAuthenticationStateLoggedIn():
         return FilledButton.icon(

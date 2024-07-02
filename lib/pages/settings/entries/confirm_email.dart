@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
+import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -18,6 +20,10 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
 
   @override
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
+    FirebaseAuthenticationState state = ref.watch(firebaseAuthenticationProvider);
+    if (state is! FirebaseAuthenticationStateLoggedOut) {
+      return const SizedBox.shrink();
+    }
     ref.watch(emailLinkAuthenticationProvider);
     return FutureBuilder(
       future: ref.read(emailLinkAuthenticationProvider.notifier).readEmailToConfirmFromPreferences(),
@@ -95,7 +101,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     if (!context.mounted) {
       return;
     }
-    AccountUtils.handleAuthenticationResult(context, ref, emailAuthenticationProvider, result);
+    AccountUtils.handleAuthenticationResult(context, ref, result);
   }
 }
 

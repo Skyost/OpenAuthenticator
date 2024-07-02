@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
-import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// Uses FlutterFire's Firebase implementation.
@@ -37,6 +38,18 @@ class FirebaseAuthDefault extends FirebaseAuth {
   @override
   Stream<FirebaseAuthUser?> get userChanges => firebase_auth.FirebaseAuth.instance.userChanges().map(_createUserFromFirebaseUser);
 
+  @override
+  Future<void> forceSendVerificationEmail() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    ActionCodeSettings actionCodeSettings = ActionCodeSettings(
+      url: App.firebaseLoginUrl,
+      handleCodeInApp: true,
+      androidPackageName: packageInfo.packageName,
+      iOSBundleId: packageInfo.packageName,
+    );
+    currentUser!._firebaseUser.sendEmailVerification(actionCodeSettings);
+  }
+
   /// Creates an [FirebaseAuthUser] instance from a Firebase user instance.
   FirebaseAuthUser? _createUserFromFirebaseUser(firebase_auth.User? firebaseUser) {
     if (firebaseUser == null) {
@@ -58,7 +71,7 @@ class FirebaseAuthUser extends User {
   String get uid => _firebaseUser.uid;
 
   @override
-  String? get email => _firebaseUser.email;
+  String get email => _firebaseUser.email!;
 
   @override
   bool get emailVerified => _firebaseUser.emailVerified;
@@ -72,6 +85,16 @@ class FirebaseAuthUser extends User {
   @override
   Future<void> delete() async => await _firebaseUser.delete();
 
+  @override
+  Future<void> reload() async => _firebaseUser.reload();
+
+  @override
+  Future<bool> verifyEmail(String oobCode) async {
+    await firebase_auth.FirebaseAuth.instance.applyActionCode(oobCode);
+    await reload();
+    return _firebaseUser.emailVerified;
+  }
+
   /// Links the current user to the given [provider].
   Future<firebase_auth.UserCredential> linkWithProvider(firebase_auth.AuthProvider provider) => _firebaseUser.linkWithProvider(provider);
 
@@ -80,26 +103,6 @@ class FirebaseAuthUser extends User {
 
   /// Unlinks the current user from the given [providerId].
   Future<firebase_auth.User> unlinkFromProvider(String providerId) => _firebaseUser.unlink(providerId);
-
-  @override
-  Future<ValidationServer?> sendEmailVerification() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    ActionCodeSettings actionCodeSettings = ActionCodeSettings(
-      url: App.firebaseLoginUrl,
-      handleCodeInApp: true,
-      androidPackageName: packageInfo.packageName,
-      iOSBundleId: packageInfo.packageName,
-    );
-    await _firebaseUser.sendEmailVerification(actionCodeSettings);
-    return null;
-  }
-
-  @override
-  Future<bool> verifyEmail(String oobCode) async {
-    firebase_auth.FirebaseAuth.instance.applyActionCode(oobCode);
-    await _firebaseUser.reload();
-    return _firebaseUser.emailVerified;
-  }
 }
 
 /// Authenticates using a [firebase_auth.AuthProvider].

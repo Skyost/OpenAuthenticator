@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:open_authenticator/utils/firebase_auth/default.dart';
 import 'package:open_authenticator/utils/firebase_auth/rest.dart';
 import 'package:open_authenticator/utils/platform.dart';
-import 'package:open_authenticator/utils/validation/server.dart';
 
 /// Allows to either use FlutterFire's Firebase implementation or fallback to the REST API if needed.
 abstract class FirebaseAuth {
+  /// The time to wait before sending another verification email.
+  static const Duration _timeToWaitBeforeNextVerificationEmail = Duration(minutes: 1);
+
+  /// The date at which a verification email sent.
+  DateTime? _verificationEmailSentTime;
+
   /// The current [FirebaseAuth] instance.
   static FirebaseAuth? _instance;
 
@@ -30,6 +35,9 @@ abstract class FirebaseAuth {
   /// Returns whether the user is logged in.
   bool get isLoggedIn => currentUser != null;
 
+  /// Returns the date at which a verification email sent.
+  DateTime? get verificationEmailSentTime => _verificationEmailSentTime;
+
   /// Sign-ins the user with a given method.
   Future<SignInResult> signInWith(FirebaseAuthMethod method) => method.signIn();
 
@@ -38,6 +46,30 @@ abstract class FirebaseAuth {
 
   /// Sign-outs the current user.
   Future<void> signOut();
+
+  /// Whether a verification mail can be sent.
+  bool get canSendVerificationMail => timeToWaitBeforeNextVerificationEmail == Duration.zero;
+
+  /// Returns the time to wait before a verification mail can be sent.
+  Duration get timeToWaitBeforeNextVerificationEmail {
+    if (_verificationEmailSentTime == null) {
+      return Duration.zero;
+    }
+    Duration duration = _verificationEmailSentTime!.add(_timeToWaitBeforeNextVerificationEmail).difference(DateTime.now());
+    return duration.isNegative ? Duration.zero : duration;
+  }
+
+  /// Sends a verification email.
+  Future<void> sendVerificationEmail() async {
+    if (canSendVerificationMail) {
+      await forceSendVerificationEmail();
+    }
+    _verificationEmailSentTime = DateTime.now();
+  }
+
+  /// Force sending a verification email.
+  @protected
+  Future<void> forceSendVerificationEmail();
 }
 
 /// Holds some info about the current user.
@@ -46,7 +78,7 @@ abstract class User {
   String get uid;
 
   /// The user email.
-  String? get email;
+  String get email;
 
   /// Whether the email is verified.
   bool get emailVerified;
@@ -61,17 +93,16 @@ abstract class User {
   /// He may need to be recently authenticated.
   Future<void> delete();
 
+  /// Reloads the current user.
+  Future<void> reload();
+
   /// Re-authenticates the user with a given method.
   Future<SignInResult> reAuthenticateWith(FirebaseAuthMethod method) async => await method.reAuthenticate(this);
 
   /// Links the user to a given method.
   Future<SignInResult> linkTo(CanLinkTo method) async => await method.linkTo(this);
 
-  /// Sends a verification email.
-  /// Should return the validation server that is being used, if any.
-  Future<ValidationServer?> sendEmailVerification();
-
-  /// Verifies the user's email.
+  /// Verifies the user email thanks to the given [oobCode].
   Future<bool> verifyEmail(String oobCode);
 }
 
@@ -107,7 +138,6 @@ abstract class AppleAuthMethod with FirebaseAuthMethod, CanLinkTo {
         scopes: scopes,
         customParameters: customParameters,
       );
-
 
   /// Creates a new REST Apple auth method instance.
   factory AppleAuthMethod.rest({

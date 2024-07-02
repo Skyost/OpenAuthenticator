@@ -52,7 +52,7 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
   Future<Result<OAuth2Response>> signIn(BuildContext context) async {
     _state = generateRandomString();
     await start();
-    return await completer!.future;
+    return await future;
   }
 
   @override

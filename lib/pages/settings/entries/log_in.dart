@@ -9,9 +9,9 @@ import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 
 /// Allows the user to login or logout from the app.
-class AccountLoginSettingsEntryWidget extends ConsumerWidget with RequiresAuthenticationProvider {
+class AccountLogInSettingsEntryWidget extends ConsumerWidget with RequiresAuthenticationProvider {
   /// Creates a new account login settings entry widget instance.
-  const AccountLoginSettingsEntryWidget({
+  const AccountLogInSettingsEntryWidget({
     super.key,
   });
 
@@ -21,8 +21,10 @@ class AccountLoginSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     switch (state) {
       case FirebaseAuthenticationStateLoggedOut():
         return const _LogInListTile();
+      case FirebaseAuthenticationStateEmailNeedsVerification(:final email):
+        return _LogOutListTile(email: email);
       case FirebaseAuthenticationStateLoggedIn(:final user):
-        return _LogoutListTile(email: user.email!);
+        return _LogOutListTile(email: user.email);
     }
   }
 }
@@ -42,12 +44,12 @@ class _LogInListTile extends ConsumerWidget {
 }
 
 /// The logout list tile.
-class _LogoutListTile extends ConsumerWidget {
+class _LogOutListTile extends ConsumerWidget {
   /// The user email.
-  final String email;
+  final String? email;
 
   /// Creates a new logout list tile instance.
-  const _LogoutListTile({
+  const _LogOutListTile({
     required this.email,
   });
 

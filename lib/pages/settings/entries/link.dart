@@ -18,41 +18,42 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget with RequiresAuthent
   @override
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
     FirebaseAuthenticationState state = ref.watch(firebaseAuthenticationProvider);
+    if (state is! FirebaseAuthenticationStateLoggedIn) {
+      return const SizedBox.shrink();
+    }
     List<FirebaseAuthenticationProvider> providers = ref.watch(userAuthenticationProviders);
-    return state is FirebaseAuthenticationStateLoggedIn
-        ? ListTile(
-            leading: const Icon(Icons.link),
-            title: Text(translations.settings.synchronization.accountLink.title),
-            subtitle: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: translations.settings.synchronization.accountLink.subtitle.text,
-                  ),
-                  if (FirebaseAuth.instance.currentUser?.providers.isNotEmpty ?? false)
-                    translations.settings.synchronization.accountLink.subtitle.linkedProviders(
-                      providers: TextSpan(
-                        children: [
-                          for (int i = 0; i < providers.length; i++)
-                            TextSpan(
-                              text: translations.settings.synchronization.accountLink.subtitle.providers[providers[i].providerId] ?? providers[i].providerId,
-                              children: [
-                                if (i < providers.length - 1)
-                                  const TextSpan(
-                                    text: ', ',
-                                    style: TextStyle(fontStyle: FontStyle.normal),
-                                  ),
-                              ],
-                              style: const TextStyle(fontStyle: FontStyle.italic),
-                            )
-                        ],
-                      ),
-                    ),
-                ],
-              ),
+    return ListTile(
+      leading: const Icon(Icons.link),
+      title: Text(translations.settings.synchronization.accountLink.title),
+      subtitle: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: translations.settings.synchronization.accountLink.subtitle.text,
             ),
-            onTap: () => AccountUtils.tryToggleLink(context, ref),
-          )
-        : const SizedBox.shrink();
+            if (FirebaseAuth.instance.currentUser?.providers.isNotEmpty ?? false)
+              translations.settings.synchronization.accountLink.subtitle.linkedProviders(
+                providers: TextSpan(
+                  children: [
+                    for (int i = 0; i < providers.length; i++)
+                      TextSpan(
+                        text: translations.settings.synchronization.accountLink.subtitle.providers[providers[i].providerId] ?? providers[i].providerId,
+                        children: [
+                          if (i < providers.length - 1)
+                            const TextSpan(
+                              text: ', ',
+                              style: TextStyle(fontStyle: FontStyle.normal),
+                            ),
+                        ],
+                        style: const TextStyle(fontStyle: FontStyle.italic),
+                      )
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+      onTap: () => AccountUtils.tryToggleLink(context, ref),
+    );
   }
 }

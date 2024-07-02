@@ -47,7 +47,7 @@ class Totps extends Table {
 }
 
 /// The local storage provider.
-final localStorageProvider = FutureProvider<LocalStorage>((ref) async {
+final localStorageProvider = Provider<LocalStorage>((ref) {
   LocalStorage storage = LocalStorage();
   ref.onDispose(storage.close);
   return storage;

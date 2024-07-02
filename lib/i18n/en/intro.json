@@ -12,7 +12,7 @@
     "fourthParagraph": "This limit can be removed at any time by subscribing to the Contributor Plan in the $app settings.",
     "button": {
       "loggedOut": "Log in",
-      "waitingForConfirmation": "Waiting for confirmation",
+      "verifyEmail": "Confirm email address",
       "loggedIn": "Logged in with success",
       "error": "Cannot authenticate"
     }

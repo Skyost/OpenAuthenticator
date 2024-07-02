@@ -92,24 +92,27 @@ class GithubSignIn with OAuth2SignIn {
                 padding: const EdgeInsets.only(bottom: 10),
                 child: Text(translations.validation.githubCodeDialog.message),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SelectableText(
-                    userCode,
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.copy,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      onPressed: () async => await Clipboard.setData(ClipboardData(text: userCode)),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SelectableText(
+                      userCode,
+                      style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.copy,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        onPressed: () async => await Clipboard.setData(ClipboardData(text: userCode)),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Text.rich(
                 translations.validation.githubCodeDialog.countdown(

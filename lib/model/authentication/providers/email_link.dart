@@ -9,7 +9,7 @@ import 'package:open_authenticator/utils/firebase_auth/default.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/utils/validation/email_confirmation.dart';
+import 'package:open_authenticator/utils/validation/sign_in/email.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -58,13 +58,13 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
       throw _ReAuthenticateException(message: 'Account needs to be confirmed in order to proceed.');
     }
     User? user = FirebaseAuth.instance.currentUser;
-    if (user == null || user.email == null) {
+    if (user == null) {
       throw _ReAuthenticateException(message: 'User must be logged in before re-authenticating.');
     }
     if (!context.mounted) {
       return const ResultCancelled();
     }
-    return _tryAuthenticate(context, user.email!);
+    return _tryAuthenticate(context, user.email);
   }
 
   /// Tries to authenticate the user with the given [email].
@@ -77,17 +77,17 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
       iOSBundleId: packageInfo.packageName,
     );
     if (currentPlatform == Platform.windows) {
-      EmailConfirmation emailLinkSignIn = EmailConfirmation(email: email);
-      Result<EmailConfirmationResponse> result;
+      EmailSignIn emailLinkSignIn = EmailSignIn(email: email);
+      Result<EmailSignInResponse> result;
       if (context.mounted) {
         result = await showWaitingOverlay(
           context,
-          future: emailLinkSignIn.sendSignInLinkToEmailAndWaitForConfirmation(),
+          future: emailLinkSignIn.sendLinkToEmailAndWaitForConfirmation(),
           message: translations.authentication.logIn.waitingConfirmationMessage,
           timeout: emailLinkSignIn.timeout,
         );
       } else {
-        result = await emailLinkSignIn.sendSignInLinkToEmailAndWaitForConfirmation();
+        result = await emailLinkSignIn.sendLinkToEmailAndWaitForConfirmation();
       }
       switch (result) {
         case ResultSuccess(:final value):
@@ -147,7 +147,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     SignInResult signInResult;
     String email = preferences.getString(_kFirebaseAuthenticationEmailKey)!;
     if (currentPlatform == Platform.windows) {
-      Result<EmailConfirmationResponse> result = await EmailConfirmation(email: email).validateUrl(emailLink);
+      Result<EmailSignInResponse> result = await EmailSignIn(email: email).validateUrl(emailLink);
       switch (result) {
         case ResultSuccess(:final value):
           signInResult = await FirebaseAuth.instance.signInWith(

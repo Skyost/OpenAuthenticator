@@ -13,8 +13,8 @@ import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/utils.dart';
 
 /// The online storage provider.
-final onlineStorageProvider = FutureProvider<OnlineStorage>((ref) async {
-  FirebaseAuthenticationState state = await ref.watch(firebaseAuthenticationProvider);
+final onlineStorageProvider = Provider<OnlineStorage>((ref) {
+  FirebaseAuthenticationState state = ref.watch(firebaseAuthenticationProvider);
   OnlineStorage storage = OnlineStorage(userId: state is FirebaseAuthenticationStateLoggedIn ? state.user.uid : null);
   storage._startCollectionListening();
   ref.onDispose(storage.close);

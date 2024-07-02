@@ -8,8 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
-import 'package:open_authenticator/utils/validation/email_confirmation.dart';
-import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 
 /// The error message thrown when an invalid response is returned.
@@ -49,7 +47,7 @@ class FirebaseAuthRest extends FirebaseAuth {
     _currentUser = currentUser;
     currentUser.addListener(_onUserChanged);
     _onUserChanged(methodChannelCall: _kCallInstall);
-    await currentUser.refreshUserInfo();
+    await currentUser.reload();
   }
 
   @override
@@ -107,6 +105,30 @@ class FirebaseAuthRest extends FirebaseAuth {
 
   @override
   Stream<RestUser?> get userChanges => _controller.stream;
+
+
+  @override
+  Future<void> forceSendVerificationEmail() async {
+    String idToken = await _currentUser!.getIdToken();
+    await http.post(
+      Uri.https(
+        'identitytoolkit.googleapis.com',
+        '/v1/accounts:sendOobCode',
+        {
+          'key': DefaultFirebaseOptions.currentPlatform.apiKey,
+        },
+      ),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      body: jsonEncode({
+        'canHandleCodeInApp': false,
+        'requestType': 'VERIFY_EMAIL',
+        'email': _currentUser!._email,
+        'idToken': idToken,
+      }),
+    );
+  }
 
   /// Triggered when the current user has changed.
   void _onUserChanged({String methodChannelCall = _kCallUserChanged}) {
@@ -172,7 +194,7 @@ class RestUser extends User with ChangeNotifier {
   String _uid;
 
   /// Matches [User.email].
-  String? _email;
+  String _email;
 
   /// Matches [User.emailVerified].
   bool _emailVerified;
@@ -195,7 +217,7 @@ class RestUser extends User with ChangeNotifier {
   /// Creates a new REST user instance.
   RestUser._({
     required String uid,
-    required String? email,
+    required String email,
     required bool emailVerified,
     required List<String> providers,
     required String idToken,
@@ -211,14 +233,14 @@ class RestUser extends User with ChangeNotifier {
   static Future<RestUser?> fromSignInResult(SignInResult signInResult) async {
     RestUser user = RestUser._(
       uid: signInResult.localId!,
-      email: signInResult.email,
+      email: signInResult.email!,
       emailVerified: signInResult.emailVerified ?? false,
       providers: [],
       idToken: signInResult.idToken!,
       refreshToken: signInResult.refreshToken!,
       expirationDate: DateTime.now().add(Duration(seconds: signInResult.expiresIn!)),
     );
-    if (!await user.refreshUserInfo()) {
+    if (!await user.reload()) {
       return null;
     }
     return user;
@@ -240,7 +262,7 @@ class RestUser extends User with ChangeNotifier {
   String get uid => _uid;
 
   @override
-  String? get email => _email;
+  String get email => _email;
 
   @override
   bool get emailVerified => _emailVerified;
@@ -294,8 +316,8 @@ class RestUser extends User with ChangeNotifier {
     return true;
   }
 
-  /// Refreshes the current user info.
-  Future<bool> refreshUserInfo() async {
+  @override
+  Future<bool> reload() async {
     String idToken = await getIdToken();
     http.Response response = await http.post(
       Uri.https(
@@ -313,6 +335,12 @@ class RestUser extends User with ChangeNotifier {
       }),
     );
     if (response.statusCode != 200) {
+      switch (response.statusCode) {
+        case 400:
+          _deleted = true;
+          break;
+      }
+      notifyListeners();
       return false;
     }
     Map<String, dynamic> data = jsonDecode(response.body);
@@ -365,19 +393,8 @@ class RestUser extends User with ChangeNotifier {
   @override
   Future<SignInResult> linkTo(CanLinkTo method) async {
     SignInResult signInResult = await super.linkTo(method);
-    await refreshUserInfo();
+    await reload();
     return signInResult;
-  }
-
-  @override
-  Future<ValidationServer?> sendEmailVerification() async {
-    EmailConfirmation emailConfirmation = EmailConfirmation(
-      email: _email!,
-    );
-    emailConfirmation.sendSignInLinkToEmailAndWaitForConfirmation(
-      requestType: 'VERIFY_EMAIL',
-    );
-    return emailConfirmation;
   }
 
   @override
@@ -403,13 +420,13 @@ class RestUser extends User with ChangeNotifier {
       return false;
     }
 
-    await refreshUserInfo();
+    await reload();
     return _emailVerified;
   }
 
   /// Refreshes the user data from the [data].
   void _refreshFromResponse(Map<String, dynamic> data) {
-    _email ??= data['email'];
+    _email = data['email'];
     _emailVerified = data['emailVerified'];
     List providerUserInfo = data['providerUserInfo'];
     if (providerUserInfo.isNotEmpty) {
@@ -547,13 +564,15 @@ class EmailLinkAuthMethodRest extends EmailLinkAuthMethod {
         '/v1/accounts:signInWithEmailLink',
         {
           'key': DefaultFirebaseOptions.currentPlatform.apiKey,
-          'oobCode': oobCode,
-          'email': email,
         },
       ),
       headers: {
-        HttpHeaders.acceptHeader: 'application/json',
+        HttpHeaders.contentTypeHeader: 'application/json',
       },
+      body: jsonEncode({
+        'oobCode': oobCode,
+        'email': email,
+      }),
     );
     if (response.statusCode != 200) {
       throw Exception(_invalidResponseErrorMessage(response));

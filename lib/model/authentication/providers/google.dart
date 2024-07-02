@@ -30,8 +30,8 @@ class GoogleAuthenticationProvider extends FirebaseAuthenticationProvider with L
   @override
   GoogleAuthMethod createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []}) {
     Map<String, String> customParameters = {};
-    if (state is FirebaseAuthenticationStateLoggedIn && (state as FirebaseAuthenticationStateLoggedIn).user.email != null) {
-      customParameters['login_hint'] = (state as FirebaseAuthenticationStateLoggedIn).user.email!;
+    if (state is FirebaseAuthenticationStateLoggedIn) {
+      customParameters['login_hint'] = (state as FirebaseAuthenticationStateLoggedIn).user.email;
     }
     return GoogleAuthMethod.defaultMethod(
       scopes: scopes,

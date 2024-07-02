@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
-import 'package:open_authenticator/model/storage/type.dart';
+import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/dialog/authentication_provider_picker.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
@@ -60,16 +59,6 @@ class AccountUtils {
 
   /// Prompts the user to choose an authentication provider, use it to re-authenticate and delete its account.
   static Future<void> tryDeleteAccount(BuildContext context, WidgetRef ref) async {
-    bool storageTypeChangeResult = await StorageMigrationUtils.changeStorageType(
-      context,
-      ref,
-      StorageType.local,
-      showConfirmation: false,
-    );
-    if (!storageTypeChangeResult || !context.mounted) {
-      return;
-    }
-
     bool confirm = await ConfirmationDialog.ask(
       context,
       title: translations.authentication.deleteConfirmationDialog.title,
@@ -100,7 +89,6 @@ class AccountUtils {
       handleAuthenticationResult(
         context,
         ref,
-        provider,
         reAuthenticationResult,
         needConfirmation: provider is ConfirmationProvider,
         handleDifferentCredentialError: true,
@@ -109,7 +97,19 @@ class AccountUtils {
     }
     Result deleteResult = await showWaitingOverlay(
       context,
-      future: ref.read(firebaseAuthenticationProvider.notifier).deleteUser(),
+      future: () async {
+        try {
+          OnlineStorage onlineStorage = ref.read(onlineStorageProvider);
+          await onlineStorage.clearTotps();
+          await onlineStorage.deleteSecretsSalt();
+          return await ref.read(firebaseAuthenticationProvider.notifier).deleteUser();
+        } catch (ex, stacktrace) {
+          return ResultError(
+            exception: ex,
+            stacktrace: stacktrace,
+          );
+        }
+      }(),
     );
     if (context.mounted) {
       context.showSnackBarForResult(deleteResult, retryIfError: true);
@@ -143,7 +143,6 @@ class AccountUtils {
       handleAuthenticationResult(
         context,
         ref,
-        provider,
         result,
         needConfirmation: needConfirmation,
         handleDifferentCredentialError: true,
@@ -156,7 +155,6 @@ class AccountUtils {
   static Future<void> handleAuthenticationResult(
     BuildContext context,
     WidgetRef ref,
-    FirebaseAuthenticationProvider provider,
     Result<String> result, {
     bool needConfirmation = false,
     bool handleDifferentCredentialError = false,

@@ -30,8 +30,8 @@ class MicrosoftAuthenticationProvider extends FirebaseAuthenticationProvider wit
   @override
   MicrosoftAuthMethod createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []}) {
     Map<String, String> customParameters = {};
-    if (state is FirebaseAuthenticationStateLoggedIn && (state as FirebaseAuthenticationStateLoggedIn).user.email != null) {
-      customParameters['login_hint'] = (state as FirebaseAuthenticationStateLoggedIn).user.email!;
+    if (state is FirebaseAuthenticationStateLoggedIn) {
+      customParameters['login_hint'] = (state as FirebaseAuthenticationStateLoggedIn).user.email;
     }
     return MicrosoftAuthMethod.defaultMethod(
       scopes: scopes,
