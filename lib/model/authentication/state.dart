@@ -7,17 +7,6 @@ sealed class FirebaseAuthenticationState {}
 /// When the user is logged out.
 class FirebaseAuthenticationStateLoggedOut extends FirebaseAuthenticationState {}
 
-/// When the email needs to be verified.
-class FirebaseAuthenticationStateEmailNeedsVerification extends FirebaseAuthenticationState {
-  /// The email.
-  final String email;
-
-  /// Creates a new email needs verification state instance.
-  FirebaseAuthenticationStateEmailNeedsVerification({
-    required this.email,
-  });
-}
-
 /// When the user is fully logged in.
 class FirebaseAuthenticationStateLoggedIn extends FirebaseAuthenticationState {
   /// The user instance.

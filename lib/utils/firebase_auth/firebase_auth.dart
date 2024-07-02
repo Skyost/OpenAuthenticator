@@ -5,12 +5,6 @@ import 'package:open_authenticator/utils/platform.dart';
 
 /// Allows to either use FlutterFire's Firebase implementation or fallback to the REST API if needed.
 abstract class FirebaseAuth {
-  /// The time to wait before sending another verification email.
-  static const Duration _timeToWaitBeforeNextVerificationEmail = Duration(minutes: 1);
-
-  /// The date at which a verification email sent.
-  DateTime? _verificationEmailSentTime;
-
   /// The current [FirebaseAuth] instance.
   static FirebaseAuth? _instance;
 
@@ -35,9 +29,6 @@ abstract class FirebaseAuth {
   /// Returns whether the user is logged in.
   bool get isLoggedIn => currentUser != null;
 
-  /// Returns the date at which a verification email sent.
-  DateTime? get verificationEmailSentTime => _verificationEmailSentTime;
-
   /// Sign-ins the user with a given method.
   Future<SignInResult> signInWith(FirebaseAuthMethod method) => method.signIn();
 
@@ -46,30 +37,6 @@ abstract class FirebaseAuth {
 
   /// Sign-outs the current user.
   Future<void> signOut();
-
-  /// Whether a verification mail can be sent.
-  bool get canSendVerificationMail => timeToWaitBeforeNextVerificationEmail == Duration.zero;
-
-  /// Returns the time to wait before a verification mail can be sent.
-  Duration get timeToWaitBeforeNextVerificationEmail {
-    if (_verificationEmailSentTime == null) {
-      return Duration.zero;
-    }
-    Duration duration = _verificationEmailSentTime!.add(_timeToWaitBeforeNextVerificationEmail).difference(DateTime.now());
-    return duration.isNegative ? Duration.zero : duration;
-  }
-
-  /// Sends a verification email.
-  Future<void> sendVerificationEmail() async {
-    if (canSendVerificationMail) {
-      await forceSendVerificationEmail();
-    }
-    _verificationEmailSentTime = DateTime.now();
-  }
-
-  /// Force sending a verification email.
-  @protected
-  Future<void> forceSendVerificationEmail();
 }
 
 /// Holds some info about the current user.
@@ -79,9 +46,6 @@ abstract class User {
 
   /// The user email.
   String get email;
-
-  /// Whether the email is verified.
-  bool get emailVerified;
 
   /// The user providers list.
   List<String> get providers;

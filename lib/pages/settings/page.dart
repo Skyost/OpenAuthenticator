@@ -19,7 +19,6 @@ import 'package:open_authenticator/pages/settings/entries/manage_backups.dart';
 import 'package:open_authenticator/pages/settings/entries/save_derived_key.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/pages/settings/entries/theme.dart';
-import 'package:open_authenticator/pages/settings/entries/verify_email.dart';
 
 /// Allows to configure the app.
 class SettingsPage extends ConsumerWidget {
@@ -57,7 +56,6 @@ class SettingsPage extends ConsumerWidget {
               const _SynchronizationSectionTitle(),
               const AccountLinkSettingsEntryWidget(),
               SynchronizeSettingsEntryWidget(),
-              const VerifyEmailSettingsEntryWidget(),
               const ConfirmEmailSettingsEntryWidget(),
               const AccountLogInSettingsEntryWidget(),
               const DeleteAccountSettingsEntryWidget(),

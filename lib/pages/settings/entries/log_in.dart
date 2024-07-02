@@ -21,8 +21,6 @@ class AccountLogInSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     switch (state) {
       case FirebaseAuthenticationStateLoggedOut():
         return const _LogInListTile();
-      case FirebaseAuthenticationStateEmailNeedsVerification(:final email):
-        return _LogOutListTile(email: email);
       case FirebaseAuthenticationStateLoggedIn(:final user):
         return _LogOutListTile(email: user.email);
     }

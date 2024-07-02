@@ -9,7 +9,6 @@ import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/utils/account.dart';
-import 'package:open_authenticator/widgets/dialog/verify_email.dart';
 
 /// The slide that allows the user to login to Firebase.
 class LogInIntroPageSlide extends IntroPageSlide {
@@ -66,12 +65,6 @@ class _LogInButton extends ConsumerWidget {
           onPressed: () => AccountUtils.trySignIn(context, ref),
           icon: const Icon(Icons.login),
           label: Text(translations.intro.logIn.button.loggedOut),
-        );
-      case FirebaseAuthenticationStateEmailNeedsVerification():
-        return FilledButton.icon(
-          onPressed: () => VerifyEmailDialog.show(context),
-          icon: const Icon(Icons.mark_email_read),
-          label: Text(translations.intro.logIn.button.verifyEmail),
         );
       case FirebaseAuthenticationStateLoggedIn():
         return FilledButton.icon(

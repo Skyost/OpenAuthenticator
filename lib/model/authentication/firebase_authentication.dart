@@ -23,58 +23,7 @@ class FirebaseAuthentication extends Notifier<FirebaseAuthenticationState> {
     if (user == null) {
       return FirebaseAuthenticationStateLoggedOut();
     }
-    return user.emailVerified ? FirebaseAuthenticationStateLoggedIn(user: user) : FirebaseAuthenticationStateEmailNeedsVerification(email: user.email);
-  }
-
-  /// Sends a verification email.
-  Future<Result> sendVerificationEmail() async {
-    try {
-      if (state is! FirebaseAuthenticationStateEmailNeedsVerification) {
-        return const ResultCancelled();
-      }
-      await FirebaseAuth.instance.sendVerificationEmail();
-      return const ResultSuccess();
-    } catch (ex, stacktrace) {
-      return ResultError(
-        exception: ex,
-        stacktrace: stacktrace,
-      );
-    }
-  }
-
-  /// Verifies the user's email.
-  Future<Result<String>> verifyEmail(String oobCode) async {
-    try {
-      if (state is! FirebaseAuthenticationStateEmailNeedsVerification) {
-        return const ResultCancelled();
-      }
-      bool result = await FirebaseAuth.instance.currentUser!.verifyEmail(oobCode);
-      if (!result) {
-        throw Exception('Unable to verify account.');
-      }
-      return ResultSuccess(value: FirebaseAuth.instance.currentUser!.email);
-    } catch (ex, stacktrace) {
-      return ResultError(
-        exception: ex,
-        stacktrace: stacktrace,
-      );
-    }
-  }
-
-  /// Refreshes the current user.
-  Future<Result> refreshUser() async {
-    try {
-      if (state is FirebaseAuthenticationStateLoggedOut) {
-        return const ResultCancelled();
-      }
-      await FirebaseAuth.instance.currentUser!.reload();
-      return const ResultSuccess();
-    } catch (ex, stacktrace) {
-      return ResultError(
-        exception: ex,
-        stacktrace: stacktrace,
-      );
-    }
+    return FirebaseAuthenticationStateLoggedIn(user: user);
   }
 
   /// Logouts the user.
