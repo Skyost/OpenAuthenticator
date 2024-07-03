@@ -77,8 +77,8 @@ class EmailSignIn extends CompleterAbstractValidationServer<EmailSignInResponse>
   /// Validates the [url].
   FutureOr<Result<EmailSignInResponse>> validateUrl(String url) async {
     Uri? uri = Uri.tryParse(url);
-    String? apiKey = uri?.queryParameters['apiKey'];
-    String? oobCode = uri?.queryParameters['oobCode'];
+    String? apiKey = uri?.queryParameters[EmailSignInResponse._kApiKey];
+    String? oobCode = uri?.queryParameters[EmailSignInResponse._kOobCode];
     if (apiKey == null || oobCode == null) {
       return ResultError(
         exception: ValidationException(code: _kErrorInvalidUrl),
@@ -87,7 +87,7 @@ class EmailSignIn extends CompleterAbstractValidationServer<EmailSignInResponse>
     return ResultSuccess(
       value: EmailSignInResponse(
         email: email,
-        oobCode: oobCode,
+        uri: uri!,
       ),
     );
   }
@@ -95,15 +95,27 @@ class EmailSignIn extends CompleterAbstractValidationServer<EmailSignInResponse>
 
 /// Contains the sign-in response.
 class EmailSignInResponse {
+  /// The API key URI parameter.
+  static const String _kApiKey = 'apiKey';
+
+  /// The OOB code URI parameter.
+  static const String _kOobCode = 'oobCode';
+
   /// The user email.
   final String email;
 
-  /// The OOB code.
-  final String oobCode;
+  /// The response URI.
+  final Uri uri;
 
   /// Creates a new email link sign-in response instance.
   const EmailSignInResponse({
     required this.email,
-    required this.oobCode,
+    required this.uri,
   });
+
+  /// Returns the OOB code.
+  String get apiKey => uri.queryParameters[_kApiKey]!;
+
+  /// Returns the OOB code.
+  String get oobCode => uri.queryParameters[_kOobCode]!;
 }

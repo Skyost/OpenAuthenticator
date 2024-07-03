@@ -95,10 +95,15 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
           SignInResult result = await showWaitingOverlay(
             context,
             future: FirebaseAuth.instance.signInWith(
-              EmailLinkAuthMethod.rest(
-                email: value.email,
-                oobCode: value.oobCode,
-              ),
+              currentPlatform == Platform.windows
+                  ? EmailLinkAuthMethod.rest(
+                      email: value.email,
+                      oobCode: value.oobCode,
+                    )
+                  : EmailLinkAuthMethod.defaultMethod(
+                      email: email,
+                      emailLink: value.uri.toString(),
+                    ),
             ),
           );
           return ResultSuccess(value: result.email);
@@ -153,7 +158,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
     String email = preferences.getString(_kFirebaseAuthenticationEmailKey)!;
     EmailLinkAuthMethod method;
-    if (currentPlatform == Platform.windows || currentPlatform == Platform.macOS) {
+    if (currentPlatform == Platform.windows) {
       Result<EmailSignInResponse> result = await EmailSignIn(email: email).validateUrl(emailLink);
       if (result is! ResultSuccess) {
         return result.to((result) => null);
