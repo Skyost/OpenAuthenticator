@@ -15,6 +15,9 @@ String _invalidResponseErrorMessage(http.Response response) => 'Invalid response
 
 /// Uses Firebase REST API to interact with Firebase Auth.
 class FirebaseAuthRest extends FirebaseAuth {
+  /// The header that allows to localize Firebase messages.
+  static const String kLocaleHeader = 'X-Firebase-Locale';
+
   /// The user data preferences key.
   static const String _kUserData = 'firebaseUserData';
 
@@ -81,6 +84,9 @@ class FirebaseAuthRest extends FirebaseAuth {
           'key': DefaultFirebaseOptions.currentPlatform.apiKey,
         },
       ),
+      headers: {
+        FirebaseAuthRest.kLocaleHeader: locale,
+      },
       body: {
         'idToken': _currentUser!._idToken,
         'deleteProvider': [providerId],

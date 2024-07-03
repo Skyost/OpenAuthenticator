@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
+import 'package:open_authenticator/utils/firebase_auth/rest.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 
@@ -52,6 +53,7 @@ class EmailSignIn extends CompleterAbstractValidationServer<EmailSignInResponse>
       ),
       headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
+        FirebaseAuthRest.kLocaleHeader: FirebaseAuth.instance.locale,
       },
       body: jsonEncode({
         'continueUrl': url,

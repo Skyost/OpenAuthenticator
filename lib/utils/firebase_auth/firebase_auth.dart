@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/utils/firebase_auth/default.dart';
 import 'package:open_authenticator/utils/firebase_auth/rest.dart';
 import 'package:open_authenticator/utils/platform.dart';
@@ -7,6 +10,12 @@ import 'package:open_authenticator/utils/platform.dart';
 abstract class FirebaseAuth {
   /// The current [FirebaseAuth] instance.
   static FirebaseAuth? _instance;
+
+  /// The current locale.
+  String _currentLocale = LocaleSettings.currentLocale.languageCode;
+
+  /// The locale change stream subscription.
+  StreamSubscription<AppLocale>? _localeStreamSubscription;
 
   /// Returns the [FirebaseAuth] instance corresponding to the current platform.
   static FirebaseAuth get instance {
@@ -17,8 +26,19 @@ abstract class FirebaseAuth {
     return _instance!;
   }
 
+  /// Returns the current locale.
+  String get locale => _currentLocale;
+
   /// Initializes the current instance.
-  void initialize() {}
+  @mustCallSuper
+  void initialize() => _localeStreamSubscription = LocaleSettings.getLocaleStream().listen((locale) => onLocaleChange(locale.languageCode));
+
+  /// Triggered when the locale has changed.
+  @mustCallSuper
+  @protected
+  void onLocaleChange(String newLocale) {
+    _currentLocale = newLocale;
+  }
 
   /// Returns the user changes stream.
   Stream<User?> get userChanges;
@@ -41,6 +61,15 @@ abstract class FirebaseAuth {
   /// Deletes the user.
   /// He may need to be recently authenticated.
   Future<void> deleteUser();
+
+  /// Disposes this instance.
+  void dispose() {
+    _localeStreamSubscription?.cancel();
+    _localeStreamSubscription = null;
+    if (FirebaseAuth._instance == this) {
+      FirebaseAuth._instance = null;
+    }
+  }
 }
 
 /// Holds some info about the current user.

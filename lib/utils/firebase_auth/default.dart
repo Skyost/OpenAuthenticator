@@ -19,6 +19,12 @@ class FirebaseAuthDefault extends FirebaseAuth {
   }
 
   @override
+  void onLocaleChange(String newLocale) {
+    super.onLocaleChange(newLocale);
+    firebase_auth.FirebaseAuth.instance.setLanguageCode(newLocale);
+  }
+
+  @override
   Future<SignInResult> unlinkFrom(String providerId) async {
     if (_currentUser == null) {
       throw Exception('User must be logged in.');
