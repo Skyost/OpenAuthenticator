@@ -20,7 +20,7 @@ abstract class FirebaseAuth {
   /// Returns the [FirebaseAuth] instance corresponding to the current platform.
   static FirebaseAuth get instance {
     if (_instance == null) {
-      _instance = currentPlatform.isDesktop ? FirebaseAuthRest() : FirebaseAuthDefault();
+      _instance = currentPlatform.isMobile || currentPlatform == Platform.macOS ? FirebaseAuthDefault() : FirebaseAuthRest();
       _instance!.initialize();
     }
     return _instance!;

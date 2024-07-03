@@ -1,5 +1,6 @@
 import Cocoa
 import FlutterMacOS
+import FirebaseAuth
 
 class MainFlutterWindow: NSWindow {
   override func awakeFromNib() {

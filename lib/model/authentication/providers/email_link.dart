@@ -35,7 +35,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
         );
 
   @override
-  bool get showLoadingDialog => currentPlatform != Platform.windows;
+  bool get showLoadingDialog => false;
 
   @override
   Future<Result<String>> trySignIn(BuildContext context) async {
@@ -79,7 +79,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     if (!context.mounted) {
       return const ResultCancelled();
     }
-    if (currentPlatform == Platform.windows) {
+    if (currentPlatform == Platform.windows || currentPlatform == Platform.macOS) {
       EmailSignIn emailLinkSignIn = EmailSignIn(email: email);
       Result<EmailSignInResponse> result = await showWaitingOverlay(
         context,
@@ -147,13 +147,13 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
 
   @override
   Future<Result<String>> tryConfirm(BuildContext context, String? emailLink) async {
-    SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
     if (emailLink == null) {
       return ResultError();
     }
+    SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
     String email = preferences.getString(_kFirebaseAuthenticationEmailKey)!;
     EmailLinkAuthMethod method;
-    if (currentPlatform == Platform.windows) {
+    if (currentPlatform == Platform.windows || currentPlatform == Platform.macOS) {
       Result<EmailSignInResponse> result = await EmailSignIn(email: email).validateUrl(emailLink);
       if (result is! ResultSuccess) {
         return result.to((result) => null);
