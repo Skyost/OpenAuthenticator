@@ -19,7 +19,6 @@ class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with L
           availablePlatforms: const [
             Platform.android,
             Platform.iOS,
-            Platform.macOS,
             Platform.windows,
           ],
         );

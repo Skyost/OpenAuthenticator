@@ -20,7 +20,6 @@ class TwitterAuthenticationProvider extends FirebaseAuthenticationProvider with 
           availablePlatforms: const [
             Platform.android,
             Platform.iOS,
-            Platform.macOS,
             // Platform.windows, // See: https://github.com/firebase/flutterfire/discussions/9398.
           ],
         );

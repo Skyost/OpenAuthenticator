@@ -19,7 +19,6 @@ class MicrosoftAuthenticationProvider extends FirebaseAuthenticationProvider wit
           availablePlatforms: const [
             Platform.android,
             Platform.iOS,
-            Platform.macOS,
             // Platform.windows, See: https://firebase.google.com/docs/auth/cpp/microsoft-oauth#expandable-2.
           ],
         );
