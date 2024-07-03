@@ -19,7 +19,7 @@ class MasterPasswordUtils {
     WidgetRef ref, {
     String? password,
   }) async {
-    _ChangeMasterPasswordDialogResult? result = await showAdaptiveDialog<_ChangeMasterPasswordDialogResult>(
+    _ChangeMasterPasswordDialogResult? result = await showDialog<_ChangeMasterPasswordDialogResult>(
       context: context,
       builder: (context) => _ChangeMasterPasswordDialog(
         defaultPassword: password,
@@ -80,7 +80,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
   Result<bool> oldPasswordValidationResult = const ResultSuccess(value: false);
 
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.masterPassword.changeDialog.title),
         scrollable: true,
         content: Column(

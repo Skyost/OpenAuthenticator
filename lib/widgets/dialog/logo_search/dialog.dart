@@ -18,7 +18,7 @@ class LogoPickerDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.logoSearch.dialogTitle),
         scrollable: true,
         content: SizedBox(
@@ -41,7 +41,7 @@ class LogoPickerDialog extends StatelessWidget {
     BuildContext context, {
     String? initialSearchKeywords,
   }) =>
-      showAdaptiveDialog<String>(
+      showDialog<String>(
         context: context,
         builder: (context) => LogoPickerDialog(
           initialSearchKeywords: initialSearchKeywords,

@@ -28,7 +28,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<FirebaseAuthenticationProvider> currentProviders = ref.watch(userAuthenticationProviders);
-    return AlertDialog.adaptive(
+    return AlertDialog(
       title: Text(translations.authentication.providerPickerDialog.title),
       scrollable: true,
       content: Column(
@@ -114,7 +114,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
     BuildContext context, {
     DialogMode dialogMode = DialogMode.authenticate,
   }) =>
-      showAdaptiveDialog<FirebaseAuthenticationProvider>(
+      showDialog<FirebaseAuthenticationProvider>(
         context: context,
         builder: (context) => AuthenticationProviderPickerDialog(
           dialogMode: dialogMode,

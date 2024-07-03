@@ -16,7 +16,7 @@ class ConfirmationDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(title),
         scrollable: true,
         content: Text(message),
@@ -38,7 +38,7 @@ class ConfirmationDialog extends StatelessWidget {
     required String title,
     required String message,
   }) async =>
-      (await showAdaptiveDialog(
+      (await showDialog(
         context: context,
         builder: (context) => ConfirmationDialog(
           title: title,

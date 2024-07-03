@@ -63,7 +63,7 @@ class HomePage extends ConsumerWidget {
       Navigator.pushNamed(context, TotpPage.name);
       return;
     }
-    _AddTotpDialogResult? choice = await showAdaptiveDialog<_AddTotpDialogResult>(
+    _AddTotpDialogResult? choice = await showDialog<_AddTotpDialogResult>(
       context: context,
       builder: (context) => _AddTotpDialog(),
     );
@@ -146,7 +146,7 @@ class _HomePageBody extends ConsumerWidget {
 /// A dialog that allows to choose a method to add a TOTP.
 class _AddTotpDialog extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.home.addDialog.title),
         scrollable: true,
         content: Column(

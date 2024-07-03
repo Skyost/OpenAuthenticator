@@ -78,7 +78,7 @@ class _WaitingDialogState extends State<_WaitingDialog> {
   @override
   Widget build(BuildContext context) => SizedBox(
     width: MediaQuery.of(context).size.width,
-    child: AlertDialog.adaptive(
+    child: AlertDialog(
           content: PopScope(
             canPop: false,
             child: timedOut

@@ -102,7 +102,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
 /// Picks for a confirmation action.
 class _ConfirmActionPickerDialog extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -131,7 +131,7 @@ class _ConfirmActionPickerDialog extends StatelessWidget {
       );
 
   /// Opens the dialog.
-  static Future<_ConfirmAction?> openDialog(BuildContext context) => showAdaptiveDialog<_ConfirmAction>(
+  static Future<_ConfirmAction?> openDialog(BuildContext context) => showDialog<_ConfirmAction>(
         context: context,
         builder: (context) => _ConfirmActionPickerDialog(),
       );

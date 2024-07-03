@@ -169,9 +169,9 @@ class AccountUtils {
         break;
       case ResultCancelled(:final timedOut):
         if (timedOut) {
-          showAdaptiveDialog(
+          showDialog(
             context: context,
-            builder: (context) => AlertDialog.adaptive(
+            builder: (context) => AlertDialog(
               scrollable: true,
               content: Text(translations.error.timeout.authentication),
               actions: [
@@ -196,9 +196,9 @@ class AccountUtils {
         switch (exception) {
           case FirebaseAuthenticationErrorAccountExistsWithDifferentCredential():
             if (handleDifferentCredentialError) {
-              showAdaptiveDialog(
+              showDialog(
                 context: context,
-                builder: (context) => AlertDialog.adaptive(
+                builder: (context) => AlertDialog(
                   title: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.title),
                   scrollable: true,
                   content: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message),

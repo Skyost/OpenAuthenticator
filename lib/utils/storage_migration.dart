@@ -151,7 +151,7 @@ class _ConfirmationDialog extends StatefulWidget {
   State<StatefulWidget> createState() => _ConfirmationDialogState();
 
   /// Asks for the confirmation.
-  static Future<_ConfirmationResult?> ask(BuildContext context, bool enable) => showAdaptiveDialog<_ConfirmationResult>(
+  static Future<_ConfirmationResult?> ask(BuildContext context, bool enable) => showDialog<_ConfirmationResult>(
         context: context,
         builder: (context) => _ConfirmationDialog(
           enable: enable,
@@ -171,7 +171,7 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
   String? backupPassword;
 
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.storageMigration.confirmDialog.title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -248,7 +248,7 @@ class _ConfirmationResult {
 /// Allows the user to choose its [StorageMigrationDeletedTotpPolicy].
 class _StorageMigrationDeletedTotpPolicyPickerDialog extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -278,7 +278,7 @@ class _StorageMigrationDeletedTotpPolicyPickerDialog extends StatelessWidget {
       );
 
   /// Opens the dialog.
-  static Future<StorageMigrationDeletedTotpPolicy?> openDialog(BuildContext context) => showAdaptiveDialog<StorageMigrationDeletedTotpPolicy>(
+  static Future<StorageMigrationDeletedTotpPolicy?> openDialog(BuildContext context) => showDialog<StorageMigrationDeletedTotpPolicy>(
         context: context,
         builder: (context) => _StorageMigrationDeletedTotpPolicyPickerDialog(),
       );

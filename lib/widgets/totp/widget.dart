@@ -187,7 +187,7 @@ class TotpWidget extends ConsumerWidget {
       Navigator.pushNamed(context, TotpPage.name);
       return;
     }
-    _MobileActionsDialogResult? choice = await showAdaptiveDialog<_MobileActionsDialogResult>(
+    _MobileActionsDialogResult? choice = await showDialog<_MobileActionsDialogResult>(
       context: context,
       builder: (context) => _MobileActionsDialog(
         canEdit: totp.isDecrypted,
@@ -235,7 +235,7 @@ class TotpWidget extends ConsumerWidget {
       return;
     }
 
-    _TotpKeyDialogResult? choice = await showAdaptiveDialog<_TotpKeyDialogResult>(
+    _TotpKeyDialogResult? choice = await showDialog<_TotpKeyDialogResult>(
       context: context,
       builder: (context) => _TotpKeyDialog(),
     );
@@ -281,7 +281,7 @@ class _MobileActionsDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.totp.actions.mobileDialog.title),
         scrollable: true,
         content: Column(
@@ -321,7 +321,7 @@ enum _MobileActionsDialogResult {
 /// Allows the user to choose an action to execute when a TOTP decryption has been done with success.
 class _TotpKeyDialog extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.totp.totpKeyDialog.title),
         scrollable: true,
         content: Column(

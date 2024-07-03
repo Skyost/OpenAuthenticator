@@ -79,9 +79,9 @@ class GithubSignIn with OAuth2SignIn {
     );
     _deviceCode = parsedResponse['device_code'];
     if (context.mounted) {
-      showAdaptiveDialog(
+      showDialog(
         context: context,
-        builder: (context) => AlertDialog.adaptive(
+        builder: (context) => AlertDialog(
           title: Text(translations.validation.githubCodeDialog.title),
           scrollable: true,
           content: Column(

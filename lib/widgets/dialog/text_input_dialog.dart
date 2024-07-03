@@ -49,7 +49,7 @@ class TextInputDialog extends StatefulWidget {
     TextInputType? keyboardType,
     String? initialValue,
   }) =>
-      showAdaptiveDialog<String>(
+      showDialog<String>(
         context: context,
         builder: (context) => TextInputDialog(
           title: title,
@@ -82,7 +82,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
   late bool valid = widget.validator == null ? true : (widget.validator!.call(value) != null);
 
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(widget.title),
         scrollable: true,
         content: Column(
@@ -164,7 +164,7 @@ class MasterPasswordInputDialog extends ConsumerStatefulWidget {
     String? title,
     String? message,
   }) =>
-      showAdaptiveDialog<String>(
+      showDialog<String>(
         context: context,
         builder: (context) => MasterPasswordInputDialog(
           title: title,
@@ -204,7 +204,7 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
   Result<bool> oldPasswordValidationResult = const ResultSuccess(value: false);
 
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(widget.title),
         scrollable: true,
         content: Column(

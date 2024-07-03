@@ -56,7 +56,7 @@ class _ContributorPlanBillingPickerDialog extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _ContributorPlanBillingPickerDialogState();
 
   /// Asks the user to pick a package type.
-  static Future<PackageType?> ask(BuildContext context) => showAdaptiveDialog<PackageType>(
+  static Future<PackageType?> ask(BuildContext context) => showDialog<PackageType>(
         context: context,
         builder: (context) => _ContributorPlanBillingPickerDialog(),
       );
@@ -65,7 +65,7 @@ class _ContributorPlanBillingPickerDialog extends ConsumerStatefulWidget {
 /// The contributor plan billing picker dialog state.
 class _ContributorPlanBillingPickerDialogState extends ConsumerState<_ContributorPlanBillingPickerDialog> {
   @override
-  Widget build(BuildContext context) => AlertDialog.adaptive(
+  Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.contributorPlan.billingPickerDialog.title),
         scrollable: true,
         content: FutureBuilder(

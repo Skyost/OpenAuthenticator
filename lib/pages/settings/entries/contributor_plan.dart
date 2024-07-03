@@ -35,9 +35,9 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
               leading: const Icon(Icons.verified),
               title: Text(translations.settings.application.contributorPlan.title),
               subtitle: Text(translations.settings.application.contributorPlan.subtitle.active),
-              onTap: () => showAdaptiveDialog(
+              onTap: () => showDialog(
                 context: context,
-                builder: (context) => AlertDialog.adaptive(
+                builder: (context) => AlertDialog(
                   title: Text(translations.settings.application.contributorPlan.subscriptionDialog.title),
                   content: Text(translations.settings.application.contributorPlan.subscriptionDialog.message),
                   scrollable: true,

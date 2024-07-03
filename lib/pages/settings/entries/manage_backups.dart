@@ -27,7 +27,7 @@ class ManageBackupSettingsEntryWidget extends ConsumerWidget {
       subtitle: Text(translations.settings.backups.manageBackups.subtitle(n: backupCount)),
       enabled: backups.hasValue && backupCount > 0,
       onTap: () {
-        showAdaptiveDialog(
+        showDialog(
           context: context,
           builder: (context) => _RestoreBackupDialog(),
         );
@@ -86,7 +86,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
         content = const CenteredCircularProgressIndicator();
         break;
     }
-    return AlertDialog.adaptive(
+    return AlertDialog(
       title: Text(translations.settings.backups.manageBackups.backupsDialogTitle),
       content: SizedBox(
         width: MediaQuery.of(context).size.width,

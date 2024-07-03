@@ -26,7 +26,7 @@ class MandatoryTotpLimitDialog extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => AlertDialog.adaptive(
+  Widget build(BuildContext context, WidgetRef ref) => AlertDialog(
         title: Text(title),
         scrollable: true,
         content: Text(message),
@@ -62,7 +62,7 @@ class MandatoryTotpLimitDialog extends ConsumerWidget {
     String? message,
     bool cancelButton = false,
   }) async =>
-      (await showAdaptiveDialog<bool>(
+      (await showDialog<bool>(
         context: context,
         builder: (context) => MandatoryTotpLimitDialog(
           title: title ?? translations.totpLimit.autoDialog.title,
