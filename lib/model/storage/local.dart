@@ -8,6 +8,7 @@ import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/riverpod.dart';
 import 'package:open_authenticator/utils/sqlite.dart';
 
 part 'local.g.dart';
@@ -47,15 +48,16 @@ class Totps extends Table {
 }
 
 /// The local storage provider.
-final localStorageProvider = Provider<LocalStorage>((ref) {
+final localStorageProvider = Provider.autoDispose<LocalStorage>((ref) {
   LocalStorage storage = LocalStorage();
   ref.onDispose(storage.close);
+  ref.cacheFor(const Duration(seconds: 10));
   return storage;
 });
 
 /// Stores TOTPs using Drift and SSS.
 @DriftDatabase(tables: [Totps])
-class LocalStorage extends _$LocalStorage with Storage, AutoTriggerListeners {
+class LocalStorage extends _$LocalStorage with Storage {
   /// The database file name.
   static const _kDbFileName = 'totps';
 
@@ -71,7 +73,6 @@ class LocalStorage extends _$LocalStorage with Storage, AutoTriggerListeners {
   @override
   Future<void> addTotp(Totp totp) async {
     await into(totps).insert(totp.asDriftTotp);
-    super.addTotp(totp);
   }
 
   @override
@@ -83,31 +84,26 @@ class LocalStorage extends _$LocalStorage with Storage, AutoTriggerListeners {
         mode: InsertMode.insertOrReplace,
       );
     });
-    super.addTotps(totps);
   }
 
   @override
   Future<void> deleteTotp(String uuid) async {
     await (delete(totps)..where((totp) => totp.uuid.isValue(uuid))).go();
-    super.deleteTotp(uuid);
   }
 
   @override
   Future<void> deleteTotps(List<String> uuids) async {
     await (delete(totps)..where((totp) => totp.uuid.isIn(uuids))).go();
-    super.deleteTotps(uuids);
   }
 
   @override
   Future<void> clearTotps() async {
-    List<String> deleted = (await (delete(totps)).goAndReturn()).map((totp) => totp.uuid).toList();
-    super.deleteTotps(deleted);
+    await (delete(totps)).go();
   }
 
   @override
   Future<void> updateTotp(String uuid, Totp totp) async {
     await update(totps).replace(totp.asDriftTotp);
-    super.updateTotp(uuid, totp);
   }
 
   @override
@@ -131,11 +127,11 @@ class LocalStorage extends _$LocalStorage with Storage, AutoTriggerListeners {
     return list.map((totp) => totp.uuid).toList();
   }
 
-  // @override
-  // Future<void> replaceTotps(List<Totp> newTotps) => batch((batch) {
-  //       batch.deleteAll(totps);
-  //       batch.insertAll(totps, newTotps.map((totp) => totp.asDriftTotp));
-  //     });
+  @override
+  Future<void> replaceTotps(List<Totp> newTotps) => batch((batch) {
+        batch.deleteAll(totps);
+        batch.insertAll(totps, newTotps.map((totp) => totp.asDriftTotp));
+      });
 
   @override
   Future<Salt?> readSecretsSalt() async => await Salt.readFromLocalStorage();

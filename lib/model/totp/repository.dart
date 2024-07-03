@@ -20,15 +20,13 @@ import 'package:open_authenticator/utils/utils.dart';
 final totpRepositoryProvider = AsyncNotifierProvider.autoDispose<TotpRepository, TotpList>(TotpRepository.new);
 
 /// Allows to query, register, update and delete TOTPs.
-class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageListener {
+class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
   @override
   FutureOr<TotpList> build() async {
     Storage storage = await ref.watch(storageProvider.future);
     CryptoStore? cryptoStore = await ref.watch(cryptoStoreProvider.future);
-    storage.addListener(this);
-    ref.onDispose(() => storage.removeListener(this));
     return TotpList._fromListAndStorage(
-      list: await (await storage.firstRead()).decrypt(cryptoStore),
+      list: await (await storage.listTotps()).decrypt(cryptoStore),
       storage: storage,
     );
   }
@@ -90,6 +88,16 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
       await totpList.waitBeforeNextOperation();
       Storage storage = await ref.read(storageProvider.future);
       await storage.addTotp(totp);
+      if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+        totp.cacheImage();
+      }
+      CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
+      state = AsyncData(
+        TotpList._fromListAndStorage(
+          list: _mergeToCurrentList(totpList, totp: await totp.decrypt(cryptoStore)),
+          storage: storage,
+        ),
+      );
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(
@@ -106,6 +114,26 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
       await totpList.waitBeforeNextOperation();
       Storage storage = await ref.read(storageProvider.future);
       await storage.replaceTotps(totps);
+      CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
+      List<Totp> decrypted = await totps.decrypt(cryptoStore);
+      if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+        TotpList totpList = await future;
+        Map<String, String> previousImages = {
+          for (Totp currentTotp in totpList)
+            if (currentTotp.isDecrypted && (currentTotp as DecryptedTotp).imageUrl != null)
+              currentTotp.uuid: currentTotp.imageUrl!,
+        };
+        for (Totp updatedTotp in decrypted) {
+          await updatedTotp.cacheImage(previousImageUrl: previousImages[updatedTotp.uuid]);
+        }
+      }
+
+      state = AsyncData(
+        TotpList._fromListAndStorage(
+          list: _mergeToCurrentList(totpList, totps: decrypted),
+          storage: storage,
+        ),
+      );
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(
@@ -122,6 +150,16 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
       await totpList.waitBeforeNextOperation();
       Storage storage = await ref.read(storageProvider.future);
       await storage.updateTotp(uuid, totp);
+      if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
+        DecryptedTotp? current = totpList._list.firstWhereOrNull((currentTotp) => currentTotp.uuid == totp.uuid && currentTotp.isDecrypted) as DecryptedTotp?;
+        await totp.cacheImage(previousImageUrl: current?.imageUrl);
+      }
+      state = AsyncData(
+        TotpList._fromListAndStorage(
+          list: _mergeToCurrentList(totpList, totp: totp),
+          storage: storage,
+        ),
+      );
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(
@@ -132,12 +170,20 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
   }
 
   /// Deletes the TOTP associated with the given [uuid].
-  Future<Result> deleteTotp(Totp totp) async {
+  Future<Result> deleteTotp(String uuid) async {
     try {
       TotpList totpList = await future;
       await totpList.waitBeforeNextOperation();
       Storage storage = await ref.read(storageProvider.future);
-      await storage.deleteTotp(totp.uuid);
+      await storage.deleteTotp(uuid);
+      await ref.read(deletedTotpsProvider).markDeleted(uuid);
+      (await TotpImageCache.getTotpCachedImage(uuid)).deleteIfExists();
+      state = AsyncData(
+        TotpList._fromListAndStorage(
+          list: totpList._list..removeWhere((totp) => totp.uuid == uuid),
+          storage: storage,
+        ),
+      );
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(
@@ -191,64 +237,16 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> with StorageList
     }
   }
 
-  @override
-  Future<void> onTotpsAdded(List<Totp> totps) async {
-    if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
-      for (Totp totp in totps) {
-        totp.cacheImage();
-      }
-    }
-    CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
-    state = AsyncData(
-      TotpList._fromListAndStorage(
-        list: await _mergeToCurrentList(await totps.decrypt(cryptoStore)),
-        storage: await ref.read(storageProvider.future),
-      ),
-    );
-  }
-
-  @override
-  Future<void> onTotpsDeleted(List<String> uuids) async {
-    for (String uuid in uuids) {
-      await ref.read(deletedTotpsProvider).markDeleted(uuid);
-      (await TotpImageCache.getTotpCachedImage(uuid)).deleteIfExists();
-    }
-    state = AsyncData(
-      TotpList._fromListAndStorage(
-        list: (await future)._list..removeWhere((totp) => uuids.contains(totp.uuid)),
-        storage: await ref.read(storageProvider.future),
-      ),
-    );
-  }
-
-  @override
-  Future<void> onTotpsUpdated(List<Totp> totps) async {
-    CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
-    List<Totp> decrypted = await totps.decrypt(cryptoStore);
-    if (await ref.read(cacheTotpPicturesSettingsEntryProvider.future)) {
-      TotpList totpList = await future;
-      Map<String, String> previousImages = {
-        for (Totp currentTotp in totpList)
-          if (currentTotp.isDecrypted && (currentTotp as DecryptedTotp).imageUrl != null)
-            currentTotp.uuid: currentTotp.imageUrl!,
-      };
-      for (Totp updatedTotp in decrypted) {
-        await updatedTotp.cacheImage(previousImageUrl: previousImages[updatedTotp.uuid]);
-      }
-    }
-
-    state = AsyncData(
-      TotpList._fromListAndStorage(
-        list: await _mergeToCurrentList(decrypted),
-        storage: await ref.read(storageProvider.future),
-      ),
-    );
-  }
-
-  /// Merges the [from] list to the current TOTP list.
-  Future<List<Totp>> _mergeToCurrentList(List<Totp> from) async {
+  /// Merges the [totp] to the current TOTP list.
+  List<Totp> _mergeToCurrentList(TotpList totpList, {Totp? totp, List<Totp>? totps}) {
+    List<Totp> from = [
+      if (totp != null)
+        totp,
+      if (totps != null)
+        for (Totp totp in totps)
+          totp,
+    ];
     Set<String> uuids = from.map((totp) => totp.uuid).toSet();
-    TotpList totpList = await future;
     return [
       ...from,
       for (Totp totp in totpList._list)

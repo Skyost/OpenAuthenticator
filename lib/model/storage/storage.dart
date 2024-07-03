@@ -86,7 +86,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       List<Totp> toAdd = [];
       if (salt == null) {
         await newStorage.saveSecretsSalt(oldSalt);
-        toAdd.addAll(totps.where((totp) => totp.isDecrypted));
+        toAdd.addAll(totps);
       } else {
         CryptoStore newCryptoStore = await CryptoStore.fromPassword(masterPassword, salt);
         for (Totp totp in totps) {
@@ -104,7 +104,6 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
 
       await currentStorage.onStorageTypeChanged(close: false);
       await ref.read(storageTypeSettingsEntryProvider.notifier).changeValue(newType);
-      ref.invalidate(currentStorage.type.provider);
 
       return const ResultSuccess();
     } catch (ex, stacktrace) {
@@ -246,39 +245,13 @@ enum StorageMigrationDeletedTotpPolicy {
   ask;
 }
 
-/// Allows to listen to the stored TOTPs.
-mixin StorageListener {
-  /// Triggered when some TOTPs have been added.
-  void onTotpsAdded(List<Totp> totps);
-
-  /// Triggered when some TOTPs have been removed.
-  void onTotpsDeleted(List<String> uuids);
-
-  /// Triggered when some TOTPs have been updated.
-  void onTotpsUpdated(List<Totp> totps);
-}
-
 /// A common interface to store TOTPs either locally or remotely.
 mixin Storage {
-  /// Contains all [StorageListener].
-  @protected
-  final Set<StorageListener> listeners = {};
-
   /// Returns the storage type.
   StorageType get type;
 
   /// The time to wait between two operations.
   Duration get operationThreshold => Duration.zero;
-
-  /// Adds a [listener] to the list.
-  void addListener(StorageListener listener) => listeners.add(listener);
-
-  /// Remove a [listener] from the list.
-  void removeListener(StorageListener listener) => listeners.remove(listener);
-
-  /// Lists all TOTPs for the first read.
-  /// This should be fast. Typically cached.
-  Future<List<Totp>> firstRead() => listTotps();
 
   /// Stores the given [totp].
   Future<void> addTotp(Totp totp);
@@ -308,7 +281,10 @@ mixin Storage {
   Future<List<String>> listUuids();
 
   /// Replace all current TOTPs by [newTotps].
-  Future<void> replaceTotps(List<Totp> newTotps);
+  Future<void> replaceTotps(List<Totp> newTotps) async {
+    await clearTotps();
+    await addTotps(newTotps);
+  }
 
   /// Loads the salt that allows to encrypt secrets.
   Future<Salt?> readSecretsSalt();
@@ -320,10 +296,7 @@ mixin Storage {
   Future<void> deleteSecretsSalt();
 
   /// Closes this storage instance.
-  @mustCallSuper
-  Future<void> close() async {
-    listeners.clear();
-  }
+  Future<void> close() => Future.value();
 
   /// Ran when the user choose another storage method.
   @mustCallSuper
@@ -331,57 +304,5 @@ mixin Storage {
     if (close) {
       await this.close();
     }
-  }
-}
-
-/// A storage that automatically triggers its listeners.
-mixin AutoTriggerListeners on Storage {
-  @override
-  Future<void> addTotp(Totp totp) async {
-    for (StorageListener listener in listeners) {
-      listener.onTotpsAdded([totp]);
-    }
-  }
-
-  @override
-  Future<void> addTotps(List<Totp> totps) async {
-    for (StorageListener listener in listeners) {
-      listener.onTotpsAdded(totps);
-    }
-  }
-
-  @override
-  Future<void> updateTotp(String uuid, Totp totp) async {
-    for (StorageListener listener in listeners) {
-      listener.onTotpsUpdated([totp]);
-    }
-  }
-
-  @override
-  Future<void> deleteTotp(String uuid) async {
-    for (StorageListener listener in listeners) {
-      listener.onTotpsDeleted([uuid]);
-    }
-  }
-
-  @override
-  Future<void> deleteTotps(List<String> uuids) async {
-    for (StorageListener listener in listeners) {
-      listener.onTotpsDeleted(uuids);
-    }
-  }
-
-  @override
-  Future<void> clearTotps() async {
-    List<String> totps = (await listTotps()).map((totp) => totp.uuid).toList();
-    for (StorageListener listener in listeners) {
-      listener.onTotpsDeleted(totps);
-    }
-  }
-
-  @override
-  Future<void> replaceTotps(List<Totp> newTotps) async {
-    clearTotps();
-    addTotps(newTotps);
   }
 }

@@ -585,10 +585,10 @@ packages:
     dependency: "direct main"
     description:
       name: freezed_annotation
-      sha256: c3fd9336eb55a38cc1bbd79ab17573113a8deccd0ecbbf926cca3c62803b5c2d
+      sha256: f54946fdb1fa7b01f780841937b1a80783a20b393485f3f6cdf336fd6f4705f2
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.1"
+    version: "2.4.2"
   frontend_server_client:
     dependency: transitive
     description:
@@ -785,10 +785,10 @@ packages:
     dependency: transitive
     description:
       name: local_auth_android
-      sha256: b77dc490fef9214e785c326bf11fa733feaa47675d0433f05f48b5caa486c8f7
+      sha256: "6b60f9f545af5b5a11a90af3c2ab4361c47fff170134fa1c6d4c7d52e6537174"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.40"
+    version: "1.0.41"
   local_auth_darwin:
     dependency: transitive
     description:
@@ -1542,10 +1542,10 @@ packages:
     dependency: "direct main"
     description:
       name: webcrypto
-      sha256: "8484a1ae7a9c6a14eef729261ff4e8d4b7e61b5f4d0c5dbed839043cc945ed28"
+      sha256: "47b5b1192e57151279374b0dc66385e767f973c8a9d6b55fa19992ee5cad12b3"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.6"
+    version: "0.5.7"
   win32:
     dependency: transitive
     description:

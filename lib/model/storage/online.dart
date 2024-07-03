@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
@@ -10,13 +11,11 @@ import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/json.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/utils/utils.dart';
 
 /// The online storage provider.
-final onlineStorageProvider = Provider<OnlineStorage>((ref) {
+final onlineStorageProvider = Provider.autoDispose<OnlineStorage>((ref) {
   FirebaseAuthenticationState state = ref.watch(firebaseAuthenticationProvider);
   OnlineStorage storage = OnlineStorage(userId: state is FirebaseAuthenticationStateLoggedIn ? state.user.uid : null);
-  storage._startCollectionListening();
   ref.onDispose(storage.close);
   return storage;
 });
@@ -51,55 +50,6 @@ class OnlineStorage with Storage {
 
   @override
   Duration get operationThreshold => const Duration(seconds: 5);
-
-  /// Starts the collection listening, if possible.
-  void _startCollectionListening() {
-    if (_userId != null) {
-      _collectionSubscription = _totpsCollection.snapshots().listen(_onCollectionChange);
-    }
-  }
-
-  /// Triggered when the collection has changed.
-  void _onCollectionChange(QuerySnapshot event) {
-    Map<DocumentChangeType, List<Totp>> changes = {};
-    for (DocumentChange change in event.docChanges) {
-      Totp? totp = _FirestoreTotp.fromFirestore(change.doc);
-      if (totp == null) {
-        return;
-      }
-      changes[change.type] = (changes[change.type] ?? [])..add(totp);
-    }
-    for (DocumentChangeType type in changes.keys) {
-      switch (type) {
-        case DocumentChangeType.added:
-          for (StorageListener listener in listeners) {
-            listener.onTotpsAdded(changes[type]!);
-          }
-          break;
-        case DocumentChangeType.modified:
-          for (StorageListener listener in listeners) {
-            listener.onTotpsUpdated(changes[type]!);
-          }
-          break;
-        case DocumentChangeType.removed:
-          List<String> uuids = changes[type]!.map((totp) => totp.uuid).toList();
-          for (StorageListener listener in listeners) {
-            listener.onTotpsDeleted(uuids);
-          }
-          break;
-      }
-    }
-  }
-
-  @override
-  Future<List<Totp>> firstRead() async {
-    try {
-      return await listTotps(getOptions: const GetOptions(source: Source.cache));
-    } catch (ex, stacktrace) {
-      handleException(ex, stacktrace);
-      return [];
-    }
-  }
 
   @override
   Future<void> addTotp(Totp totp) async {

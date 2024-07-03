@@ -72,7 +72,6 @@
     "confirmEmail": {
       "title": "Confirmer votre adresse mail",
       "subtitle(rich)": "Un email de confirmation a été envoyé à votre adresse mail : $email.\nVeuillez cliquer sur le lien pour poursuivre la connexion. Vous pouvez également taper ici pour l'entrer manuellement.",
-      "waitingDialogMessage": "Veuillez patienter pendant que nous confirmons votre adresse mail... Ne fermez pas l'application.",
       "success": "Adresse mail confirmée avec succès.",
       "confirmActionPickerDialog": {
         "title": "Que voulez-vous faire ?",

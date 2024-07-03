@@ -40,13 +40,13 @@ dependencies:
   flutter_riverpod: ^2.5.1
   simple_secure_storage: ^0.3.0
   flutter_svg: ^2.0.10
-  freezed_annotation: ^2.4.1
+  freezed_annotation: ^2.4.2
   google_mlkit_barcode_scanning: ^0.12.0
   path_provider: ^2.1.3
   shared_preferences: ^2.2.3
   totp: ^0.0.1
   uuid: ^4.4.0
-  webcrypto: ^0.5.6
+  webcrypto: ^0.5.7
   equatable: ^2.0.5
   drift: ^2.18.0
   sqlite3_flutter_libs: ^0.5.24

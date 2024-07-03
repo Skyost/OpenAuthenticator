@@ -35,7 +35,7 @@ class HomePage extends ConsumerWidget {
               ),
             if (currentPlatform.isDesktop)
               IconButton(
-                onPressed: ref.read(totpRepositoryProvider.notifier).refresh,
+                onPressed: () => ref.read(totpRepositoryProvider.notifier).refresh(),
                 icon: const Icon(Icons.sync),
               ),
             IconButton(

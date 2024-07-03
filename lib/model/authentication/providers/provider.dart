@@ -14,6 +14,7 @@ import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Contains all the user authentication providers.
 final userAuthenticationProviders = NotifierProvider<UserAuthenticationProviders, List<FirebaseAuthenticationProvider>>(UserAuthenticationProviders.new);
@@ -132,9 +133,9 @@ mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
   Future<bool> isWaitingForConfirmation() => Future.value(false);
 
   /// Confirms the log in, with the given [code], if needed.
-  Future<Result<String>> confirm(T? code) async {
+  Future<Result<String>> confirm(BuildContext context, T? code) async {
     try {
-      return await tryConfirm(code);
+      return await tryConfirm(context, code);
     } catch (ex, stacktrace) {
       return ResultError(
         exception: FirebaseAuthenticationException(ex),
@@ -145,7 +146,7 @@ mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
 
   /// Tries to confirm the log in, with the given [code], if needed.
   @protected
-  Future<Result<String>> tryConfirm(T? code);
+  Future<Result<String>> tryConfirm(BuildContext context, T? code);
 
   /// Cancels the confirmation.
   Future<Result> cancelConfirmation();
@@ -196,9 +197,9 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
   @override
   @protected
   Future<Result<String>> trySignIn(BuildContext context) => tryTo(
-    context,
-    action: FirebaseAuth.instance.signInWith,
-  );
+        context,
+        action: FirebaseAuth.instance.signInWith,
+      );
 
   @override
   @protected
@@ -238,7 +239,10 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
       }
       switch (result) {
         case ResultSuccess(:final value):
-          actionResult = await action(createRestAuthMethod(context, value));
+          actionResult = await showWaitingOverlay(
+            context,
+            future: action(createRestAuthMethod(context, value)),
+          );
           break;
         case ResultCancelled():
           return ResultCancelled.fromAnother(result);
@@ -249,7 +253,10 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
           );
       }
     } else {
-      actionResult = await action(createDefaultAuthMethod(context, scopes: fallbackAuthProvider.scopes));
+      actionResult = await showWaitingOverlay(
+        context,
+        future: action(createDefaultAuthMethod(context, scopes: fallbackAuthProvider.scopes)),
+      );
     }
     return ResultSuccess(value: actionResult.email);
   }

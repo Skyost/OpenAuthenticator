@@ -278,11 +278,14 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
 
   /// Triggered when a dynamic link has been received.
   Future<void> dynamicLinkCallback(PendingDynamicLinkData link) async {
+    if (!mounted) {
+      return;
+    }
     String? mode = link.link.queryParameters['mode'];
     switch (mode) {
       case 'signIn':
         EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
-        Result<String> result = await emailAuthenticationProvider.confirm(link.link.toString());
+        Result<String> result = await emailAuthenticationProvider.confirm(context, link.link.toString());
         if (mounted) {
           AccountUtils.handleAuthenticationResult(context, ref, result);
         }

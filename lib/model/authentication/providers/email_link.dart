@@ -76,25 +76,29 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
       androidPackageName: packageInfo.packageName,
       iOSBundleId: packageInfo.packageName,
     );
+    if (!context.mounted) {
+      return const ResultCancelled();
+    }
     if (currentPlatform == Platform.windows) {
       EmailSignIn emailLinkSignIn = EmailSignIn(email: email);
-      Result<EmailSignInResponse> result;
-      if (context.mounted) {
-        result = await showWaitingOverlay(
-          context,
-          future: emailLinkSignIn.sendLinkToEmailAndWaitForConfirmation(),
-          message: translations.authentication.logIn.waitingConfirmationMessage,
-          timeout: emailLinkSignIn.timeout,
-        );
-      } else {
-        result = await emailLinkSignIn.sendLinkToEmailAndWaitForConfirmation();
+      Result<EmailSignInResponse> result = await showWaitingOverlay(
+        context,
+        future: emailLinkSignIn.sendLinkToEmailAndWaitForConfirmation(),
+        message: translations.authentication.logIn.waitingConfirmationMessage,
+        timeout: emailLinkSignIn.timeout,
+      );
+      if (!context.mounted) {
+        return const ResultCancelled();
       }
       switch (result) {
         case ResultSuccess(:final value):
-          SignInResult result = await FirebaseAuth.instance.signInWith(
-            EmailLinkAuthMethod.rest(
-              email: value.email,
-              oobCode: value.oobCode,
+          SignInResult result = await showWaitingOverlay(
+            context,
+            future: FirebaseAuth.instance.signInWith(
+              EmailLinkAuthMethod.rest(
+                email: value.email,
+                oobCode: value.oobCode,
+              ),
             ),
           );
           return ResultSuccess(value: result.email);
@@ -102,7 +106,10 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
           return result.to((result) => null);
       }
     } else {
-      EmailLinkAuthMethodDefault.sendSignInLink(email, actionCodeSettings);
+      showWaitingOverlay(
+        context,
+        future: EmailLinkAuthMethodDefault.sendSignInLink(email, actionCodeSettings),
+      );
     }
     SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
     bool result = await preferences.setString(_kFirebaseAuthenticationEmailKey, email);
@@ -139,35 +146,36 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   }
 
   @override
-  Future<Result<String>> tryConfirm(String? emailLink) async {
+  Future<Result<String>> tryConfirm(BuildContext context, String? emailLink) async {
     SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
     if (emailLink == null) {
       return ResultError();
     }
-    SignInResult signInResult;
     String email = preferences.getString(_kFirebaseAuthenticationEmailKey)!;
+    EmailLinkAuthMethod method;
     if (currentPlatform == Platform.windows) {
       Result<EmailSignInResponse> result = await EmailSignIn(email: email).validateUrl(emailLink);
-      switch (result) {
-        case ResultSuccess(:final value):
-          signInResult = await FirebaseAuth.instance.signInWith(
-            EmailLinkAuthMethod.rest(
-              email: value.email,
-              oobCode: value.oobCode,
-            ),
-          );
-          break;
-        default:
-          return result.to((result) => null);
+      if (result is! ResultSuccess) {
+        return result.to((result) => null);
       }
+      EmailSignInResponse response = (result as ResultSuccess<EmailSignInResponse>).value;
+      method = EmailLinkAuthMethod.rest(
+        email: response.email,
+        oobCode: response.oobCode,
+      );
     } else {
-      signInResult = await FirebaseAuth.instance.signInWith(
-        EmailLinkAuthMethod.defaultMethod(
-          email: email,
-          emailLink: emailLink,
-        ),
+      method = EmailLinkAuthMethod.defaultMethod(
+        email: email,
+        emailLink: emailLink,
       );
     }
+    if (!context.mounted) {
+      return const ResultCancelled();
+    }
+    SignInResult signInResult = await showWaitingOverlay(
+      context,
+      future: FirebaseAuth.instance.signInWith(method),
+    );
     bool result = await preferences.remove(_kFirebaseAuthenticationEmailKey);
     if (result) {
       ref.invalidateSelf();

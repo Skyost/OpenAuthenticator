@@ -174,7 +174,7 @@ class TotpWidget extends ConsumerWidget {
     }
     Result result = await showWaitingOverlay(
       context,
-      future: ref.read(totpRepositoryProvider.notifier).deleteTotp(totp),
+      future: ref.read(totpRepositoryProvider.notifier).deleteTotp(totp.uuid),
     );
     if (result is ResultError && context.mounted) {
       SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.noTryAgain);

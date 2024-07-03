@@ -97,7 +97,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
                   }
                   Result result = await showWaitingOverlay(
                     context,
-                    future: ref.read(totpRepositoryProvider.notifier).deleteTotp(widget.totp!),
+                    future: ref.read(totpRepositoryProvider.notifier).deleteTotp(widget.totp!.uuid),
                   );
                   if (!context.mounted) {
                     return;

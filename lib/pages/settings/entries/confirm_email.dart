@@ -74,7 +74,6 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     Result result = await showWaitingOverlay(
       context,
       future: ref.read(emailLinkAuthenticationProvider.notifier).cancelConfirmation(),
-      message: translations.settings.synchronization.confirmEmail.waitingDialogMessage,
     );
     if (context.mounted) {
       context.showSnackBarForResult(result, retryIfError: true);
@@ -93,15 +92,10 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
       return;
     }
     EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
-    Result<String> result = await showWaitingOverlay(
-      context,
-      future: emailAuthenticationProvider.confirm(emailLink),
-      message: translations.settings.synchronization.confirmEmail.waitingDialogMessage,
-    );
-    if (!context.mounted) {
-      return;
+    Result<String> result = await emailAuthenticationProvider.confirm(context, emailLink);
+    if (context.mounted) {
+      AccountUtils.handleAuthenticationResult(context, ref, result);
     }
-    AccountUtils.handleAuthenticationResult(context, ref, result);
   }
 }
 
