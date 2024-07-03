@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
@@ -67,7 +68,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
   late String newPassword = widget.defaultPassword ?? '';
 
   /// Whether the user wants to create a backup.
-  bool createBackup = true;
+  bool createBackup = !kDebugMode;
 
   /// The backup password form key.
   final GlobalKey<FormState> backupPasswordFormKey = GlobalKey<FormState>();

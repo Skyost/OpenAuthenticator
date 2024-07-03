@@ -184,7 +184,6 @@ class OnlineStorage with Storage {
 
   @override
   Future<void> close() async {
-    await super.close();
     _cancelSubscription();
     // FirebaseFirestore.instance.terminate();
   }

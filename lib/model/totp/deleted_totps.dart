@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/utils/riverpod.dart';
 import 'package:open_authenticator/utils/sqlite.dart';
 
 part 'deleted_totps.g.dart';
@@ -9,6 +10,7 @@ part 'deleted_totps.g.dart';
 final deletedTotpsProvider = Provider.autoDispose((ref) {
   DeletedTotpsDatabase database = DeletedTotpsDatabase();
   ref.onDispose(database.close);
+  ref.cacheFor(const Duration(seconds: 3));
   return database;
 });
 

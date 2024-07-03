@@ -31,9 +31,14 @@ Future<T> showWaitingOverlay<T>(
   );
   Overlay.of(context).insert(entry);
   if (future != null) {
-    T result = await future;
-    entry.remove();
-    return result;
+    try {
+      T result = await future;
+      return result;
+    } catch (ex) {
+      rethrow;
+    } finally {
+      entry.remove();
+    }
   }
   return null as T;
 }

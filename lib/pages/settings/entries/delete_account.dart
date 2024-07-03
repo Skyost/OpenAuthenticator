@@ -34,23 +34,26 @@ class _DeleteAccountListTileState extends ConsumerState<_DeleteAccountListTile> 
   @override
   Widget build(BuildContext context) {
     AsyncValue<StorageType> storageType = ref.watch(storageTypeSettingsEntryProvider);
+    bool enabled = storageType is AsyncData<StorageType> && storageType.value != StorageType.online;
+    Color? textColor;
+    if (enabled) {
+      textColor = currentBrightness == Brightness.light ? Colors.red.shade900 : Colors.red.shade400;
+    }
     return ListTile(
       leading: Icon(
         Icons.person_off,
-        color: _textColor,
+        color: textColor,
       ),
       title: Text(
         translations.settings.synchronization.deleteAccount.title,
-        style: TextStyle(color: _textColor),
+        style: TextStyle(color: textColor),
       ),
       subtitle: Text(
         translations.settings.synchronization.deleteAccount.subtitle,
-        style: TextStyle(color: _textColor),
+        style: TextStyle(color: textColor),
       ),
-      onTap: storageType is AsyncData<StorageType> && storageType.value != StorageType.online ? (() => AccountUtils.tryDeleteAccount(context, ref)) : null,
+      enabled: enabled,
+      onTap: enabled ? (() => AccountUtils.tryDeleteAccount(context, ref)) : null,
     );
   }
-
-  /// The text color.
-  Color get _textColor => currentBrightness == Brightness.light ? Colors.red.shade900 : Colors.red.shade400;
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
@@ -164,7 +165,7 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
   final GlobalKey<FormState> backupPasswordFormKey = GlobalKey<FormState>();
 
   /// Whether the user wants to create a backup.
-  bool createBackup = true;
+  bool createBackup = !kDebugMode;
 
   /// The backup password.
   String? backupPassword;

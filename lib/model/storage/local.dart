@@ -51,7 +51,7 @@ class Totps extends Table {
 final localStorageProvider = Provider.autoDispose<LocalStorage>((ref) {
   LocalStorage storage = LocalStorage();
   ref.onDispose(storage.close);
-  ref.cacheFor(const Duration(seconds: 10));
+  ref.cacheFor(const Duration(seconds: 3));
   return storage;
 });
 

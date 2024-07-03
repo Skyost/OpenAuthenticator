@@ -32,7 +32,6 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
     String? backupPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
-    Future<void> Function()? close;
     try {
       Result<bool> passwordCheckResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(masterPassword);
       if (passwordCheckResult is! ResultSuccess || !(passwordCheckResult as ResultSuccess<bool>).value) {
@@ -58,11 +57,6 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
 
       Storage newStorage = ref.read(newType.provider);
       DeletedTotpsDatabase deletedTotpsDatabase = ref.read(deletedTotpsProvider);
-      close = () async {
-        await newStorage.close();
-        // await deletedTotpsDatabase.close();
-      };
-
       List<String> toDelete = [];
       List<String> newStorageUuids = await newStorage.listUuids();
       for (String uuid in newStorageUuids) {
@@ -99,9 +93,6 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
       await newStorage.addTotps(toAdd);
       await newStorage.deleteTotps(toDelete);
 
-      await close();
-      close = null;
-
       await currentStorage.onStorageTypeChanged(close: false);
       await ref.read(storageTypeSettingsEntryProvider.notifier).changeValue(newType);
 
@@ -111,8 +102,6 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
         exception: ex,
         stacktrace: stacktrace,
       );
-    } finally {
-      await close?.call();
     }
   }
 }
@@ -296,7 +285,7 @@ mixin Storage {
   Future<void> deleteSecretsSalt();
 
   /// Closes this storage instance.
-  Future<void> close() => Future.value();
+  Future<void> close();
 
   /// Ran when the user choose another storage method.
   @mustCallSuper
