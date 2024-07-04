@@ -38,7 +38,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   bool get showLoadingDialog => false;
 
   @override
-  Future<Result<String>> trySignIn(BuildContext context) async {
+  Future<Result<AuthenticationObject>> trySignIn(BuildContext context) async {
     String? email = await TextInputDialog.prompt(
       context,
       title: translations.authentication.emailDialog.title,
@@ -53,7 +53,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   }
 
   @override
-  Future<Result<String>> tryReAuthenticate(BuildContext context) async {
+  Future<Result<AuthenticationObject>> tryReAuthenticate(BuildContext context) async {
     if (await isWaitingForConfirmation()) {
       throw _ReAuthenticateException(message: 'Account needs to be confirmed in order to proceed.');
     }
@@ -68,7 +68,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   }
 
   /// Tries to authenticate the user with the given [email].
-  Future<Result<String>> _tryAuthenticate(BuildContext context, String email) async {
+  Future<Result<AuthenticationObject>> _tryAuthenticate(BuildContext context, String email) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     ActionCodeSettings actionCodeSettings = ActionCodeSettings(
       url: App.firebaseLoginUrl,
@@ -106,7 +106,11 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
                     ),
             ),
           );
-          return ResultSuccess(value: result.email);
+          return ResultSuccess(
+            value: AuthenticationObject(
+              email: result.email,
+            ),
+          );
         default:
           return result.to((result) => null);
       }
@@ -121,7 +125,12 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     if (result) {
       ref.invalidateSelf();
     }
-    return ResultSuccess(value: email);
+    return ResultSuccess(
+      value: AuthenticationObject(
+        email: email,
+        needValidation: true,
+      ),
+    );
   }
 
   /// Reads the email to confirm from preferences.
@@ -151,7 +160,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   }
 
   @override
-  Future<Result<String>> tryConfirm(BuildContext context, String? emailLink) async {
+  Future<Result<AuthenticationObject>> tryConfirm(BuildContext context, String? emailLink) async {
     if (emailLink == null) {
       return ResultError();
     }
@@ -185,7 +194,11 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     if (result) {
       ref.invalidateSelf();
     }
-    return ResultSuccess(value: signInResult.email);
+    return ResultSuccess(
+      value: AuthenticationObject(
+        email: signInResult.email,
+      ),
+    );
   }
 
   @override

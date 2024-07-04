@@ -13,6 +13,7 @@ import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
+import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
@@ -283,7 +284,7 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     switch (mode) {
       case 'signIn':
         EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
-        Result<String> result = await emailAuthenticationProvider.confirm(context, link.link.toString());
+        Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, link.link.toString());
         if (mounted) {
           AccountUtils.handleAuthenticationResult(context, ref, result);
         }

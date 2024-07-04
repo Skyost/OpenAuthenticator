@@ -25,7 +25,6 @@ class AccountUtils {
       waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
       action: (context, provider) => provider.signIn(context),
       timeoutMessage: translations.error.timeout.authentication,
-      needConfirmation: provider is ConfirmationProvider,
     );
   }
 
@@ -72,25 +71,23 @@ class AccountUtils {
     if (provider == null || !context.mounted) {
       return;
     }
-    Result<String> reAuthenticationResult = await _tryTo(
+    Result<AuthenticationObject> reAuthenticationResult = await _tryTo(
       context,
       ref,
       provider,
       waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
       action: (context, provider) => provider.reAuthenticate(context),
       timeoutMessage: translations.error.timeout.authentication,
-      needConfirmation: provider is ConfirmationProvider,
       handleResult: false,
     );
     if (!context.mounted) {
       return;
     }
-    if (reAuthenticationResult is! ResultSuccess<String>) {
+    if (reAuthenticationResult is! ResultSuccess<AuthenticationObject>) {
       handleAuthenticationResult(
         context,
         ref,
         reAuthenticationResult,
-        needConfirmation: provider is ConfirmationProvider,
         handleDifferentCredentialError: true,
       );
       return;
@@ -117,17 +114,16 @@ class AccountUtils {
   }
 
   /// Tries to do the specified [action].
-  static Future<Result<String>> _tryTo<T extends FirebaseAuthenticationProvider>(
+  static Future<Result<AuthenticationObject>> _tryTo<T extends FirebaseAuthenticationProvider>(
     BuildContext context,
     WidgetRef ref,
     T provider, {
-    required Future<Result<String>> Function(BuildContext, T) action,
+    required Future<Result<AuthenticationObject>> Function(BuildContext, T) action,
     String? waitingDialogMessage,
     String? timeoutMessage,
-    bool needConfirmation = false,
     bool handleResult = true,
   }) async {
-    Result<String> result;
+    Result<AuthenticationObject> result;
     if (provider.showLoadingDialog) {
       result = await showWaitingOverlay(
         context,
@@ -144,7 +140,6 @@ class AccountUtils {
         context,
         ref,
         result,
-        needConfirmation: needConfirmation,
         handleDifferentCredentialError: true,
       );
     }
@@ -155,16 +150,15 @@ class AccountUtils {
   static Future<void> handleAuthenticationResult(
     BuildContext context,
     WidgetRef ref,
-    Result<String> result, {
-    bool needConfirmation = false,
+    Result<AuthenticationObject> result, {
     bool handleDifferentCredentialError = false,
   }) async {
     switch (result) {
-      case ResultSuccess():
+      case ResultSuccess(:final value):
         context.showSnackBarForResult(
           result,
           retryIfError: true,
-          successMessage: needConfirmation ? translations.authentication.logIn.successNeedConfirmation : null,
+          successMessage: value.needValidation ? translations.authentication.logIn.successNeedConfirmation : null,
         );
         break;
       case ResultCancelled(:final timedOut):

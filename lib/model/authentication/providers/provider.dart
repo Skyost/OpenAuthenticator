@@ -89,7 +89,7 @@ abstract class FirebaseAuthenticationProvider extends Notifier<FirebaseAuthentic
   String get providerId;
 
   /// Log-ins the current user.
-  Future<Result<String>> signIn(BuildContext context) async {
+  Future<Result<AuthenticationObject>> signIn(BuildContext context) async {
     try {
       return await trySignIn(context);
     } catch (ex, stacktrace) {
@@ -102,10 +102,10 @@ abstract class FirebaseAuthenticationProvider extends Notifier<FirebaseAuthentic
 
   /// Tries to log-in.
   @protected
-  Future<Result<String>> trySignIn(BuildContext context);
+  Future<Result<AuthenticationObject>> trySignIn(BuildContext context);
 
   /// Re-authenticates the current user.
-  Future<Result<String>> reAuthenticate(BuildContext context) async {
+  Future<Result<AuthenticationObject>> reAuthenticate(BuildContext context) async {
     try {
       return await tryReAuthenticate(context);
     } catch (ex, stacktrace) {
@@ -118,7 +118,7 @@ abstract class FirebaseAuthenticationProvider extends Notifier<FirebaseAuthentic
 
   /// Tries to re-authenticate.
   @protected
-  Future<Result<String>> tryReAuthenticate(BuildContext context);
+  Future<Result<AuthenticationObject>> tryReAuthenticate(BuildContext context);
 
   /// Whether to show the loading dialog.
   bool get showLoadingDialog => true;
@@ -133,7 +133,7 @@ mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
   Future<bool> isWaitingForConfirmation() => Future.value(false);
 
   /// Confirms the log in, with the given [code], if needed.
-  Future<Result<String>> confirm(BuildContext context, T? code) async {
+  Future<Result<AuthenticationObject>> confirm(BuildContext context, T? code) async {
     try {
       return await tryConfirm(context, code);
     } catch (ex, stacktrace) {
@@ -146,7 +146,7 @@ mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
 
   /// Tries to confirm the log in, with the given [code], if needed.
   @protected
-  Future<Result<String>> tryConfirm(BuildContext context, T? code);
+  Future<Result<AuthenticationObject>> tryConfirm(BuildContext context, T? code);
 
   /// Cancels the confirmation.
   Future<Result> cancelConfirmation();
@@ -155,7 +155,7 @@ mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
 /// Allows to link an account.
 mixin LinkProvider on FirebaseAuthenticationProvider {
   /// Links the current provider.
-  Future<Result<String>> link(BuildContext context) async {
+  Future<Result<AuthenticationObject>> link(BuildContext context) async {
     try {
       return await tryLink(context);
     } catch (ex, stacktrace) {
@@ -168,12 +168,16 @@ mixin LinkProvider on FirebaseAuthenticationProvider {
 
   /// Tries to link the current provider.
   @protected
-  Future<Result<String>> tryLink(BuildContext context);
+  Future<Result<AuthenticationObject>> tryLink(BuildContext context);
 
   /// Tries to unlink the current provider.
-  Future<Result<String>> unlink(BuildContext context) async {
+  Future<Result<AuthenticationObject>> unlink(BuildContext context) async {
     SignInResult result = await FirebaseAuth.instance.unlinkFrom(providerId);
-    return ResultSuccess(value: result.email);
+    return ResultSuccess(
+      value: AuthenticationObject(
+        email: result.email,
+      ),
+    );
   }
 }
 
@@ -196,14 +200,14 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
 
   @override
   @protected
-  Future<Result<String>> trySignIn(BuildContext context) => tryTo(
+  Future<Result<AuthenticationObject>> trySignIn(BuildContext context) => tryTo(
         context,
         action: FirebaseAuth.instance.signInWith,
       );
 
   @override
   @protected
-  Future<Result<String>> tryLink(BuildContext context) async {
+  Future<Result<AuthenticationObject>> tryLink(BuildContext context) async {
     if (!FirebaseAuth.instance.isLoggedIn) {
       return const ResultCancelled();
     }
@@ -214,7 +218,7 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
   }
 
   @override
-  Future<Result<String>> tryReAuthenticate(BuildContext context) async {
+  Future<Result<AuthenticationObject>> tryReAuthenticate(BuildContext context) async {
     if (!FirebaseAuth.instance.isLoggedIn) {
       return const ResultCancelled();
     }
@@ -226,7 +230,7 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
 
   /// Tries to do the specified [action].
   @protected
-  Future<Result<String>> tryTo(
+  Future<Result<AuthenticationObject>> tryTo(
     BuildContext context, {
     required Future<SignInResult> Function(CanLinkTo) action,
   }) async {
@@ -258,8 +262,27 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
         future: action(createDefaultAuthMethod(context, scopes: fallbackAuthProvider.scopes)),
       );
     }
-    return ResultSuccess(value: actionResult.email);
+    return ResultSuccess(
+      value: AuthenticationObject(
+        email: actionResult.email,
+      ),
+    );
   }
+}
+
+/// Returned by authentication methods.
+class AuthenticationObject {
+  /// The email.
+  final String? email;
+
+  /// Whether the email needs validation.
+  final bool needValidation;
+
+  /// Creates a new authentication object instance.
+  const AuthenticationObject({
+    required this.email,
+    this.needValidation = false,
+  });
 }
 
 /// Thrown when there is an error authenticating the user.

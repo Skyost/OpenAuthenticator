@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
+import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/account.dart';
@@ -92,7 +93,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
       return;
     }
     EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
-    Result<String> result = await emailAuthenticationProvider.confirm(context, emailLink);
+    Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, emailLink);
     if (context.mounted) {
       AccountUtils.handleAuthenticationResult(context, ref, result);
     }
