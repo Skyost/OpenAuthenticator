@@ -76,7 +76,12 @@ class IntroPageState extends ConsumerState<IntroPage> with BrightnessListener {
   @override
   Widget build(BuildContext context) => Scaffold(
         bottomNavigationBar: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          padding: EdgeInsets.only(
+            top: 10,
+            right: 20,
+            bottom: 10 + MediaQuery.paddingOf(context).bottom,
+            left: 20,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

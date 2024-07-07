@@ -197,9 +197,14 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
           ),
         ),
         bottomNavigationBar: FilledButton.tonalIcon(
-          style: const ButtonStyle(
-            padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 20)),
-            shape: WidgetStatePropertyAll(RoundedRectangleBorder()),
+          style: ButtonStyle(
+            padding: WidgetStatePropertyAll(
+              EdgeInsets.only(
+                top: 20,
+                bottom: 20 + MediaQuery.paddingOf(context).bottom,
+              ),
+            ),
+            shape: const WidgetStatePropertyAll(RoundedRectangleBorder()),
           ),
           onPressed: isValidTotp && enabled
               ? () async {
