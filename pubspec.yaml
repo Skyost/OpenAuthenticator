@@ -61,12 +61,12 @@ dependencies:
   sqlite3: ^2.4.4
   url_launcher: ^6.3.0
   firebase_app_check: ^0.3.0
-  purchases_flutter: ^6.29.4
+  purchases_flutter: ^6.30.0
   firebase_crashlytics: ^4.0.2
   window_manager: ^0.3.9
   slang: ^3.31.1
   slang_flutter: ^3.31.0
-  purchases_ui_flutter: ^6.29.4
+  purchases_ui_flutter: ^6.30.0
   rate_my_app: ^2.2.0
 
 dev_dependencies:
