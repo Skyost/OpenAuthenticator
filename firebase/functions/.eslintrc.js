@@ -30,5 +30,6 @@ module.exports = {
     'indent': ['error', 2],
     'object-curly-spacing': ['error', 'always'],
     'semi': ['error', 'never'],
+    'max-len': ['error', { 'code': 200 }],
   },
 }
