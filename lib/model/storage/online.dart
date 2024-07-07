@@ -188,6 +188,9 @@ class OnlineStorage with Storage {
     // FirebaseFirestore.instance.terminate();
   }
 
+  /// Deletes the user document.
+  Future<void> deleteUserDocument() async => await _userDocument.delete();
+
   /// Cancels the subscription.
   void _cancelSubscription() {
     _collectionSubscription?.cancel();

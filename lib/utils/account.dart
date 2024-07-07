@@ -98,7 +98,7 @@ class AccountUtils {
         try {
           OnlineStorage onlineStorage = ref.read(onlineStorageProvider);
           await onlineStorage.clearTotps();
-          await onlineStorage.deleteSecretsSalt();
+          await onlineStorage.deleteUserDocument();
           return await ref.read(firebaseAuthenticationProvider.notifier).deleteUser();
         } catch (ex, stacktrace) {
           return ResultError(
