@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/authentication/app_links.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
@@ -224,9 +224,6 @@ class _RouteWidget extends ConsumerStatefulWidget {
 
 /// The route widget state.
 class _RouteWidgetState extends ConsumerState<_RouteWidget> {
-  /// The dynamic links subscription.
-  StreamSubscription<PendingDynamicLinkData>? dynamicLinksSubscription;
-
   /// The [RateMyApp] instance.
   RateMyApp? rateMyApp;
 
@@ -235,7 +232,21 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     super.initState();
     if (widget.listen) {
       if (currentPlatform.isMobile) {
-        WidgetsBinding.instance.addPostFrameCallback((_) => listenDynamicLinks());
+        ref.listenManual(appLinksListenerProvider, (previous, next) async {
+          if (next.valueOrNull == null) {
+            return;
+          }
+          String? mode = next.value?.queryParameters['mode'];
+          switch (mode) {
+            case 'signIn':
+              EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
+              Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, next.value.toString());
+              if (mounted) {
+                AccountUtils.handleAuthenticationResult(context, ref, result);
+              }
+              break;
+          }
+        });
       }
       ref.listenManual(totpLimitExceededProvider, (previous, next) async {
         if (next.valueOrNull != true) {
@@ -258,39 +269,6 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
           child: widget.child,
         )
       : widget.child;
-
-  @override
-  void dispose() {
-    dynamicLinksSubscription?.cancel();
-    dynamicLinksSubscription = null;
-    super.dispose();
-  }
-
-  /// Listen for dynamic links.
-  Future<void> listenDynamicLinks() async {
-    PendingDynamicLinkData? initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
-    if (initialLink != null) {
-      dynamicLinkCallback(initialLink);
-    }
-    dynamicLinksSubscription = FirebaseDynamicLinks.instance.onLink.listen(dynamicLinkCallback);
-  }
-
-  /// Triggered when a dynamic link has been received.
-  Future<void> dynamicLinkCallback(PendingDynamicLinkData link) async {
-    if (!mounted) {
-      return;
-    }
-    String? mode = link.link.queryParameters['mode'];
-    switch (mode) {
-      case 'signIn':
-        EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
-        Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, link.link.toString());
-        if (mounted) {
-          AccountUtils.handleAuthenticationResult(context, ref, result);
-        }
-        break;
-    }
-  }
 
   /// Initializes [RateMyApp] and shows the dialog, if needed.
   Future<void> initializeRateMyApp() async {

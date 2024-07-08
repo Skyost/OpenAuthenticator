@@ -57,7 +57,6 @@ dependencies:
   qr_flutter: ^4.1.0
   flex_color_scheme: ^7.3.1
   intl: any
-  firebase_dynamic_links: ^6.0.2
   sqlite3: ^2.4.4
   url_launcher: ^6.3.0
   firebase_app_check: ^0.3.0
@@ -68,6 +67,7 @@ dependencies:
   slang_flutter: ^3.31.0
   purchases_ui_flutter: ^6.30.0
   rate_my_app: ^2.2.0
+  app_links: ^6.1.4
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to

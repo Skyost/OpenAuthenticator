@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  gtk
   screen_retriever
   simple_secure_storage_linux
   sqlite3_flutter_libs
