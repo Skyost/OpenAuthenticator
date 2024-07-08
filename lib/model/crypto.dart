@@ -147,8 +147,6 @@ class CryptoStore {
   /// Checks if the given password is valid.
   Future<bool> checkPasswordValidity(String password) async {
     Uint8List derivedKey =  await _deriveKey(password, salt);
-    print('Original : ${await key.exportRawKey()}');
-    print('Derived key : ${derivedKey}');
     return memEquals(derivedKey, await key.exportRawKey());
   }
 
