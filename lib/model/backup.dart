@@ -93,13 +93,13 @@ class Backup implements Comparable<Backup> {
       }
 
       Map<String, dynamic> jsonData = jsonDecode(file.readAsStringSync());
-      if (jsonData[kTotpsKey] is! List || jsonData[kSaltKey] is! List || jsonData[kPasswordSignatureKey] is! List) {
+      if (jsonData[kTotpsKey] is! List || jsonData[kSaltKey] is! String || jsonData[kPasswordSignatureKey] is! String) {
         throw _InvalidBackupContentException();
       }
 
       CryptoStore cryptoStore = await CryptoStore.fromPassword(password, Salt.fromRawValue(value: base64.decode(jsonData[kSaltKey])));
       HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(await cryptoStore.key.exportRawKey(), Hash.sha256);
-      if(!(await hmacSecretKey.verifyBytes((jsonData[kPasswordSignatureKey] as List).cast<int>(), utf8.encode(password)))) {
+      if(!(await hmacSecretKey.verifyBytes(base64.decode(jsonData[kPasswordSignatureKey]), utf8.encode(password)))) {
         throw _InvalidPasswordException();
       }
 

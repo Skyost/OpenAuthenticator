@@ -10,6 +10,12 @@ class FirebaseAuthDefault extends FirebaseAuth {
   FirebaseAuthUser? _currentUser;
 
   @override
+  void initialize() {
+    super.initialize();
+    firebase_auth.FirebaseAuth.instance.setLanguageCode(locale);
+  }
+
+  @override
   FirebaseAuthUser? get currentUser {
     firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
     if (user?.uid != _currentUser?.uid) {

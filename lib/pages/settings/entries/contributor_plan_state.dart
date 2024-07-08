@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+port 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 
 /// Allows to change the Contributor Plan state for debugging purposes.
@@ -12,9 +10,6 @@ class ContributorPlanStateEntryWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!kDebugMode) {
-      return const SizedBox.shrink();
-    }
     AsyncValue<ContributorPlanState> state = ref.watch(contributorPlanStateProvider);
     return ListTile(
       leading: const Icon(Icons.bug_report),

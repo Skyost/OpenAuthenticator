@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
@@ -16,6 +17,7 @@ import 'package:open_authenticator/pages/settings/entries/link.dart';
 import 'package:open_authenticator/pages/settings/entries/locale.dart';
 import 'package:open_authenticator/pages/settings/entries/log_in.dart';
 import 'package:open_authenticator/pages/settings/entries/manage_backups.dart';
+import 'package:open_authenticator/pages/settings/entries/refresh_id_token.dart';
 import 'package:open_authenticator/pages/settings/entries/save_derived_key.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/pages/settings/entries/theme.dart';
@@ -45,9 +47,7 @@ class SettingsPage extends ConsumerWidget {
             children: [
               _SettingsPageSectionTitle(title: translations.settings.application.title),
               const ContributorPlanEntryWidget(),
-              const ContributorPlanStateEntryWidget(),
               const ThemeSettingsEntryWidget(),
-              const LocaleEntryWidget(),
               CacheTotpPicturesSettingsEntryWidget(),
               _SettingsPageSectionTitle(title: translations.settings.security.title),
               EnableLocalAuthSettingsEntryWidget(),
@@ -65,6 +65,13 @@ class SettingsPage extends ConsumerWidget {
               _SettingsPageSectionTitle(title: translations.settings.about.title),
               const GithubSettingsEntryWidget(),
               const AboutSettingsEntryWidget(),
+              if (kDebugMode)
+                ...[
+                  const _SettingsPageSectionTitle(title: 'Debug'),
+                  const ContributorPlanStateEntryWidget(),
+                  const LocaleEntryWidget(),
+                  const RefreshUserSettingsEntryWidget(),
+                ]
             ],
           ),
         ),

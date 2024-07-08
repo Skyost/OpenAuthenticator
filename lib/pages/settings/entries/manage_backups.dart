@@ -61,6 +61,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
               ListTile(
                 title: Text(formatter.format(backup.dateTime)),
                 onLongPress: currentPlatform.isDesktop ? null : () => deleteBackup(backup),
+                contentPadding: EdgeInsets.zero,
                 trailing: currentPlatform.isDesktop
                     ? Row(
                         mainAxisSize: MainAxisSize.min,

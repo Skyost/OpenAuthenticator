@@ -71,6 +71,9 @@ class App {
   /// How much TOTPs can be saved without subscribing to the Contributor Plan.
   static const int freeTotpsLimit = 6;
 
+  /// The Firebase Firestore database id.
+  static const String? firebaseFirestoreDatabaseId = null;
+
   /// The Firebase login URL.
   static const String firebaseLoginUrl = 'https://login.openauthenticator.app/do';
 

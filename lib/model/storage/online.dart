@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/crypto.dart';
@@ -60,7 +62,7 @@ class OnlineStorage with Storage {
   @override
   Future<void> addTotps(List<Totp> totps) async {
     CollectionReference? collection = _totpsCollection;
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     for (Totp totp in totps) {
       batch.set(collection.doc(totp.uuid), totp.toFirestore());
     }
@@ -73,7 +75,7 @@ class OnlineStorage with Storage {
   @override
   Future<void> deleteTotps(List<String> uuids) async {
     CollectionReference? collection = _totpsCollection;
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     for (String uuid in uuids) {
       batch.delete(collection.doc(uuid));
     }
@@ -83,7 +85,7 @@ class OnlineStorage with Storage {
   @override
   Future<void> clearTotps() async {
     QuerySnapshot snapshot = await _totpsCollection.get();
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     for (QueryDocumentSnapshot document in snapshot.docs) {
       batch.delete(document.reference);
     }
@@ -134,7 +136,7 @@ class OnlineStorage with Storage {
   @override
   Future<void> replaceTotps(List<Totp> newTotps) async {
     CollectionReference? collection = _totpsCollection;
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    WriteBatch batch = _firestore.batch();
     QuerySnapshot snapshots = await collection.get();
     for (QueryDocumentSnapshot document in snapshots.docs) {
       batch.delete(document.reference);
@@ -185,7 +187,7 @@ class OnlineStorage with Storage {
   @override
   Future<void> close() async {
     _cancelSubscription();
-    // FirebaseFirestore.instance.terminate();
+    // _firestore.terminate();
   }
 
   /// Deletes the user document.
@@ -197,13 +199,21 @@ class OnlineStorage with Storage {
     _collectionSubscription = null;
   }
 
+  /// Returns the Firestore instance.
+  static FirebaseFirestore get _firestore => App.firebaseFirestoreDatabaseId == null
+      ? FirebaseFirestore.instance
+      : FirebaseFirestore.instanceFor(
+          app: Firebase.app(),
+          databaseId: App.firebaseFirestoreDatabaseId,
+        );
+
   /// Returns a reference to the current user document.
   /// Throws a [NotLoggedInException] if user is not logged in.
   DocumentReference<Map<String, dynamic>> get _userDocument {
     if (_userId == null) {
       throw NotLoggedInException();
     }
-    return FirebaseFirestore.instance.collection(_userId).doc(_kUserDataDocument);
+    return _firestore.collection(_userId).doc(_kUserDataDocument);
   }
 
   /// Returns a reference to the current user collection.
