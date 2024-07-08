@@ -236,11 +236,15 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
           if (next.valueOrNull == null) {
             return;
           }
-          String? mode = next.value?.queryParameters['mode'];
+          Uri? link = Uri.tryParse(next.value?.queryParameters['link'] ?? '');
+          if (link == null) {
+            return;
+          }
+          String? mode = link.queryParameters['mode'];
           switch (mode) {
             case 'signIn':
               EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
-              Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, next.value.toString());
+              Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, link.toString());
               if (mounted) {
                 AccountUtils.handleAuthenticationResult(context, ref, result);
               }

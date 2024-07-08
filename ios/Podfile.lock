@@ -946,6 +946,8 @@ PODS:
     - abseil/meta/type_traits
     - abseil/xcprivacy
   - abseil/xcprivacy (1.20240116.2)
+  - app_links (0.0.1):
+    - Flutter
   - AppCheckCore (10.19.2):
     - GoogleUtilities/Environment (~> 7.13)
     - GoogleUtilities/UserDefaults (~> 7.13)
@@ -970,9 +972,6 @@ PODS:
   - Firebase/Crashlytics (10.27.0):
     - Firebase/CoreOnly
     - FirebaseCrashlytics (~> 10.27.0)
-  - Firebase/DynamicLinks (10.27.0):
-    - Firebase/CoreOnly
-    - FirebaseDynamicLinks (~> 10.27.0)
   - Firebase/Firestore (10.27.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 10.27.0)
@@ -990,10 +989,6 @@ PODS:
     - Flutter
   - firebase_crashlytics (4.0.2):
     - Firebase/Crashlytics (= 10.27.0)
-    - firebase_core
-    - Flutter
-  - firebase_dynamic_links (6.0.2):
-    - Firebase/DynamicLinks (= 10.27.0)
     - firebase_core
     - Flutter
   - FirebaseAppCheck (10.27.0):
@@ -1028,8 +1023,6 @@ PODS:
     - GoogleUtilities/Environment (~> 7.8)
     - nanopb (< 2.30911.0, >= 2.30908.0)
     - PromisesObjC (~> 2.1)
-  - FirebaseDynamicLinks (10.27.0):
-    - FirebaseCore (~> 10.0)
   - FirebaseFirestore (10.27.0):
     - FirebaseCore (~> 10.0)
     - FirebaseCoreExtension (~> 10.0)
@@ -1276,13 +1269,13 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
+  - app_links (from `.symlinks/plugins/app_links/ios`)
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - firebase_app_check (from `.symlinks/plugins/firebase_app_check/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
-  - firebase_dynamic_links (from `.symlinks/plugins/firebase_dynamic_links/ios`)
   - Flutter (from `Flutter`)
   - google_mlkit_barcode_scanning (from `.symlinks/plugins/google_mlkit_barcode_scanning/ios`)
   - google_mlkit_commons (from `.symlinks/plugins/google_mlkit_commons/ios`)
@@ -1311,7 +1304,6 @@ SPEC REPOS:
     - FirebaseCoreExtension
     - FirebaseCoreInternal
     - FirebaseCrashlytics
-    - FirebaseDynamicLinks
     - FirebaseFirestore
     - FirebaseFirestoreInternal
     - FirebaseInstallations
@@ -1342,6 +1334,8 @@ SPEC REPOS:
     - sqlite3
 
 EXTERNAL SOURCES:
+  app_links:
+    :path: ".symlinks/plugins/app_links/ios"
   camera_avfoundation:
     :path: ".symlinks/plugins/camera_avfoundation/ios"
   cloud_firestore:
@@ -1354,8 +1348,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_crashlytics:
     :path: ".symlinks/plugins/firebase_crashlytics/ios"
-  firebase_dynamic_links:
-    :path: ".symlinks/plugins/firebase_dynamic_links/ios"
   Flutter:
     :path: Flutter
   google_mlkit_barcode_scanning:
@@ -1387,6 +1379,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: d121da9ef7e2ff4cab7666e76c5a3e0915ae08c3
+  app_links: e70ca16b4b0f88253b3b3660200d4a10b4ea9795
   AppCheckCore: 9feb4300caa596a36416cde10674dc5bec1e022e
   BoringSSL-GRPC: 1e2348957acdbcad360b80a264a90799984b2ba6
   camera_avfoundation: 759172d1a77ae7be0de08fc104cfb79738b8a59e
@@ -1396,7 +1389,6 @@ SPEC CHECKSUMS:
   firebase_auth: cc4ea3f47dda7afc4c64f59540aa570aca60814d
   firebase_core: f8d0424c45e0f1e596811085fc12c638d628457c
   firebase_crashlytics: 39ca2155bac4fa2eec0aec9f0eb5e938a08bca23
-  firebase_dynamic_links: 8a142e279cd3d683bbb8d501d0ff5521d72a8616
   FirebaseAppCheck: 2395c0d724d32911bba468f1ffde26d836a8d3ec
   FirebaseAppCheckInterop: 5315f40293191bfec04b2cfab0215760e441540a
   FirebaseAuth: 77a012b7e08042bf44d0db835ca2e86e6ca7bbd3
@@ -1404,7 +1396,6 @@ SPEC CHECKSUMS:
   FirebaseCoreExtension: f63147b723e2a700fe0f34ec6fb7f358d6fe83e0
   FirebaseCoreInternal: 58d07f1362fddeb0feb6a857d1d1d1c5e558e698
   FirebaseCrashlytics: 81ea6ec96519388687f6061beb838a8eec482293
-  FirebaseDynamicLinks: 087bf18ffabe8b6abe0c80301fd16ba2225ce373
   FirebaseFirestore: 7169b75e7db8f9796d4130e3c2157ed444f100d4
   FirebaseFirestoreInternal: 7ba63f170a554ae49392da44f9430e5b7915a7ff
   FirebaseInstallations: 60c1d3bc1beef809fd1ad1189a8057a040c59f2e
