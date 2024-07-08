@@ -153,5 +153,17 @@ class AppContributorPlan {
   static const String stripeCustomerPortalLink = kDebugMode ? 'https://billing.stripe.com/p/login/test_28o5mbdMd6K5dQAcMM' : 'https://billing.stripe.com/p/login/dR65lCdFwb7d7ledQQ';
 }
 
+/// Contains all Argon2 parameters.
+class Argon2Parameters {
+  /// The number of iterations to perform.
+  static const int iterations = 3;
+
+  /// The degree of parallelism (ie. number of threads).
+  static const int parallelism = 8;
+
+  /// The amount of memory (in kibibytes) to use.
+  static const int memorySize = 1 << 18;
+}
+
 ''');
 }

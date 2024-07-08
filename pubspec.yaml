@@ -44,7 +44,6 @@ dependencies:
   google_mlkit_barcode_scanning: ^0.12.0
   path_provider: ^2.1.3
   shared_preferences: ^2.2.3
-  totp: ^0.0.1
   uuid: ^4.4.0
   webcrypto: ^0.5.7
   equatable: ^2.0.5
@@ -68,6 +67,8 @@ dependencies:
   purchases_ui_flutter: ^6.30.0
   rate_my_app: ^2.2.0
   app_links: ^6.1.4
+  hashlib: ^1.19.1
+  hashlib_codecs: ^2.5.0
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to

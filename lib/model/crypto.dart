@@ -4,10 +4,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hashlib/hashlib.dart';
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
-import 'package:open_authenticator/utils/argon2/base.dart';
-import 'package:open_authenticator/utils/argon2/parameters.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 import 'package:webcrypto/webcrypto.dart';
@@ -109,11 +109,13 @@ class CryptoStore {
   /// Generates a derived key from the given [password] and save it to the device secure storage.
   /// Also returns the salt that has been used.
   static Future<Uint8List> _deriveKey(String password, Salt salt) async {
-    Argon2BytesGenerator argon2 = Argon2BytesGenerator();
-    argon2.init(Argon2Parameters(Argon2Parameters.argon2ID, salt.value));
-    Uint8List key = Uint8List(_keyLength);
-    argon2.generateBytesFromString(password, key);
-    return key;
+    Argon2 argon2 = Argon2(
+      iterations: Argon2Parameters.iterations,
+      memorySizeKB: Argon2Parameters.memorySize,
+      parallelism: Argon2Parameters.parallelism,
+      salt: salt.value,
+    );
+    return argon2.convert(utf8.encode(password)).bytes;
   }
 
   /// Encrypts the given text.
@@ -145,6 +147,8 @@ class CryptoStore {
   /// Checks if the given password is valid.
   Future<bool> checkPasswordValidity(String password) async {
     Uint8List derivedKey =  await _deriveKey(password, salt);
+    print('Original : ${await key.exportRawKey()}');
+    print('Derived key : ${derivedKey}');
     return memEquals(derivedKey, await key.exportRawKey());
   }
 

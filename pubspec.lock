@@ -97,14 +97,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
-  base32:
-    dependency: transitive
-    description:
-      name: base32
-      sha256: ddad4ebfedf93d4500818ed8e61443b734ffe7cf8a45c668c9b34ef6adde02e2
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -661,14 +653,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-  hotp:
-    dependency: transitive
+  hashlib:
+    dependency: "direct main"
     description:
-      name: hotp
-      sha256: "20bea17b3a2b4b9de741e369abafd0d387bf0aadbff2e9f69e8824cdbdce644a"
+      name: hashlib
+      sha256: "5037d3b8c36384c03a728543ae67d962a56970c5432a50862279fe68ee4c8411"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "1.19.1"
+  hashlib_codecs:
+    dependency: "direct main"
+    description:
+      name: hashlib_codecs
+      sha256: "2b570061f5a4b378425be28a576c1e11783450355ad4345a19f606ff3d96db0f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
   hotreloader:
     dependency: transitive
     description:
@@ -1402,14 +1402,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
-  totp:
-    dependency: "direct main"
-    description:
-      name: totp
-      sha256: c0aa0933e2d8d33e7595110c9039502e591a211afec43412b2ca969e8a8ee23f
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1"
   typed_data:
     dependency: transitive
     description:

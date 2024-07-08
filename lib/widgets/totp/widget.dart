@@ -134,7 +134,7 @@ class TotpWidget extends ConsumerWidget {
 
   /// Allows to copy the code to the clipboard.
   Future<void> _copyCode(BuildContext context) async {
-    await Clipboard.setData(ClipboardData(text: (totp as DecryptedTotp).generator.generate(DateTime.now())));
+    await Clipboard.setData(ClipboardData(text: (totp as DecryptedTotp).generator.value().toString()));
     if (context.mounted) {
       SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.actions.copyConfirmation);
     }

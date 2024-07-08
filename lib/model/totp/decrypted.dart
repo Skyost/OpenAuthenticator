@@ -1,7 +1,8 @@
+import 'package:hashlib/hashlib.dart' as hashlib;
+import 'package:hashlib_codecs/hashlib_codecs.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:totp/totp.dart' as totp_lib;
 import 'package:uuid/uuid.dart';
 
 /// Represents a TOTP, in its decrypted state.
@@ -45,9 +46,9 @@ class DecryptedTotp extends Totp {
   String? get imageUrl => decryptedData.decryptedImageUrl;
 
   /// Returns the [totp_lib.Totp] instance.
-  totp_lib.Totp get generator => totp_lib.Totp.fromBase32(
-        secret: secret,
-        algorithm: (algorithm ?? Totp.kDefaultAlgorithm).mapsTo,
+  hashlib.TOTP get generator => hashlib.TOTP(
+        fromBase32(secret),
+        algo: (algorithm ?? Totp.kDefaultAlgorithm).mapsTo,
         digits: digits ?? Totp.kDefaultDigits,
         period: validity ?? Totp.kDefaultValidity,
       );

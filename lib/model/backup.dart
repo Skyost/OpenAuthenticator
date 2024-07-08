@@ -48,7 +48,7 @@ class BackupStore extends AsyncNotifier<List<Backup>> {
         result.add(Backup._(ref: ref, dateTime: dateTime));
       }
     }
-    return result;
+    return result..sort((a, b) => a.dateTime.compareTo(b.dateTime));
   }
 
   /// Returns the backup directory.
