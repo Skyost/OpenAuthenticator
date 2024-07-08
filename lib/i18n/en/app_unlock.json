@@ -1,0 +1,12 @@
+{
+  "widget": {
+    "text": "$app is locked.",
+    "button": "Unlock"
+  },
+  "localAuthentication(map)": {
+    "openApp": "Authenticate to access the app.",
+    "enable": "Authenticate to enable local authentication.",
+    "disable":  "Authenticate to disable local authentication."
+  },
+  "masterPasswordDialogMessage": "Please enter your master password to unlock the app."
+}
