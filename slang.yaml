@@ -1,0 +1,11 @@
+input_directory: lib/i18n
+input_file_pattern: .json
+output_directory: lib/i18n
+output_file_name: translations.g.dart
+fallback_strategy: base_locale
+translate_var: translations
+key_case: camel
+key_map_case: camel
+param_case: camel
+namespaces: true
+output_format: multiple_files
