@@ -11,13 +11,16 @@ export default defineNuxtConfig({
   app: {
     head: {
       meta: [
-        { name: 'theme-color', content: '#000000' }
-      ]
-    }
+        { name: 'theme-color', content: '#000000' },
+      ],
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ],
+    },
   },
 
   css: [
-    '~/assets/app.scss'
+    '~/assets/app.scss',
   ],
 
   i18n: {
@@ -28,8 +31,8 @@ export default defineNuxtConfig({
     strategy: 'no_prefix',
     compilation: {
       escapeHtml: false,
-      strictMessage: false
-    }
+      strictMessage: false,
+    },
   },
 
   modules: [
@@ -40,33 +43,33 @@ export default defineNuxtConfig({
     'nuxt-link-checker',
     '@nuxtjs/sitemap',
     'nuxt-simple-robots',
-    '@bootstrap-vue-next/nuxt'
+    '@bootstrap-vue-next/nuxt',
   ],
 
   vite: {
     plugins: [
       StylelintPlugin(),
-      eslintPlugin()
-    ]
+      eslintPlugin(),
+    ],
   },
 
   site: {
     url: siteMeta.url,
     name: siteMeta.name,
-    trailingSlash: true
+    trailingSlash: true,
   },
 
   sitemap: {
-    include: availableLocales.map(locale => `/${locale.code}/**`)
+    include: availableLocales.map(locale => `/${locale.code}/**`),
   },
 
   cname: {
-    host: siteMeta.url
+    host: siteMeta.url,
   },
 
   eslint: {
     config: {
-      stylistic: true
-    }
-  }
+      stylistic: true,
+    },
+  },
 })

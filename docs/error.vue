@@ -17,8 +17,8 @@ const title = computed(() => {
 <template>
   <nuxt-layout>
     <page-head :title="title" />
-    <div class="prose max-w-none p-16">
+    <b-container class="pt-5 pb-5">
       <error-display :error="error" />
-    </div>
+    </b-container>
   </nuxt-layout>
 </template>
