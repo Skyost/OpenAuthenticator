@@ -1,6 +1,6 @@
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="https://openauthenticator.app/images/logo.svg" alt="Logo" width="80" height="80">
+  <a href="https://openauthenticator.app">
+    <img src="https://openauthenticator.app/images/logo.svg" alt="Logo" width="120" height="120">
   </a>
 
 <h3 align="center">Open Authenticator</h3>
@@ -47,7 +47,7 @@ That's how **Open Authenticator** was born, with open-sourceness, interoperabili
 
 ## Screenshots
 
-<img src="https://github.com/Skyost/OpenAuthenticator/raw/main/docs/public/images/screenshots/screenshot-1.png" width="30%">
+<img src="https://github.com/Skyost/OpenAuthenticator/raw/main/docs/public/images/screenshots/home.png" height="400">
 
 ## Download
 
