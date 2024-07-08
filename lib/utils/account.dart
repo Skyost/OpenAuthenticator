@@ -158,7 +158,7 @@ class AccountUtils {
         context.showSnackBarForResult(
           result,
           retryIfError: true,
-          successMessage: value.needValidation ? translations.authentication.logIn.successNeedConfirmation : null,
+          successMessage: value.needValidation ? translations.authentication.logIn.successNeedConfirmation : translations.authentication.logIn.success,
         );
         break;
       case ResultCancelled(:final timedOut):
