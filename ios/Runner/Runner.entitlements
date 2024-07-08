@@ -6,6 +6,11 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:open-authenticator-by-skyost.page.link</string>
+		<string>applinks:login.openauthenticator.app</string>
+	</array>
 	<key>keychain-access-groups</key>
 	<array/>
 </dict>
