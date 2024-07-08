@@ -1,4 +1,5 @@
-port 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
