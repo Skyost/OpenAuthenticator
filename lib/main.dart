@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/app_links.dart';
+import 'package:open_authenticator/model/app_links.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
@@ -29,6 +29,7 @@ import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/totp_limit.dart';
 import 'package:open_authenticator/widgets/route/unlock_challenge.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 import 'package:window_manager/window_manager.dart';
@@ -201,7 +202,7 @@ class _RouteWidget extends ConsumerStatefulWidget {
   /// The route widget.
   final Widget child;
 
-  /// Listen to dynamic links and [totpLimitExceededProvider].
+  /// Listen to [appLinksListenerProvider] and [totpLimitExceededProvider].
   final bool listen;
 
   /// Whether to provide an [UnlockChallengeRouteWidget].
@@ -236,19 +237,14 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
           if (next.valueOrNull == null) {
             return;
           }
-          Uri? link = Uri.tryParse(next.value?.queryParameters['link'] ?? '');
-          if (link == null) {
+          Uri uri = next.value!;
+          if (uri.host == Uri.parse(App.firebaseLoginUrl).host) {
+            handleLoginLink(uri);
             return;
           }
-          String? mode = link.queryParameters['mode'];
-          switch (mode) {
-            case 'signIn':
-              EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
-              Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, link.toString());
-              if (mounted) {
-                AccountUtils.handleAuthenticationResult(context, ref, result);
-              }
-              break;
+          if (uri.scheme == 'otpauth') {
+            handleTotpLink(uri);
+            return;
           }
         });
       }
@@ -256,10 +252,7 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         if (next.valueOrNull != true) {
           return;
         }
-        bool result = false;
-        while (!result && mounted) {
-          result = await MandatoryTotpLimitDialog.show(context);
-        }
+        MandatoryTotpLimitDialog.showAndBlock(context);
       });
     }
     if (widget.rateMyApp) {
@@ -289,6 +282,37 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     }
     if (rateMyApp!.shouldOpenDialog && mounted) {
       rateMyApp!.showRateDialog(context);
+    }
+  }
+
+  /// Handles a login link.
+  Future<void> handleLoginLink(Uri loginLink) async {
+    if (!mounted) {
+      return;
+    }
+    Uri? link = Uri.tryParse(loginLink.queryParameters['link'] ?? '');
+    if (link == null) {
+      return;
+    }
+    String? mode = link.queryParameters['mode'];
+    switch (mode) {
+      case 'signIn':
+        EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
+        Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, link.toString());
+        if (mounted) {
+          AccountUtils.handleAuthenticationResult(context, ref, result);
+        }
+        break;
+    }
+  }
+
+  /// Handles a TOTP link.
+  Future<void> handleTotpLink(Uri totpLink) async {
+    if (mounted) {
+      await showWaitingOverlay(
+        context,
+        future: TotpPage.openFromUri(context, ref, totpLink),
+      );
     }
   }
 }

@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/main.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/pages/home.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -17,6 +19,7 @@ import 'package:open_authenticator/widgets/dialog/totp_limit.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 import 'package:open_authenticator/widgets/list/expand_list_tile.dart';
 import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
+import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/totp/image.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -45,6 +48,28 @@ class TotpPage extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _TotpPageState();
+
+  /// Opens this page from a scanned [uri].
+  static Future<void> openFromUri(BuildContext context, WidgetRef ref, Uri uri) async {
+    CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
+    DecryptedTotp? totp = await DecryptedTotp.fromUri(uri, cryptoStore);
+    if (!context.mounted) {
+      return;
+    }
+    if (totp == null) {
+      SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: Exception('Failed to decrypt TOTP.')));
+      return;
+    }
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      TotpPage.name,
+      (route) => route.settings.name == HomePage.name,
+      arguments: {
+        OpenAuthenticatorApp.kRouteParameterTotp: totp,
+        OpenAuthenticatorApp.kRouteParameterAddTotp: true,
+      },
+    );
+  }
 }
 
 /// The TOTP edit page state.

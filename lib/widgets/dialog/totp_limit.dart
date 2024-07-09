@@ -55,6 +55,14 @@ class MandatoryTotpLimitDialog extends ConsumerWidget {
         ],
       );
 
+  /// Shows the dialog until it returns `true`.
+  static Future<void> showAndBlock(BuildContext context) async {
+    bool result = false;
+    while (!result && context.mounted) {
+      result = await MandatoryTotpLimitDialog.show(context);
+    }
+  }
+
   /// Shows a mandatory totp limit dialog.
   static Future<bool> show(
     BuildContext context, {
