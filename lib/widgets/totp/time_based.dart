@@ -26,10 +26,16 @@ abstract class TimeBasedTotpWidgetState<T extends TimeBasedTotpWidget> extends S
   @override
   void initState() {
     super.initState();
-    _updateTimer = Timer(calculateExpirationDuration(), () {
-      updateState();
-      _updateTimer = Timer.periodic(Duration(seconds: validity), (_) => updateState());
-    });
+    _scheduleUpdates();
+  }
+
+  @override
+  void didUpdateWidget(covariant T oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.totp.validity != widget.totp.validity) {
+      _cancelUpdates();
+      _scheduleUpdates();
+    }
   }
 
   @override
@@ -43,6 +49,14 @@ abstract class TimeBasedTotpWidgetState<T extends TimeBasedTotpWidget> extends S
 
   /// Triggered when the state should be updated.
   void updateState();
+
+  /// Schedule the updates.
+  void _scheduleUpdates() {
+    _updateTimer = Timer(calculateExpirationDuration(), () {
+      updateState();
+      _updateTimer = Timer.periodic(Duration(seconds: validity), (_) => updateState());
+    });
+  }
 
   /// Cancels the updates.
   void _cancelUpdates() {

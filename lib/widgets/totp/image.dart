@@ -167,16 +167,7 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
     if (((DateTime.now().millisecondsSinceEpoch ~/ 1000) ~/ this.validity).isEven) {
       changeColors();
     }
-    Duration validity = _validity;
-    animationController = AnimationController(
-      vsync: this,
-      duration: validity,
-      upperBound: this.validity.toDouble(),
-    )
-      ..addListener(() {
-        setState(() {});
-      })
-      ..forward(from: (validity - calculateExpirationDuration()).inMilliseconds / 1000);
+    scheduleAnimation();
   }
 
   @override
@@ -201,22 +192,50 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
       );
 
   @override
+  void didUpdateWidget(covariant TotpCountdownImageWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.totp.validity != widget.totp.validity) {
+      cancelAnimation();
+      scheduleAnimation();
+    }
+  }
+
+  @override
   void dispose() {
-    animationController.dispose();
+    cancelAnimation();
     super.dispose();
   }
 
   @override
   void updateState({bool changeColors = true}) {
     if (mounted) {
+      animationController.duration = _validity;
+      animationController.forward(from: 0);
       setState(() {
-        animationController.duration = _validity;
-        animationController.forward(from: 0);
         if (changeColors) {
           this.changeColors();
         }
       });
     }
+  }
+
+  /// Schedule the animation.
+  void scheduleAnimation() {
+    Duration validity = _validity;
+    animationController = AnimationController(
+      vsync: this,
+      duration: validity,
+      upperBound: this.validity.toDouble(),
+    )
+      ..addListener(() {
+        setState(() {});
+      })
+      ..forward(from: (validity - calculateExpirationDuration()).inMilliseconds / 1000);
+  }
+
+  /// Cancels the animation.
+  void cancelAnimation() {
+    animationController.dispose();
   }
 
   /// Changes the colors.

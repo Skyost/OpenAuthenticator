@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
@@ -12,7 +11,7 @@ import 'package:open_authenticator/widgets/totp/code.dart';
 import 'package:open_authenticator/widgets/totp/image.dart';
 
 /// Allows to display TOTPs in a [ListView].
-class TotpWidget extends ConsumerWidget {
+class TotpWidget extends StatelessWidget {
   /// The TOTP instance.
   final Totp totp;
 
@@ -51,7 +50,7 @@ class TotpWidget extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     Widget result = Padding(
       padding: contentPadding,
       child: Row(
@@ -126,7 +125,7 @@ class TotpWidget extends ConsumerWidget {
     );
     return (currentPlatform.isMobile || kDebugMode)
         ? InkWell(
-            onLongPress: () => _showMobileActionsMenu(context, ref),
+            onLongPress: () => _showMobileActionsMenu(context),
             child: result,
           )
         : result;
@@ -134,14 +133,14 @@ class TotpWidget extends ConsumerWidget {
 
   /// Allows to copy the code to the clipboard.
   Future<void> _copyCode(BuildContext context) async {
-    await Clipboard.setData(ClipboardData(text: (totp as DecryptedTotp).generator.value().toString()));
+    await Clipboard.setData(ClipboardData(text: (totp as DecryptedTotp).generateCode()));
     if (context.mounted) {
       SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.actions.copyConfirmation);
     }
   }
 
   /// Triggered when the user long presses the widget on mobile.
-  Future<void> _showMobileActionsMenu(BuildContext context, WidgetRef ref) async {
+  Future<void> _showMobileActionsMenu(BuildContext context) async {
     if (!currentPlatform.isMobile && !kDebugMode) {
       Navigator.pushNamed(context, TotpPage.name);
       return;

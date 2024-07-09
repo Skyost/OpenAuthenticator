@@ -28,7 +28,7 @@ String generateRandomString([int length = 20]) {
   return String.fromCharCodes(Iterable.generate(length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
 }
 
-/// Compares two [Uint8List]s by comparing 8 bytes at a time.ù
+/// Compares two [Uint8List]s by comparing 8 bytes at a time.
 /// Kudos to https://stackoverflow.com/a/70751501/3608831.
 bool memEquals(Uint8List bytes1, Uint8List bytes2) {
   if (identical(bytes1, bytes2)) {

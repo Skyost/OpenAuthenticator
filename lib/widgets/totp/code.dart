@@ -41,7 +41,7 @@ class _TotpCodeWidgetState extends TimeBasedTotpWidgetState<TotpCodeWidget> {
     if (!widget.totp.isDecrypted) {
       return '';
     }
-    String code = (widget.totp as DecryptedTotp).generator.value().toString();
+    String code = (widget.totp as DecryptedTotp).generateCode();
     StringBuffer buffer = StringBuffer();
     for (int i = 0; i < code.length; i++) {
       buffer.write(code[i]);
