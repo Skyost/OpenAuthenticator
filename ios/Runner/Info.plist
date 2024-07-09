@@ -35,10 +35,20 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>Firebase</string>
+			<string>app.openauthenticator.firebase</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.15794778256-2mngm8dj80j5o8nggvbodjfg4ud8fvo7</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>app.openauthenticator</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>otpauth</string>
 			</array>
 		</dict>
 	</array>
