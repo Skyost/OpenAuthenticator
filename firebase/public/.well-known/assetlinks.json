@@ -1,0 +1,16 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.openauthenticator",
+      "sha256_cert_fingerprints": [
+        "0F:32:AC:A7:41:B1:6A:C3:DC:FE:6C:C8:50:98:D5:76:9E:63:E3:F7:73:9E:02:47:B4:F8:32:C0:6B:E2:F1:0D",
+        "76:40:05:07:E2:C0:45:5D:21:9A:89:29:8A:49:E7:38:EB:DA:CA:40:1B:62:2F:D1:3F:7D:23:A0:DA:B8:A7:9B",
+        "E4:B3:80:E5:64:3C:5C:3E:C3:94:28:B0:23:3C:DB:A0:5B:4A:8B:EE:EB:71:96:AE:74:39:29:0A:BB:99:8F:E6"
+      ]
+    }
+  }
+]

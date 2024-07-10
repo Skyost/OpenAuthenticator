@@ -23,6 +23,17 @@
         "source": "/**",
         "dynamicLinks": true
       }
+    ],
+    "headers": [
+      {
+        "source": "/.well-known/assetlinks.json",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      }
     ]
   },
   "functions": [
