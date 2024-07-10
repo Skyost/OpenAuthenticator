@@ -6,6 +6,7 @@ import availableLocales from './locales/availableLocales'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  compatibilityDate: '2024-07-01',
   devtools: { enabled: true },
 
   app: {
@@ -50,6 +51,12 @@ export default defineNuxtConfig({
     'nuxt-simple-robots',
     '@bootstrap-vue-next/nuxt',
   ],
+
+  nitro: {
+    prerender: {
+      routes: ['/'],
+    },
+  },
 
   vite: {
     plugins: [
