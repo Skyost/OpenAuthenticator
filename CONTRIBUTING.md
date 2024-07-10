@@ -151,6 +151,16 @@ There are a few things to think about when doing a release:
   for removal in the version that you are intending to release.
 - Create a PR containing the changes for removing the deprecated entities.
 
+When every steps above has been done, just use the built-in utility to automatically bump the version
+and push a release :
+
+```
+dart run open_authenticator:version
+```
+
+Note that you need a Github PAT that has write access to the current repository. It should be put
+in a `.env` file under the key `GITHUB_PAT`.
+
 [GitHub issue]: https://github.com/Skyost/OpenAuthenticator/issues
 [GitHub issues]: https://github.com/Skyost/OpenAuthenticator/issues
 [PRs]: https://github.com/Skyost/OpenAuthenticator/pulls

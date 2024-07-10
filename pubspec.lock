@@ -189,18 +189,18 @@ packages:
     dependency: transitive
     description:
       name: camera_avfoundation
-      sha256: "7d021e8cd30d9b71b8b92b4ad669e80af432d722d18d6aac338572754a786c15"
+      sha256: dfe32a72db81e92a15672cb6e8ecc81e34e0a9d5bf03017f0545e7041b2b8150
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.16"
+    version: "0.9.16+2"
   camera_platform_interface:
     dependency: transitive
     description:
       name: camera_platform_interface
-      sha256: a250314a48ea337b35909a4c9d5416a208d736dcb01d0b02c6af122be66660b0
+      sha256: b3ede1f171532e0d83111fe0980b46d17f1aa9788a07a2fbed07366bbdbb9061
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.4"
+    version: "2.8.0"
   camera_web:
     dependency: transitive
     description:
@@ -305,6 +305,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  conventional_commit:
+    dependency: "direct main"
+    description:
+      name: conventional_commit
+      sha256: dec15ad1118f029c618651a4359eb9135d8b88f761aa24e4016d061cd45948f2
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.0+1"
   convert:
     dependency: transitive
     description:
@@ -369,6 +377,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.6"
+  dotenv:
+    dependency: "direct main"
+    description:
+      name: dotenv
+      sha256: "379e64b6fc82d3df29461d349a1796ecd2c436c480d4653f3af6872eccbc90e1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.0"
   drift:
     dependency: "direct main"
     description:
@@ -1602,6 +1618,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
+  yaml_magic:
+    dependency: "direct main"
+    description:
+      name: yaml_magic
+      sha256: "6f281c7fd58492e8f30f9a7335697193d61269313952fc43e3baa784860062f3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.6"
 sdks:
   dart: ">=3.4.0 <4.0.0"
   flutter: ">=3.22.0"
