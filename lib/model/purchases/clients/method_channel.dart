@@ -85,4 +85,7 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
     CustomerInfo customerInfo = await Purchases.getCustomerInfo();
     return customerInfo.managementURL;
   }
+
+  @override
+  Future<void> invalidateUserInfo() => Purchases.invalidateCustomerInfoCache();
 }

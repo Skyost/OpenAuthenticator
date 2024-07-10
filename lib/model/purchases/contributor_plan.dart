@@ -83,6 +83,7 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
           return const ResultCancelled();
         case PaywallResult.purchased:
         case PaywallResult.restored:
+          await revenueCatClient.invalidateUserInfo();
           if (await revenueCatClient.hasEntitlement(AppContributorPlan.entitlementId)) {
             state = const AsyncData(ContributorPlanState.active);
           }
