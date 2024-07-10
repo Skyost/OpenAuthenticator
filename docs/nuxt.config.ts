@@ -11,7 +11,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       meta: [
-        { name: 'theme-color', content: '#000000' },
+        { name: 'theme-color', content: '#ffffff' },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -32,6 +32,11 @@ export default defineNuxtConfig({
     compilation: {
       escapeHtml: false,
       strictMessage: false,
+    },
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'language',
+      redirectOn: 'root',
     },
   },
 
@@ -57,10 +62,6 @@ export default defineNuxtConfig({
     url: siteMeta.url,
     name: siteMeta.name,
     trailingSlash: true,
-  },
-
-  sitemap: {
-    include: availableLocales.map(locale => `/${locale.code}/**`),
   },
 
   cname: {

@@ -132,7 +132,7 @@ dans le cadre de votre appareil mobile ou via le marché ou le réseau d'applica
 que vous utiliserez l'Application et pendant un certain temps raisonnable par la suite. Le Fournisseur
 de services conservera les informations collectées automatiquement jusqu'à 24 mois,
 puis pourra les stocker de manière agrégée. Si vous souhaitez que le Fournisseur de services supprime
-les données fournies par l'utilisateur que vous avez fournies via l'Application,
+les données fournies par l'utilisateur transmises via l'Application,
 veuillez <a href="/contact">les contacter</a> et ils vous répondront dans un délai raisonnable.
 Veuillez noter que certaines ou toutes les données fournies par l'utilisateur peuvent être nécessaires
 pour que l'Application fonctionne correctement.
