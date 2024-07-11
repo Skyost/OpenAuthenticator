@@ -358,7 +358,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
     if (secret.isEmpty) {
       return translations.error.validation.empty;
     }
-    if (!RegExp(r'^[A-Z2-7]{16,128}$').hasMatch(secret)) {
+    if (!RegExp(r'^[A-Z2-7]{16,128}$').hasMatch(secret.toUpperCase())) {
       return translations.error.validation.secret;
     }
     return null;
