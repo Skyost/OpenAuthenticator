@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:hashlib_codecs/hashlib_codecs.dart';
 
 /// Contains some useful iterable methods.
 extension IterableUtils<T> on Iterable<T> {
@@ -11,6 +12,15 @@ extension IterableUtils<T> on Iterable<T> {
     }
     return null;
   }
+}
+
+/// Returns whether a given [string] is a valid base 32 string.
+bool isValidBase32(String string) {
+  try {
+    fromBase32(string);
+    return true;
+  } catch (_) {}
+  return false;
 }
 
 /// Handles an exception.

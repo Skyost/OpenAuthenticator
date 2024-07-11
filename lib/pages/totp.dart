@@ -13,6 +13,7 @@ import 'package:open_authenticator/pages/home.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/logo_search/dialog.dart';
 import 'package:open_authenticator/widgets/dialog/totp_limit.dart';
@@ -327,7 +328,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
       child: Center(
         child: QrImageView(
           data: DecryptedTotp.toUri(
-            secret: secret,
+            secret: secret.toUpperCase(),
             label: label,
             issuer: issuer,
             algorithm: algorithm,
@@ -355,10 +356,11 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   /// Validates the [secret].
   String? validateSecret([String? secret]) {
     secret ??= this.secret;
+    secret = secret.toUpperCase();
     if (secret.isEmpty) {
       return translations.error.validation.empty;
     }
-    if (!RegExp(r'^[A-Z2-7]{16,128}$').hasMatch(secret.toUpperCase())) {
+    if (!isValidBase32(secret)) {
       return translations.error.validation.secret;
     }
     return null;
@@ -446,7 +448,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   Future<DecryptedTotp?> _createTotp() async => await DecryptedTotp.create(
         cryptoStore: await ref.read(cryptoStoreProvider.future),
         uuid: widget.totp?.uuid,
-        secret: secret,
+        secret: secret.toUpperCase(),
         label: label,
         issuer: issuer,
         algorithm: algorithm,
