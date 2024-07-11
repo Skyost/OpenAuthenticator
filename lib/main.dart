@@ -298,6 +298,9 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     switch (mode) {
       case 'signIn':
         EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
+        if (!(await emailAuthenticationProvider.isWaitingForConfirmation())) {
+          return;
+        }
         Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, link.toString());
         if (mounted) {
           AccountUtils.handleAuthenticationResult(context, ref, result);
