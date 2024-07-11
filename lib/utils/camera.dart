@@ -47,16 +47,17 @@ extension CameraImageToInputImage on CameraImage {
     if (planes.isEmpty) {
       return null;
     }
-    Plane plane = planes.first;
 
     // compose InputImage using bytes
     return InputImage.fromBytes(
-      bytes: plane.bytes,
+      bytes: Uint8List.fromList(
+        planes.fold([], (previousValue, element) => previousValue..addAll(element.bytes)),
+      ),
       metadata: InputImageMetadata(
-        size: Size((plane.width ?? width).toDouble(), (plane.height ?? height).toDouble()),
+        size: Size((planes.first.width ?? width).toDouble(), (planes.first.height ?? height).toDouble()),
         rotation: rotation, // used only in Android
         format: format, // used only in iOS
-        bytesPerRow: plane.bytesPerRow, // used only in iOS
+        bytesPerRow: planes.first.bytesPerRow, // used only in iOS
       ),
     );
   }
