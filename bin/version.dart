@@ -65,7 +65,7 @@ Future<void> main() async {
     }
     newVersion = await Version.parse(input);
   }
-  String defaultIgnoredScopes = 'docs,version';
+  String defaultIgnoredScopes = 'docs,version,deps';
   stdout.write('Enter a comma separated list of scopes to ignore (default is "$defaultIgnoredScopes") or "Y" to continue. ');
   input = stdin.readLineSync(encoding: utf8)?.toUpperCase() ?? 'Y';
   if (input == 'Y') {
@@ -231,6 +231,11 @@ class ChangeLogEntry {
       commitsOfType = [commit];
       _subEntries[commit.type!] = [];
     } else {
+      for (ConventionalCommitWithHash commitWithHash in commitsOfType) {
+        if (commitWithHash.description == commit.description) {
+          return;
+        }
+      }
       commitsOfType.add(commit);
       commitsOfType.sort(_compareConventionalCommits);
     }
