@@ -29,6 +29,7 @@ class ScanPage extends ConsumerWidget {
           }
           Uri? uri = Uri.tryParse(code);
           if (uri == null) {
+            Navigator.pop(context);
             SnackBarIcon.showErrorSnackBar(context, text: translations.error.scan.noUri);
             return;
           }

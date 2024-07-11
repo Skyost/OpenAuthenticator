@@ -184,7 +184,7 @@ class _CodeScannerState extends State<CodeScanner> with WidgetsBindingObserver {
   /// The camera listener.
   CodeScannerCameraListener? listener;
 
-  /// Whether to retry.
+  /// Whether to retry for when camera permission is denied.
   bool retry = true;
 
   /// Whether it's initialized.
@@ -209,21 +209,13 @@ class _CodeScannerState extends State<CodeScanner> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (!isInternalController) {
+    if (!isInternalController || controller == null || !controller!.value.isInitialized) {
       return;
     }
 
     if (state == AppLifecycleState.inactive) {
-      CameraController? cameraController = controller;
-      if (cameraController == null || !cameraController.value.isInitialized) {
-        return;
-      }
-      cameraController.dispose();
-      if (mounted) {
-        setState(() => controller = null);
-      }
-    } else if (state == AppLifecycleState.resumed && retry && initialized && controller == null) {
-      initialized = false;
+      controller!.dispose();
+    } else if (state == AppLifecycleState.resumed) {
       _initCameraController();
     }
   }
@@ -267,11 +259,26 @@ class _CodeScannerState extends State<CodeScanner> with WidgetsBindingObserver {
     }
     listener = CodeScannerCameraListener(
       this.controller!,
-      onScan: widget.onScan,
-      onScanAll: widget.onScanAll,
+      onScan: (code, details, listener) async {
+        widget.onScan?.call(code, details, listener);
+        if (widget.once) {
+          setState(() {
+            this.controller = null;
+            listener.stop();
+          });
+        }
+      },
+      onScanAll: (barcodes, listener) async {
+        widget.onScanAll?.call(barcodes, listener);
+        if (widget.once) {
+          setState(() {
+            this.controller = null;
+            listener.stop();
+          });
+        }
+      },
       formats: widget.formats,
       interval: widget.scanInterval,
-      once: widget.once,
     );
 
     initialized = true;
@@ -360,9 +367,6 @@ class CodeScannerCameraListener {
   /// The scanner instance.
   final BarcodeScanner scanner;
 
-  /// Whether there is only one asked scan.
-  final bool once;
-
   /// Called when a scan occurs.
   final void Function(String? code, Barcode details, CodeScannerCameraListener listener)? onScan;
 
@@ -380,7 +384,6 @@ class CodeScannerCameraListener {
     this.controller, {
     List<BarcodeFormat> formats = const [BarcodeFormat.all],
     Duration interval = const Duration(milliseconds: 500),
-    this.once = false,
     this.onScan,
     this.onScanAll,
     this.onError,
@@ -453,9 +456,6 @@ class CodeScannerCameraListener {
   Future<void> _onImageProcessed(List<Barcode> barcodes) async {
     if (!controller.value.isStreamingImages || barcodes.isEmpty) {
       return;
-    }
-    if (once) {
-      await stop();
     }
     onScan?.call(barcodes.first.rawValue, barcodes.first, this);
     onScanAll?.call(barcodes, this);

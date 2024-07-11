@@ -65,6 +65,7 @@
     "validity": "Validité (en secondes)",
     "advancedOptions": "Options avancées",
     "showQrCode": "Afficher le QR code",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "uriError": "Impossible de lire ce TOTP. Êtes-vous sûr qu'il est valide ?"
   }
 }

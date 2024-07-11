@@ -57,8 +57,7 @@ class TotpPage extends ConsumerStatefulWidget {
       return;
     }
     if (totp == null) {
-      SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: Exception('Failed to decrypt TOTP.')));
-      return;
+      SnackBarIcon.showErrorSnackBar(context, text: translations.totp.page.uriError);
     }
     Navigator.pushNamedAndRemoveUntil(
       context,
