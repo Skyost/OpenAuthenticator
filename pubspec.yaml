@@ -52,7 +52,7 @@ dependencies:
   purchases_ui_flutter: ^6.30.0
   rate_my_app: ^2.2.0
   app_links: ^6.1.4
-  hashlib: ^1.19.1
+  hashlib: ^1.19.2
   hashlib_codecs: ^2.5.0
   yaml_magic: ^1.0.6
   conventional_commit: ^0.6.0+1

@@ -54,7 +54,7 @@ class DecryptedTotp extends Totp {
       );
 
   /// Generates a code using the [generator].
-  String generateCode() => generator.value().toString().padLeft(digits ?? Totp.kDefaultDigits, '0');
+  String generateCode() => generator.valueString();
 
   @override
   List<Object?> get props => [...super.props, secret, label, issuer];

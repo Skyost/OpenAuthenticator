@@ -673,10 +673,10 @@ packages:
     dependency: "direct main"
     description:
       name: hashlib
-      sha256: "5037d3b8c36384c03a728543ae67d962a56970c5432a50862279fe68ee4c8411"
+      sha256: d41795742c10947930630118c6836608deeb9047cd05aee32d2baeb697afd66a
       url: "https://pub.dev"
     source: hosted
-    version: "1.19.1"
+    version: "1.19.2"
   hashlib_codecs:
     dependency: "direct main"
     description:
