@@ -1,17 +1,16 @@
-import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
+import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/widgets/smart_image.dart';
 import 'package:open_authenticator/widgets/totp/time_based.dart';
 
 /// Displays a TOTP image.
-class TotpImageWidget extends StatefulWidget {
+class TotpImageWidget extends ConsumerWidget {
   /// The TOTP UUID.
   final String? uuid;
 
@@ -61,77 +60,76 @@ class TotpImageWidget extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _TotpImageWidgetState();
-}
-
-/// The TOTP image widget state.
-class _TotpImageWidgetState extends State<TotpImageWidget> {
-  /// Whether the cached image has been loaded.
-  bool cachedImageLoaded = false;
-
-  /// The cached image file.
-  File? cachedImageFile;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCachedImageIfPossible();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget child;
-    if (widget.imageUrl == null || !cachedImageLoaded) {
-      child = ColorFiltered(
-        colorFilter: ColorFilter.mode(
-          widget._filterColor,
-          BlendMode.color,
-        ),
-        child: SvgPicture.asset(
-          'assets/images/logo.svg',
-          height: widget.size,
-          width: widget.size,
-          fit: BoxFit.contain,
-        ),
-      );
-    } else {
-      child = SmartImageWidget(
-        source: widget.imageUrl!,
-        height: widget.size,
-        width: widget.size,
-        fit: BoxFit.contain,
-        cachedImage: cachedImageFile,
-      );
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (uuid == null) {
+      return _makeCircle(_createDefaultImage());
     }
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(widget.size),
-      child: SizedBox.square(
-        dimension: widget.size,
-        child: child,
-      ),
+
+    AsyncValue<Map<String, String>> cached = ref.watch(totpImageCacheManagerProvider);
+    if (cached is! AsyncData<Map<String, String>>) {
+      return _makeCircle(_createDefaultImage());
+    }
+
+    return FutureBuilder(
+      future: TotpImageCacheManager.getCachedImage(cached.value, uuid!, imageUrl),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return _makeCircle(_createDefaultImage());
+        }
+        String? source = snapshot.data?.path ?? imageUrl;
+        if (source == null) {
+          return _makeCircle(_createDefaultImage());
+        }
+        return _makeCircle(
+          SmartImageWidget(
+            imageKey: ValueKey('$uuid/$imageUrl'),
+            source: source,
+            height: size,
+            width: size,
+            fit: BoxFit.contain,
+            imageType: imageUrl!.endsWith('.svg') ? ImageType.svg : ImageType.other,
+          ),
+        );
+      },
     );
   }
 
-  /// Loads the cached image if possible.
-  Future<void> _loadCachedImageIfPossible() async {
-    File? cached;
-    if (widget.uuid != null && widget.imageUrl != null) {
-      cached = await TotpImageCache.getTotpCachedImage(widget.uuid!);
-      if (!cached.existsSync()) {
-        cached = null;
-      }
-    }
-    if (mounted) {
-      setState(() {
-        cachedImageLoaded = true;
-        cachedImageFile = cached;
-      });
-    }
-  }
+  /// Makes a circle widget.
+  Widget _makeCircle(Widget child) => ClipRRect(
+        borderRadius: BorderRadius.circular(size),
+        child: SizedBox.square(
+          dimension: size,
+          child: child,
+        ),
+      );
+
+  /// Creates a default image, with the app logo inside.
+  Widget _createDefaultImage() => imageUrl == null
+      ? ColorFiltered(
+          colorFilter: ColorFilter.mode(
+            _filterColor,
+            BlendMode.color,
+          ),
+          child: SvgPicture.asset(
+            'assets/images/logo.svg',
+            height: size,
+            width: size,
+            fit: BoxFit.contain,
+          ),
+        )
+      : SmartImageWidget(
+          source: imageUrl!,
+          height: size,
+          width: size,
+          fit: BoxFit.contain,
+        );
 }
 
 /// Displays the TOTP image with a countdown.
-class TotpCountdownImageWidget extends TimeBasedTotpWidget {
+class TotpCountdownImageWidget extends StatelessWidget {
+  /// The TOTP.
+  final Totp totp;
+
   /// The circle size.
   final double size;
 
@@ -141,17 +139,54 @@ class TotpCountdownImageWidget extends TimeBasedTotpWidget {
   /// Creates a new TOTP countdown image widget instance.
   const TotpCountdownImageWidget({
     super.key,
+    required this.totp,
+    this.size = 30,
+    this.progressColor = Colors.green,
+  });
+
+  @override
+  Widget build(BuildContext context) => SizedBox.square(
+    dimension: size,
+    child: Stack(
+      children: [
+        Positioned.fill(
+          child: TotpImageWidget.fromTotp(
+            totp: totp,
+          ),
+        ),
+        Positioned.fill(
+          child: _TotpCountdownImageWidgetCircularProgress(
+            totp: totp,
+            size: size,
+            progressColor: progressColor,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Displays the TOTP image with a countdown.
+class _TotpCountdownImageWidgetCircularProgress extends TimeBasedTotpWidget {
+  /// The circle size.
+  final double size;
+
+  /// The progress color.
+  final MaterialColor progressColor;
+
+  /// Creates a new TOTP countdown image widget instance.
+  const _TotpCountdownImageWidgetCircularProgress({
     required super.totp,
     this.size = 30,
     this.progressColor = Colors.green,
   });
 
   @override
-  State<TimeBasedTotpWidget> createState() => _TotpCountdownImageWidgetState();
+  State<TimeBasedTotpWidget> createState() => _TotpCountdownImageWidgetCircularProgressState();
 }
 
 /// The TOTP countdown image widget state.
-class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountdownImageWidget> with TickerProviderStateMixin {
+class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidgetState<_TotpCountdownImageWidgetCircularProgress> with TickerProviderStateMixin {
   /// The progress indicator color.
   late Color color = widget.progressColor.shade700;
 
@@ -164,35 +199,21 @@ class _TotpCountdownImageWidgetState extends TimeBasedTotpWidgetState<TotpCountd
   @override
   void initState() {
     super.initState();
-    if (((DateTime.now().millisecondsSinceEpoch ~/ 1000) ~/ this.validity).isEven) {
+    if (((DateTime.now().millisecondsSinceEpoch ~/ 1000) ~/ validity).isEven) {
       changeColors();
     }
     scheduleAnimation();
   }
 
   @override
-  Widget build(BuildContext context) => SizedBox.square(
-        dimension: widget.size,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: TotpImageWidget.fromTotp(
-                totp: widget.totp,
-              ),
-            ),
-            Positioned.fill(
-              child: CircularProgressIndicator(
-                value: animationController.value / validity,
-                color: color,
-                backgroundColor: backgroundColor,
-              ),
-            ),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) => CircularProgressIndicator(
+    value: animationController.value / validity,
+    color: color,
+    backgroundColor: backgroundColor,
+  );
 
   @override
-  void didUpdateWidget(covariant TotpCountdownImageWidget oldWidget) {
+  void didUpdateWidget(covariant _TotpCountdownImageWidgetCircularProgress oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.totp.validity != widget.totp.validity) {
       cancelAnimation();

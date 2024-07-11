@@ -5,6 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 /// Displays a classic image or a vector image.
 class SmartImageWidget extends StatelessWidget {
+  /// The image key.
+  /// Useful when [imageCache] should not be taken into account.
+  final Key? imageKey;
+
   /// The image source.
   final String source;
 
@@ -20,50 +24,36 @@ class SmartImageWidget extends StatelessWidget {
   /// The error widget builder.
   final ImageErrorWidgetBuilder? errorBuilder;
 
-  /// The cached image.
-  final File? cachedImage;
+  /// The image type.
+  final ImageType imageType;
 
   /// Creates a new smart image widget instance.
-  const SmartImageWidget({
+  SmartImageWidget({
     super.key,
+    this.imageKey,
     required this.source,
     this.width,
     this.height,
     this.fit = BoxFit.scaleDown,
     this.errorBuilder,
-    this.cachedImage,
-  });
+    ImageType? imageType,
+    bool? autoDetectImageType,
+  }) : imageType = ((autoDetectImageType ?? imageType == null) ? (source.endsWith('.svg') ? ImageType.svg : ImageType.other) : imageType!);
 
   @override
   Widget build(BuildContext context) {
-    if (cachedImage != null) {
-      return source.endsWith('.svg')
-          ? SvgPicture.file(
-              cachedImage!,
-              width: width,
-              height: height,
-              fit: fit,
-            )
-          : Image.file(
-              cachedImage!,
-              width: width,
-              height: height,
-              cacheWidth: width?.ceil(),
-              cacheHeight: height?.ceil(),
-              fit: fit,
-              errorBuilder: errorBuilder,
-            );
-    }
     if (source.startsWith('http://') || source.startsWith('https://')) {
-      return source.endsWith('.svg')
+      return imageType == ImageType.svg
           ? SvgPicture.network(
               source,
+              key: imageKey,
               width: width,
               height: height,
               fit: fit,
             )
           : Image.network(
               source,
+              key: imageKey,
               width: width,
               height: height,
               cacheWidth: width?.ceil(),
@@ -72,15 +62,21 @@ class SmartImageWidget extends StatelessWidget {
               errorBuilder: errorBuilder,
             );
     }
-    return source.endsWith('.svg')
-        ? SvgPicture.asset(
-            source,
+    File file = File(source);
+    if (!file.existsSync()) {
+      return const SizedBox.shrink();
+    }
+    return imageType == ImageType.svg
+        ? SvgPicture.file(
+            file,
+            key: imageKey,
             width: width,
             height: height,
             fit: fit,
           )
-        : Image.asset(
-            source,
+        : Image.file(
+            file,
+            key: imageKey,
             width: width,
             height: height,
             cacheWidth: width?.ceil(),
@@ -89,4 +85,13 @@ class SmartImageWidget extends StatelessWidget {
             errorBuilder: errorBuilder,
           );
   }
+}
+
+/// The image type.
+enum ImageType {
+  /// "SVG" type.
+  svg,
+
+  /// Any other image.
+  other;
 }
