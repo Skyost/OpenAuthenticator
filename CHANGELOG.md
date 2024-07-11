@@ -1,5 +1,15 @@
 # 📰 Open Authenticator Changelog
 
+## v1.0.2
+Released on Jul 11, 2024.
+
+* **FEAT** : Added a cache manager for easily handling cached images. ([#9b6b2d2](https://github.com/Skyost/OpenAuthenticator/commit/9b6b2d2))
+* **FEAT** : Lowercase secrets are now accepted. ([#07d9aba](https://github.com/Skyost/OpenAuthenticator/commit/07d9aba))
+* **FIX** : Fixed an issue with QR code scanning on Android. ([#d711b50](https://github.com/Skyost/OpenAuthenticator/commit/d711b50))
+* **FIX** : Fixed errors with secret validation. ([#6f61c3c](https://github.com/Skyost/OpenAuthenticator/commit/6f61c3c))
+* **FIX** : Fixed some remaining problems with QR code scanning and URI parsing. ([#be3a739](https://github.com/Skyost/OpenAuthenticator/commit/be3a739))
+* **FIX** : Fixed various problems with deep links. ([#dcfa646](https://github.com/Skyost/OpenAuthenticator/commit/dcfa646))
+
 ## v1.0.1
 Released on Jul 11, 2024.
 

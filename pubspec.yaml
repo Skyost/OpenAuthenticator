@@ -8,7 +8,7 @@ publish_to: none
 # dependencies can be manually updated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
-version: 1.0.1+4
+version: 1.0.2+5
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
