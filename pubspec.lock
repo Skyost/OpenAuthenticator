@@ -181,18 +181,18 @@ packages:
     dependency: transitive
     description:
       name: camera_android_camerax
-      sha256: "594b40a5ea0e144fdfe49e4036abe4ec9bd578b2ce3aabdb0668a02db376a1e8"
+      sha256: "7c03940cb8c92eb5b184952674a07cc4a73c6ba2b3568aad70255ad4cb913660"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.7"
+    version: "0.6.7+1"
   camera_avfoundation:
     dependency: transitive
     description:
       name: camera_avfoundation
-      sha256: dfe32a72db81e92a15672cb6e8ecc81e34e0a9d5bf03017f0545e7041b2b8150
+      sha256: "95c2f40b4d06cdb0fd2ad893c762d1f2c931a5e370793ec34c939eb4fcbf96bb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.16+2"
+    version: "0.9.17"
   camera_platform_interface:
     dependency: transitive
     description:
@@ -205,10 +205,10 @@ packages:
     dependency: transitive
     description:
       name: camera_web
-      sha256: "9e9aba2fbab77ce2472924196ff8ac4dd8f9126c4f9a3096171cd1d870d6b26c"
+      sha256: b9235ec0a2ce949daec546f1f3d86f05c3921ed31c7d9ab6b7c03214d152fc2d
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.3"
+    version: "0.3.4"
   characters:
     dependency: transitive
     description:
@@ -1041,18 +1041,18 @@ packages:
     dependency: "direct main"
     description:
       name: purchases_flutter
-      sha256: "135a7e973deac49aa1e2b4f1d51cc90bd31085310b86710e9187b1b03822ff8a"
+      sha256: ce3ce16d94e51300f28a2ef7eaf84617decf87e904d6c6f7a226b0f5af6b0c10
       url: "https://pub.dev"
     source: hosted
-    version: "6.30.0"
+    version: "6.30.1"
   purchases_ui_flutter:
     dependency: "direct main"
     description:
       name: purchases_ui_flutter
-      sha256: "15ad4ecb8664418bf77b0934a8c41820e893e6c276ac342706d35885f2a7c3e0"
+      sha256: "3858544fbc8cd3bf0c4b9b2c28d891a85c881a98f4069c0f2c7faedc9f971b49"
       url: "https://pub.dev"
     source: hosted
-    version: "6.30.0"
+    version: "6.30.1"
   qr:
     dependency: transitive
     description:
