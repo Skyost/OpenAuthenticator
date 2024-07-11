@@ -1,9 +1,17 @@
 # 📰 Open Authenticator Changelog
 
+## v1.0.1
+Released on Jul 11, 2024.
+
+* **FIX** : Fixed an issue with QR code scanning on Android. ([#d711b50](https://github.com/Skyost/OpenAuthenticator/commit/d711b50))
+* **FIX** : Fixed some remaining problems with QR code scanning and URI parsing. ([#be3a739](https://github.com/Skyost/OpenAuthenticator/commit/be3a739))
+* **FIX** : Fixed various problems with deep links. ([#dcfa646](https://github.com/Skyost/OpenAuthenticator/commit/dcfa646))
+
 ## v1.0.0
 Released on Jul 11, 2024.
 
 * **FEAT** : Added `otpauth` protocol support on Android. ([#b0de12d](https://github.com/Skyost/OpenAuthenticator/commit/b0de12d))
+* **FEAT** : Added a way to clear a RevenueCat user cache. ([#6d0904c](https://github.com/Skyost/OpenAuthenticator/commit/6d0904c))
 * **FEAT** : Enabled `otpauth` protocol support on iOS. ([#ba3aded](https://github.com/Skyost/OpenAuthenticator/commit/ba3aded))
 * **BREAKING FIX** : Fixed incorrect TOTP generation. ([#42c6801](https://github.com/Skyost/OpenAuthenticator/commit/42c6801))
 * **FIX** : Fixed various Firebase related problems. ([#2e06a5b](https://github.com/Skyost/OpenAuthenticator/commit/2e06a5b))
