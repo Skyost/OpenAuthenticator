@@ -72,7 +72,7 @@ Future<void> main() async {
     input = defaultIgnoredScopes;
   }
   DateTime now = DateTime.now();
-  String markdownEntryTitle = '## v${version.toString(includeBuild: false)}';
+  String markdownEntryTitle = '## v${newVersion.toString(includeBuild: false)}';
   String markdownEntryHeader = '''$markdownEntryTitle
 Released on ${DateFormat.yMMMd().format(now)}.
 ''';
@@ -240,8 +240,7 @@ class ChangeLogEntry {
   void addSubEntry(ConventionalCommitWithHash commit) {
     List<ConventionalCommitWithHash>? commitsOfType = _subEntries[commit.type!];
     if (commitsOfType == null) {
-      commitsOfType = [commit];
-      _subEntries[commit.type!] = [];
+      _subEntries[commit.type!] = [commit];
     } else {
       for (ConventionalCommitWithHash commitWithHash in commitsOfType) {
         if (commitWithHash.description == commit.description) {
