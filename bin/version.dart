@@ -71,33 +71,45 @@ Future<void> main() async {
   if (input == 'Y') {
     input = defaultIgnoredScopes;
   }
-  String markdownEntry = changeLogEntry.generateMarkdownContent(newVersion, ignoredScopes: input.split(','));
+  DateTime now = DateTime.now();
+  String markdownEntryTitle = '## v${version.toString(includeBuild: false)}';
+  String markdownEntryHeader = '''$markdownEntryTitle
+Released on ${DateFormat.yMMMd().format(now)}.
+''';
+  String markdownEntryContent = changeLogEntry.generateMarkdownContent(ignoredScopes: input.split(','));
   File changeLogFile = File('./CHANGELOG.md');
-  String changeLogContent;
-  String header = '# 📰 Open Authenticator Changelog\n\n';
+  String changeLogHeader = '# 📰 Open Authenticator Changelog';
+  String changeLogContent = '''$changeLogHeader
+
+$markdownEntryHeader
+$markdownEntryContent''';
   if (changeLogFile.existsSync()) {
-    changeLogContent = changeLogFile.readAsStringSync();
-  } else {
-    changeLogContent = header;
+    String fileContent = changeLogFile.readAsStringSync();
+    changeLogContent = '''$changeLogContent
+${fileContent.substring(changeLogHeader.length + 2)}''';
   }
-  if (!changeLogContent.startsWith(header)) {
+  if (!changeLogContent.startsWith(changeLogHeader)) {
     stderr.writeln('Invalid changelog.');
     return;
   }
-  changeLogContent = '$header$markdownEntry${changeLogContent.substring(header.length)}\n\n';
   stdout.writeln('Writing changelog content...');
   changeLogFile.writeAsStringSync(changeLogContent);
   stdout.writeln('Done.');
   yamlMagic['version'] = newVersion.toString();
   stdout.writeln('Writing version to "pubspec.yaml" and running `flutter pub get`...');
   await yamlMagic.save();
+  String pubspecContent = pubspecFile.readAsStringSync();
+  if (pubspecContent.endsWith('\n\n')) {
+    pubspecContent = pubspecContent.substring(0, pubspecContent.length - '\n'.length);
+    pubspecFile.writeAsStringSync(pubspecContent);
+  }
   await Process.run('dart', ['pub', 'get']);
   stdout.writeln('Done.');
-  bool commit = askYNQuestion('Do you want to commit the changes and to create a tag ?');
+  bool commit = askYNQuestion('Do you want to commit the changes ?');
   if (commit) {
     stdout.writeln('Committing changes...');
-    await Process.run('git', ['add', '"pubspec.yaml"', '"pubspec.lock"', '"CHANGELOG.md"']);
-    await Process.run('git', ['commit', '-m', '"chore(version): Updated version and changelog."']);
+    await Process.run('git', ['add', 'pubspec.yaml', 'pubspec.lock', 'CHANGELOG.md'], stdoutEncoding: utf8, stderrEncoding: utf8);
+    await Process.run('git', ['commit', '-m', 'chore(version): Updated version and changelog.']);
     stdout.writeln('Done.');
     bool push = askYNQuestion('Do you want to push the changes ?');
     if (push) {
@@ -114,7 +126,7 @@ Future<void> main() async {
             Uri(
               scheme: 'https',
               host: 'api.github.com',
-              path: 'repos/${Uri.parse(repo).path}/releases',
+              path: 'repos${Uri.parse(repo).path}/releases',
             ),
             headers: {
               HttpHeaders.acceptHeader: 'application/vnd.github+json',
@@ -124,10 +136,10 @@ Future<void> main() async {
             body: jsonEncode({
               'tag_name': newVersion.toString(includeBuild: false, includePreRelease: false),
               'name': 'v${newVersion.toString(includeBuild: false, includePreRelease: false)}',
-              'body': markdownEntry.replaceFirst('## ', '# '),
+              'body': markdownEntryContent,
             })
           );
-          if (response.statusCode == 200) {
+          if (response.statusCode == 200 || response.statusCode == 201) {
             stdout.writeln('Done.');
           } else {
             stderr.writeln('An error occurred (status code : ${response.statusCode}).');
@@ -264,18 +276,14 @@ class ChangeLogEntry {
   }
 
   /// Generates the Markdown content corresponding to this entry.
-  String generateMarkdownContent(Version version, {List<String> ignoredScopes = const []}) {
-    DateTime now = DateTime.now();
-    String result = '''## v${version.toString(includeBuild: false)}
-Released on ${DateFormat.yMMMd().format(now)}.
-
-''';
+  String generateMarkdownContent({List<String> ignoredScopes = const []}) {
+    String result = '';
     for (String type in _subEntries.keys) {
       for (ConventionalCommitWithHash entry in _subEntries[type]!) {
         if (entry.scopes.firstWhere(ignoredScopes.contains, orElse: () => '').isNotEmpty) {
           continue;
         }
-        result += '* **${entry.isBreakingChange ? 'BREAKING ' : ''}${type.toUpperCase()}** : ${entry.description} ([$repo/commit/${entry.hash}](#${entry.hash}))\n';
+        result += '* **${entry.isBreakingChange ? 'BREAKING ' : ''}${type.toUpperCase()}** : ${entry.description} ([#${entry.hash}]($repo/commit/${entry.hash}))\n';
       }
     }
     return result;
