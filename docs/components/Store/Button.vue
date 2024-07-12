@@ -52,7 +52,7 @@ const tip = computed(() => {
 <template>
   <b-card
     v-b-tooltip="tip"
-    class="d-inline-block"
+    class="store-button-card"
   >
     <b-button
       :href="store.url ?? '#download'"
@@ -74,19 +74,26 @@ const tip = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-.store-button {
-  min-height: 3em;
-  display: flex;
-  align-items: center;
+.store-button-card {
+  max-width: 300px;
+  width: 100%;
+  display: inline-block;
 
-  img {
-    height: 1em;
-    vertical-align: -0.1em;
-    padding-right: 0.2em;
-  }
+  .store-button {
+    min-height: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  &.disabled {
-    color: rgba(black, 0.3);
+    img {
+      height: 1em;
+      vertical-align: -0.1em;
+      padding-right: 0.2em;
+    }
+
+    &.disabled {
+      color: rgba(black, 0.3);
+    }
   }
 }
 </style>

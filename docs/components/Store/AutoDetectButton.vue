@@ -44,7 +44,7 @@ const oSToShow = computed<OS[]>(() => {
     :placeholder="loadingText"
   >
     <div v-if="os">
-      <div class="text-center">
+      <div class="text-center w-100">
         <store-button
           class="mb-4"
           :os="os"
@@ -57,14 +57,19 @@ const oSToShow = computed<OS[]>(() => {
           :title="moreButton"
           class="text-center"
         >
-          <store-button
-            v-for="(storeOs, index) in oSToShow"
-            :key="`store-${index}`"
-            :os="storeOs"
-            :available-on-template="availableOnTemplate"
-            :available-soon-template="availableSoonTemplate"
-            :class="{ 'ms-2': index > 0, 'me-2': index < oSToShow.length - 1 }"
-          />
+          <div class="accordion-content-buttons">
+            <div
+              v-for="(storeOs, index) in oSToShow"
+              :key="`store-${index}`"
+              class="accordion-content-button"
+            >
+              <store-button
+                :os="storeOs"
+                :available-on-template="availableOnTemplate"
+                :available-soon-template="availableSoonTemplate"
+              />
+            </div>
+          </div>
         </b-accordion-item>
       </b-accordion>
     </div>
@@ -79,3 +84,21 @@ const oSToShow = computed<OS[]>(() => {
     </div>
   </client-only>
 </template>
+
+<style lang="scss" scoped>
+@import 'assets/bootstrap-mixins';
+
+.accordion-content-buttons {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 20px;
+
+  .accordion-content-button {
+    flex: 1;
+  }
+
+  @include media-breakpoint-down(lg) {
+    flex-direction: column;
+  }
+}
+</style>

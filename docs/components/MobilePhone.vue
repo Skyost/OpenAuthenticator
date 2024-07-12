@@ -15,7 +15,7 @@
 @import 'assets/bootstrap-mixins';
 
 $padding: 10px;
-$original-width: 350px;
+$original-width: 330px;
 $original-height: 600px;
 $lg-width: 300px;
 $md-width: 200px;
