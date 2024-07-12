@@ -109,7 +109,9 @@ class TotpImageCacheManager extends AutoDisposeAsyncNotifier<Map<String, String>
   /// Saves the content to the index.
   Future<void> _saveIndex({Map<String, String>? content}) async {
     content ??= await future;
-    (await _getIndexFile()).writeAsStringSync(jsonEncode(content));
+    File index = await _getIndexFile();
+    index.createSync(recursive: true);
+    index.writeAsStringSync(jsonEncode(content));
   }
 
   /// Returns the TOTP cached image file.
