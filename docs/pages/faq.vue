@@ -5,7 +5,10 @@
       <section>
         <article-title article="faq" />
       </section>
-      <b-accordion id="questions" free>
+      <b-accordion
+        id="questions"
+        free
+      >
         <b-accordion-item
           id="question-1"
           :title="$t('faq.questions.1.question')"
