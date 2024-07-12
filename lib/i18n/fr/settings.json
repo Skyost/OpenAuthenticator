@@ -103,10 +103,6 @@
           "enabled": "Souscrivez à l'Abonnement Contributeur pour en synchroniser plus !"
         }
       }
-    },
-    "deleteAccount": {
-      "title": "Supprimer votre compte",
-      "subtitle": "Supprime votre compte ainsi que vos données synchronisées en ligne."
     }
   },
   "backups": {
@@ -147,6 +143,29 @@
       "title": "$appName",
       "subtitle(rich)": "$appName v$appVersion, par $appAuthor.",
       "dialogLegalese": "$appName est une application open-source, créée par $appAuthor."
+    }
+  },
+  "dangerZone": {
+    "title": "Zone dangereuse",
+    "deleteAccount": {
+      "title": "Supprimer votre compte",
+      "subtitle": "Supprime votre compte ainsi que vos données synchronisées en ligne."
+    },
+    "clearData": {
+      "title": "Supprimer toutes les données",
+      "subtitle": "Supprime toutes les données stockées par l'application sur votre appareil.",
+      "confirmationDialog": {
+        "title": "Suppression des données de l'application",
+        "message": "Voulez-vous vraiment supprimer les données de l'application ? Vous ne pourrez plus les récupérer. Veuillez noter que, si vous avez synchronisé des TOTPs, cette aciton ne les supprimera pas du stockage en ligne."
+      },
+      "backupDeleteConfirmationDialog": {
+        "title": "Suppression des backups",
+        "message": "Voulez-vous également supprimer les backups enregistrées ?"
+      },
+      "doneDialog": {
+        "title": "Données supprimées",
+        "message": "Les données ont été supprimées avec succès. L'application va fermer pour terminer l'opération, mais n'hésitez pas à la relancer quand vous le souhaiterez !"
+      }
     }
   }
 }

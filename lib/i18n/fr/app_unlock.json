@@ -5,6 +5,7 @@
   },
   "localAuthentication(map)": {
     "openApp": "Authentifiez-vous pour accéder à l'application.",
+    "sensibleAction": "Authentifiez-vous pour continuer.",
     "enable": "Authentifiez-vous pour activer l'authentification locale.",
     "disable":  "Authentifiez-vous pour désactiver l'authentification locale."
   },

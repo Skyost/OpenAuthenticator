@@ -5,6 +5,7 @@
   },
   "localAuthentication(map)": {
     "openApp": "Authenticate to access the app.",
+    "sensibleAction": "Authenticate to continue.",
     "enable": "Authenticate to enable local authentication.",
     "disable":  "Authenticate to disable local authentication."
   },

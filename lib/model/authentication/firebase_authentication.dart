@@ -30,7 +30,7 @@ class FirebaseAuthentication extends Notifier<FirebaseAuthenticationState> {
   Future<Result> logout() async {
     try {
       if (state is FirebaseAuthenticationStateLoggedOut) {
-        return const ResultCancelled();
+        return const ResultSuccess();
       }
       await FirebaseAuth.instance.signOut();
       return const ResultSuccess();

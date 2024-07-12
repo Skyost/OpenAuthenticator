@@ -2,11 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/password_verification/password_verification.dart';
+import 'package:open_authenticator/model/app_unlock/method.dart';
+import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/form/master_password_form.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
@@ -19,6 +19,14 @@ class MasterPasswordUtils {
     WidgetRef ref, {
     String? password,
   }) async {
+    AppUnlockState state = ref.read(appUnlockStateProvider.notifier);
+    Result unlockResult = await state.tryUnlockWithCurrentMethod(context, UnlockReason.sensibleAction);
+    if (unlockResult is! ResultSuccess) {
+      return unlockResult;
+    }
+    if (!context.mounted) {
+      return const ResultCancelled();
+    }
     _ChangeMasterPasswordDialogResult? result = await showDialog<_ChangeMasterPasswordDialogResult>(
       context: context,
       builder: (context) => _ChangeMasterPasswordDialog(
@@ -55,12 +63,6 @@ class _ChangeMasterPasswordDialog extends ConsumerStatefulWidget {
 
 /// The change master password dialog state.
 class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswordDialog> {
-  /// The old password form key.
-  final GlobalKey<FormState> oldPasswordFormKey = GlobalKey<FormState>();
-
-  /// The old password value.
-  String oldPassword = '';
-
   /// The new password form key.
   final GlobalKey<FormState> newPasswordFormKey = GlobalKey<FormState>();
 
@@ -76,9 +78,6 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
   /// The backup password.
   String? backupPassword;
 
-  /// The old password validation result.
-  Result<bool> oldPasswordValidationResult = const ResultSuccess(value: false);
-
   @override
   Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.masterPassword.changeDialog.title),
@@ -86,19 +85,6 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Form(
-              key: oldPasswordFormKey,
-              child: PasswordFormField(
-                decoration: FormLabelWithIcon(
-                  icon: Icons.key,
-                  text: translations.masterPassword.changeDialog.current.label,
-                  hintText: translations.masterPassword.changeDialog.current.hint,
-                ),
-                onChanged: (value) => oldPassword = value,
-                initialValue: oldPassword,
-                validator: (_) => MasterPasswordInputDialog.validateMasterPassword(oldPasswordValidationResult),
-              ),
-            ),
             MasterPasswordForm(
               formKey: newPasswordFormKey,
               defaultPassword: widget.defaultPassword,
@@ -134,11 +120,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
         actions: [
           TextButton(
             onPressed: () async {
-              oldPasswordValidationResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(oldPassword);
-              if (!oldPasswordFormKey.currentState!.validate() || !newPasswordFormKey.currentState!.validate()) {
-                return;
-              }
-              if (createBackup && !backupPasswordFormKey.currentState!.validate()) {
+              if (!newPasswordFormKey.currentState!.validate() || (createBackup && !backupPasswordFormKey.currentState!.validate())) {
                 return;
               }
               if (context.mounted) {

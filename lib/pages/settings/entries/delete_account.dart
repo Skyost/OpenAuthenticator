@@ -7,7 +7,6 @@ import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/account.dart';
-import 'package:open_authenticator/utils/brightness_listener.dart';
 
 /// Allows to delete the user account.
 class DeleteAccountSettingsEntryWidget extends ConsumerWidget with RequiresAuthenticationProvider {
@@ -19,41 +18,17 @@ class DeleteAccountSettingsEntryWidget extends ConsumerWidget with RequiresAuthe
   @override
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
     FirebaseAuthenticationState state = ref.watch(firebaseAuthenticationProvider);
-    return state is FirebaseAuthenticationStateLoggedIn ? _DeleteAccountListTile() : const SizedBox.shrink();
-  }
-}
-
-/// The delete account list tile.
-class _DeleteAccountListTile extends ConsumerStatefulWidget {
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _DeleteAccountListTileState();
-}
-
-/// The delete account list tile state.
-class _DeleteAccountListTileState extends ConsumerState<_DeleteAccountListTile> with BrightnessListener {
-  @override
-  Widget build(BuildContext context) {
+    if (state is! FirebaseAuthenticationStateLoggedIn) {
+      return const SizedBox.shrink();
+    }
     AsyncValue<StorageType> storageType = ref.watch(storageTypeSettingsEntryProvider);
     bool enabled = storageType is AsyncData<StorageType> && storageType.value != StorageType.online;
-    Color? textColor;
-    if (enabled) {
-      textColor = currentBrightness == Brightness.light ? Colors.red.shade900 : Colors.red.shade400;
-    }
-    return ListTile(
-      leading: Icon(
-        Icons.person_off,
-        color: textColor,
-      ),
-      title: Text(
-        translations.settings.synchronization.deleteAccount.title,
-        style: TextStyle(color: textColor),
-      ),
-      subtitle: Text(
-        translations.settings.synchronization.deleteAccount.subtitle,
-        style: TextStyle(color: textColor),
-      ),
+    return DangerZoneListTile(
+      icon: Icons.person_off,
+      title: translations.settings.dangerZone.deleteAccount.title,
+      subtitle: translations.settings.dangerZone.deleteAccount.subtitle,
       enabled: enabled,
-      onTap: enabled ? (() => AccountUtils.tryDeleteAccount(context, ref)) : null,
+      onTap: () => AccountUtils.tryDeleteAccount(context, ref),
     );
   }
 }

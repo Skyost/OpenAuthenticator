@@ -103,10 +103,6 @@
           "enabled": "Subscribe to the Contributor Plan to synchronize more !"
         }
       }
-    },
-    "deleteAccount": {
-      "title": "Delete your account",
-      "subtitle": "Delete your account and all your synchronized data."
     }
   },
   "backups": {
@@ -147,6 +143,29 @@
       "title": "$appName",
       "subtitle(rich)": "$appName v$appVersion, by $appAuthor.",
       "dialogLegalese": "$appName is an open-source application, created by $appAuthor."
+    }
+  },
+  "dangerZone": {
+    "title": "Danger zone",
+    "deleteAccount": {
+      "title": "Delete your account",
+      "subtitle": "Delete your account and all your synchronized data."
+    },
+    "clearData": {
+      "title": "Clear everything",
+      "subtitle": "Clear everything stored by the app on your device.",
+      "confirmationDialog": {
+        "title": "Clear app data",
+        "message": "Are you sure you want to clear the app data ? It will be gone forever. Please note that, if you have synchronized your TOTPs, doing this will not delete them from the online storage."
+      },
+      "backupDeleteConfirmationDialog": {
+        "title": "Delete backups",
+        "message": "Do you also want to delete your backups ?"
+      },
+      "doneDialog": {
+        "title": "Data deleted",
+        "message": "The data has been deleted with success. The app will close to finish the operation, but feel free to restart it when you'll be ready !"
+      }
     }
   }
 }
