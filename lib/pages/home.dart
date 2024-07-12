@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/main.dart';
@@ -12,19 +13,22 @@ import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
+import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/master_password.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
+import 'package:open_authenticator/widgets/smooth_highlight.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/title.dart';
 import 'package:open_authenticator/widgets/totp/widget.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 /// The home page.
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   /// The home page name.
   static const String name = '/';
 
@@ -34,10 +38,36 @@ class HomePage extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Scaffold(
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomePageState();
+}
+
+/// The home page state.
+class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
+  /// Allows to scroll through the list of items.
+  late final ItemScrollController itemScrollController = ItemScrollController();
+
+  /// The TOTP to emphasis, if any.
+  Totp? emphasis;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: const TitleWidget(),
           actions: [
+            _SearchButton(
+              onTotpFound: (totp) async {
+                TotpList totps = await ref.read(totpRepositoryProvider.future);
+                int index = totps.indexOf(totp);
+                if (index >= 0) {
+                  itemScrollController.jumpTo(index: index);
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      setState(() => emphasis = totp);
+                    }
+                  });
+                }
+              },
+            ),
             if (kDebugMode || currentPlatform != Platform.android)
               IconButton(
                 onPressed: () => _onAddButtonPressed(context),
@@ -64,7 +94,15 @@ class HomePage extends ConsumerWidget {
               )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        body: _HomePageBody(),
+        body: _HomePageBody(
+          itemScrollController: itemScrollController,
+          emphasis: emphasis,
+          onHighlightFinished: () {
+            if (mounted && emphasis != null) {
+              setState(() => emphasis = null);
+            }
+          },
+        ),
       );
 
   /// Triggered when the "Add" button is pressed.
@@ -86,6 +124,23 @@ class HomePage extends ConsumerWidget {
 
 /// The home page body, where all TOTPs are displayed.
 class _HomePageBody extends ConsumerWidget {
+  /// The item scroll controller.
+  final ItemScrollController? itemScrollController;
+
+  /// The TOTP to emphasis, if any.
+  final Totp? emphasis;
+
+  /// Triggered when the highlight has been finished.
+  /// Should clear the [emphasis].
+  final VoidCallback? onHighlightFinished;
+
+  /// Creates a new home page body instance.
+  const _HomePageBody({
+    this.itemScrollController,
+    this.emphasis,
+    this.onHighlightFinished,
+  });
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
@@ -109,18 +164,27 @@ class _HomePageBody extends ConsumerWidget {
                   ),
                 ],
               )
-            : ListView.separated(
+            : ScrollablePositionedList.separated(
+                itemScrollController: itemScrollController,
                 itemCount: value.length,
                 itemBuilder: (context, position) {
                   Totp totp = value[position];
-                  return TotpWidget(
+                  Widget totpWidget = TotpWidget.adaptive(
                     key: ValueKey(value[position].uuid),
                     totp: totp,
                     displayCode: isUnlocked.valueOrNull ?? false,
                     onDecryptPressed: () => _tryDecryptTotp(context, ref, totp),
                     onEditPressed: () => _editTotp(context, ref, totp),
                     onDeletePressed: () => _deleteTotp(context, ref, totp),
+                    onCopyPressed: totp.isDecrypted ? (() => _copyCode(context, totp as DecryptedTotp)) : null,
                   );
+                  return totp == emphasis
+                      ? SmoothHighlight(
+                          color: Theme.of(context).focusColor,
+                          useInitialHighLight: true,
+                          child: totpWidget,
+                        )
+                      : totpWidget;
                 },
                 separatorBuilder: (context, position) => const Divider(),
               );
@@ -209,6 +273,14 @@ class _HomePageBody extends ConsumerWidget {
     }
   }
 
+  /// Allows to copy the code to the clipboard.
+  Future<void> _copyCode(BuildContext context, DecryptedTotp totp) async {
+    await Clipboard.setData(ClipboardData(text: totp.generateCode()));
+    if (context.mounted) {
+      SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.actions.copyConfirmation);
+    }
+  }
+
   /// Tries to decrypt the current TOTP.
   Future<void> _tryDecryptTotp(BuildContext context, WidgetRef ref, Totp totp) async {
     String? password = await TextInputDialog.prompt(
@@ -271,6 +343,104 @@ class _HomePageBody extends ConsumerWidget {
     }
     await repository.tryDecryptAll(previousCryptoStore);
   }
+}
+
+/// Displays a search button if the TOTP list is available.
+class _SearchButton extends ConsumerWidget {
+  /// Triggered when a TOTP has been found by the user.
+  final Function(Totp totp) onTotpFound;
+
+  /// Creates a new search button instance.
+  const _SearchButton({
+    required this.onTotpFound,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
+    return switch (totps) {
+      AsyncData<TotpList>(:final value) => value.isEmpty
+          ? const SizedBox.shrink()
+          : IconButton(
+              onPressed: () async {
+                Totp? result = await showSearch(
+                  context: context,
+                  delegate: _TotpSearchDelegate(
+                    totpList: value,
+                  ),
+                );
+                if (result != null) {
+                  onTotpFound(result);
+                }
+              },
+              icon: const Icon(Icons.search),
+            ),
+      _ => const SizedBox.shrink(),
+    };
+  }
+}
+
+/// Allows to search through the TOTP list.
+class _TotpSearchDelegate extends SearchDelegate<Totp> {
+  /// The TOTP list.
+  final TotpList totpList;
+
+  /// Creates a new TOTP search delegate instance.
+  _TotpSearchDelegate({
+    required this.totpList,
+  });
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    ThemeData theme = super.appBarTheme(context);
+    return Theme.of(context).copyWith(
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+      ),
+      inputDecorationTheme: theme.inputDecorationTheme,
+    );
+  }
+
+  @override
+  List<Widget>? buildActions(BuildContext context) => [
+        IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () => query = '',
+        ),
+      ];
+
+  @override
+  Widget? buildLeading(BuildContext context) => const BackButton();
+
+  @override
+  Widget buildResults(BuildContext context) {
+    String lowercaseQuery = query.toLowerCase();
+    List<Totp> searchResults = [];
+    for (Totp totp in totpList) {
+      if (!totp.isDecrypted) {
+        if (totp.uuid.contains(lowercaseQuery)) {
+          searchResults.add(totp);
+        }
+        continue;
+      }
+      DecryptedTotp decryptedTotp = totp as DecryptedTotp;
+      if ((decryptedTotp.label != null && decryptedTotp.label!.contains(lowercaseQuery)) || (decryptedTotp.issuer != null && decryptedTotp.issuer!.contains(lowercaseQuery))) {
+        searchResults.add(decryptedTotp);
+      }
+    }
+    return ListView.builder(
+        itemCount: searchResults.length,
+        itemBuilder: (context, index) {
+          Totp totp = searchResults[index];
+          return TotpWidget(
+            totp: totp,
+            onTap: (context) => close(context, totp),
+          );
+        });
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) => buildResults(context);
 }
 
 /// A dialog that allows to choose a method to add a TOTP.

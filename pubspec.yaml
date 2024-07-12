@@ -57,6 +57,7 @@ dependencies:
   yaml_magic: ^1.0.6
   conventional_commit: ^0.6.0+1
   dotenv: ^4.2.0
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to

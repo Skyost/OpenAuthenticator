@@ -296,6 +296,9 @@ class TotpList extends Iterable<Totp> {
   @override
   Iterator<Totp> get iterator => _list.iterator;
 
+  /// Returns the index of the given [totp].
+  int indexOf(Totp totp) => _list.indexOf(totp);
+
   /// The next possible operation time.
   DateTime get nextPossibleOperationTime => updated.add(operationThreshold);
 

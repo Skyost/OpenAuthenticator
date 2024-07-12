@@ -1,17 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/platform.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/totp/code.dart';
 import 'package:open_authenticator/widgets/totp/image.dart';
 
 /// Allows to display TOTPs in a [ListView].
 class TotpWidget extends StatelessWidget {
+  /// The default image size.
+  static const double _kDefaultImageSize = 70;
+
+  /// The default padding.
+  static const EdgeInsets _kDefaultPadding = EdgeInsets.symmetric(vertical: 10, horizontal: 16);
+
+  /// The default space.
+  static const double _kDefaultSpace = 10;
+
   /// The TOTP instance.
   final Totp totp;
 
@@ -27,26 +34,85 @@ class TotpWidget extends StatelessWidget {
   /// Whether to display the code.
   final bool displayCode;
 
-  /// Triggered when the "decrypt" button has been pressed.
-  final VoidCallback? onDecryptPressed;
+  /// Triggered when tapped.
+  final Function(BuildContext context)? onTap;
 
-  /// Triggered when the "edit" button has been pressed.
-  final VoidCallback? onEditPressed;
+  /// Triggered when long pressed.
+  final Function(BuildContext context)? onLongPress;
 
-  /// Triggered when the "delete" button has been pressed.
-  final VoidCallback? onDeletePressed;
+  /// The footer widget builder.
+  final WidgetBuilder? footerWidgetBuilder;
+
+  /// the trailing widget builder.
+  final WidgetBuilder? trailingWidgetBuilder;
+
+  /// Creates a new TOTP widget instance that adapts itself to the current platform.
+  TotpWidget.adaptive({
+    Key? key,
+    required Totp totp,
+    double imageSize = _kDefaultImageSize,
+    EdgeInsets contentPadding = _kDefaultPadding,
+    double space = _kDefaultSpace,
+    bool displayCode = true,
+    VoidCallback? onDecryptPressed,
+    VoidCallback? onEditPressed,
+    VoidCallback? onDeletePressed,
+    VoidCallback? onCopyPressed,
+  }) : this(
+          key: key,
+          totp: totp,
+          imageSize: imageSize,
+          contentPadding: contentPadding,
+          space: space,
+          displayCode: displayCode,
+          footerWidgetBuilder: currentPlatform.isDesktop || kDebugMode
+              ? ((context) => _DesktopActionsWidget(
+                    totp: totp,
+                    onDecryptPressed: onDecryptPressed,
+                    onEditPressed: onEditPressed,
+                    onDeletePressed: onDeletePressed,
+                    onCopyPressed: onCopyPressed,
+                  ))
+              : null,
+          trailingWidgetBuilder: currentPlatform.isMobile
+              ? ((context) => totp.isDecrypted
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.copy,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      onPressed: onCopyPressed,
+                    )
+                  : IconButton(
+                      icon: Icon(
+                        Icons.lock,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      onPressed: onDecryptPressed,
+                    ))
+              : null,
+          onLongPress: currentPlatform.isMobile || kDebugMode
+              ? ((context) => _showMobileActionsMenu(
+                    context,
+                    totp,
+                    onEditPressed: onEditPressed,
+                    onDeletePressed: onDeletePressed,
+                  ))
+              : null,
+        );
 
   /// Creates a new TOTP widget instance.
   const TotpWidget({
     super.key,
     required this.totp,
-    this.imageSize = 70,
-    this.contentPadding = const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-    this.space = 10,
+    this.imageSize = _kDefaultImageSize,
+    this.contentPadding = _kDefaultPadding,
+    this.space = _kDefaultSpace,
     this.displayCode = true,
-    this.onDecryptPressed,
-    this.onEditPressed,
-    this.onDeletePressed,
+    this.onTap,
+    this.onLongPress,
+    this.footerWidgetBuilder,
+    this.trailingWidgetBuilder,
   });
 
   @override
@@ -90,57 +156,34 @@ class TotpWidget extends StatelessWidget {
                     totp: totp as DecryptedTotp,
                     textStyle: Theme.of(context).textTheme.headlineLarge,
                   ),
-                if (!currentPlatform.isMobile)
+                if (footerWidgetBuilder != null)
                   SizedBox(
                     width: MediaQuery.of(context).size.width - contentPadding.left - contentPadding.right - imageSize - space,
-                    child: _DesktopActionsWidget(
-                      onCopyPressed: totp.isDecrypted ? (() async => await _copyCode(context)) : null,
-                      onDecryptPressed: totp.isDecrypted ? null : onDecryptPressed,
-                      onEditPressed: onEditPressed,
-                      onDeletePressed: onDeletePressed,
-                    ),
+                    child: footerWidgetBuilder!.call(context),
                   ),
               ],
             ),
           ),
-          if (currentPlatform.isMobile)
-            if (totp.isDecrypted)
-              IconButton(
-                icon: Icon(
-                  Icons.copy,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                onPressed: () async => await _copyCode(context),
-              )
-            else
-              IconButton(
-                icon: Icon(
-                  Icons.lock,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                onPressed: onDecryptPressed,
-              ),
+          if (trailingWidgetBuilder != null) trailingWidgetBuilder!.call(context),
         ],
       ),
     );
-    return (currentPlatform.isMobile || kDebugMode)
+    return (onLongPress != null || onTap != null)
         ? InkWell(
-            onLongPress: () => _showMobileActionsMenu(context),
+            onLongPress: onLongPress == null ? null : (() => onLongPress!.call(context)),
+            onTap: onTap == null ? null : (() => onTap!.call(context)),
             child: result,
           )
         : result;
   }
 
-  /// Allows to copy the code to the clipboard.
-  Future<void> _copyCode(BuildContext context) async {
-    await Clipboard.setData(ClipboardData(text: (totp as DecryptedTotp).generateCode()));
-    if (context.mounted) {
-      SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.actions.copyConfirmation);
-    }
-  }
-
   /// Triggered when the user long presses the widget on mobile.
-  Future<void> _showMobileActionsMenu(BuildContext context) async {
+  static Future<void> _showMobileActionsMenu(
+    BuildContext context,
+    Totp totp, {
+    VoidCallback? onEditPressed,
+    VoidCallback? onDeletePressed,
+  }) async {
     if (!currentPlatform.isMobile && !kDebugMode) {
       Navigator.pushNamed(context, TotpPage.name);
       return;
@@ -225,6 +268,9 @@ enum _MobileActionsDialogResult {
 
 /// Wraps all three desktop actions in a widget.
 class _DesktopActionsWidget extends StatelessWidget {
+  /// The TOTP instance.
+  final Totp totp;
+
   /// Triggered when the user clicks on "Decrypt".
   final VoidCallback? onDecryptPressed;
 
@@ -239,6 +285,7 @@ class _DesktopActionsWidget extends StatelessWidget {
 
   /// Creates a new desktop actions instance.
   const _DesktopActionsWidget({
+    required this.totp,
     this.onDecryptPressed,
     this.onCopyPressed,
     this.onEditPressed,
@@ -249,7 +296,7 @@ class _DesktopActionsWidget extends StatelessWidget {
   Widget build(BuildContext context) => Wrap(
         alignment: WrapAlignment.end,
         children: [
-          if (onDecryptPressed == null) ...[
+          if (totp.isDecrypted) ...[
             TextButton.icon(
               onPressed: onCopyPressed,
               icon: const Icon(Icons.copy),
