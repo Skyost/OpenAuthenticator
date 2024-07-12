@@ -19,30 +19,45 @@ class ScanPage extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => CodeScanner(
-        once: true,
-        formats: const [BarcodeFormat.qrCode],
-        loading: const CenteredCircularProgressIndicator(),
-        onScan: (code, details, listener) async {
-          if (code == null || !context.mounted) {
-            return;
-          }
-          Uri? uri = Uri.tryParse(code);
-          if (uri == null) {
-            Navigator.pop(context);
-            SnackBarIcon.showErrorSnackBar(context, text: translations.error.scan.noUri);
-            return;
-          }
-          await showWaitingOverlay(
-            context,
-            future: TotpPage.openFromUri(context, ref, uri),
-          );
-        },
-        onAccessDenied: (exception, listener) => ConfirmationDialog.ask(
-          context,
-          title: translations.error.scan.accessDeniedDialog.title,
-          message: translations.error.scan.accessDeniedDialog.message(exception: exception),
+  Widget build(BuildContext context, WidgetRef ref) => Scaffold(
+        body: CodeScanner(
+          once: true,
+          formats: const [BarcodeFormat.qrCode],
+          loading: const CenteredCircularProgressIndicator(),
+          onScan: (code, details, listener) async {
+            if (code == null || !context.mounted) {
+              return;
+            }
+            Uri? uri = Uri.tryParse(code);
+            if (uri == null) {
+              Navigator.pop(context);
+              SnackBarIcon.showErrorSnackBar(context, text: translations.error.scan.noUri);
+              return;
+            }
+            await showWaitingOverlay(
+              context,
+              future: TotpPage.openFromUri(context, ref, uri),
+            );
+          },
+          onAccessDenied: (exception, listener) async {
+            bool result = await ConfirmationDialog.ask(
+              context,
+              title: translations.error.scan.accessDeniedDialog.title,
+              message: translations.error.scan.accessDeniedDialog.message(exception: exception),
+            );
+            if (result) {
+              return true;
+            }
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+            return false;
+          },
+          onError: (exception, listener) => SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: exception)),
         ),
-        onError: (exception, listener) => SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: exception)),
+        floatingActionButton: FloatingActionButton(
+          child: const BackButtonIcon(),
+          onPressed: () => Navigator.pop(context),
+        ),
       );
 }
