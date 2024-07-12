@@ -146,6 +146,12 @@ class AppContributorPlan {
     PackageType.monthly: kDebugMode ? 'price_1OxH1yA6p1nUn9O04XyDgF76' : 'price_1P2V0EA6p1nUn9O0DgwzkTfj',
   };
 
+  /// The link to the privacy policy.
+  static const String restPrivacyPolicyLink = 'https://openauthenticator.app/privacy-policy';
+
+  /// The link to the terms of service.
+  static const String restTermsOfServiceLink = 'https://openauthenticator.app/terms-of-service';
+
   /// The link to restore purchases, using REST.
   static const String restRestorePurchasesLink = 'https://openauthenticator.app/contact';
 

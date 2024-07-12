@@ -54,10 +54,13 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
                           return;
                         }
                         if (context.mounted) {
-                          SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
+                          SnackBarIcon.showErrorSnackBar(
+                            context,
+                            text: translations.settings.application.contributorPlan.subscriptionDialog.manageSubscription.error,
+                          );
                         }
                       },
-                      child: Text(translations.settings.application.contributorPlan.subscriptionDialog.manageSubscriptionButton),
+                      child: Text(translations.settings.application.contributorPlan.subscriptionDialog.manageSubscription.button),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context),

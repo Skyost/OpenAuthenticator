@@ -17,6 +17,7 @@ import 'package:open_authenticator/model/authentication/providers/provider.dart'
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
+import 'package:open_authenticator/pages/contributor_plan_fallback_paywall.dart';
 import 'package:open_authenticator/pages/home.dart';
 import 'package:open_authenticator/pages/intro/page.dart';
 import 'package:open_authenticator/pages/scan.dart';
@@ -198,6 +199,9 @@ class OpenAuthenticatorApp extends ConsumerWidget {
                 ),
               );
             },
+            ContributorPlanFallbackPaywallPage.name: (_) => const _RouteWidget(
+                  child: ContributorPlanFallbackPaywallPage(),
+                ),
           },
           initialRoute: value ? IntroPage.name : HomePage.name,
         ),
@@ -262,7 +266,7 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         if (next.valueOrNull != true) {
           return;
         }
-        MandatoryTotpLimitDialog.showAndBlock(context);
+        TotpLimitDialog.showAndBlock(context);
       });
     }
     if (widget.rateMyApp) {

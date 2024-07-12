@@ -165,6 +165,7 @@ class _HomePageBody extends ConsumerWidget {
                 ],
               )
             : ScrollablePositionedList.separated(
+                padding: EdgeInsets.zero,
                 itemScrollController: itemScrollController,
                 itemCount: value.length,
                 itemBuilder: (context, position) {
@@ -428,15 +429,18 @@ class _TotpSearchDelegate extends SearchDelegate<Totp> {
         searchResults.add(decryptedTotp);
       }
     }
-    return ListView.builder(
-        itemCount: searchResults.length,
-        itemBuilder: (context, index) {
-          Totp totp = searchResults[index];
-          return TotpWidget(
-            totp: totp,
-            onTap: (context) => close(context, totp),
-          );
-        });
+    return ListView.separated(
+      padding: EdgeInsets.zero,
+      itemCount: searchResults.length,
+      itemBuilder: (context, index) {
+        Totp totp = searchResults[index];
+        return TotpWidget(
+          totp: totp,
+          onTap: (context) => close(context, totp),
+        );
+      },
+      separatorBuilder: (context, position) => const Divider(),
+    );
   }
 
   @override

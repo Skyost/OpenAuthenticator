@@ -12,7 +12,10 @@
       "subscriptionDialog": {
         "title": "Your Contributor Plan",
         "message": "You have successfully subscribed to the Contributor Plan. With this subscription, you're helping this small open-source software to keep growing. Thanks a lot.",
-        "manageSubscriptionButton": "Manage subscription"
+        "manageSubscription": {
+          "button": "Manage subscription",
+          "error": "Unable to open the subscription management URL. If you have subscribed on another device, try to execute this action on this one."
+        }
       }
     },
     "cacheTotpPictures": {

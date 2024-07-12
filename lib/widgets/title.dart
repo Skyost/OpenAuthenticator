@@ -3,6 +3,9 @@ import 'package:open_authenticator/app.dart';
 
 /// The title widget with a nice green color.
 class TitleWidget extends StatelessWidget {
+  /// The text to display.
+  final String text;
+
   /// The text align.
   final TextAlign? textAlign;
 
@@ -12,27 +15,28 @@ class TitleWidget extends StatelessWidget {
   /// Creates a new title widget instance.
   const TitleWidget({
     super.key,
+    this.text = App.appName,
     this.textAlign,
     this.textStyle,
   });
 
   @override
   Widget build(BuildContext context) {
-    List<String> parts = App.appName.split(' ');
+    List<String> parts = text.split(' ');
+    if (parts.length == 1) {
+      return _createGradientText(parts.first).child;
+    }
     return Text.rich(
       TextSpan(
         children: [
-          if (parts.length == 1) _createGradientText(parts.first),
-          if (parts.length > 1) ...[
+          TextSpan(
+            text: '${parts.first} ',
+          ),
+          _createGradientText(parts[1]),
+          for (int i = 2; i < parts.length; i++)
             TextSpan(
-              text: '${parts.first} ',
+              text: ' ${parts[i]}',
             ),
-            _createGradientText(parts[1]),
-            for (int i = 2; i < parts.length; i++)
-              TextSpan(
-                text: ' ${parts[i]}',
-              ),
-          ],
         ],
       ),
       style: textStyle,

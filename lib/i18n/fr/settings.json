@@ -12,7 +12,10 @@
       "subscriptionDialog": {
         "title": "Votre Abonnement Contributeur",
         "message": "Vous avez souscrit à l'Abonnement Contributeur avec succès. Avec cette souscription, vous aidez ce petit logiciel open-source à grandir. Merci beaucoup.",
-        "manageSubscriptionButton": "Gérer l'abonnement"
+        "manageSubscription": {
+          "button": "Gérer l'abonnement",
+          "error": "Impossible d'ouvrir l'URL de gestion de l'abonnement. Si vous avez souscrit sur un autre appareil, essayez d'effectuer cette action sur celui-ci."
+        }
       }
     },
     "cacheTotpPictures": {

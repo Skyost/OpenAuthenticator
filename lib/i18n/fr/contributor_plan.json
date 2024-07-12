@@ -3,25 +3,35 @@
     "waitingDialogMessage": "En attente de votre paiement...",
     "success": "Vous avez souscrit à l'Abonnement Contributeur avec succès. Merci beaucoup !"
   },
-  "billingPickerDialog": {
-    "title": "Choisissez votre souscription",
-    "priceSubtitle(rich)": "$subtitle\n$price / $interval.",
-    "empty": "Vous ne pouvez pas souscrire à l'Abonnement Contributeur actuellement.",
-    "packageTypeName(map)": {
-      "annual": "Annuelle",
-      "monthly": "Mensuelle"
+  "fallbackPaywall": {
+    "title(rich)": "Abonnement ${title(Contributeur)}",
+    "features": [
+      "Synchronisez autant de TOTPs que vous souhaitez.",
+      "Contribuez à l'Open Source.",
+      "Aidez au développement de l'application."
+    ],
+    "packageType": {
+      "choose": "Choisissez votre plan de souscription :",
+      "empty": "Vous ne pouvez pas souscrire à l'Abonnement Contributeur actuellement.",
+      "name(map)": {
+        "annual": "Annuelle",
+        "monthly": "Mensuelle"
+      },
+      "interval(map)": {
+        "annual": "An",
+        "monthly": "Mois"
+      },
+      "priceSubtitle(rich)": "$subtitle\n$price / $interval.",
+      "subtitle(map)": {
+        "annual": "Une facturation par an.",
+        "monthly": "Une facturation par mois."
+      }
     },
-    "packageTypeInterval(map)": {
-      "annual": "An",
-      "monthly": "Mois"
+    "button": {
+      "privacyPolicy": "Politique de confidentialité",
+      "termsOfService": "Conditions d'utilisation",
+      "restorePurchases": "Restaurer les achats"
     },
-    "packageTypeSubtitle(map)": {
-      "annual": "Une facturation par an.",
-      "monthly": "Une facturation par mois."
-    },
-    "restorePurchases": {
-      "button": "Restaurer les achats",
-      "success": "Vos achats ont été restauré avec succès !"
-    }
+    "restorePurchasesSuccess": "Vos achats ont été restauré avec succès !"
   }
 }

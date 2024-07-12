@@ -7,7 +7,7 @@ import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 
 /// A dialog that blocks everything until the user has either changed its storage type or subscribed to the Contributor Plan.
-class MandatoryTotpLimitDialog extends ConsumerWidget {
+class TotpLimitDialog extends ConsumerWidget {
   /// The dialog title.
   final String title;
 
@@ -18,7 +18,7 @@ class MandatoryTotpLimitDialog extends ConsumerWidget {
   final bool cancelButton;
 
   /// Creates a new mandatory totp limit dialog.
-  const MandatoryTotpLimitDialog({
+  const TotpLimitDialog({
     super.key,
     required this.title,
     required this.message,
@@ -32,19 +32,11 @@ class MandatoryTotpLimitDialog extends ConsumerWidget {
         content: Text(message),
         actions: [
           TextButton(
-            onPressed: () async {
-              if (await StorageMigrationUtils.changeStorageType(context, ref, StorageType.local) && context.mounted) {
-                Navigator.pop(context, true);
-              }
-            },
+            onPressed: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.local)),
             child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
           ),
           TextButton(
-            onPressed: () async {
-              if (await ContributorPlanUtils.purchase(context, ref) && context.mounted) {
-                Navigator.pop(context, true);
-              }
-            },
+            onPressed: () => _returnIfSucceeded(context, ContributorPlanUtils.purchase(context, ref)),
             child: Text(translations.totpLimit.autoDialog.actions.subscribe),
           ),
           if (cancelButton)
@@ -55,15 +47,27 @@ class MandatoryTotpLimitDialog extends ConsumerWidget {
         ],
       );
 
-  /// Shows the dialog until it returns `true`.
-  static Future<void> showAndBlock(BuildContext context) async {
-    bool result = false;
-    while (!result && context.mounted) {
-      result = await MandatoryTotpLimitDialog.show(context);
+  /// Waits for the [action] result before closing the dialog in case of success.
+  Future<void> _returnIfSucceeded(BuildContext context, Future<bool> action) async {
+    bool result = await action;
+    if (context.mounted && result) {
+      Navigator.pop(context, true);
     }
   }
 
-  /// Shows a mandatory totp limit dialog.
+  static Future<void> showAndBlock(
+    BuildContext context, {
+    String? title,
+    String? message,
+    bool cancelButton = false,
+  }) async {
+    bool result = false;
+    while (!result && context.mounted) {
+      result = await show(context);
+    }
+  }
+
+  /// Shows the totp limit dialog.
   static Future<bool> show(
     BuildContext context, {
     String? title,
@@ -72,7 +76,7 @@ class MandatoryTotpLimitDialog extends ConsumerWidget {
   }) async =>
       (await showDialog<bool>(
         context: context,
-        builder: (context) => MandatoryTotpLimitDialog(
+        builder: (context) => TotpLimitDialog(
           title: title ?? translations.totpLimit.autoDialog.title,
           message: message ??
               translations.totpLimit.autoDialog.message(
