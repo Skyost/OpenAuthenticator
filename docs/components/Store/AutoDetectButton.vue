@@ -55,7 +55,9 @@ const oSToShow = computed<OS[]>(() => {
       <b-accordion v-if="moreButton">
         <b-accordion-item
           :title="moreButton"
-          class="text-center"
+          class="border-black text-center"
+          body-class="bg-black text-white"
+          button-class="accordion-black-button bg-black text-white"
         >
           <div class="accordion-content-buttons">
             <div
@@ -84,6 +86,18 @@ const oSToShow = computed<OS[]>(() => {
     </div>
   </client-only>
 </template>
+
+<style lang="scss">
+.accordion-black-button {
+  --bs-accordion-border-color: black;
+  --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem #ffffff25;
+
+  &::after {
+    --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
+    --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 @import 'assets/bootstrap-mixins';

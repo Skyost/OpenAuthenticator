@@ -12,8 +12,17 @@ const items = computed(() => [
     active: route.path === '/',
   },
   {
+    title: 'navbar.faq',
+    to: '/faq/',
+    icon: {
+      normal: 'heroicons:question-mark-circle',
+      active: 'heroicons:question-mark-circle-solid',
+    },
+    active: route.path.startsWith('/faq'),
+  },
+  {
     title: 'navbar.privacyPolicy',
-    to: '/privacy-policy',
+    to: '/privacy-policy/',
     icon: {
       normal: 'heroicons:eye',
       active: 'heroicons:eye-solid',
@@ -22,7 +31,7 @@ const items = computed(() => [
   },
   {
     title: 'navbar.termsOfService',
-    to: '/terms-of-service',
+    to: '/terms-of-service/',
     icon: {
       normal: 'heroicons:document-text',
       active: 'heroicons:document-text-solid',
@@ -31,7 +40,7 @@ const items = computed(() => [
   },
   {
     title: 'navbar.contact',
-    to: '/contact',
+    to: '/contact/',
     icon: {
       normal: 'heroicons:at-symbol',
       active: 'heroicons:at-symbol-solid',
@@ -59,7 +68,10 @@ const items = computed(() => [
           :to="item.to"
           :class="{ 'fw-bold': item.active }"
         >
-          <icon :name="item.active ? item.icon.active : item.icon.normal" />
+          <icon
+            class="navbar-icon"
+            :name="item.active ? item.icon.active : item.icon.normal"
+          />
           {{ $t(item.title) }}
         </b-nav-item>
       </b-navbar-nav>
@@ -77,6 +89,10 @@ const items = computed(() => [
 
 <style lang="scss" scoped>
 @import 'assets/bootstrap-mixins';
+
+.navbar-icon {
+  vertical-align: -0.15em;
+}
 
 .download {
   position: absolute;

@@ -3,12 +3,7 @@
     <article>
       <page-head :title="$t('privacyPolicy.title')" />
       <section>
-        <div class="text-center mb-4">
-          <h1 v-html="$t('privacyPolicy.title')" />
-          <small>
-            <em v-html="$t('privacyPolicy.lastUpdated')" />
-          </small>
-        </div>
+        <article-title article="privacyPolicy" />
         <p v-html="$t('privacyPolicy.intro')" />
       </section>
       <section>
@@ -77,5 +72,3 @@
     </article>
   </b-container>
 </template>
-<script setup lang="ts">
-</script>

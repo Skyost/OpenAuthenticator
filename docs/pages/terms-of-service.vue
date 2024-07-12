@@ -3,12 +3,7 @@
     <article>
       <page-head :title="$t('termsOfService.title')" />
       <section>
-        <div class="text-center mb-4">
-          <h1 v-html="$t('termsOfService.title')" />
-          <small>
-            <em v-html="$t('termsOfService.lastUpdated')" />
-          </small>
-        </div>
+        <article-title article="termsOfService" />
         <p v-html="$t('termsOfService.intro')" />
         <p v-html="$t('termsOfService.agreement')" />
         <p v-html="$t('termsOfService.modification')" />
