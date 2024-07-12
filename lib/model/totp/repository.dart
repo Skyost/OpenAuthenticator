@@ -118,7 +118,6 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
       for (Totp updatedTotp in decrypted) {
         await totpImageCacheManager.cacheImage(updatedTotp);
       }
-
       state = AsyncData(
         TotpList._fromListAndStorage(
           list: _mergeToCurrentList(totpList, totps: decrypted),
