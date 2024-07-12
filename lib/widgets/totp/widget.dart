@@ -65,7 +65,7 @@ class TotpWidget extends StatelessWidget {
           contentPadding: contentPadding,
           space: space,
           displayCode: displayCode,
-          footerWidgetBuilder: currentPlatform.isDesktop || kDebugMode
+          footerWidgetBuilder: currentPlatform.isDesktop
               ? ((context) => _DesktopActionsWidget(
                     totp: totp,
                     onDecryptPressed: onDecryptPressed,
