@@ -63,10 +63,7 @@ Future<void> main() async {
       };
     }
   }
-  await SimpleSecureStorage.initialize(const InitializationOptions(
-    appName: App.appName,
-    namespace: App.appPackageName,
-  ));
+  await SimpleSecureStorage.initialize(_OpenAuthenticatorSSSInitializationOptions());
   LocaleSettings.useDeviceLocale();
   runApp(
     ProviderScope(
@@ -75,6 +72,16 @@ Future<void> main() async {
       ),
     ),
   );
+}
+
+/// Allows to initialize [SimpleSecureStorage] with parameters that depend on the current mode.
+class _OpenAuthenticatorSSSInitializationOptions extends InitializationOptions {
+  /// Creates a new Open Authenticator SimpleSecureStorage initialization options.
+  _OpenAuthenticatorSSSInitializationOptions()
+      : super(
+          appName: App.appName + (kDebugMode ? ' Debug' : ''),
+          namespace: App.appPackageName + (kDebugMode ? '.debug' : ''),
+        );
 }
 
 /// The main widget class.
