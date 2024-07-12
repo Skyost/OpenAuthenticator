@@ -244,7 +244,7 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     if (widget.listen) {
       if (currentPlatform.isMobile) {
         ref.listenManual(appLinksListenerProvider, (previous, next) async {
-          if (next.valueOrNull == null) {
+          if (next.valueOrNull == null || previous == next) {
             return;
           }
           Uri uri = next.value!;
