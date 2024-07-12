@@ -414,17 +414,17 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   /// Adds the TOTP to the repository.
   Future<Result> addTotp() async {
     bool willExceed = await ref.read(totpLimitExceededProvider.notifier).willExceedIfAddMore(count: 1);
-    if (willExceed && mounted) {
-      willExceed = !(await MandatoryTotpLimitDialog.show(
-        context,
-        title: translations.totpLimit.addDialog.title,
-        message: translations.totpLimit.addDialog.message(
-          count: App.freeTotpsLimit.toString(),
-        ),
-        cancelButton: true,
-      ));
-    }
     if (willExceed) {
+      if (mounted) {
+        await TotpLimitDialog.show(
+          context,
+          title: translations.totpLimit.addDialog.title,
+          message: translations.totpLimit.addDialog.message(
+            count: App.freeTotpsLimit.toString(),
+          ),
+          cancelButton: true,
+        );
+      }
       return const ResultCancelled();
     }
 
