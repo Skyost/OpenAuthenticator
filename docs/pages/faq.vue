@@ -59,7 +59,7 @@ const visible = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-#questions .answer p:last-child {
+#questions .answer > *:last-child {
   margin-bottom: 0;
 }
 </style>

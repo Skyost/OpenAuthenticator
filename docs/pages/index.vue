@@ -43,16 +43,34 @@ const features = computed(() => {
                   <span v-html="feature" />
                 </li>
               </ul>
-              <b-button
-                variant="primary"
-                to="/#download"
-                size="lg"
-              >
-                <icon
-                  name="heroicons:arrow-down-tray"
-                  class="h-6 w-6"
-                /> {{ t('index.main.downloadButton') }}
-              </b-button>
+              <div class="d-inline-block text-center">
+                <b-button
+                  variant="primary"
+                  to="/#download"
+                  size="lg"
+                >
+                  <icon
+                    name="heroicons:arrow-down-tray"
+                    class="h-6 w-6"
+                  /> {{ t('index.main.downloadButton') }}
+                </b-button>
+                <div class="latest-version">
+                  <span class="fw-bold">
+                    <app-version>
+                      <template #prefix>
+                        <span
+                          class="fw-normal"
+                          v-text="t('index.main.latestVersion.text')"
+                        />
+                      </template>
+                      <template #suffix><span class="fw-normal">.</span></template>
+                    </app-version>
+                  </span> <a
+                    :href="`${siteMeta.github}/blob/main/CHANGELOG.md`"
+                    v-text="t('index.main.latestVersion.changelog')"
+                  />.
+                </div>
+              </div>
             </div>
           </b-col>
           <b-col
@@ -124,7 +142,7 @@ const features = computed(() => {
                 src="/images/logo.svg"
                 alt="Logo"
               >
-              <span class="font-bold text-base-content/70">x</span>
+              <span class="text-weight-bold">x</span>
               <img
                 class="os-logo"
                 src="/images/home/github.svg"
@@ -184,5 +202,10 @@ const features = computed(() => {
   .os-logo {
     max-width: 20%;
   }
+}
+
+.latest-version {
+  margin-top: 10px;
+  font-size: 0.7rem;
 }
 </style>

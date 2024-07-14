@@ -35,6 +35,10 @@ export default {
         4: 'Utilisable sur (presque) <strong>toutes les plateformes</strong>.',
       },
       downloadButton: 'Télécharger',
+      latestVersion: {
+        text: 'Dernière version :',
+        changelog: 'Changelog',
+      },
     },
     download: {
       title: '<strong>Télécharger</strong> l\'appli',

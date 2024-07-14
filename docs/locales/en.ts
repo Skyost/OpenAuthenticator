@@ -35,6 +35,10 @@ export default {
         4: 'Use it on (almost) <strong>any platform</strong>.',
       },
       downloadButton: 'Download now',
+      latestVersion: {
+        text: 'Latest version :',
+        changelog: 'Changelog',
+      },
     },
     download: {
       title: '<strong>Download</strong> the app',
