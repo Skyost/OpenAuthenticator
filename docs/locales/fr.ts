@@ -68,38 +68,34 @@ en <strong>faisant un don</strong> ou tout simplement en lui <strong>attribuant 
     questions: {
       1: {
         question: 'Que faire si j\'oublie mon mot de passe principal ?',
-        answer: {
-          1: `Nous ne pouvons rien faire. Pour de vrai. Vos TOTPs sont chiffrés à l'aide d'une clé dérivée de votre mot de passe principal
+        answer: `<p>Nous ne pouvons rien faire. Pour de vrai. Vos TOTPs sont chiffrés à l'aide d'une clé dérivée de votre mot de passe principal
 avec l'algorithme <a href="https://fr.wikipedia.org/wiki/Argon2">Argon2</a>. Nous ne pourrons pas récupérer
-vos données si vous oubliez votre mot de passe principal. Pour cette raison, il est fortement recommandé de faire des sauvegardes régulières.`,
-          2: `L'application vous demande automatiquement de faire une sauvegarde avant des opérations sensibles, mais vous pouvez en créer
-manuellement dans les paramètres de l'application.`,
-        },
+vos données si vous oubliez votre mot de passe principal. Pour cette raison, il est fortement recommandé de faire des sauvegardes régulières.</p>
+<p>L'application vous demande automatiquement de faire une sauvegarde avant des opérations sensibles, mais vous pouvez en créer
+manuellement dans les paramètres de l'application.</p>`,
       },
       2: {
         question: 'Où sont stockées mes données ?',
-        answer: `Si vous n'avez pas activé la synchronisation des données, tout est stocké localement dans une base de données SQLite
+        answer: `<p>Si vous n'avez pas activé la synchronisation des données, tout est stocké localement dans une base de données SQLite
 gérée à l'aide de <a href="https://drift.simonbinder.eu/">Drift</a>. Même dans ce cas, tout est chiffré.
 Si vous avez activé la synchronisation des données, nous utilisons Firestore pour stocker vos données. Si l'application devient populaire,
-nous prévoyons de créer notre propre backend.`,
+nous prévoyons de créer notre propre backend.</p>`,
       },
       3: {
         question: 'Qu\'est-ce que l\'Abonnement Contributeur ?',
-        answer: {
-          1: `Comme vous le savez peut-être, les serveurs ne sont pas gratuits. Dans notre cas, comme nous nous appuyons sur Firebase, plus nous avons
-d'utilisateurs, plus nous devons payer. Donc, soit nous :`,
-          list: {
-            1: 'mettons des publicités dans notre application ;',
-            2: 'comptons exclusivement sur les dons ;',
-            3: 'demandons à nos utilisateurs de payer un peu d\'argent.',
-          },
-          2: `L'option 2 n'est pas réaliste du tout. L'option 1 pourrait être une solution, mais les publicités entraînent généralement une mauvaise
+        answer: `<p>Comme vous le savez peut-être, les serveurs ne sont pas gratuits. Dans notre cas, comme nous nous appuyons sur Firebase, plus nous avons
+d'utilisateurs, plus nous devons payer. Donc, soit nous :</p>
+<ol>
+  <li>mettons des publicités dans notre application ;</li>
+  <li>comptons exclusivement sur les dons ;</li>
+  <li>demandons à nos utilisateurs de payer un peu d'argent.</li>
+</ol>
+<p>L'option 2 n'est pas réaliste du tout. L'option 1 pourrait être une solution, mais les publicités entraînent généralement une mauvaise
 expérience utilisateur. Par conséquent, le choix que nous avons fait pour amortir les coûts est de créer un modèle d'abonnement
 appelé <q>Abonnement Contributeur</q>. Actuellement, vous pouvez stocker et synchroniser jusqu'à six TOTPs gratuitement,
-avec tous vos appareils. En vous abonnant au Abonnement Contributeur, vous pourrez synchroniser autant de TOTPs que vous le souhaitez.`,
-          3: `À l'avenir, nous espérons pouvoir lever ces limitations, voire les supprimer ! Dans tous les cas, vous
-pouvez utiliser l'application en local sans aucune limitation ni publicité.`,
-        },
+avec tous vos appareils. En vous abonnant au Abonnement Contributeur, vous pourrez synchroniser autant de TOTPs que vous le souhaitez.</p>
+<p>À l'avenir, nous espérons pouvoir lever ces limitations, voire les supprimer ! Dans tous les cas, vous
+pouvez utiliser l'application en local sans aucune limitation ni publicité.</p>`,
       },
     },
     questionLeft: {

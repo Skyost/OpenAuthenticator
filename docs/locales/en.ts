@@ -68,38 +68,34 @@ by <strong>donating</strong> or just by <strong>starring it</strong> on Github !
     questions: {
       1: {
         question: 'What if I forget my master password ?',
-        answer: {
-          1: `We cannot do anything. Like, for real. Your TOTPs are encrypted using a key derived from your master password
+        answer: `<p>We cannot do anything. Like, for real. Your TOTPs are encrypted using a key derived from your master password
 with the <a href="https://en.wikipedia.org/wiki/Argon2">Argon2</a> algorithm. We will be unable to recover
-your data if you forget your master password. For this reason, you're strongly advised to do regular backups.`,
-          2: `The app automatically asks you to make a backup before sensitive operations, but you can manually
-create one in the app settings.`,
-        },
+your data if you forget your master password. For this reason, you're strongly advised to do regular backups.</p>
+<p>The app automatically asks you to make a backup before sensitive operations, but you can manually
+create one in the app settings.</p>`,
       },
       2: {
         question: 'Where is my data stored ?',
-        answer: `If you don't have enabled data synchronization, then everything is stored locally in a SQLite database
+        answer: `<p>If you don't have enabled data synchronization, then everything is stored locally in a SQLite database
 managed using <a href="https://drift.simonbinder.eu/">Drift</a>. Even in this case, everything is encrypted.
 If you have enabled data synchronization, we use Firestore to store you data. If the app become popular,
-we plan to create our own backend.`,
+we plan to create our own backend.</p>`,
       },
       3: {
         question: 'What is the Contributor Plan ?',
-        answer: {
-          1: `As you may know, servers are not free. In our case, because we rely on Firebase, the more users we have,
-the more we have to pay. So, either we :`,
-          list: {
-            1: 'put ads in our app ;',
-            2: 'rely exclusively on donations ;',
-            3: 'ask our users to pay some money.',
-          },
-          2: `Option 2. is not realistic at all. Option 1. could be a solution, but ads generally result in a bad user
+        answer: `<p>As you may know, servers are not free. In our case, because we rely on Firebase, the more users we have,
+the more we have to pay. So, either we :</p>
+<ol>
+  <li>put ads in our app ;</li>
+  <li>rely exclusively on donations ;</li>
+  <li>ask our users to pay some money.</li>
+</ol>
+<p>Option 2. is not realistic at all. Option 1. could be a solution, but ads generally result in a bad user
 experience. Therefore, the choice we made to be able to be sustainable enough is to create a subscription
 based model called <q>Contributor Plan</q>. Currently, you can store and synchronize up to six TOTPs for free,
-with all your devices. By subscribing to the Contributor Plan, you get unlimited TOTP synchronization.`,
-          3: `In the future, we hope to be able to raise these limitations, or even to remove them ! Anyway, you can
-totally use the app locally without any limitation nor any ad.`,
-        },
+with all your devices. By subscribing to the Contributor Plan, you get unlimited TOTP synchronization.</p>
+<p>In the future, we hope to be able to raise these limitations, or even to remove them ! Anyway, you can
+totally use the app locally without any limitation nor any ad.</p>`,
       },
     },
     questionLeft: {

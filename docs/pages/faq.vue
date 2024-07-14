@@ -1,3 +1,22 @@
+<script setup lang="ts">
+const { t, te } = useI18n()
+
+const questions = computed(() => {
+  const result = []
+  for (let i = 1; te(`faq.questions.${i}.question`); i++) {
+    result.push({
+      question: t(`faq.questions.${i}.question`),
+      answer: t(`faq.questions.${i}.answer`),
+    })
+  }
+  return result
+})
+
+const visible = computed(() => {
+  return import.meta.client && window.screen.width > 768
+})
+</script>
+
 <template>
   <b-container>
     <article>
@@ -10,41 +29,15 @@
         free
       >
         <b-accordion-item
-          id="question-1"
-          :title="$t('faq.questions.1.question')"
-          visible
+          v-for="(question, index) in questions"
+          :id="`question-${index + 1}`"
+          :key="`question-${index + 1}`"
+          :title="question.question"
+          :visible="visible"
         >
-          <p v-html="$t('faq.questions.1.answer.1')" />
-          <p
-            class="mb-0"
-            v-html="$t('faq.questions.1.answer.2')"
-          />
-        </b-accordion-item>
-        <b-accordion-item
-          id="question-2"
-          :title="$t('faq.questions.2.question')"
-          visible
-        >
-          <p
-            class="mb-0"
-            v-html="$t('faq.questions.2.answer')"
-          />
-        </b-accordion-item>
-        <b-accordion-item
-          id="question-3"
-          :title="$t('faq.questions.3.question')"
-          visible
-        >
-          <p v-html="$t('faq.questions.3.answer.1')" />
-          <ol>
-            <li v-html="$t('faq.questions.3.answer.list.1')" />
-            <li v-html="$t('faq.questions.3.answer.list.2')" />
-            <li v-html="$t('faq.questions.3.answer.list.3')" />
-          </ol>
-          <p v-html="$t('faq.questions.3.answer.2')" />
-          <p
-            class="mb-0"
-            v-html="$t('faq.questions.3.answer.3')"
+          <div
+            class="answer"
+            v-html="question.answer"
           />
         </b-accordion-item>
       </b-accordion>
@@ -64,3 +57,9 @@
     </article>
   </b-container>
 </template>
+
+<style lang="scss" scoped>
+#questions .answer p:last-child {
+  margin-bottom: 0;
+}
+</style>
