@@ -32,7 +32,7 @@ dependencies:
   uuid: ^4.4.0
   webcrypto: ^0.5.7
   equatable: ^2.0.5
-  drift: ^2.18.0
+  drift: ^2.19.1
   sqlite3_flutter_libs: ^0.5.24
   path: ^1.9.0
   local_auth: ^2.2.0
@@ -44,20 +44,16 @@ dependencies:
   sqlite3: ^2.4.4
   url_launcher: ^6.3.0
   firebase_app_check: ^0.3.0
-  purchases_flutter: ^6.30.0
+  purchases_flutter: ^6.30.1
   firebase_crashlytics: ^4.0.3
   window_manager: ^0.3.9
   slang: ^3.31.1
   slang_flutter: ^3.31.0
-  purchases_ui_flutter: ^6.30.0
+  purchases_ui_flutter: ^6.30.1
   rate_my_app: ^2.2.0
   app_links: ^6.1.4
   hashlib: ^1.19.2
   hashlib_codecs: ^2.5.0
-  yaml_magic: ^1.0.6
-  conventional_commit: ^0.6.0+1
-  dotenv: ^4.2.0
-  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -72,6 +68,10 @@ dev_dependencies:
   slang_build_runner: ^3.31.0
   custom_lint: ^0.6.4
   riverpod_lint: ^2.3.10
+  yaml_magic: ^1.0.6
+  conventional_commit: ^0.6.0+1
+  dotenv: ^4.2.0
+  scrollable_positioned_list: ^0.3.8
 
 flutter:
   # The following line ensures that the Material Icons font is

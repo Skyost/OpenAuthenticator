@@ -306,7 +306,7 @@ packages:
     source: hosted
     version: "4.1.0"
   conventional_commit:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: conventional_commit
       sha256: dec15ad1118f029c618651a4359eb9135d8b88f761aa24e4016d061cd45948f2
@@ -378,7 +378,7 @@ packages:
     source: hosted
     version: "2.3.6"
   dotenv:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: dotenv
       sha256: "379e64b6fc82d3df29461d349a1796ecd2c436c480d4653f3af6872eccbc90e1"
@@ -389,18 +389,18 @@ packages:
     dependency: "direct main"
     description:
       name: drift
-      sha256: "6acedc562ffeed308049f78fb1906abad3d65714580b6745441ee6d50ec564cd"
+      sha256: "771b88c19c0b73fd5cc1368ab68f709bb0e8ad56d76c2568457d5d2a2096e701"
       url: "https://pub.dev"
     source: hosted
-    version: "2.18.0"
+    version: "2.19.1"
   drift_dev:
     dependency: "direct dev"
     description:
       name: drift_dev
-      sha256: d9b020736ea85fff1568699ce18b89fabb3f0f042e8a7a05e84a3ec20d39acde
+      sha256: "349b5d51d19117806a29a57af947d4da1d7f024f79dc0f4a0996852577f92e3b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.18.0"
+    version: "2.19.0"
   equatable:
     dependency: "direct main"
     description:
@@ -1126,7 +1126,7 @@ packages:
     source: hosted
     version: "0.1.9"
   scrollable_positioned_list:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: scrollable_positioned_list
       sha256: "1b54d5f1329a1e263269abc9e2543d90806131aa14fe7c6062a8054d57249287"
@@ -1350,10 +1350,10 @@ packages:
     dependency: transitive
     description:
       name: sqlparser
-      sha256: ade9a67fd70d0369329ed3373208de7ebd8662470e8c396fc8d0d60f9acdfc9f
+      sha256: "6a94d6f36eb2f25c2768c049cac38a0b683a9a33521d87992acfd82742ce109a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.36.0"
+    version: "0.37.0"
   stack_trace:
     dependency: transitive
     description:
@@ -1454,10 +1454,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_ios
-      sha256: "7068716403343f6ba4969b4173cbf3b84fc768042124bc2c011e5d782b24fe89"
+      sha256: e43b677296fadce447e987a2f519dcf5f6d1e527dc35d01ffab4fff5b8a7063e
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.0"
+    version: "6.3.1"
   url_launcher_linux:
     dependency: transitive
     description:
@@ -1502,10 +1502,10 @@ packages:
     dependency: "direct main"
     description:
       name: uuid
-      sha256: "814e9e88f21a176ae1359149021870e87f7cddaf633ab678a5d2b0bff7fd1ba8"
+      sha256: "83d37c7ad7aaf9aa8e275490669535c8080377cfa7a7004c24dfac53afffaa90"
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.0"
+    version: "4.4.2"
   vector_graphics:
     dependency: transitive
     description:
@@ -1627,7 +1627,7 @@ packages:
     source: hosted
     version: "3.1.2"
   yaml_magic:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: yaml_magic
       sha256: "6f281c7fd58492e8f30f9a7335697193d61269313952fc43e3baa784860062f3"
