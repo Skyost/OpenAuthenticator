@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -88,25 +89,61 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
           if (!context.mounted) {
             return;
           }
-          await showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(translations.settings.dangerZone.clearData.doneDialog.title),
-              content: Text(translations.settings.dangerZone.clearData.doneDialog.message),
-              scrollable: true,
-              actions: [
+          await _showCloseDialog(context);
+          if (_canExitWithConfirmDialog) {
+            await _closeApp();
+          }
+        },
+      );
+
+  /// Shows the dialog that indicates the user he has to restart the app.
+  Future<void> _showCloseDialog(BuildContext context) async {
+    bool canExitWithConfirmDialog = _canExitWithConfirmDialog;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(translations.settings.dangerZone.clearData.doneDialog.title),
+        content: Text(
+          canExitWithConfirmDialog ? translations.settings.dangerZone.clearData.doneDialog.message.appWillClose : translations.settings.dangerZone.clearData.doneDialog.message.closeAppManually,
+        ),
+        scrollable: true,
+        actions: canExitWithConfirmDialog
+            ? [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(MaterialLocalizations.of(context).continueButtonLabel),
                 ),
-              ],
-            ),
-          );
-          if (currentPlatform.isMobile) {
-            SystemChannels.platform.invokeMethod('SystemNavigator.pop', true);
-          } else {
-            exit(0);
-          }
-        },
-      );
+              ]
+            : null,
+      ),
+    );
+  }
+
+  /// Whether we can exit following the [_showCloseDialog] method.
+  bool get _canExitWithConfirmDialog {
+    switch (currentPlatform) {
+      case Platform.android:
+      case Platform.macOS:
+      case Platform.linux:
+      case Platform.windows:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  /// Closes the app programmatically.
+  Future<void> _closeApp() async {
+    switch (currentPlatform) {
+      case Platform.android:
+      case Platform.macOS:
+      case Platform.linux:
+        await SystemNavigator.pop(animated: true);
+        break;
+      default:
+        debugger();
+        exit(0);
+    }
+  }
 }

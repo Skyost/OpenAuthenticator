@@ -167,7 +167,10 @@
       },
       "doneDialog": {
         "title": "Données supprimées",
-        "message": "Les données ont été supprimées avec succès. L'application va fermer pour terminer l'opération, mais n'hésitez pas à la relancer quand vous le souhaiterez !"
+        "message": {
+          "appWillClose": "Les données ont été supprimées avec succès. L'application va fermer pour terminer l'opération, mais n'hésitez pas à la relancer quand vous le souhaiterez !",
+          "closeAppManually": "Les données ont été supprimées avec succès. Veuillez redémarrer l'application pour terminer l'opération."
+        }
       }
     }
   }

@@ -167,7 +167,10 @@
       },
       "doneDialog": {
         "title": "Data deleted",
-        "message": "The data has been deleted with success. The app will close to finish the operation, but feel free to restart it when you'll be ready !"
+        "message": {
+          "appWillClose": "The data has been deleted with success. The app will close to finish the operation, but feel free to restart it when you'll be ready !",
+          "closeAppManually": "The data has been deleted with success. Please restart the app to finish the operation."
+        }
       }
     }
   }
