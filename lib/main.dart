@@ -315,6 +315,9 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         if (!(await emailAuthenticationProvider.isWaitingForConfirmation())) {
           return;
         }
+        if (!mounted) {
+          return;
+        }
         Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, link.toString());
         if (mounted) {
           AccountUtils.handleAuthenticationResult(context, ref, result);

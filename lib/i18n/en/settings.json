@@ -22,6 +22,10 @@
       "title": "Cache TOTP pictures",
       "subtitle": "Ensure that your TOTP pictures will always be available by caching them on your device."
     },
+    "displayCopyIconButton": {
+      "title": "Display copy button",
+      "subtitle": "If enabled, will display a copy button next to your TOTPs. Otherwise, a simple tap will copy the code into your clipboard."
+    },
     "theme": {
       "title": "Theme",
       "values(map)": {

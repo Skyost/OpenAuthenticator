@@ -12,6 +12,7 @@ import 'package:open_authenticator/pages/settings/entries/confirm_email.dart';
 import 'package:open_authenticator/pages/settings/entries/contributor_plan.dart';
 import 'package:open_authenticator/pages/settings/entries/contributor_plan_state.dart';
 import 'package:open_authenticator/pages/settings/entries/delete_account.dart';
+import 'package:open_authenticator/pages/settings/entries/display_copy_button.dart';
 import 'package:open_authenticator/pages/settings/entries/enable_local_auth.dart';
 import 'package:open_authenticator/pages/settings/entries/github.dart';
 import 'package:open_authenticator/pages/settings/entries/link.dart';
@@ -23,6 +24,7 @@ import 'package:open_authenticator/pages/settings/entries/save_derived_key.dart'
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/pages/settings/entries/theme.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
+import 'package:open_authenticator/utils/platform.dart';
 
 /// Allows to configure the app.
 class SettingsPage extends ConsumerWidget {
@@ -51,6 +53,8 @@ class SettingsPage extends ConsumerWidget {
               const ContributorPlanEntryWidget(),
               const ThemeSettingsEntryWidget(),
               CacheTotpPicturesSettingsEntryWidget(),
+              if (currentPlatform.isMobile || kDebugMode) //
+                DisplayCopyButtonSettingsEntryWidget(),
               _SettingsPageSectionTitle(title: translations.settings.security.title),
               EnableLocalAuthSettingsEntryWidget(),
               SaveDerivedKeySettingsEntryWidget(),

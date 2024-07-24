@@ -22,6 +22,10 @@
       "title": "Cacher les images des TOTPs",
       "subtitle": "S'assure que les images de vos TOTPs soient toujours disponibles en les cachant sur votre appareil."
     },
+    "displayCopyIconButton": {
+      "title": "Afficher un bouton de copie",
+      "subtitle": "Si activé, affiche un bouton de copie à côté des TOTPs. Sinon, un simple appui permet de copier les codes dans votre presse-papiers."
+    },
     "theme": {
       "title": "Thème",
       "values(map)": {

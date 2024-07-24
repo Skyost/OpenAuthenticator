@@ -6,6 +6,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/main.dart';
 import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/model/crypto.dart';
+import 'package:open_authenticator/model/settings/display_copy_button.dart';
 import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
@@ -144,9 +145,10 @@ class _HomePageBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
-    AsyncValue<bool> isUnlocked = ref.watch(appUnlockStateProvider);
     switch (totps) {
       case AsyncData(:final value):
+        bool isUnlocked = ref.watch(appUnlockStateProvider).valueOrNull ?? false;
+        bool displayCopyButton = ref.watch(displayCopyButtonSettingsEntryProvider).valueOrNull ?? true;
         Widget child = value.isEmpty
             ? CustomScrollView(
                 slivers: [
@@ -173,11 +175,12 @@ class _HomePageBody extends ConsumerWidget {
                   Widget totpWidget = TotpWidget.adaptive(
                     key: ValueKey(value[position].uuid),
                     totp: totp,
-                    displayCode: isUnlocked.valueOrNull ?? false,
+                    displayCode: isUnlocked,
                     onDecryptPressed: () => _tryDecryptTotp(context, ref, totp),
                     onEditPressed: () => _editTotp(context, ref, totp),
                     onDeletePressed: () => _deleteTotp(context, ref, totp),
-                    onCopyPressed: totp.isDecrypted ? (() => _copyCode(context, totp as DecryptedTotp)) : null,
+                    onTap: !displayCopyButton && totp.isDecrypted ? ((_) => _copyCode(context, totp as DecryptedTotp)) : null,
+                    onCopyPressed: displayCopyButton && totp.isDecrypted ? (() => _copyCode(context, totp as DecryptedTotp)) : null,
                   );
                   return totp == emphasis
                       ? SmoothHighlight(

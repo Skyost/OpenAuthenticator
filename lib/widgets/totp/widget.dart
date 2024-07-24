@@ -54,6 +54,7 @@ class TotpWidget extends StatelessWidget {
     EdgeInsets contentPadding = _kDefaultPadding,
     double space = _kDefaultSpace,
     bool displayCode = true,
+    Function(BuildContext context)? onTap,
     VoidCallback? onDecryptPressed,
     VoidCallback? onEditPressed,
     VoidCallback? onDeletePressed,
@@ -65,6 +66,7 @@ class TotpWidget extends StatelessWidget {
           contentPadding: contentPadding,
           space: space,
           displayCode: displayCode,
+          onTap: onTap,
           footerWidgetBuilder: currentPlatform.isDesktop
               ? ((context) => _DesktopActionsWidget(
                     totp: totp,
@@ -75,21 +77,30 @@ class TotpWidget extends StatelessWidget {
                   ))
               : null,
           trailingWidgetBuilder: currentPlatform.isMobile
-              ? ((context) => totp.isDecrypted
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.copy,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      onPressed: onCopyPressed,
-                    )
-                  : IconButton(
-                      icon: Icon(
-                        Icons.lock,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      onPressed: onDecryptPressed,
-                    ))
+              ? ((context) {
+                  Color color = Theme.of(context).colorScheme.primary;
+                  if (totp.isDecrypted) {
+                    return onCopyPressed == null
+                        ? const SizedBox.shrink()
+                        : IconButton(
+                            icon: Icon(
+                              Icons.copy,
+                              color: color,
+                            ),
+                            onPressed: onCopyPressed,
+                          );
+                  } else {
+                    return onDecryptPressed == null
+                        ? const SizedBox.shrink()
+                        : IconButton(
+                            icon: Icon(
+                              Icons.lock,
+                              color: color,
+                            ),
+                            onPressed: onDecryptPressed,
+                          );
+                  }
+                })
               : null,
           onLongPress: currentPlatform.isMobile || kDebugMode
               ? ((context) => _showMobileActionsMenu(
