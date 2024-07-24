@@ -438,6 +438,7 @@ class _TotpSearchDelegate extends SearchDelegate<Totp> {
       itemBuilder: (context, index) {
         Totp totp = searchResults[index];
         return TotpWidget(
+          key: ValueKey(totp.uuid),
           totp: totp,
           onTap: (context) => close(context, totp),
         );
