@@ -1,20 +1,23 @@
 # 📰 Open Authenticator Changelog
 
+## v1.0.4
+Released on Jul 25, 2024.
+
+* **FEAT** : Added a settings entry for displaying a copy button next to TOTPs. ([#0f040e0](https://github.com/Skyost/OpenAuthenticator/commit/0f040e0))
+* **FEAT** : Fully localized `local_auth` messages. ([#8625688](https://github.com/Skyost/OpenAuthenticator/commit/8625688))
+* **FIX** : Fixed a bug where the search page was displaying wrong TOTP codes. ([#f738109](https://github.com/Skyost/OpenAuthenticator/commit/f738109))
+* **FIX** : Fixed an error occurring with type casting. ([#e7f82e1](https://github.com/Skyost/OpenAuthenticator/commit/e7f82e1))
+* **FIX** : Fixed app exiting on iOS. ([#7e8c8f2](https://github.com/Skyost/OpenAuthenticator/commit/7e8c8f2))
+
 ## v1.0.3
 Released on Jul 12, 2024.
 
 * **FEAT** : Added a back button to the scan page. ([#756794f](https://github.com/Skyost/OpenAuthenticator/commit/756794f))
-* **FEAT** : Added a cache manager for easily handling cached images. ([#9b6b2d2](https://github.com/Skyost/OpenAuthenticator/commit/9b6b2d2))
 * **FEAT** : Added a fallback paywall. ([#e9c9f8a](https://github.com/Skyost/OpenAuthenticator/commit/e9c9f8a))
 * **FEAT** : Added a settings entry for clearing all data. ([#db2bc6e](https://github.com/Skyost/OpenAuthenticator/commit/db2bc6e))
 * **FEAT** : Implemented a search button. ([#8f92304](https://github.com/Skyost/OpenAuthenticator/commit/8f92304))
-* **FEAT** : Lowercase secrets are now accepted. ([#07d9aba](https://github.com/Skyost/OpenAuthenticator/commit/07d9aba))
 * **FIX** : Fixed a bug with the image cache. ([#087101c](https://github.com/Skyost/OpenAuthenticator/commit/087101c))
 * **FIX** : Fixed a problem with deep links callbacks being triggered multiple times. ([#94f0c29](https://github.com/Skyost/OpenAuthenticator/commit/94f0c29))
-* **FIX** : Fixed an issue with QR code scanning on Android. ([#d711b50](https://github.com/Skyost/OpenAuthenticator/commit/d711b50))
-* **FIX** : Fixed errors with secret validation. ([#6f61c3c](https://github.com/Skyost/OpenAuthenticator/commit/6f61c3c))
-* **FIX** : Fixed some remaining problems with QR code scanning and URI parsing. ([#be3a739](https://github.com/Skyost/OpenAuthenticator/commit/be3a739))
-* **FIX** : Fixed various problems with deep links. ([#dcfa646](https://github.com/Skyost/OpenAuthenticator/commit/dcfa646))
 * **FIX** : Not displaying desktop action on mobile in debug mode anymore. ([#7467218](https://github.com/Skyost/OpenAuthenticator/commit/7467218))
 * **CHORE** : Not using the same storage location in debug mode. ([#23e5b47](https://github.com/Skyost/OpenAuthenticator/commit/23e5b47))
 * **CHORE** : Removed some safe margins. ([#67f51a5](https://github.com/Skyost/OpenAuthenticator/commit/67f51a5))
@@ -24,10 +27,7 @@ Released on Jul 11, 2024.
 
 * **FEAT** : Added a cache manager for easily handling cached images. ([#9b6b2d2](https://github.com/Skyost/OpenAuthenticator/commit/9b6b2d2))
 * **FEAT** : Lowercase secrets are now accepted. ([#07d9aba](https://github.com/Skyost/OpenAuthenticator/commit/07d9aba))
-* **FIX** : Fixed an issue with QR code scanning on Android. ([#d711b50](https://github.com/Skyost/OpenAuthenticator/commit/d711b50))
 * **FIX** : Fixed errors with secret validation. ([#6f61c3c](https://github.com/Skyost/OpenAuthenticator/commit/6f61c3c))
-* **FIX** : Fixed some remaining problems with QR code scanning and URI parsing. ([#be3a739](https://github.com/Skyost/OpenAuthenticator/commit/be3a739))
-* **FIX** : Fixed various problems with deep links. ([#dcfa646](https://github.com/Skyost/OpenAuthenticator/commit/dcfa646))
 
 ## v1.0.1
 Released on Jul 11, 2024.
