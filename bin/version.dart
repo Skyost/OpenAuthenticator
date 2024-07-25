@@ -141,6 +141,14 @@ ${fileContent.substring(changeLogHeader.length + 2)}''';
           );
           if (response.statusCode == 200 || response.statusCode == 201) {
             stdout.writeln('Done.');
+            stdout.writeln('Fetching tags...');
+            await Future.delayed(const Duration(seconds: 1));
+            await Process.run(
+              'git',
+              ['fetch', '--tags'],
+              stdoutEncoding: utf8,
+            );
+            stdout.writeln('Done.');
           } else {
             stderr.writeln('An error occurred (status code : ${response.statusCode}).');
           }
