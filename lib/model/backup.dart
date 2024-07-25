@@ -28,7 +28,7 @@ class BackupStore extends AsyncNotifier<List<Backup>> {
     Backup backup = Backup._(ref: ref, dateTime: DateTime.now());
     Result result = await backup.save(password);
     if (result is! ResultSuccess) {
-      return result as Result<Backup>;
+      return result.to<Backup>((value) => null);
     }
     state = AsyncData([...(await future), backup]..sort());
     return ResultSuccess(value: backup);
