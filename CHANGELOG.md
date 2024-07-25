@@ -1,5 +1,10 @@
 # 📰 Open Authenticator Changelog
 
+## v1.0.5
+Released on Jul 25, 2024.
+
+* **FIX** : Fixed a problem with Firebase authentication. ([#23e5f25](https://github.com/Skyost/OpenAuthenticator/commit/23e5f25))
+
 ## v1.0.4
 Released on Jul 25, 2024.
 
