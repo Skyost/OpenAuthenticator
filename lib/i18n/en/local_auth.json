@@ -1,0 +1,18 @@
+{
+  "common": {
+    "goToSettings": "Go to settings"
+  },
+  "android": {
+    "biometricHint": "Verify identity",
+    "biometricNotRecognized": "Not recognized. Try again.",
+    "signInTitle": "Authentication required",
+    "biometricRequiredTitle": "Biometric required",
+    "deviceCredentialsRequiredTitle": "Device credentials required",
+    "deviceCredentialsSetupDescription": "Device credentials required",
+    "goToSettingsDescription": "Biometric authentication is not set up on your device. Go to 'Settings > Security' to add biometric authentication."
+  },
+  "ios": {
+    "lockOut": "Biometric authentication is disabled. Please lock and unlock your screen to enable it.",
+    "goToSettingsDescription": "Biometric authentication is not set up on your device. Please either enable Touch ID or Face ID on your phone."
+  }
+}

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth_darwin/local_auth_darwin.dart';
+import 'package:local_auth_windows/local_auth_windows.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
@@ -17,22 +20,48 @@ sealed class AppUnlockMethod {
 
   /// Triggered when this method has been chosen has the app unlock method.
   /// [unlockResult] is the result of the [tryUnlock] call.
-  Future<void> onMethodChosen(AsyncNotifierProviderRef ref, { ResultSuccess? enableResult }) => Future.value();
+  Future<void> onMethodChosen(AsyncNotifierProviderRef ref, {ResultSuccess? enableResult}) => Future.value();
 
   /// Triggered when a new method will be used for app unlocking.
-  Future<void> onMethodChanged(AsyncNotifierProviderRef ref, { ResultSuccess? disableResult }) => Future.value();
+  Future<void> onMethodChanged(AsyncNotifierProviderRef ref, {ResultSuccess? disableResult}) => Future.value();
 }
 
 /// Local authentication.
 class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
   @override
   Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) async {
-    String message = translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.';
     LocalAuthentication auth = LocalAuthentication();
     if (!(await auth.isDeviceSupported())) {
       return ResultError();
     }
-    return (await auth.authenticate(localizedReason: message)) ? const ResultSuccess() : const ResultCancelled();
+    if (!context.mounted) {
+      return const ResultCancelled();
+    }
+    bool result = await auth.authenticate(
+      localizedReason: translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.',
+      authMessages: [
+        IOSAuthMessages(
+          lockOut: translations.localAuth.ios.lockOut,
+          goToSettingsButton: translations.localAuth.common.goToSettings,
+          goToSettingsDescription: translations.localAuth.ios.goToSettingsDescription,
+          cancelButton: MaterialLocalizations.of(context).cancelButtonLabel,
+        ),
+        AndroidAuthMessages(
+          biometricHint: translations.localAuth.android.biometricHint,
+          biometricNotRecognized: translations.localAuth.android.biometricNotRecognized,
+          biometricRequiredTitle: translations.localAuth.android.biometricRequiredTitle,
+          biometricSuccess: translations.error.noError,
+          cancelButton: MaterialLocalizations.of(context).cancelButtonLabel,
+          deviceCredentialsRequiredTitle: translations.localAuth.android.deviceCredentialsRequiredTitle,
+          deviceCredentialsSetupDescription: translations.localAuth.android.deviceCredentialsSetupDescription,
+          goToSettingsButton: translations.localAuth.common.goToSettings,
+          goToSettingsDescription: translations.localAuth.android.goToSettingsDescription,
+          signInTitle: translations.localAuth.android.signInTitle,
+        ),
+        const WindowsAuthMessages(),
+      ],
+    );
+    return result ? const ResultSuccess() : const ResultCancelled();
   }
 
   /// Returns whether this unlock method is supported;
@@ -78,7 +107,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
   }
 
   @override
-  Future<void> onMethodChosen(AsyncNotifierProviderRef ref, { ResultSuccess? enableResult }) async {
+  Future<void> onMethodChosen(AsyncNotifierProviderRef ref, {ResultSuccess? enableResult}) async {
     String? password = enableResult?.valueOrNull;
     if (await ref.read(passwordSignatureVerificationMethodProvider.notifier).enable(password)) {
       await ref.read(cryptoStoreProvider.notifier).deleteFromLocalStorage();
@@ -86,7 +115,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
   }
 
   @override
-  Future<void> onMethodChanged(AsyncNotifierProviderRef ref, { ResultSuccess? disableResult }) async {
+  Future<void> onMethodChanged(AsyncNotifierProviderRef ref, {ResultSuccess? disableResult}) async {
     await ref.read(passwordSignatureVerificationMethodProvider.notifier).disable();
     await ref.read(cryptoStoreProvider.notifier).saveCurrentOnLocalStorage(checkSettings: false);
   }
