@@ -45,10 +45,10 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     'nuxt-cname-generator',
     '@nuxtjs/i18n',
-    'nuxt-icon',
+    '@nuxt/icon',
     'nuxt-link-checker',
     '@nuxtjs/sitemap',
-    'nuxt-simple-robots',
+    '@nuxtjs/robots',
     '@bootstrap-vue-next/nuxt',
   ],
 

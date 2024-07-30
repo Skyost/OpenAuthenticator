@@ -10,6 +10,11 @@ enum FormState {
   success,
 }
 
+const { t, locale } = useI18n()
+const pageHead = () => usePageHead({ title: t('contact.title') })
+pageHead()
+watch(locale, pageHead)
+
 const accountDeletion = 'accountDeletion'
 const subjects = [accountDeletion, 'moreInfoNeeded', 'commercial', 'other']
 
@@ -71,15 +76,14 @@ const onFormSubmit = async () => {
 
 <template>
   <b-container class="pt-5 pb-5">
-    <page-head :title="$t('contact.title')" />
     <b-row>
       <b-col
         sm="12"
         md="7"
         lg="9"
       >
-        <h1>{{ $t('contact.title') }}</h1>
-        <p v-html="$t('contact.description')" />
+        <h1>{{ t('contact.title') }}</h1>
+        <p v-html="t('contact.description')" />
       </b-col>
       <b-col
         sm="12"
@@ -107,35 +111,35 @@ const onFormSubmit = async () => {
       >
         <b-form-group
           class="form-group"
-          :label="$t('contact.form.name.label')"
+          :label="t('contact.form.name.label')"
           label-for="name"
         >
           <b-form-input
             id="name"
             v-model="currentName"
             type="text"
-            :placeholder="$t('contact.form.name.placeholder')"
+            :placeholder="t('contact.form.name.placeholder')"
             :disabled="!formEnabled"
             required
           />
         </b-form-group>
         <b-form-group
           class="form-group"
-          :label="$t('contact.form.email.label')"
+          :label="t('contact.form.email.label')"
           label-for="name"
         >
           <b-form-input
             id="email"
             v-model="currentEmail"
             type="email"
-            :placeholder="$t('contact.form.email.placeholder')"
+            :placeholder="t('contact.form.email.placeholder')"
             :disabled="!formEnabled"
             required
           />
         </b-form-group>
         <b-form-group
           class="form-group"
-          :label="$t('contact.form.subject.label')"
+          :label="t('contact.form.subject.label')"
           label-for="subject"
         >
           <b-form-select
@@ -149,21 +153,21 @@ const onFormSubmit = async () => {
               :key="`contact-subject-${index}`"
               :value="subject"
             >
-              {{ $t(`contact.form.subject.options.${subject}`) }}
+              {{ t(`contact.form.subject.options.${subject}`) }}
             </b-form-select-option>
           </b-form-select>
         </b-form-group>
         <b-form-group
           v-if="currentSubject !== accountDeletion"
           class="form-group"
-          :label="$t('contact.form.message.label')"
+          :label="t('contact.form.message.label')"
           label-for="message"
         >
           <b-form-textarea
             id="message"
             v-model="currentMessage"
             rows="6"
-            :placeholder="$t('contact.form.message.placeholder')"
+            :placeholder="t('contact.form.message.placeholder')"
             :disabled="!formEnabled"
           />
         </b-form-group>
@@ -173,7 +177,7 @@ const onFormSubmit = async () => {
           type="submit"
           :disabled="!formSubmitEnabled"
         >
-          <icon name="bi:send" /> {{ $t('contact.form.send') }}
+          <icon name="bi:send" /> {{ t('contact.form.send') }}
         </b-button>
       </b-form>
     </client-only>
@@ -182,14 +186,14 @@ const onFormSubmit = async () => {
       class="mb-5"
       variant="danger"
     >
-      {{ $t('contact.form.error') }}
+      {{ t('contact.form.error') }}
     </b-alert>
     <b-alert
       :model-value="currentState === FormState.success"
       class="mb-5"
       variant="success"
     >
-      {{ $t('contact.form.success') }}
+      {{ t('contact.form.success') }}
     </b-alert>
   </b-container>
 </template>

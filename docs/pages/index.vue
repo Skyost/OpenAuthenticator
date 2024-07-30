@@ -4,6 +4,7 @@ import AutoDetectButton from '~/components/Store/AutoDetectButton.vue'
 import { siteMeta } from '~/site'
 
 const { t, te } = useI18n()
+usePageHead()
 
 const features = computed(() => {
   const result = []
@@ -16,7 +17,6 @@ const features = computed(() => {
 
 <template>
   <div>
-    <page-head />
     <header class="pt-5 pb-5">
       <b-container>
         <b-row>
@@ -56,15 +56,17 @@ const features = computed(() => {
                 </b-button>
                 <div class="latest-version">
                   <span class="fw-bold">
-                    <app-version>
-                      <template #prefix>
-                        <span
-                          class="fw-normal"
-                          v-text="t('index.main.latestVersion.text')"
-                        />
-                      </template>
-                      <template #suffix><span class="fw-normal">.</span></template>
-                    </app-version>
+                    <client-only>
+                      <app-version>
+                        <template #prefix>
+                          <span
+                            class="fw-normal"
+                            v-text="t('index.main.latestVersion.text')"
+                          />
+                        </template>
+                        <template #suffix><span class="fw-normal">.</span></template>
+                      </app-version>
+                    </client-only>
                   </span> <a
                     :href="`${siteMeta.github}/blob/main/CHANGELOG.md`"
                     v-text="t('index.main.latestVersion.changelog')"

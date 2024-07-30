@@ -6,9 +6,7 @@ const { data } = useFetch(`https://api.github.com/repos${url.pathname}/releases/
 </script>
 
 <template>
-  <client-only>
-    <span v-if="data && data.name">
-      <slot name="prefix" /> {{ data.name }}<slot name="suffix" />
-    </span>
-  </client-only>
+  <span v-if="data && data.name">
+    <slot name="prefix" /> {{ data.name }}<slot name="suffix" />
+  </span>
 </template>

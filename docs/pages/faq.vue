@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const { t, te } = useI18n()
+const { t, te, locale } = useI18n()
+const pageHead = () => usePageHead({ title: t('faq.title') })
+pageHead()
+watch(locale, pageHead)
 
 const questions = computed(() => {
   const result = []
@@ -20,7 +23,6 @@ const visible = computed(() => {
 <template>
   <b-container>
     <article>
-      <page-head :title="$t('faq.title')" />
       <section>
         <article-title article="faq" />
       </section>
@@ -44,14 +46,14 @@ const visible = computed(() => {
       <b-container class="text-center pt-5">
         <p>
           <em>
-            {{ $t('faq.questionLeft.text') }}
+            {{ t('faq.questionLeft.text') }}
           </em>
         </p>
         <b-button
           to="/contact/"
           variant="primary"
         >
-          <icon name="heroicons:at-symbol" /> {{ $t('faq.questionLeft.askButton') }}
+          <icon name="heroicons:at-symbol" /> {{ t('faq.questionLeft.askButton') }}
         </b-button>
       </b-container>
     </article>
