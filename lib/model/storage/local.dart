@@ -35,7 +35,7 @@ class Totps extends Table {
   IntColumn get digits => integer().nullable()();
 
   /// Maps to [Totp.validity].
-  IntColumn get validity => integer().nullable()();
+  IntColumn get validity => integer().map(const _DurationConverter()).nullable()();
 
   /// Maps to [Totp.imageUrl].
   TextColumn get imageUrl => text().map(const _Uint8ListConverter()).nullable()();
@@ -159,6 +159,18 @@ class _Uint8ListConverter extends TypeConverter<Uint8List, String> {
 
   @override
   String toSql(Uint8List value) => base64.encode(value);
+}
+
+/// Allows to store [Duration] into Drift databases.
+class _DurationConverter extends TypeConverter<Duration, int> {
+  /// Creates a new Uint8List converter instance.
+  const _DurationConverter();
+
+  @override
+  Duration fromSql(int fromDb) => Duration(seconds: fromDb);
+
+  @override
+  int toSql(Duration value) => value.inSeconds;
 }
 
 /// Contains some useful methods from the generated [Secret] class.

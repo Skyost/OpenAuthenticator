@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/apple.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
@@ -10,6 +9,7 @@ import 'package:open_authenticator/model/authentication/providers/microsoft.dart
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/authentication/providers/twitter.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
+import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 
 /// Allows to pick an authentication provider.
 class AuthenticationProviderPickerDialog extends ConsumerWidget {
@@ -159,27 +159,32 @@ class _ProviderTile extends StatefulWidget {
 /// The provider tile state.
 class _ProviderTileState extends State<_ProviderTile> with BrightnessListener {
   @override
-  Widget build(BuildContext context) => ListTile(
-        leading: SvgPicture.asset(
-          'assets/images/authentication/${widget.name.toLowerCase()}.svg',
-          width: widget.size,
-          height: widget.size,
-          colorFilter: widget.invertIconOnBrightnessChange && currentBrightness == Brightness.dark
-              ? const ColorFilter.matrix(
-                  [
-                    -1.0, 0.0, 0.0, 0.0, 255.0, //
-                    0.0, -1.0, 0.0, 0.0, 255.0, //
-                    0.0, 0.0, -1.0, 0.0, 255.0, //
-                    0.0, 0.0, 0.0, 1.0, 0.0, //
-                  ],
-                )
-              : null,
-        ),
-        title: Text(widget.name),
-        subtitle: Text(widget.subtitle),
-        onTap: () => Navigator.pop(context, widget.provider),
-        trailing: widget.trailingIcon == null ? null : Icon(widget.trailingIcon),
-      );
+  Widget build(BuildContext context) {
+    Widget image = SizedScalableImageWidget(
+      asset: 'assets/images/authentication/${widget.name.toLowerCase()}.si',
+      width: widget.size,
+      height: widget.size,
+    );
+    return ListTile(
+      leading: widget.invertIconOnBrightnessChange && currentBrightness == Brightness.dark
+          ? ColorFiltered(
+              colorFilter: const ColorFilter.matrix(
+                [
+                  -1.0, 0.0, 0.0, 0.0, 255.0, //
+                  0.0, -1.0, 0.0, 0.0, 255.0, //
+                  0.0, 0.0, -1.0, 0.0, 255.0, //
+                  0.0, 0.0, 0.0, 1.0, 0.0, //
+                ],
+              ),
+              child: image,
+            )
+          : image,
+      title: Text(widget.name),
+      subtitle: Text(widget.subtitle),
+      onTap: () => Navigator.pop(context, widget.provider),
+      trailing: widget.trailingIcon == null ? null : Icon(widget.trailingIcon),
+    );
+  }
 }
 
 /// Allows to change the dialog behavior.
@@ -223,5 +228,6 @@ enum DialogMode {
   static bool _shouldDisplayInReAuthenticateMode(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) => currentProviders.contains(provider);
 
   /// Returns the [link] mode trailing icon.
-  static IconData? _getLinkModeTrailingIcon(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) => currentProviders.contains(provider) ? Icons.link_off : null;
+  static IconData? _getLinkModeTrailingIcon(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) =>
+      currentProviders.contains(provider) ? Icons.link_off : null;
 }

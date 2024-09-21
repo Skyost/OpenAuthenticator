@@ -40,7 +40,7 @@ class Totp extends Equatable implements Comparable<Totp> {
   static const int kDefaultDigits = 6;
 
   /// The default validity to use.
-  static const int kDefaultValidity = 30;
+  static const Duration kDefaultValidity = Duration(seconds: 30);
 
   /// The TOTP UUID.
   final String uuid;
@@ -55,7 +55,7 @@ class Totp extends Equatable implements Comparable<Totp> {
   final int? digits;
 
   /// The validity period.
-  final int? validity;
+  final Duration? validity;
 
   /// Creates a new TOTP instance.
   const Totp({

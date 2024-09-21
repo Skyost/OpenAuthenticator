@@ -96,7 +96,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   late int? digits = widget.totp?.digits;
 
   /// The TOTP validity.
-  late int? validity = widget.totp?.validity;
+  late Duration? validity = widget.totp?.validity;
 
   /// Whether the form is enabled.
   bool enabled = true;
@@ -299,7 +299,8 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
           child: TextFormField(
             initialValue: validity?.toString(),
             onChanged: (value) {
-              setState(() => validity = int.tryParse(value));
+              int? validity = int.tryParse(value);
+              setState(() => this.validity = validity == null ? null : Duration(seconds: validity));
             },
             keyboardType: const TextInputType.numberWithOptions(),
             decoration: FormLabelWithIcon(

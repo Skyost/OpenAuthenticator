@@ -16,44 +16,44 @@ environment:
 dependencies:
   animations: ^2.0.11
   camera: ^0.11.0
-  cloud_firestore: ^5.1.0
-  firebase_auth: ^5.1.2
-  firebase_core: ^3.2.0
+  cloud_firestore: ^5.4.2
+  firebase_auth: ^5.3.0
+  firebase_core: ^3.5.0
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
   flutter_riverpod: ^2.5.1
   simple_secure_storage: ^0.3.0
-  flutter_svg: ^2.0.10
-  google_mlkit_barcode_scanning: ^0.12.0
-  path_provider: ^2.1.3
-  shared_preferences: ^2.2.3
-  uuid: ^4.4.2
+  jovial_svg: ^1.1.22
+  google_mlkit_barcode_scanning: ^0.12.1
+  path_provider: ^2.1.4
+  shared_preferences: ^2.3.2
+  uuid: ^4.5.0
   webcrypto: ^0.5.7
   equatable: ^2.0.5
-  drift: ^2.19.1
+  drift: ^2.20.2
   sqlite3_flutter_libs: ^0.5.24
   path: ^1.9.0
-  local_auth: ^2.2.0
-  package_info_plus: ^8.0.0
+  local_auth: ^2.3.0
+  package_info_plus: ^8.0.2
   http: ^1.2.2
   qr_flutter: ^4.1.0
   flex_color_scheme: ^7.3.1
   intl: any
-  sqlite3: ^2.4.4
+  sqlite3: ^2.4.6
   url_launcher: ^6.3.0
-  firebase_app_check: ^0.3.0
-  purchases_flutter: ^6.30.2
-  firebase_crashlytics: ^4.0.3
-  window_manager: ^0.3.9
-  slang: ^3.31.1
+  firebase_app_check: ^0.3.1
+  purchases_flutter: ^8.1.2
+  firebase_crashlytics: ^4.1.2
+  window_manager: ^0.4.2
+  slang: ^3.31.2
   slang_flutter: ^3.31.0
-  purchases_ui_flutter: ^6.30.2
+  purchases_ui_flutter: ^8.1.2
   rate_my_app: ^2.2.0
-  app_links: ^6.1.4
-  hashlib: ^1.19.2
-  hashlib_codecs: ^2.5.0
+  app_links: ^6.3.2
+  hashlib: ^1.20.3
+  hashlib_codecs: ^2.6.0
   scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
@@ -62,13 +62,13 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  build_runner: ^2.4.11
-  drift_dev: ^2.19.1
+  build_runner: ^2.4.12
+  drift_dev: ^2.20.3
   flutter_lints: ^4.0.0
-  msix: ^3.16.7
+  msix: ^3.16.8
   slang_build_runner: ^3.31.0
-  custom_lint: ^0.6.4
-  riverpod_lint: ^2.3.10
+  custom_lint: ^0.6.7
+  riverpod_lint: ^2.3.13
   yaml_magic: ^1.0.6
   conventional_commit: ^0.6.0+1
   dotenv: ^4.2.0

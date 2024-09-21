@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
+import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 import 'package:open_authenticator/widgets/title.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -45,12 +45,12 @@ class ContributorPlanFallbackPaywallPage extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              ListTilePadding(
+              const ListTilePadding(
                 bottom: 10,
                 child: SizedBox(
                   height: 150,
-                  child: SvgPicture.asset(
-                    'assets/images/logo.svg',
+                  child: SizedScalableImageWidget(
+                    asset: 'assets/images/logo.si',
                   ),
                 ),
               ),

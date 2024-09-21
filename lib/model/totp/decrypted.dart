@@ -79,7 +79,7 @@ class DecryptedTotp extends Totp {
     String? issuer,
     Algorithm? algorithm,
     int? digits,
-    int? validity,
+    Duration? validity,
     String? imageUrl,
   }) async {
     EncryptedData? encryptedData = await EncryptedData.encrypt(
@@ -116,6 +116,7 @@ class DecryptedTotp extends Totp {
     if (label.startsWith('/')) {
       label = label.substring(1);
     }
+    int? validity = uri.queryParameters.containsKey(Totp.kValidityKey) ? int.tryParse(uri.queryParameters[Totp.kValidityKey]!) : null;
     return create(
       cryptoStore: cryptoStore,
       secret: Uri.decodeFull(uri.queryParameters[Totp.kSecretKey]!),
@@ -123,7 +124,7 @@ class DecryptedTotp extends Totp {
       issuer: uri.queryParameters[Totp.kIssuerKey],
       algorithm: uri.queryParameters.containsKey(Totp.kAlgorithmKey) ? Algorithm.fromString(uri.queryParameters[Totp.kAlgorithmKey]!) : null,
       digits: uri.queryParameters.containsKey(Totp.kDigitsKey) ? int.tryParse(uri.queryParameters[Totp.kDigitsKey]!) : null,
-      validity: uri.queryParameters.containsKey(Totp.kValidityKey) ? int.tryParse(uri.queryParameters[Totp.kValidityKey]!) : null,
+      validity: validity == null ? null : Duration(seconds: validity),
     );
   }
 
@@ -144,7 +145,7 @@ class DecryptedTotp extends Totp {
     String? issuer,
     Algorithm? algorithm,
     int? digits,
-    int? validity,
+    Duration? validity,
   }) {
     Map<String, dynamic> queryParameters = {};
     queryParameters[Totp.kSecretKey] = secret;
@@ -158,7 +159,7 @@ class DecryptedTotp extends Totp {
       queryParameters[Totp.kDigitsKey] = digits.toString();
     }
     if (validity != null) {
-      queryParameters[Totp.kValidityKey] = validity.toString();
+      queryParameters[Totp.kValidityKey] = validity.inSeconds.toString();
     }
     return Uri(
       scheme: 'otpauth',

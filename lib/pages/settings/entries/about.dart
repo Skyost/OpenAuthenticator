@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// Shows various info about the app.
@@ -39,8 +39,9 @@ class AboutSettingsEntryWidget extends StatelessWidget {
             context: context,
             applicationName: snapshot.data!.appName,
             applicationVersion: 'v${snapshot.data!.version}',
-            applicationIcon: SvgPicture.asset(
-              'assets/images/logo.svg',
+            applicationIcon: const SizedScalableImageWidget(
+              asset: 'assets/images/logo.si',
+              height: 90,
               width: 90,
             ),
             applicationLegalese: translations.settings.about.aboutApp.dialogLegalese(

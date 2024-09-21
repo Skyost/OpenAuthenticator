@@ -2,7 +2,6 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/pages/home.dart';
@@ -47,10 +46,6 @@ class IntroPageState extends ConsumerState<IntroPage> with BrightnessListener {
           continue;
         }
         slides.add(slide);
-        if (mounted) {
-          SvgAssetLoader loader = SvgAssetLoader(slide.imagePath);
-          svg.cache.putIfAbsent(loader.cacheKey(context), () => loader.loadBytes(context));
-        }
       }
       if (mounted) {
         setState(() {

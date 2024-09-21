@@ -45,7 +45,7 @@ abstract class TimeBasedTotpWidgetState<T extends TimeBasedTotpWidget> extends S
   }
 
   /// The validity, in seconds.
-  int get validity => widget.totp.validity ?? Totp.kDefaultValidity;
+  Duration get validity => widget.totp.validity ?? Totp.kDefaultValidity;
 
   /// Triggered when the state should be updated.
   void updateState();
@@ -54,7 +54,7 @@ abstract class TimeBasedTotpWidgetState<T extends TimeBasedTotpWidget> extends S
   void _scheduleUpdates() {
     _updateTimer = Timer(calculateExpirationDuration(), () {
       updateState();
-      _updateTimer = Timer.periodic(Duration(seconds: validity), (_) => updateState());
+      _updateTimer = Timer.periodic(validity, (_) => updateState());
     });
   }
 
@@ -72,9 +72,10 @@ abstract class TimeBasedTotpWidgetState<T extends TimeBasedTotpWidget> extends S
 
   /// Calculates the expiration date.
   DateTime _calculateExpirationDate(DateTime date) {
+    int seconds = validity.inSeconds;
     int currentUnixTime = date.toUtc().millisecondsSinceEpoch ~/ 1000;
-    int timeStepRemainder = currentUnixTime % validity;
-    int expirationTime = currentUnixTime + (validity - timeStepRemainder);
+    int timeStepRemainder = currentUnixTime % seconds;
+    int expirationTime = currentUnixTime + (seconds - timeStepRemainder);
     return DateTime.fromMillisecondsSinceEpoch(expirationTime * 1000);
   }
 }

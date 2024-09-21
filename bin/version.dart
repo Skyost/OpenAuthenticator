@@ -462,7 +462,7 @@ class Version implements Comparable<Version> {
 
   /// Determines whether the left-hand protocol version represents an equal precedence to the right-hand protocol version.
   @override
-  bool operator ==(dynamic other) => other is Version && compareTo(other) == 0;
+  bool operator ==(Object other) => other is Version && compareTo(other) == 0;
 
   /// Determines whether the left-hand protocol version represents a greater precedence than the right-hand protocol version.
   bool operator >(dynamic other) => other is Version && compareTo(other) > 0;

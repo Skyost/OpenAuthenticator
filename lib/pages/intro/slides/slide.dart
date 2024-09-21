@@ -1,11 +1,11 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:open_authenticator/pages/intro/slides/log_in.dart';
 import 'package:open_authenticator/pages/intro/slides/password.dart';
 import 'package:open_authenticator/pages/intro/slides/welcome.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
+import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 
 /// A "slide" of the intro page.
 class IntroPageSlide {
@@ -24,7 +24,7 @@ class IntroPageSlide {
   Future<bool> shouldSkip(WidgetRef ref) => Future.value(false);
 
   /// Returns the image SVG path.
-  String get imagePath => 'assets/images/intro/${name.toLowerCase()}.svg';
+  String get imagePath => 'assets/images/intro/${name.toLowerCase()}.si';
 
   /// Triggered when the user clicks on "Next".
   Future<bool> onGoToNextSlide(BuildContext context, WidgetRef ref) => Future.value(true);
@@ -143,8 +143,8 @@ class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerP
                   animation: _imageAnimation,
                   child: SizedBox(
                     height: 200,
-                    child: SvgPicture.asset(
-                      widget.slide.imagePath,
+                    child: SizedScalableImageWidget(
+                      asset: widget.slide.imagePath,
                     ),
                   ),
                 ),

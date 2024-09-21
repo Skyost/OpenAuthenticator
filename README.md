@@ -57,7 +57,13 @@ Download links are available on the [Open Authenticator website](https://openaut
 
 ### App
 
-First, you'll have to generate your own `app.dart` file.
+First, you'll have to compile SVG files into `.si`.  In order to do that, you can use the following command :
+
+```shell
+dart run "open_authenticator:compile_svg"
+```
+
+Then, you'll have to generate your own `app.dart` file.
 It contains all credentials needed to run the app (Firebase, Sign-In providers, RevenueCat, ...).
 
 To do so, you can run the following utility :
@@ -66,7 +72,7 @@ To do so, you can run the following utility :
 dart run "open_authenticator:generate"
 ```
 
-Then, you'll also need to link the app to Firebase. You can follow the steps [here](https://firebase.google.com/docs/flutter/setup)
+And then, you'll also need to link the app to Firebase. You can follow the steps [here](https://firebase.google.com/docs/flutter/setup)
 for that.
 
 This should allow you to run the app in its minimal state.

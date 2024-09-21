@@ -52,6 +52,8 @@ msix.bat
 lib/app.dart
 lib/firebase_options.dart
 **/*.g.dart
+/assets/images/*.si
+/assets/images/**/*.si
 /macos/firebase_app_id_file.json
 /ios/firebase_app_id_file.json
 /ios/Runner/GoogleService-Info.plist

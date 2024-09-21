@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 import 'package:open_authenticator/widgets/smart_image.dart';
 import 'package:open_authenticator/widgets/totp/time_based.dart';
 
@@ -110,11 +110,10 @@ class TotpImageWidget extends ConsumerWidget {
             _filterColor,
             BlendMode.color,
           ),
-          child: SvgPicture.asset(
-            'assets/images/logo.svg',
+          child: SizedScalableImageWidget(
             height: size,
             width: size,
-            fit: BoxFit.contain,
+            asset: 'assets/images/logo.si',
           ),
         )
       : SmartImageWidget(
@@ -199,7 +198,7 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
   @override
   void initState() {
     super.initState();
-    if (((DateTime.now().millisecondsSinceEpoch ~/ 1000) ~/ validity).isEven) {
+    if (((DateTime.now().millisecondsSinceEpoch ~/ 1000) ~/ validity.inSeconds).isEven) {
       changeColors();
     }
     scheduleAnimation();
@@ -207,7 +206,7 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
 
   @override
   Widget build(BuildContext context) => CircularProgressIndicator(
-    value: animationController.value / validity,
+    value: animationController.value / validity.inSeconds,
     color: color,
     backgroundColor: backgroundColor,
   );
@@ -230,7 +229,7 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
   @override
   void updateState({bool changeColors = true}) {
     if (mounted) {
-      animationController.duration = _validity;
+      animationController.duration = validity;
       animationController.forward(from: 0);
       setState(() {
         if (changeColors) {
@@ -242,11 +241,10 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
 
   /// Schedule the animation.
   void scheduleAnimation() {
-    Duration validity = _validity;
     animationController = AnimationController(
       vsync: this,
       duration: validity,
-      upperBound: this.validity.toDouble(),
+      upperBound: validity.inSeconds.toDouble(),
     )
       ..addListener(() {
         setState(() {});
@@ -265,7 +263,4 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
     color = backgroundColor;
     backgroundColor = temporary;
   }
-
-  /// Returns the TOTP validity.
-  Duration get _validity => Duration(seconds: validity);
 }
