@@ -33,7 +33,7 @@ dependencies:
   webcrypto: ^0.5.7
   equatable: ^2.0.5
   drift: ^2.21.0
-  sqlite3_flutter_libs: ^0.5.25
+  sqlite3_flutter_libs: ^0.5.26
   path: ^1.9.0
   local_auth: ^2.3.0
   package_info_plus: ^8.1.0
