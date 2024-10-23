@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
+import 'package:open_authenticator/utils/image_type.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 
 /// Displays a classic image or a vector image.
@@ -45,17 +46,8 @@ class SmartImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (source.startsWith('http://') || source.startsWith('https://')) {
-      return imageType == ImageType.svg
-          ? SizedBox(
-              width: width,
-              height: height,
-              child: ScalableImageWidget.fromSISource(
-                si: ScalableImageSource.fromSvgHttpUrl(Uri.parse(source)),
-                key: imageKey,
-                fit: fit,
-              ),
-            )
-          : Image.network(
+      return imageType == ImageType.other
+          ? Image.network(
               source,
               key: imageKey,
               width: width,
@@ -64,6 +56,15 @@ class SmartImageWidget extends StatelessWidget {
               cacheHeight: height?.ceil(),
               fit: fit,
               errorBuilder: errorBuilder,
+            )
+          : SizedBox(
+              width: width,
+              height: height,
+              child: ScalableImageWidget.fromSISource(
+                si: ScalableImageSource.fromSvgHttpUrl(Uri.parse(source)),
+                key: imageKey,
+                fit: fit,
+              ),
             );
     }
     File file = File(source);
@@ -72,54 +73,31 @@ class SmartImageWidget extends StatelessWidget {
     }
     return switch (imageType) {
       ImageType.svg => SizedBox(
-        width: width,
-        height: height,
-        child: ScalableImageWidget.fromSISource(
-          si: ScalableImageSource.fromSvg(rootBundle, source),
+          width: width,
+          height: height,
+          child: ScalableImageWidget.fromSISource(
+            si: ScalableImageSource.fromSvg(rootBundle, source),
+            key: imageKey,
+            fit: fit,
+          ),
+        ),
+      ImageType.si => SizedScalableImageWidget(
+          width: width,
+          height: height,
+          asset: source,
           key: imageKey,
           fit: fit,
         ),
-      ),
-      ImageType.si => SizedScalableImageWidget(
-        width: width,
-        height: height,
-        asset: source,
-        key: imageKey,
-        fit: fit,
-      ),
       ImageType.other => Image.file(
-        file,
-        key: imageKey,
-        width: width,
-        height: height,
-        cacheWidth: width?.ceil(),
-        cacheHeight: height?.ceil(),
-        fit: fit,
-        errorBuilder: errorBuilder,
-      ),
+          file,
+          key: imageKey,
+          width: width,
+          height: height,
+          cacheWidth: width?.ceil(),
+          cacheHeight: height?.ceil(),
+          fit: fit,
+          errorBuilder: errorBuilder,
+        ),
     };
-  }
-}
-
-/// The image type.
-enum ImageType {
-  /// "SVG" type.
-  svg,
-
-  /// "SI" type.
-  si,
-
-  /// Any other image.
-  other;
-
-  /// Infers an image type from the given [source].
-  static ImageType inferFromSource(String source) {
-    if (source.endsWith('.svg')) {
-      return svg;
-    }
-    if (source.endsWith('.si')) {
-      return si;
-    }
-    return other;
   }
 }

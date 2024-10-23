@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -65,18 +66,19 @@ class TotpImageWidget extends ConsumerWidget {
       return _makeCircle(_createDefaultImage());
     }
 
-    AsyncValue<Map<String, String>> cached = ref.watch(totpImageCacheManagerProvider);
-    if (cached is! AsyncData<Map<String, String>>) {
+    AsyncValue<Map<String, CacheObject>> cached = ref.watch(totpImageCacheManagerProvider);
+    if (cached is! AsyncData<Map<String, CacheObject>>) {
       return _makeCircle(_createDefaultImage());
     }
 
     return FutureBuilder(
-      future: TotpImageCacheManager.getCachedImage(cached.value, uuid!, imageUrl),
+      future: cached.value.getCachedImage(uuid!, imageUrl),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return _makeCircle(_createDefaultImage());
         }
-        String? source = snapshot.data?.path ?? imageUrl;
+        File file = snapshot.data!.$1;
+        String? source = file.existsSync() ? file.path : imageUrl;
         if (source == null) {
           return _makeCircle(_createDefaultImage());
         }
@@ -87,7 +89,7 @@ class TotpImageWidget extends ConsumerWidget {
             height: size,
             width: size,
             fit: BoxFit.contain,
-            imageType: imageUrl!.endsWith('.svg') ? ImageType.svg : ImageType.other,
+            imageType: snapshot.data!.$2,
           ),
         );
       },

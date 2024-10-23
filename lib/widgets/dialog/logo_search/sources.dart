@@ -98,6 +98,28 @@ class UpLeadSource with Source, DirectApiSource {
   String get apiPath => 'https://logo.uplead.com';
 }
 
+/// Search using Brandfetch.
+class Brandfetch with Source {
+  @override
+  String get name => 'Brandfetch';
+
+  @override
+  Future<List<String>> search(http.Client client, String userKeywords) async {
+    List<String> result = [];
+    http.Response response = await client.get(Uri.parse(buildEndpointUrl(userKeywords)));
+    List jsonList = jsonDecode(response.body);
+    for (dynamic jsonBrand in jsonList) {
+      if (jsonBrand['qualityScore'] >= 0.75) {
+        result.add(jsonBrand);
+      }
+    }
+    return result;
+  }
+
+  /// The endpoint URL.
+  String buildEndpointUrl(String keywords) => 'https://api.brandfetch.io/v2/search/${Uri.encodeComponent(keywords)}';
+}
+
 /// Allows to quickly search on a source list.
 extension Search on List<Source> {
   /// Searches using these sources, avoiding errors.

@@ -9,6 +9,7 @@ import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/display_copy_button.dart';
 import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
+import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/scan.dart';
@@ -49,6 +50,12 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
 
   /// The TOTP to emphasis, if any.
   Totp? emphasis;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(totpImageCacheManagerProvider.notifier).convertLegacyCacheObjects();
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
