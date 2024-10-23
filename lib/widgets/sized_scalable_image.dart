@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
-import 'package:jovial_svg/src/compact.dart';
+import 'package:open_authenticator/utils/jovial_svg.dart';
 
 /// A sized scalable image widget.
 class SizedScalableImageWidget extends StatelessWidget {
@@ -42,14 +39,8 @@ class SizedScalableImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    File file = File(asset);
     Widget child = ScalableImageWidget.fromSISource(
-      si: file.existsSync()
-          ? _SIFileSource(file, null)
-          : ScalableImageSource.fromSI(
-              rootBundle,
-              asset,
-            ),
+      si: JovialSvgUtils.siFromFileOrAsset(asset),
       fit: fit,
       alignment: alignment,
     );
@@ -79,39 +70,4 @@ class SizedScalableImageWidget extends StatelessWidget {
     }
     return child;
   }
-}
-
-class _SIFileSource extends ScalableImageSource {
-  final File file;
-  final Color? currentColor;
-
-  _SIFileSource(this.file, this.currentColor);
-
-  @override
-  Future<ScalableImage> get si => createSI();
-
-  @override
-  Future<ScalableImage> createSI({bool compact = false}) async {
-    ScalableImageCompact scalableImageCompact = ScalableImageCompact.fromBytes(file.readAsBytesSync(), currentColor: currentColor);
-    if (compact) {
-      return scalableImageCompact;
-    } else {
-      return scalableImageCompact.toDag();
-    }
-  }
-
-  @override
-  bool operator ==(final Object other) {
-    if (other is _SIFileSource) {
-      return file == other.file && currentColor == other.currentColor;
-    } else {
-      return false;
-    }
-  }
-
-  @override
-  int get hashCode => 0xf67cd716 ^ Object.hash(file, currentColor);
-
-  @override
-  String toString() => '__SIFileSource($file $currentColor)';
 }

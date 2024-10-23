@@ -1,19 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:jovial_misc/io_utils.dart';
-import 'package:jovial_svg/src/compact_noui.dart';
-import 'package:jovial_svg/src/svg_parser.dart';
 import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/image_type.dart';
+import 'package:open_authenticator/utils/jovial_svg.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -46,7 +43,7 @@ class TotpImageCacheManager extends AutoDisposeAsyncNotifier<Map<String, CacheOb
         CacheObject newCacheObject = entry.value.copyWith(legacy: false);
         if (entry.value.imageType == ImageType.svg) {
           File? cachedImage = (await cached.getCachedImage(entry.key, entry.value.url))?.$1;
-          if (cachedImage != null && cachedImage.existsSync() && (await _svgToSi(cachedImage.readAsStringSync(), cachedImage))) {
+          if (cachedImage != null && cachedImage.existsSync() && (await JovialSvgUtils.svgToSi(cachedImage.readAsStringSync(), cachedImage))) {
             newCacheObject = entry.value.copyWith(imageType: ImageType.si);
           }
         }
@@ -87,7 +84,7 @@ class TotpImageCacheManager extends AutoDisposeAsyncNotifier<Map<String, CacheOb
         ImageType imageType;
         if (imageUrl.endsWith('.svg')) {
           imageType = ImageType.svg;
-          if (await _svgToSi(response.body, file)) {
+          if (await JovialSvgUtils.svgToSi(response.body, file)) {
             imageType = ImageType.si;
           }
         } else {
@@ -105,23 +102,6 @@ class TotpImageCacheManager extends AutoDisposeAsyncNotifier<Map<String, CacheOb
     } catch (ex, stacktrace) {
       handleException(ex, stacktrace);
     }
-  }
-
-  /// Compiles a SVG string into an SI file.
-  Future<bool> _svgToSi(String svg, File destinationFile) async {
-    IOSink ioSink = destinationFile.openWrite();
-    try {
-      DataOutputSink outputSink = DataOutputSink(ioSink, Endian.big);
-      SICompactBuilderNoUI siCompactBuilder = SICompactBuilderNoUI(bigFloats: false, warn: (_) {});
-      StringSvgParser(svg, [], siCompactBuilder, warn: (_) {}).parse();
-      siCompactBuilder.si.writeToFile(outputSink);
-      return true;
-    } catch (ex, stacktrace) {
-      handleException(ex, stacktrace);
-    } finally {
-      await ioSink.close();
-    }
-    return false;
   }
 
   /// Deletes the cached image, if possible.
