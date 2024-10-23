@@ -1,0 +1,1 @@
+import{f as n,i as s,j as r,W as t}from"./D00O74Ou.js";const l={class:"text-center mb-4"},a=["innerHTML"],i=["innerHTML"],p=n({__name:"ArticleTitle",props:{article:{}},setup(o){return(e,c)=>(s(),r("div",l,[t("h1",{innerHTML:e.$t(`${e.article}.title`)},null,8,a),t("small",null,[t("em",{innerHTML:e.$t(`${e.article}.lastUpdated`)},null,8,i)])]))}});export{p as _};
