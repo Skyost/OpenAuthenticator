@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
 import 'package:open_authenticator/utils/image_type.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
@@ -76,7 +75,7 @@ class SmartImageWidget extends StatelessWidget {
           width: width,
           height: height,
           child: ScalableImageWidget.fromSISource(
-            si: ScalableImageSource.fromSvg(rootBundle, source),
+            si: ScalableImageSource.fromSvgFile(file, () => file.readAsString()),
             key: imageKey,
             fit: fit,
           ),
