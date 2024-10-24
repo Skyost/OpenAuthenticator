@@ -1,5 +1,16 @@
 # 📰 Open Authenticator Changelog
 
+## v1.0.6
+Released on Oct 24, 2024.
+
+* **FEAT** : Added a fade-in to `SmartImageWidget`. ([#69be9e9](https://github.com/Skyost/OpenAuthenticator/commit/69be9e9))
+* **FEAT** : Dropped `flutter_svg` support in favor of `jovial_svg`. ([#dbb7302](https://github.com/Skyost/OpenAuthenticator/commit/dbb7302))
+* **FEAT** : Improved overall app speed by compiling SVG files into SI. ([#27c9d4f](https://github.com/Skyost/OpenAuthenticator/commit/27c9d4f))
+* **FIX** : Fixed some SI files that were not loading. ([#be0cf0c](https://github.com/Skyost/OpenAuthenticator/commit/be0cf0c))
+* **CHORE** : Did some refactoring with `jovial_svg`. ([#e230f94](https://github.com/Skyost/OpenAuthenticator/commit/e230f94))
+* **CHORE** : Made `SizedScalableImageWidget` only supporting project assets, not files. ([#9f60f63](https://github.com/Skyost/OpenAuthenticator/commit/9f60f63))
+* **CHORE** : Various improvements made to `SmartImageWidget`. ([#eabba24](https://github.com/Skyost/OpenAuthenticator/commit/eabba24))
+
 ## v1.0.5
 Released on Jul 25, 2024.
 
