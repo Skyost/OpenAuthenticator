@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jovial_svg/jovial_svg.dart';
-import 'package:open_authenticator/utils/jovial_svg.dart';
 
 /// A sized scalable image widget.
 class SizedScalableImageWidget extends StatelessWidget {
@@ -40,7 +40,10 @@ class SizedScalableImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget child = ScalableImageWidget.fromSISource(
-      si: JovialSvgUtils.siFromFileOrAsset(asset),
+      si: ScalableImageSource.fromSI(
+        rootBundle,
+        asset,
+      ),
       fit: fit,
       alignment: alignment,
     );

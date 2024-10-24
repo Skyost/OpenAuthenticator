@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:jovial_svg/jovial_svg.dart';
 import 'package:open_authenticator/utils/image_type.dart';
-import 'package:open_authenticator/widgets/sized_scalable_image.dart';
+import 'package:open_authenticator/utils/jovial_svg.dart';
 
 /// Displays a classic image or a vector image.
 class SmartImageWidget extends StatelessWidget {
@@ -80,12 +80,14 @@ class SmartImageWidget extends StatelessWidget {
             fit: fit,
           ),
         ),
-      ImageType.si => SizedScalableImageWidget(
+      ImageType.si => SizedBox(
           width: width,
           height: height,
-          asset: source,
-          key: imageKey,
-          fit: fit,
+          child: ScalableImageWidget.fromSISource(
+            si: SIFileSource(file: file),
+            key: imageKey,
+            fit: fit,
+          ),
         ),
       ImageType.other => Image.file(
           file,

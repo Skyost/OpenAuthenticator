@@ -27,17 +27,6 @@ class JovialSvgUtils {
     }
     return false;
   }
-
-  /// Loads an SI graphic from a file or from an asset.
-  static ScalableImageSource siFromFileOrAsset(String source) {
-    File file = File(source);
-    return file.existsSync()
-        ? SIFileSource(file, null)
-        : ScalableImageSource.fromSI(
-            rootBundle,
-            source,
-          );
-  }
 }
 
 /// Allows to load a SI image from a file.
@@ -49,7 +38,10 @@ class SIFileSource extends ScalableImageSource {
   final Color? currentColor;
 
   /// Creates a new SI file source instance.
-  SIFileSource(this.file, this.currentColor);
+  SIFileSource({
+    required this.file,
+    this.currentColor,
+  });
 
   @override
   Future<ScalableImage> get si => createSI();
