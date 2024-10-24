@@ -402,10 +402,10 @@ packages:
     dependency: "direct dev"
     description:
       name: drift_dev
-      sha256: "27bab15e7869b69259663590381180117873b9b273a1ea9ebb21bb73133d1233"
+      sha256: "4592cea370f1dcd8afc67987c28402797d9ddb4aa3ae372cb675497c0741816c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.21.0"
+    version: "2.21.1"
   equatable:
     dependency: "direct main"
     description:
@@ -1246,18 +1246,18 @@ packages:
     dependency: "direct main"
     description:
       name: simple_secure_storage
-      sha256: "1146cb34dc0bbd28c067260c2fa260258c4d7d062866122a73629c6c40328c05"
+      sha256: "65358bcb5d05033c5fa80605f09acee01bd2ded7b1b87f69b242032297b93c74"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.3.1"
   simple_secure_storage_android:
     dependency: transitive
     description:
       name: simple_secure_storage_android
-      sha256: "4a9ab8f9956d0cd3e37627e9a17ff5f0e1f47fec6fa4ab09411297d7d9dc2728"
+      sha256: bfd11247b23efdcb277af987e0068329194fa853377da7d5443c893a0a913302
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.0"
+    version: "0.2.1"
   simple_secure_storage_darwin:
     dependency: transitive
     description:
@@ -1371,10 +1371,10 @@ packages:
     dependency: transitive
     description:
       name: sqlparser
-      sha256: c5f63dff8677407ddcddfa4744c176ea6dc44286c47ba9e69e76d8071398034d
+      sha256: d77749237609784e337ec36c979d41f6f38a7b279df98622ae23929c8eb954a4
       url: "https://pub.dev"
     source: hosted
-    version: "0.39.1"
+    version: "0.39.2"
   stack_trace:
     dependency: transitive
     description:
