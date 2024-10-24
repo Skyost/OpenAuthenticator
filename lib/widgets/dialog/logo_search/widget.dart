@@ -138,7 +138,7 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
           source: imageUrl,
           height: widget.imageWidth,
           width: widget.imageWidth,
-          errorBuilder: (context, error, stacktrace) => const SizedBox.shrink(),
+          errorBuilder: (context) => const SizedBox.shrink(),
         ),
       ),
     );
