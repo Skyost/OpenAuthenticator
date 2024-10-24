@@ -52,20 +52,16 @@ class SmartImageWidget extends StatelessWidget {
     if (source.startsWith('http://') || source.startsWith('https://')) {
       if (imageType == ImageType.other) {
         return shouldFadeIn
-            ? FadeInImage(
+            ? FadeInImage.memoryNetwork(
                 key: imageKey,
-                placeholder: ResizeImage.resizeIfNeeded(
-                  _cacheWidth,
-                  _cacheHeight,
-                  MemoryImage(kTransparentImage),
-                ),
-                image: ResizeImage.resizeIfNeeded(
-                  _cacheWidth,
-                  _cacheHeight,
-                  NetworkImage(source),
-                ),
+                placeholder: kTransparentImage,
+                placeholderCacheWidth: _cacheWidth,
+                placeholderCacheHeight: _cacheWidth,
+                image: source,
                 width: width,
                 height: height,
+                imageCacheWidth: _cacheWidth,
+                imageCacheHeight: _cacheHeight,
                 fadeInDuration: fadeInDuration!,
                 fit: fit,
                 imageErrorBuilder: errorBuilder == null ? null : ((context, error, stacktrace) => errorBuilder!(context)),
@@ -167,6 +163,8 @@ class SmartImageWidget extends StatelessWidget {
   /// The vector image switcher.
   Widget Function(BuildContext context, Widget child)? get _vectorSwitcher => shouldFadeIn
       ? ((context, child) => AnimatedSwitcher(
+            switchInCurve: Curves.easeIn,
+            switchOutCurve: Curves.easeOut,
             duration: fadeInDuration!,
             child: child,
           ))
