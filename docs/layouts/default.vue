@@ -47,4 +47,8 @@ ul {
 .btn-primary, .btn-success {
   color: white !important;
 }
+
+.btn .iconify {
+  vertical-align: -0.15em;
+}
 </style>
