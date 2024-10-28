@@ -297,7 +297,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
         ),
         ListTilePadding(
           child: TextFormField(
-            initialValue: validity?.toString(),
+            initialValue: validity?.inSeconds.toString(),
             onChanged: (value) {
               int? validity = int.tryParse(value);
               setState(() => this.validity = validity == null ? null : Duration(seconds: validity));
@@ -306,7 +306,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
             decoration: FormLabelWithIcon(
               icon: Icons.schedule,
               text: translations.totp.page.validity,
-              hintText: Totp.kDefaultValidity.toString(),
+              hintText: Totp.kDefaultValidity.inSeconds.toString(),
             ),
             validator: validateValidity,
             enabled: enabled,

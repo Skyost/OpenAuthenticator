@@ -17,7 +17,7 @@ extension JsonTotp on Totp {
       encryptedData: encryptedData,
       algorithm: data[Totp.kAlgorithmKey] is! String ? null : Algorithm.fromString(data[Totp.kAlgorithmKey]),
       digits: data[Totp.kDigitsKey] is! int ? null : data[Totp.kDigitsKey],
-      validity: data[Totp.kValidityKey] is! int ? null : data[Totp.kValidityKey],
+      validity: data[Totp.kValidityKey] is! int ? null : Duration(seconds: data[Totp.kValidityKey]),
     );
   }
 
@@ -27,7 +27,7 @@ extension JsonTotp on Totp {
     ...encryptedData.toJson(),
     if (algorithm != null) Totp.kAlgorithmKey: algorithm!.name,
     if (digits != null) Totp.kDigitsKey: digits,
-    if (validity != null) Totp.kValidityKey: validity,
+    if (validity != null) Totp.kValidityKey: validity!.inSeconds,
   };
 }
 
