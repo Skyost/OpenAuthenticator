@@ -16,20 +16,20 @@ import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 sealed class AppUnlockMethod {
   /// Tries to unlock the app.
   /// [context] is required so that we can interact with the user.
-  Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason);
+  Future<Result> tryUnlock(BuildContext context, Ref ref, UnlockReason reason);
 
   /// Triggered when this method has been chosen has the app unlock method.
   /// [unlockResult] is the result of the [tryUnlock] call.
-  Future<void> onMethodChosen(AsyncNotifierProviderRef ref, {ResultSuccess? enableResult}) => Future.value();
+  Future<void> onMethodChosen(Ref ref, {ResultSuccess? enableResult}) => Future.value();
 
   /// Triggered when a new method will be used for app unlocking.
-  Future<void> onMethodChanged(AsyncNotifierProviderRef ref, {ResultSuccess? disableResult}) => Future.value();
+  Future<void> onMethodChanged(Ref ref, {ResultSuccess? disableResult}) => Future.value();
 }
 
 /// Local authentication.
 class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
   @override
-  Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) async {
+  Future<Result> tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
     LocalAuthentication auth = LocalAuthentication();
     if (!(await auth.isDeviceSupported())) {
       return ResultError();
@@ -71,7 +71,7 @@ class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
 /// Enter master password.
 class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
   @override
-  Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) async {
+  Future<Result> tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
     if (reason != UnlockReason.openApp && reason != UnlockReason.sensibleAction) {
       TotpList totps = await ref.read(totpRepositoryProvider.future);
       if (totps.isEmpty) {
@@ -107,7 +107,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
   }
 
   @override
-  Future<void> onMethodChosen(AsyncNotifierProviderRef ref, {ResultSuccess? enableResult}) async {
+  Future<void> onMethodChosen(Ref ref, {ResultSuccess? enableResult}) async {
     String? password = enableResult?.valueOrNull;
     if (await ref.read(passwordSignatureVerificationMethodProvider.notifier).enable(password)) {
       await ref.read(cryptoStoreProvider.notifier).deleteFromLocalStorage();
@@ -115,7 +115,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
   }
 
   @override
-  Future<void> onMethodChanged(AsyncNotifierProviderRef ref, {ResultSuccess? disableResult}) async {
+  Future<void> onMethodChanged(Ref ref, {ResultSuccess? disableResult}) async {
     await ref.read(passwordSignatureVerificationMethodProvider.notifier).disable();
     await ref.read(cryptoStoreProvider.notifier).saveCurrentOnLocalStorage(checkSettings: false);
   }
@@ -124,7 +124,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
 /// No unlock.
 class NoneAppUnlockMethod extends AppUnlockMethod {
   @override
-  Future<Result> tryUnlock(BuildContext context, AsyncNotifierProviderRef ref, UnlockReason reason) => Future.value(const ResultSuccess());
+  Future<Result> tryUnlock(BuildContext context, Ref ref, UnlockReason reason) => Future.value(const ResultSuccess());
 }
 
 /// Configures the unlock reason for [UnlockChallenge]s.

@@ -137,6 +137,15 @@
       "deleteBackupConfirmationDialog": {
         "title": "Supprimer la sauvegarde",
         "message": "Voulez-vous vraiment supprimer cette sauvegarde ?"
+      },
+      "exportBackupDialog": {
+        "subject": "Exporter la sauvegarde",
+        "text": "Exporter la sauvegarde pour l'enregistrer ou la partager."
+      },
+      "button": {
+        "export": "Exporter",
+        "delete": "Supprimer",
+        "restore": "Restaurer"
       }
     }
   },
