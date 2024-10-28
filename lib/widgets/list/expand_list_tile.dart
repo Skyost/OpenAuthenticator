@@ -29,9 +29,25 @@ class ExpandListTile extends StatefulWidget {
 }
 
 /// The expand list tile instance.
-class _ExpandListTileState extends State<ExpandListTile> with BrightnessListener {
+class _ExpandListTileState extends State<ExpandListTile> with SingleTickerProviderStateMixin, BrightnessListener {
+  /// The expand controller.
+  late AnimationController expandController;
+
+  /// The expand animation.
+  late Animation<double> expandAnimation;
+
   /// Whether the content is expanded.
   bool expand = false;
+
+  @override
+  void initState() {
+    super.initState();
+    expandController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    expandAnimation = CurvedAnimation(
+      parent: expandController,
+      curve: Curves.fastOutSlowIn,
+    );
+  }
 
   @override
   Widget build(BuildContext context) => Column(
@@ -41,7 +57,13 @@ class _ExpandListTileState extends State<ExpandListTile> with BrightnessListener
             iconColor: Theme.of(context).colorScheme.primary,
             title: widget.title,
             onTap: () {
-              setState(() => expand = !expand);
+              bool willExpand = !expand;
+              setState(() => expand = willExpand);
+              if (willExpand) {
+                expandController.forward();
+              } else {
+                expandController.reverse();
+              }
             },
             trailing: AnimatedRotation(
               turns: expand ? 0.25 : 0,
@@ -53,7 +75,26 @@ class _ExpandListTileState extends State<ExpandListTile> with BrightnessListener
             ),
             enabled: widget.enabled,
           ),
-          if (expand) ...widget.children,
+          SizeTransition(
+            axisAlignment: 1.0,
+            sizeFactor: expandAnimation,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: widget.children,
+            ),
+          ),
+          // for (Widget child in widget.children)
+          //   SizeTransition(
+          //     axisAlignment: 1.0,
+          //     sizeFactor: expandAnimation,
+          //     child: child,
+          //   ),
         ],
       );
+
+  @override
+  void dispose() {
+    expandController.dispose();
+    super.dispose();
+  }
 }
