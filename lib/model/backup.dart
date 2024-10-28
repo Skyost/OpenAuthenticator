@@ -75,21 +75,21 @@ class Backup implements Comparable<Backup> {
   static const String kPasswordSignatureKey = 'passwordSignature';
 
   /// The Riverpod ref.
-  final AsyncNotifierProviderRef _ref;
+  final Ref _ref;
 
   /// The backup time.
   final DateTime dateTime;
 
   /// Creates a new backup instance.
   Backup._({
-    required AsyncNotifierProviderRef ref,
+    required Ref ref,
     required this.dateTime,
   }) : _ref = ref;
 
   /// Restore this backup.
   Future<Result> restore(String password) async {
     try {
-      File file = await _getBackupPath();
+      File file = await getBackupPath();
       if (!file.existsSync()) {
         throw _BackupFileDoesNotExistException(path: file.path);
       }
@@ -146,7 +146,7 @@ class Backup implements Comparable<Backup> {
         toBackup.add(decryptedTotp ?? totp);
       }
       HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(await newStore.key.exportRawKey(), Hash.sha256);
-      File file = await _getBackupPath(createDirectory: true);
+      File file = await getBackupPath(createDirectory: true);
       file.writeAsString(jsonEncode({
         kPasswordSignatureKey: base64.encode(await hmacSecretKey.signBytes(utf8.encode(password))),
         kSaltKey: base64.encode(newStore.salt.value),
@@ -164,7 +164,7 @@ class Backup implements Comparable<Backup> {
   /// Deletes this backup.
   Future<Result> delete() async {
     try {
-      File file = await _getBackupPath();
+      File file = await getBackupPath();
       if (file.existsSync()) {
         file.deleteSync();
       }
@@ -179,7 +179,7 @@ class Backup implements Comparable<Backup> {
   }
 
   /// Returns the backup path (TOTPs and salt).
-  Future<File> _getBackupPath({bool createDirectory = false}) async {
+  Future<File> getBackupPath({bool createDirectory = false}) async {
     Directory directory = await BackupStore._getBackupsDirectory(create: createDirectory);
     return File(join(directory.path, '${dateTime.millisecondsSinceEpoch}.bak'));
   }

@@ -137,6 +137,15 @@
       "deleteBackupConfirmationDialog": {
         "title": "Delete backup",
         "message": "Do you want to delete this backup ?"
+      },
+      "exportBackupDialog": {
+        "subject": "Export backup",
+        "text": "Export the backup to save it or to share it."
+      },
+      "button": {
+        "export": "Export",
+        "delete": "Delete",
+        "restore": "Restore"
       }
     }
   },
