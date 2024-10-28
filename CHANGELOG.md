@@ -1,5 +1,12 @@
 # 📰 Open Authenticator Changelog
 
+## v1.0.7
+Released on Oct 28, 2024.
+
+* **FEAT** : Added the ability to export a given backup. Fixes #3. ([#5a7ce70](https://github.com/Skyost/OpenAuthenticator/commit/5a7ce70))
+* **FEAT** : Improved `ExpandListTile` widget with an animation. ([#2cd61bc](https://github.com/Skyost/OpenAuthenticator/commit/2cd61bc))
+* **FIX** : Better handling of durations. Fixes #4. ([#61b58f4](https://github.com/Skyost/OpenAuthenticator/commit/61b58f4))
+
 ## v1.0.6
 Released on Oct 24, 2024.
 
