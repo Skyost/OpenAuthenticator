@@ -8,7 +8,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_auth
   firebase_core
   local_auth_windows
-  screen_retriever
+  screen_retriever_windows
   share_plus
   simple_secure_storage_windows
   sqlite3_flutter_libs

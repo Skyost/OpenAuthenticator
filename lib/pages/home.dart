@@ -198,6 +198,7 @@ class _HomePageBody extends ConsumerWidget {
                       ? SmoothHighlight(
                           color: Theme.of(context).focusColor,
                           useInitialHighLight: true,
+                          onHighlightFinished: onHighlightFinished,
                           child: totpWidget,
                         )
                       : totpWidget;

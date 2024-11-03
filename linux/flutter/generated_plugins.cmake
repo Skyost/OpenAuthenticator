@@ -4,7 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   gtk
-  screen_retriever
+  screen_retriever_linux
   simple_secure_storage_linux
   sqlite3_flutter_libs
   url_launcher_linux

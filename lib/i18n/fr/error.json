@@ -36,7 +36,9 @@
     "accessDeniedDialog": {
       "title": "Accès refusé",
       "message": "Impossible d'accéder à votre caméra (accès refusé : $exception). Voulez-vous réessayer ?"
-    }
+    },
+    "controllerUninitialized": "Controlleur non initialisé (code : $exception).",
+    "unsupported": "Le scan n'est pas supporté par cet appareil (code : $exception)."
   },
   "storageMigration(map)": {
     "backupError": "Une erreur est survenue durant la sauvegarde. Veuillez réessayer.",

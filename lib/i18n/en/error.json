@@ -36,7 +36,9 @@
     "accessDeniedDialog": {
       "title": "Access denied",
       "message": "Failed to access your camera (access denied : $exception). Do you want to retry ?"
-    }
+    },
+    "controllerUninitialized": "Uninitialized controller (code : $exception).",
+    "unsupported": "Scanning is not supported on this device (code : $exception)."
   },
   "storageMigration(map)": {
     "backupError": "An error occurred while doing the backup. Please try again.",
