@@ -1,5 +1,11 @@
 # 📰 Open Authenticator Changelog
 
+## v1.0.8
+Released on Nov 4, 2024.
+
+* **FEAT** : Now directly copying TOTP code when tapped on by search (if enabled in the app settings). ([#e1d2447](https://github.com/Skyost/OpenAuthenticator/commit/e1d2447))
+* **CHORE** : Now using `mobile_scanner` instead of `google_mlkit_barcode_scanning`. ([#f684564](https://github.com/Skyost/OpenAuthenticator/commit/f684564))
+
 ## v1.0.7
 Released on Oct 28, 2024.
 
