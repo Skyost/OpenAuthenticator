@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Allows to cache a given provider for an amount of time.
-extension CacheForExtension on AutoDisposeRef<Object?> {
+extension CacheForExtension on Ref<Object?> {
   /// Keeps the provider alive for [duration].
   void cacheFor(Duration duration) {
     // Immediately prevent the state from getting destroyed.
