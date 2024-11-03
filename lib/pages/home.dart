@@ -62,19 +62,24 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
         appBar: AppBar(
           title: const TitleWidget(),
           actions: [
-            _SearchButton(
-              onTotpFound: (totp) async {
-                TotpList totps = await ref.read(totpRepositoryProvider.future);
-                int index = totps.indexOf(totp);
-                if (index >= 0) {
-                  itemScrollController.jumpTo(index: index);
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) {
-                      setState(() => emphasis = totp);
-                    }
-                  });
-                }
-              },
+            Builder(
+              builder: (context) => _SearchButton(
+                onTotpFound: (totp) async {
+                  TotpList totps = await ref.read(totpRepositoryProvider.future);
+                  int index = totps.indexOf(totp);
+                  if (index >= 0) {
+                    itemScrollController.jumpTo(index: index);
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        setState(() => emphasis = totp);
+                      }
+                    });
+                  }
+                  if (!(await ref.read(displayCopyButtonSettingsEntryProvider.future)) && totp.isDecrypted && context.mounted) {
+                    _HomePageBody._copyCode(context, totp as DecryptedTotp);
+                  }
+                },
+              ),
             ),
             if (kDebugMode || currentPlatform != Platform.android)
               IconButton(
@@ -285,7 +290,7 @@ class _HomePageBody extends ConsumerWidget {
   }
 
   /// Allows to copy the code to the clipboard.
-  Future<void> _copyCode(BuildContext context, DecryptedTotp totp) async {
+  static Future<void> _copyCode(BuildContext context, DecryptedTotp totp) async {
     await Clipboard.setData(ClipboardData(text: totp.generateCode()));
     if (context.mounted) {
       SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.actions.copyConfirmation);
