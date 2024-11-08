@@ -56,7 +56,12 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
         Center(
           child: MobileScanner(
             placeholderBuilder: (context, child) => widget.placeholderBuilder(context),
-            onDetect: widget.onScan,
+            onDetect: (barcodes) {
+              widget.onScan?.call(barcodes);
+              if (barcodes.barcodes.firstOrNull != null) {
+                controller.stop();
+              }
+            },
             onDetectError: widget.onError ?? handleException,
             fit: BoxFit.contain,
             controller: controller,
