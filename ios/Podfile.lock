@@ -1157,8 +1157,6 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.36):
     - BoringSSL-GRPC/Interface (= 0.0.36)
   - BoringSSL-GRPC/Interface (0.0.36)
-  - camera_avfoundation (0.0.1):
-    - Flutter
   - cloud_firestore (5.4.4):
     - Firebase/Firestore (= 11.2.0)
     - firebase_core
@@ -1261,13 +1259,6 @@ PODS:
     - PromisesSwift (~> 2.1)
   - FirebaseSharedSwift (11.4.0)
   - Flutter (1.0.0)
-  - google_mlkit_barcode_scanning (0.13.0):
-    - Flutter
-    - google_mlkit_commons
-    - GoogleMLKit/BarcodeScanning (~> 7.0.0)
-  - google_mlkit_commons (0.9.0):
-    - Flutter
-    - MLKitVision
   - GoogleDataTransport (10.1.0):
     - nanopb (~> 3.30910.0)
     - PromisesObjC (~> 2.4)
@@ -1396,7 +1387,7 @@ PODS:
   - gRPC-Core/Interface (1.65.5)
   - gRPC-Core/Privacy (1.65.5)
   - GTMSessionFetcher/Core (3.5.0)
-  - leveldb-library (1.22.5)
+  - leveldb-library (1.22.6)
   - local_auth_darwin (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -1417,6 +1408,9 @@ PODS:
     - GTMSessionFetcher/Core (< 4.0, >= 3.3.2)
     - MLImage (= 1.0.0-beta6)
     - MLKitCommon (~> 12.0)
+  - mobile_scanner (6.0.2):
+    - Flutter
+    - GoogleMLKit/BarcodeScanning (~> 7.0.0)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
@@ -1430,24 +1424,26 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (8.1.6):
+  - purchases_flutter (8.2.0):
     - Flutter
-    - PurchasesHybridCommon (= 13.5.1)
-  - purchases_ui_flutter (8.1.6):
+    - PurchasesHybridCommon (= 13.7.0)
+  - purchases_ui_flutter (8.2.0):
     - Flutter
-    - PurchasesHybridCommonUI (= 13.5.1)
-  - PurchasesHybridCommon (13.5.1):
-    - RevenueCat (= 5.6.0)
-  - PurchasesHybridCommonUI (13.5.1):
-    - PurchasesHybridCommon (= 13.5.1)
-    - RevenueCatUI (= 5.6.0)
+    - PurchasesHybridCommonUI (= 13.7.0)
+  - PurchasesHybridCommon (13.7.0):
+    - RevenueCat (= 5.7.0)
+  - PurchasesHybridCommonUI (13.7.0):
+    - PurchasesHybridCommon (= 13.7.0)
+    - RevenueCatUI (= 5.7.0)
   - rate_my_app (2.2.0):
     - Flutter
     - FlutterMacOS
   - RecaptchaInterop (100.0.0)
-  - RevenueCat (5.6.0)
-  - RevenueCatUI (5.6.0):
-    - RevenueCat (= 5.6.0)
+  - RevenueCat (5.7.0)
+  - RevenueCatUI (5.7.0):
+    - RevenueCat (= 5.7.0)
+  - share_plus (0.0.1):
+    - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -1474,31 +1470,33 @@ PODS:
     - sqlite3/rtree
   - url_launcher_ios (0.0.1):
     - Flutter
+  - wakelock_plus (0.0.1):
+    - Flutter
   - webcrypto (0.1.1):
     - Flutter
     - FlutterMacOS
 
 DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
-  - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - firebase_app_check (from `.symlinks/plugins/firebase_app_check/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
   - Flutter (from `Flutter`)
-  - google_mlkit_barcode_scanning (from `.symlinks/plugins/google_mlkit_barcode_scanning/ios`)
-  - google_mlkit_commons (from `.symlinks/plugins/google_mlkit_commons/ios`)
   - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
+  - mobile_scanner (from `.symlinks/plugins/mobile_scanner/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
   - purchases_ui_flutter (from `.symlinks/plugins/purchases_ui_flutter/ios`)
   - rate_my_app (from `.symlinks/plugins/rate_my_app/darwin`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - simple_secure_storage_darwin (from `.symlinks/plugins/simple_secure_storage_darwin/darwin`)
   - sqlite3_flutter_libs (from `.symlinks/plugins/sqlite3_flutter_libs/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
   - webcrypto (from `.symlinks/plugins/webcrypto/darwin`)
 
 SPEC REPOS:
@@ -1546,8 +1544,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   app_links:
     :path: ".symlinks/plugins/app_links/ios"
-  camera_avfoundation:
-    :path: ".symlinks/plugins/camera_avfoundation/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   firebase_app_check:
@@ -1560,12 +1556,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_crashlytics/ios"
   Flutter:
     :path: Flutter
-  google_mlkit_barcode_scanning:
-    :path: ".symlinks/plugins/google_mlkit_barcode_scanning/ios"
-  google_mlkit_commons:
-    :path: ".symlinks/plugins/google_mlkit_commons/ios"
   local_auth_darwin:
     :path: ".symlinks/plugins/local_auth_darwin/darwin"
+  mobile_scanner:
+    :path: ".symlinks/plugins/mobile_scanner/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
@@ -1576,6 +1570,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/purchases_ui_flutter/ios"
   rate_my_app:
     :path: ".symlinks/plugins/rate_my_app/darwin"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   simple_secure_storage_darwin:
@@ -1584,6 +1580,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqlite3_flutter_libs/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
+  wakelock_plus:
+    :path: ".symlinks/plugins/wakelock_plus/ios"
   webcrypto:
     :path: ".symlinks/plugins/webcrypto/darwin"
 
@@ -1592,7 +1590,6 @@ SPEC CHECKSUMS:
   app_links: e7a6750a915a9e161c58d91bc610e8cd1d4d0ad0
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
   BoringSSL-GRPC: ca6a8e5d04812fce8ffd6437810c2d46f925eaeb
-  camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
   cloud_firestore: 5cb927f1a8c9d748d6fdbf16c6b267956cb82c53
   Firebase: 98e6bf5278170668a7983e12971a66b2cd57fc8c
   firebase_app_check: 78383bfcd0445037a8ff9795b2e3023f39db5b78
@@ -1614,8 +1611,6 @@ SPEC CHECKSUMS:
   FirebaseSessions: 655ff17f3cc1a635cbdc2d69b953878001f9e25b
   FirebaseSharedSwift: 505dae2d05969dbf6d43749a642bb1bf230f0252
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  google_mlkit_barcode_scanning: 1a409f86a4c7df45e6dee9ba06e520357b2c7110
-  google_mlkit_commons: 384e4e206e122b6dad430d3158205e0b2fac6789
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleMLKit: eff9e23ec1d90ea4157a1ee2e32a4f610c5b3318
   GoogleToolboxForMac: d1a2cbf009c453f4d6ded37c105e2f67a32206d8
@@ -1623,30 +1618,33 @@ SPEC CHECKSUMS:
   "gRPC-C++": 2fa52b3141e7789a28a737f251e0c45b4cb20a87
   gRPC-Core: a27c294d6149e1c39a7d173527119cfbc3375ce4
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
-  leveldb-library: e8eadf9008a61f9e1dde3978c086d2b6d9b9dc28
+  leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
   local_auth_darwin: 66e40372f1c29f383a314c738c7446e2f7fdadc3
   MLImage: 0ad1c5f50edd027672d8b26b0fee78a8b4a0fc56
   MLKitBarcodeScanning: 0a3064da0a7f49ac24ceb3cb46a5bc67496facd2
   MLKitCommon: 07c2c33ae5640e5380beaaa6e4b9c249a205542d
   MLKitVision: 45e79d68845a2de77e2dd4d7f07947f0ed157b0e
+  mobile_scanner: fd0054c52ede661e80bf5a4dea477a2467356bee
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: ca28cb96fcdf5abbcf2b64fc1df5284adaff8080
-  purchases_ui_flutter: 48f24565aac298007bcef7a793db66a94782b95b
-  PurchasesHybridCommon: 8e28d8363ad95bab48ef4da2c6af2ee5132d7170
-  PurchasesHybridCommonUI: b73317f993c0d1858168bf1ed88f88e9b9763acb
+  purchases_flutter: ef97cff49141ba88105dd937e91817392d32ab4b
+  purchases_ui_flutter: ef64e724d0dc7fcc15ef830aab804568c9650f65
+  PurchasesHybridCommon: cfcbc24de93b4fd30181233f83814e29b87c48b5
+  PurchasesHybridCommonUI: d4fe9a816da5bed8a07b9038574c372a50295207
   rate_my_app: cd3e1c44d12f387482698ffaf6ea9bd669a69b94
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
-  RevenueCat: a7117d40c27bc1e8a48e41ca4ea6856209664097
-  RevenueCatUI: 8ea429e4f6353ef3995f24d8d069fef19e2fa130
+  RevenueCat: f4d2291de0fa400f7880e62283fb19a148567a6a
+  RevenueCatUI: b6f1f34b78fde7fd2cd0fe000bbc32adff73ce06
+  share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   simple_secure_storage_darwin: a0ae551f37462248ee6693eac8c9be1f12a16899
   sqlite3: 0aa20658a9b238a3b1ff7175eb7bdd863b0ab4fd
   sqlite3_flutter_libs: b55ef23cfafea5318ae5081e0bf3fbbce8417c94
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
+  wakelock_plus: 78ec7c5b202cab7761af8e2b2b3d0671be6c4ae1
   webcrypto: f44963fa2d88f93deea971a9f59f2e21c2301689
 
 PODFILE CHECKSUM: fec077f742b3d8ca89976d25e02025e37ad663d4

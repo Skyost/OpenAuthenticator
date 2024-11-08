@@ -1383,9 +1383,11 @@ PODS:
   - gRPC-Core/Interface (1.65.5)
   - gRPC-Core/Privacy (1.65.5)
   - GTMSessionFetcher/Core (3.5.0)
-  - leveldb-library (1.22.5)
+  - leveldb-library (1.22.6)
   - local_auth_darwin (0.0.1):
     - Flutter
+    - FlutterMacOS
+  - mobile_scanner (6.0.2):
     - FlutterMacOS
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
@@ -1400,16 +1402,18 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (8.1.6):
+  - purchases_flutter (8.2.0):
     - FlutterMacOS
-    - PurchasesHybridCommon (= 13.5.1)
-  - PurchasesHybridCommon (13.5.1):
-    - RevenueCat (= 5.6.0)
+    - PurchasesHybridCommon (= 13.7.0)
+  - PurchasesHybridCommon (13.7.0):
+    - RevenueCat (= 5.7.0)
   - rate_my_app (2.2.0):
     - Flutter
     - FlutterMacOS
-  - RevenueCat (5.6.0)
-  - screen_retriever (0.0.1):
+  - RevenueCat (5.7.0)
+  - screen_retriever_macos (0.0.1):
+    - FlutterMacOS
+  - share_plus (0.0.1):
     - FlutterMacOS
   - shared_preferences_foundation (0.0.1):
     - Flutter
@@ -1437,6 +1441,8 @@ PODS:
     - sqlite3/rtree
   - url_launcher_macos (0.0.1):
     - FlutterMacOS
+  - wakelock_plus (0.0.1):
+    - FlutterMacOS
   - webcrypto (0.1.1):
     - Flutter
     - FlutterMacOS
@@ -1452,15 +1458,18 @@ DEPENDENCIES:
   - firebase_crashlytics (from `Flutter/ephemeral/.symlinks/plugins/firebase_crashlytics/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - local_auth_darwin (from `Flutter/ephemeral/.symlinks/plugins/local_auth_darwin/darwin`)
+  - mobile_scanner (from `Flutter/ephemeral/.symlinks/plugins/mobile_scanner/macos`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - purchases_flutter (from `Flutter/ephemeral/.symlinks/plugins/purchases_flutter/macos`)
   - rate_my_app (from `Flutter/ephemeral/.symlinks/plugins/rate_my_app/darwin`)
-  - screen_retriever (from `Flutter/ephemeral/.symlinks/plugins/screen_retriever/macos`)
+  - screen_retriever_macos (from `Flutter/ephemeral/.symlinks/plugins/screen_retriever_macos/macos`)
+  - share_plus (from `Flutter/ephemeral/.symlinks/plugins/share_plus/macos`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
   - simple_secure_storage_darwin (from `Flutter/ephemeral/.symlinks/plugins/simple_secure_storage_darwin/darwin`)
   - sqlite3_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/sqlite3_flutter_libs/macos`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
+  - wakelock_plus (from `Flutter/ephemeral/.symlinks/plugins/wakelock_plus/macos`)
   - webcrypto (from `Flutter/ephemeral/.symlinks/plugins/webcrypto/darwin`)
   - window_manager (from `Flutter/ephemeral/.symlinks/plugins/window_manager/macos`)
 
@@ -1514,6 +1523,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
   local_auth_darwin:
     :path: Flutter/ephemeral/.symlinks/plugins/local_auth_darwin/darwin
+  mobile_scanner:
+    :path: Flutter/ephemeral/.symlinks/plugins/mobile_scanner/macos
   package_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
   path_provider_foundation:
@@ -1522,8 +1533,10 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/purchases_flutter/macos
   rate_my_app:
     :path: Flutter/ephemeral/.symlinks/plugins/rate_my_app/darwin
-  screen_retriever:
-    :path: Flutter/ephemeral/.symlinks/plugins/screen_retriever/macos
+  screen_retriever_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/screen_retriever_macos/macos
+  share_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/share_plus/macos
   shared_preferences_foundation:
     :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin
   simple_secure_storage_darwin:
@@ -1532,6 +1545,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/sqlite3_flutter_libs/macos
   url_launcher_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
+  wakelock_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/wakelock_plus/macos
   webcrypto:
     :path: Flutter/ephemeral/.symlinks/plugins/webcrypto/darwin
   window_manager:
@@ -1568,23 +1583,26 @@ SPEC CHECKSUMS:
   "gRPC-C++": 2fa52b3141e7789a28a737f251e0c45b4cb20a87
   gRPC-Core: a27c294d6149e1c39a7d173527119cfbc3375ce4
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
-  leveldb-library: e8eadf9008a61f9e1dde3978c086d2b6d9b9dc28
+  leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
   local_auth_darwin: 66e40372f1c29f383a314c738c7446e2f7fdadc3
+  mobile_scanner: 07710d6b9b2c220ae899de2d7ecf5d77ffa56333
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   package_info_plus: f5790acc797bf17c3e959e9d6cf162cc68ff7523
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: 4043d83d75a44319255f4c1c1388967071fd4e91
-  PurchasesHybridCommon: 8e28d8363ad95bab48ef4da2c6af2ee5132d7170
+  purchases_flutter: d6e148e91339d472b3116ca5b094a43b8c74e86e
+  PurchasesHybridCommon: cfcbc24de93b4fd30181233f83814e29b87c48b5
   rate_my_app: cd3e1c44d12f387482698ffaf6ea9bd669a69b94
-  RevenueCat: a7117d40c27bc1e8a48e41ca4ea6856209664097
-  screen_retriever: 59634572a57080243dd1bf715e55b6c54f241a38
+  RevenueCat: f4d2291de0fa400f7880e62283fb19a148567a6a
+  screen_retriever_macos: 776e0fa5d42c6163d2bf772d22478df4b302b161
+  share_plus: fd717ef89a2801d3491e737630112b80c310640e
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   simple_secure_storage_darwin: a0ae551f37462248ee6693eac8c9be1f12a16899
   sqlite3: 0aa20658a9b238a3b1ff7175eb7bdd863b0ab4fd
   sqlite3_flutter_libs: f0b7a85544d8bac7b8bac12eac7d05bcfdd786d0
   url_launcher_macos: c82c93949963e55b228a30115bd219499a6fe404
+  wakelock_plus: 4783562c9a43d209c458cb9b30692134af456269
   webcrypto: f44963fa2d88f93deea971a9f59f2e21c2301689
   window_manager: 3a1844359a6295ab1e47659b1a777e36773cd6e8
 
