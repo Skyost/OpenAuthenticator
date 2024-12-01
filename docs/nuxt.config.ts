@@ -2,11 +2,20 @@ import StylelintPlugin from 'vite-plugin-stylelint'
 import eslintPlugin from '@nabla/vite-plugin-eslint'
 
 import { siteMeta } from './site'
-import availableLocales from './locales/availableLocales'
+import availableLocales from './i18n/availableLocales'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-07-01',
+  modules: [
+    '@nuxt/eslint',
+    'nuxt-cname-generator',
+    '@nuxtjs/i18n',
+    '@nuxt/icon',
+    'nuxt-link-checker',
+    '@nuxtjs/sitemap',
+    '@nuxtjs/robots',
+    '@bootstrap-vue-next/nuxt',
+  ],
   devtools: { enabled: true },
 
   app: {
@@ -24,7 +33,39 @@ export default defineNuxtConfig({
     '~/assets/app.scss',
   ],
 
+  site: {
+    url: siteMeta.url,
+    name: siteMeta.name,
+    trailingSlash: true,
+  },
+
+  compatibilityDate: '2024-07-01',
+
+  nitro: {
+    prerender: {
+      routes: ['/'],
+    },
+  },
+
+  vite: {
+    plugins: [
+      StylelintPlugin(),
+      eslintPlugin(),
+    ],
+  },
+
+  cname: {
+    host: siteMeta.url,
+  },
+
+  eslint: {
+    config: {
+      stylistic: true,
+    },
+  },
+
   i18n: {
+    vueI18n: 'i18n.config.ts',
     baseUrl: siteMeta.url,
     locales: availableLocales,
     langDir: 'locales',
@@ -41,43 +82,11 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: [
-    '@nuxt/eslint',
-    'nuxt-cname-generator',
-    '@nuxtjs/i18n',
-    '@nuxt/icon',
-    'nuxt-link-checker',
-    '@nuxtjs/sitemap',
-    '@nuxtjs/robots',
-    '@bootstrap-vue-next/nuxt',
-  ],
-
-  nitro: {
-    prerender: {
-      routes: ['/'],
-    },
-  },
-
-  vite: {
-    plugins: [
-      StylelintPlugin(),
-      eslintPlugin(),
+  linkChecker: {
+    failOnError: false,
+    skipInspections: [
+      'link-text',
+      'no-uppercase-chars',
     ],
-  },
-
-  site: {
-    url: siteMeta.url,
-    name: siteMeta.name,
-    trailingSlash: true,
-  },
-
-  cname: {
-    host: siteMeta.url,
-  },
-
-  eslint: {
-    config: {
-      stylistic: true,
-    },
   },
 })

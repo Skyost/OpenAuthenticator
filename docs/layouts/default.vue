@@ -1,9 +1,5 @@
 <script setup lang="ts">
-const i18nHead = useLocaleHead({
-  addSeoAttributes: {
-    canonicalQueries: ['foo'],
-  },
-})
+const i18nHead = useLocaleHead()
 useHead({
   htmlAttrs: {
     lang: i18nHead.value.htmlAttrs!.lang,
