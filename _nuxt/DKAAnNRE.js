@@ -1,0 +1,1 @@
+import{g as n,l as s,p as l,Y as t}from"./CAfoNPNR.js";const r={class:"text-center mb-4"},a=["innerHTML"],o=["innerHTML"],_=n({__name:"ArticleTitle",props:{article:{}},setup(i){return(e,c)=>(s(),l("div",r,[t("h1",{innerHTML:e.$t(`${e.article}.title`)},null,8,a),t("small",null,[t("em",{innerHTML:e.$t(`${e.article}.lastUpdated`)},null,8,o)])]))}});export{_};
