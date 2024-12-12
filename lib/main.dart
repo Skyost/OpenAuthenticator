@@ -247,27 +247,34 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     super.initState();
     if (widget.listen) {
       if (currentPlatform.isMobile) {
-        ref.listenManual(appLinksListenerProvider, (previous, next) async {
-          if (next.valueOrNull == null || previous == next) {
-            return;
-          }
-          Uri uri = next.value!;
-          if (uri.host == Uri.parse(App.firebaseLoginUrl).host) {
-            handleLoginLink(uri);
-            return;
-          }
-          if (uri.scheme == 'otpauth') {
-            handleTotpLink(uri);
-            return;
-          }
-        });
+        ref.listenManual(
+          appLinksListenerProvider,
+          (previous, next) async {
+            if (next.valueOrNull == null || previous == next) {
+              return;
+            }
+            Uri uri = next.value!;
+            if (uri.host == Uri.parse(App.firebaseLoginUrl).host) {
+              handleLoginLink(uri);
+              return;
+            }
+            if (uri.scheme == 'otpauth') {
+              handleTotpLink(uri);
+              return;
+            }
+          },
+        );
       }
-      ref.listenManual(totpLimitExceededProvider, (previous, next) async {
-        if (next.valueOrNull != true) {
-          return;
-        }
-        TotpLimitDialog.showAndBlock(context);
-      });
+      ref.listenManual(
+        totpLimitExceededProvider,
+        (previous, next) async {
+          if (next.valueOrNull != true) {
+            return;
+          }
+          TotpLimitDialog.showAndBlock(context);
+        },
+        fireImmediately: true,
+      );
     }
     if (widget.rateMyApp) {
       WidgetsBinding.instance.addPostFrameCallback((_) => initializeRateMyApp());
