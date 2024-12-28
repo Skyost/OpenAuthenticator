@@ -72,6 +72,14 @@ export default defineNuxtConfig({
     },
   },
 
+  experimental: {
+    defaults: {
+      nuxtLink: {
+        trailingSlash: 'append',
+      },
+    },
+  },
+
   i18n: {
     vueI18n: 'i18n.config.ts',
     baseUrl: siteMeta.url,

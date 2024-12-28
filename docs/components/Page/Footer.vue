@@ -58,17 +58,17 @@ const getFlagUrl = (locale: LocaleObject) => {
               </nuxt-link>
             </li>
             <li>
-              <nuxt-link to="/privacy-policy">
+              <nuxt-link to="/privacy-policy/">
                 {{ $t('footer.legal.privacyPolicy') }}
               </nuxt-link>
             </li>
             <li>
-              <nuxt-link to="/terms-of-service">
+              <nuxt-link to="/terms-of-service/">
                 {{ $t('footer.legal.termsOfService') }}
               </nuxt-link>
             </li>
             <li>
-              <nuxt-link to="/contact">
+              <nuxt-link to="/contact/">
                 {{ $t('footer.legal.contact') }}
               </nuxt-link>
             </li>

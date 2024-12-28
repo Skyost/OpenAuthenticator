@@ -172,7 +172,7 @@ or via the mobile application marketplace or network.`,
 Application and for a reasonable time thereafter. The Service Provider will retain Automatically Collected
 information for up to 24 months and thereafter may store it in aggregate.
 If you'd like the Service Provider to delete User Provided Data that you have provided via the Application,
-please <a href="/contact">contact them</a> and they will respond in a reasonable time.
+please <a href="/contact/">contact them</a> and they will respond in a reasonable time.
 Please note that some or all of the User Provided Data may be required in order for the Application
 to function properly.
 Your master password is not transmitted to any remote server.
@@ -207,7 +207,7 @@ Privacy Policy.`,
     contact: {
       title: 'Contact Us',
       content: `If you have any questions regarding privacy while using the Application, or
-have questions about the practices, please <a href="/contact">contact</a> the Service Provider.`,
+have questions about the practices, please <a href="/contact/">contact</a> the Service Provider.`,
     },
     credit: 'Thanks to <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> for this privacy policy.',
   },
@@ -319,7 +319,7 @@ The Service Provider will notify you of any changes by posting the new Terms and
     contact: {
       title: 'Contact Us',
       content: `If you have any questions or suggestions about the Terms and Conditions,
-please do not hesitate to <nuxt-link to="/contact">contact</nuxt-link> the Service Provider.`,
+please do not hesitate to <nuxt-link to="/contact/">contact</nuxt-link> the Service Provider.`,
     },
     credit: 'Thanks to <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> for these terms of service.',
   },

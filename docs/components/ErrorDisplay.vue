@@ -32,7 +32,7 @@ const title = computed(() => {
       You can keep browsing by heading to the <a class="underline" href="javascript:history.back()">previous page</a> or
       or by going on the <nuxt-link class="underline" to="/">home page</nuxt-link>.
       <span v-if="errorCode === 404">
-        If you think something should be here, please <nuxt-link class="underline" to="/contact">contact me</nuxt-link>.
+        If you think something should be here, please <nuxt-link class="underline" to="/contact/">contact me</nuxt-link>.
       </span>
     </p>
   </div>

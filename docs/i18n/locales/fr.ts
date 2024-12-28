@@ -181,7 +181,7 @@ que vous utiliserez l'Application et pendant un certain temps raisonnable par la
 de services conservera les informations collectées automatiquement jusqu'à 24 mois,
 puis pourra les stocker de manière agrégée. Si vous souhaitez que le Fournisseur de services supprime
 les données fournies par l'utilisateur transmises via l'Application,
-veuillez <a href="/contact">les contacter</a> et ils vous répondront dans un délai raisonnable.
+veuillez <a href="/contact/">les contacter</a> et ils vous répondront dans un délai raisonnable.
 Veuillez noter que certaines ou toutes les données fournies par l'utilisateur peuvent être nécessaires
 pour que l'Application fonctionne correctement.
 Votre mot de passe maître n'est pas transmis à un serveur distant.
@@ -216,7 +216,7 @@ passe maître et un sel aléatoire.`,
     contact: {
       title: 'Contactez-nous',
       content: `Si vous avez des questions concernant la confidentialité lors de l'utilisation de
-l'Application, ou si vous avez des questions sur les pratiques, veuillez <a href="/contact">nous contacter</a>.`,
+l'Application, ou si vous avez des questions sur les pratiques, veuillez <a href="/contact/">nous contacter</a>.`,
     },
     credit: 'Merci à <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> pour cette politique de confidentialité.',
   },
@@ -321,7 +321,7 @@ Le Fournisseur de services vous informera de tout changement en publiant les nou
     contact: {
       title: 'Contactez-nous',
       content: `Si vous avez des questions ou des suggestions concernant les Conditions générales d'utilisation,
-n'hésitez pas à <nuxt-link to="/contact">nous contacter</nuxt-link>.`,
+n'hésitez pas à <nuxt-link to="/contact/">nous contacter</nuxt-link>.`,
     },
     credit: 'Merci à <a href="https://app-privacy-policy-generator.firebaseapp.com/"><em>nisrulz</em></a> pour ces conditions générales d\'utilisation.',
   },
