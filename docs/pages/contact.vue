@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { load } from 'recaptcha-v3'
 import { contactPostUrl, recaptchaKey } from '~/site'
+import Spinner from '~/components/Spinner.vue'
 
 enum FormState {
   incomplete,
@@ -99,10 +100,7 @@ const onFormSubmit = async () => {
         >
       </b-col>
     </b-row>
-    <client-only
-      fallback-tag="em"
-      fallback="Loading form..."
-    >
+    <client-only>
       <b-form
         :action="contactPostUrl"
         class="pt-3 pb-3"
@@ -180,6 +178,9 @@ const onFormSubmit = async () => {
           <icon name="bi:send" /> {{ t('contact.form.send') }}
         </b-button>
       </b-form>
+      <template #fallback>
+        <spinner />
+      </template>
     </client-only>
     <b-alert
       :model-value="currentState === FormState.error"

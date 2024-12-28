@@ -113,7 +113,6 @@ const features = computed(() => {
             <auto-detect-button
               :available-soon-template="t('index.download.storeButtons.availableSoonTemplate')"
               :available-on-template="t('index.download.storeButtons.availableOnTemplate')"
-              :loading-text="t('index.download.storeButtons.loading')"
               :more-button="t('index.download.storeButtons.morePlatformsButton')"
             />
           </b-col>
@@ -168,7 +167,7 @@ const features = computed(() => {
               >
                 <b-button
                   class="w-100"
-                  variant="primary"
+                  variant="dark"
                   :href="siteMeta.github"
                 >
                   <icon name="bi:github" /> {{ t('index.openSource.linkButtons.github') }}
@@ -180,6 +179,15 @@ const features = computed(() => {
               >
                 <b-button
                   class="w-100"
+                  variant="primary"
+                  to="/translate"
+                >
+                  <icon name="bi:translate" /> {{ t('index.openSource.linkButtons.translate') }}
+                </b-button>
+              </b-col>
+              <b-col>
+                <b-button
+                  class="mt-3 w-100"
                   variant="light"
                   href="https://paypal.me/Skyost"
                 >

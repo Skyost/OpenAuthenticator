@@ -121,7 +121,10 @@ before getting started.
 
 ### Help translating it
 
-You can translate the app into your language by submitting a pull request targeting the files located
+We're looking for translators. If you want to help but know nothing about code, just go on the
+[translation page](https://openauthenticator.app/translate/) on the website.
+
+You can also translate the app into your language by submitting a pull request targeting the files located
 in the `lib/i18n` folder (for the app) and `docs/locales` (for the website).
 Feel also free to submit a pull request for any typo you encounter.
 

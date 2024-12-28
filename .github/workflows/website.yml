@@ -7,10 +7,16 @@ on:
       - master
     paths:
       - docs/**
+      - lib/i18n/**
+      - pubspec.yaml
   pull_request:
     branches:
       - main
       - master
+    paths:
+      - docs/**
+      - lib/i18n/**
+      - pubspec.yaml
 
 jobs:
   build:

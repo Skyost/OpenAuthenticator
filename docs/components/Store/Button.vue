@@ -50,7 +50,7 @@ const tip = computed(() => {
 </script>
 
 <template>
-  <b-card
+  <div
     v-b-tooltip="tip"
     class="store-button-card"
   >
@@ -70,7 +70,7 @@ const tip = computed(() => {
         {{ store.name }}
       </div>
     </b-button>
-  </b-card>
+  </div>
 </template>
 
 <style lang="scss" scoped>

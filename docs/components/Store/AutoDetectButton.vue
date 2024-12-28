@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { storesLink, type OS } from '~/site'
+import Spinner from '~/components/Spinner.vue'
 
 defineProps<{
   moreButton?: string
-  loadingText?: string
   availableSoonTemplate?: string
   availableOnTemplate?: string
 }>()
@@ -39,10 +39,7 @@ const oSToShow = computed<OS[]>(() => {
 </script>
 
 <template>
-  <client-only
-    placeholder-tag="span"
-    :placeholder="loadingText"
-  >
+  <client-only>
     <div v-if="os">
       <div class="text-center w-100">
         <store-button
@@ -84,6 +81,9 @@ const oSToShow = computed<OS[]>(() => {
         :available-soon-template="availableSoonTemplate"
       />
     </div>
+    <template #fallback>
+      <spinner />
+    </template>
   </client-only>
 </template>
 

@@ -7,7 +7,7 @@ const { locales, setLocale } = useI18n()
 const year = (new Date()).getFullYear()
 
 const getFlagUrl = (locale: LocaleObject) => {
-  let code = locale.code
+  let code: string = locale.code
   if (code === 'en') {
     code = 'gb'
   }
@@ -34,6 +34,11 @@ const getFlagUrl = (locale: LocaleObject) => {
             <li>
               <nuxt-link to="/#download">
                 {{ $t('footer.app.download') }}
+              </nuxt-link>
+            </li>
+            <li>
+              <nuxt-link to="/translate/">
+                {{ $t('footer.app.translation') }}
               </nuxt-link>
             </li>
           </ul>

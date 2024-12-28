@@ -12,6 +12,7 @@ export default {
       title: 'App',
       index: 'Home',
       download: 'Download',
+      translation: 'Translation',
     },
     legal: {
       title: 'Legal',
@@ -45,7 +46,6 @@ export default {
       description: `Open Authenticator has been built using Flutter. Therefore, you can use it on <strong>Android</strong>
 and <strong>iOS</strong>, but also on <strong>macOS</strong>, <strong>Windows</strong> and <strong>Linux</strong> !`,
       storeButtons: {
-        loading: 'Loading links...',
         availableSoonTemplate: 'Available for %s soon !',
         availableOnTemplate: 'Download for %s',
         morePlatformsButton: 'Want another platform ?',
@@ -58,10 +58,12 @@ and <strong>iOS</strong>, but also on <strong>macOS</strong>, <strong>Windows</s
 It's licensed under <a class="underline" href="https://github.com/Skyost/OpenAuthenticator">GNU GPL v3</a>.
 Feel free to contribute to the project by submitting your <strong>pull requests</strong> on Github,
 by <strong>donating</strong> or just by <strong>starring it</strong> on Github !`,
-        2: 'Thanks a lot to <a class="underline" href="https://github.com/Skyost/OpenAuthenticator/contributors">all contributors</a> !',
+        2: `You can help translating Open Authenticator. To do so, go on the <a href="/translate/">translation</a> page.
+Thanks a lot to <a class="underline" href="https://github.com/Skyost/OpenAuthenticator/contributors">all contributors</a> !`,
       },
       linkButtons: {
         github: 'Github',
+        translate: 'Translate the app',
         paypal: 'Donate',
       },
     },
@@ -352,5 +354,66 @@ If you want to contact me for anything else or for deleting your account, please
       error: 'An error occurred while sending your request.',
       send: 'Send',
     },
+  },
+  translate: {
+    pageTitle: 'Localization',
+    title: 'Help translating Open Authenticator',
+    notYourLanguage: 'Not your language ?',
+    description: `Speaking another language ? Want to contribute ton an open-source project ? Say no more, Open Authenticator
+is looking for translators !`,
+    pickLanguage: 'First, choose your language.',
+    languageDescription: `<p>The translation is organized into multiple files. To translate one, you must first expand it.
+Once done, you will see the original texts displayed in the left column, and the existing translation on the right.
+When you have finished translating a file, you can send it by clicking on the green submit button.</p>
+<p>It is possible to save your progress at any time using the <q>Save</q> button.
+The <q>Load</q> button will then allow you to resume the translation.</p>`,
+    accordion: {
+      load: 'Load',
+      save: 'Save',
+      submit: 'Submit',
+    },
+    table: {
+      originalText: 'Original text',
+      translation: 'Translation',
+    },
+    modal: {
+      modalTitle: 'Submit your translation',
+      title: 'Thanks a lot for contributing to Open Authenticator !',
+      subtitle: 'Follow the steps below to submit your translation.',
+      grabCode: {
+        title: 'Grab the code',
+        copyCode: 'First, you have to copy the code below.',
+        copyToClipboard: 'Copy to clipboard',
+        translationData: 'This contains the translation data.',
+      },
+      openGithub: {
+        title: 'Open Github',
+        click: 'Click on the following link to edit the current file on Github.',
+        note: `<strong>Note.</strong> You need a Github account.
+Please <a class="link-danger" href="https://github.com/">create one</a> first before going further.`,
+      },
+      fork: {
+        title: 'Fork the repository',
+        fork: 'Click on <button class="btn btn-success text-button">Fork this repository</button>.',
+        pasteTheCode: 'Once done, paste the code copied during <em>Step <strong>#1</strong></em>.',
+        commit: 'Then, click on <button class="btn btn-success text-button">Commit changes...</button> and on <button class="btn btn-success text-button">Propose changes</button>.',
+      },
+      pullRequest: {
+        title: 'Create a pull request',
+        beforeCreate: 'Click on <button class="btn btn-success text-button">Create pull request</button>, and fill the form.',
+        form: {
+          title: 'You can put something like <q><span class="font-monospace">feat: Translated `(file)` into `(language)`.</span></q>.',
+          message: 'Leave a message detailing what you have translated, and what still need to be translated.',
+        },
+        create: 'Then, click on <button class="btn btn-success text-button">Create pull request</button>.',
+      },
+      done: {
+        title: 'Done !',
+        message: 'Your submission will be reviewed, and will likely be approved if it meets the Open Authenticator quality standards 😎',
+      },
+      close: 'Close',
+    },
+    unsavedChanges: 'It looks like you have unsaved changes. If you leave this page, everything will be lost. Do you want to continue ?',
+    error: 'Error while requesting translation data.',
   },
 }

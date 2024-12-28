@@ -52,6 +52,14 @@ export default defineNuxtConfig({
       StylelintPlugin(),
       eslintPlugin(),
     ],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler',
+          silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import'],
+        },
+      },
+    },
   },
 
   cname: {
@@ -80,6 +88,11 @@ export default defineNuxtConfig({
       cookieKey: 'language',
       redirectOn: 'root',
     },
+  },
+
+  icon: {
+    provider: 'iconify',
+    class: 'vue-icon',
   },
 
   linkChecker: {
