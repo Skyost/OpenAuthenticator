@@ -84,7 +84,7 @@ export default defineNuxtConfig({
     vueI18n: 'i18n.config.ts',
     baseUrl: siteMeta.url,
     locales: availableLocales,
-    langDir: 'locales',
+    langDir: './i18n/locales',
     defaultLocale: 'en',
     strategy: 'no_prefix',
     compilation: {
