@@ -151,6 +151,10 @@
   },
   "about": {
     "title": "About",
+    "translate": {
+      "title": "Help translating the app",
+      "subtitle": "Open the app translation page. If you speak another language and you want to help translating $appName, you're in the right place !"
+    },
     "github": {
       "title": "Report bugs or suggest new features",
       "subtitle": "Open the Github page of the app to report bugs or to suggest new features."

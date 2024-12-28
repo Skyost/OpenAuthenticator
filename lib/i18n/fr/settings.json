@@ -151,6 +151,10 @@
   },
   "about": {
     "title": "À propos",
+    "translate": {
+      "title": "Aider à traduire l'application",
+      "subtitle": "Ouvrir la page de traduction de l'application. Si vous parlez une autre langue et que vous souhaitez aider à traduire $appName, c'est ici !"
+    },
     "github": {
       "title": "Signaler un bug ou suggérer des fonctionnalités",
       "subtitle": "Ouvrir la page Github de l'application pour signaler un bug ou suggérer des fonctionnalités."
