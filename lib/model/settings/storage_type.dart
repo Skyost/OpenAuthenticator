@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
 import 'package:open_authenticator/model/storage/type.dart';
@@ -15,5 +16,6 @@ class StorageTypeSettingsEntry extends EnumSettingsEntry<StorageType> {
         );
 
   @override
+  @protected
   List<StorageType> get values => StorageType.values;
 }

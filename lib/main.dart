@@ -65,9 +65,6 @@ Future<void> main() async {
     }
   }
   await SimpleSecureStorage.initialize(_OpenAuthenticatorSSSInitializationOptions());
-  if (kDebugMode) {
-    SharedPreferences.setPrefix('flutter_debug.');
-  }
   LocaleSettings.useDeviceLocale();
   runApp(
     ProviderScope(

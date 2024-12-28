@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 
 /// The app unlock method settings entry provider.
@@ -19,7 +19,7 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
         );
 
   @override
-  Future<AppUnlockMethod> loadFromPreferences(SharedPreferences preferences) async {
+  Future<AppUnlockMethod> loadFromPreferences(SharedPreferencesWithPrefix preferences) async {
     if (!preferences.containsKey(key)) {
       return defaultValue;
     }
@@ -40,7 +40,7 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
   }
 
   @override
-  Future<void> saveToPreferences(SharedPreferences preferences, AppUnlockMethod value) async => await preferences.setString(key, value.serialize());
+  Future<void> saveToPreferences(SharedPreferencesWithPrefix preferences, AppUnlockMethod value) async => await preferences.setString(key, value.serialize());
 
   /// Changes the entry value but check for unlock success before.
   Future<Result> changeValueIfUnlockSucceed(AppUnlockMethod newMethod, BuildContext context) async {
@@ -71,7 +71,6 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
         break;
       case LocalAuthenticationAppUnlockMethod():
       case MasterPasswordAppUnlockMethod():
-      default:
         await SimpleSecureStorage.write(key, value.serialize());
         break;
     }

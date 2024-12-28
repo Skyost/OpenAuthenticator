@@ -9,11 +9,11 @@ import 'package:open_authenticator/utils/firebase_auth/default.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';
 import 'package:open_authenticator/utils/validation/sign_in/email.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// The email link authentication provider.
 final emailLinkAuthenticationProvider = NotifierProvider<EmailLinkAuthenticationProvider, FirebaseAuthenticationState>(EmailLinkAuthenticationProvider.new);
@@ -120,11 +120,9 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
         future: EmailLinkAuthMethodDefault.sendSignInLink(email, actionCodeSettings),
       );
     }
-    SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
-    bool result = await preferences.setString(_kFirebaseAuthenticationEmailKey, email);
-    if (result) {
-      ref.invalidateSelf();
-    }
+    SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
+    await preferences.setString(_kFirebaseAuthenticationEmailKey, email);
+    ref.invalidateSelf();
     return ResultSuccess(
       value: AuthenticationObject(
         email: email,
@@ -135,7 +133,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
 
   /// Reads the email to confirm from preferences.
   Future<String?> readEmailToConfirmFromPreferences() async {
-    SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
+    SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
     return preferences.getString(_kFirebaseAuthenticationEmailKey);
   }
 
@@ -145,11 +143,9 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   @override
   Future<Result> cancelConfirmation() async {
     try {
-      SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
-      bool result = await preferences.remove(_kFirebaseAuthenticationEmailKey);
-      if (result) {
-        ref.invalidateSelf();
-      }
+      SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
+      await preferences.remove(_kFirebaseAuthenticationEmailKey);
+      ref.invalidateSelf();
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(
@@ -164,7 +160,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     if (emailLink == null) {
       return ResultError();
     }
-    SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
+    SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
     String email = preferences.getString(_kFirebaseAuthenticationEmailKey)!;
     EmailLinkAuthMethod method;
     if (currentPlatform == Platform.windows) {
@@ -190,10 +186,8 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
       context,
       future: FirebaseAuth.instance.signInWith(method),
     );
-    bool result = await preferences.remove(_kFirebaseAuthenticationEmailKey);
-    if (result) {
-      ref.invalidateSelf();
-    }
+    await preferences.remove(_kFirebaseAuthenticationEmailKey);
+    ref.invalidateSelf();
     return ResultSuccess(
       value: AuthenticationObject(
         email: signInResult.email,

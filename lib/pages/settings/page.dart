@@ -23,6 +23,7 @@ import 'package:open_authenticator/pages/settings/entries/refresh_id_token.dart'
 import 'package:open_authenticator/pages/settings/entries/save_derived_key.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/pages/settings/entries/theme.dart';
+import 'package:open_authenticator/pages/settings/entries/translate.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/platform.dart';
 
@@ -68,6 +69,7 @@ class SettingsPage extends ConsumerWidget {
               const BackupNowSettingsEntryWidget(),
               const ManageBackupSettingsEntryWidget(),
               _SettingsPageSectionTitle(title: translations.settings.about.title),
+              const TranslateSettingsEntryWidget(),
               const GithubSettingsEntryWidget(),
               const AboutSettingsEntryWidget(),
               _SettingsPageSectionTitle(title: translations.settings.dangerZone.title),

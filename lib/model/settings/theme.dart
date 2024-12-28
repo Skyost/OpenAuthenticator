@@ -15,5 +15,6 @@ class ThemeSettingsEntry extends EnumSettingsEntry<ThemeMode> {
         );
 
   @override
+  @protected
   List<ThemeMode> get values => ThemeMode.values;
 }

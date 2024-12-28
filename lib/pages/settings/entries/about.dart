@@ -17,11 +17,11 @@ class AboutSettingsEntryWidget extends StatelessWidget {
         initialData: _DefaultPackageInfo(),
         builder: (context, snapshot) => ListTile(
           leading: const Icon(Icons.favorite),
-          title: Text(translations.settings.about.aboutApp.title(appName: snapshot.data!.appName)),
+          title: Text(translations.settings.about.aboutApp.title(appName: App.appName)),
           subtitle: Text.rich(
             translations.settings.about.aboutApp.subtitle(
               appName: TextSpan(
-                text: snapshot.data!.appName,
+                text: App.appName,
                 style: const TextStyle(fontStyle: FontStyle.italic),
               ),
               appVersion: TextSpan(

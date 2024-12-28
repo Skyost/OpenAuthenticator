@@ -55,7 +55,7 @@ class _BlurWidgetState extends State<BlurWidget> with BrightnessListener {
                 filter: ImageFilter.blur(sigmaX: widget.blur, sigmaY: widget.blur),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: (currentBrightness == Brightness.light ? Colors.white : Colors.black).withOpacity(widget.colorOpacity),
+                    color: (currentBrightness == Brightness.light ? Colors.white : Colors.black).withValues(alpha: widget.colorOpacity),
                   ),
                   alignment: widget.alignment,
                   child: widget.overlay,

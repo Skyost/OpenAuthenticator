@@ -16,9 +16,9 @@ import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
-import 'package:rate_my_app/rate_my_app.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 
 /// Allows to clear all the app data.
@@ -74,7 +74,7 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
               await SimpleSecureStorage.clear();
               TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
               await totpImageCacheManager.clearCache();
-              SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
+              SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
               await preferences.clear();
               LocalStorage localStorage = await ref.read(localStorageProvider);
               await localStorage.clearTotps();

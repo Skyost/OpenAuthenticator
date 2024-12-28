@@ -1,21 +1,21 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';
 import 'package:open_authenticator/utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// The shared preferences provider.
-final sharedPreferencesProvider = FutureProvider.autoDispose<SharedPreferences>((ref) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  return preferences;
-});
+final sharedPreferencesProvider = FutureProvider.autoDispose<SharedPreferencesWithPrefix>((ref) async => await SharedPreferencesWithPrefix.create());
 
 /// Represents a settings entry, which can be user configured (directly or not).
 class SettingsEntry<T> extends AutoDisposeAsyncNotifier<T> {
   /// The preferences key.
+  @protected
   final String key;
 
   /// The default value.
+  @protected
   final T defaultValue;
 
   /// Creates a new settings entry instance.
@@ -26,7 +26,7 @@ class SettingsEntry<T> extends AutoDisposeAsyncNotifier<T> {
 
   @override
   FutureOr<T> build() async {
-    SharedPreferences preferences = await ref.watch(sharedPreferencesProvider.future);
+    SharedPreferencesWithPrefix preferences = await ref.watch(sharedPreferencesProvider.future);
     if (preferences.containsKey(key)) {
       return await loadFromPreferences(preferences);
     }
@@ -37,19 +37,19 @@ class SettingsEntry<T> extends AutoDisposeAsyncNotifier<T> {
   Future<void> changeValue(T value) async {
     if (value != state.valueOrNull) {
       state = AsyncData(value);
-      SharedPreferences preferences = await ref.read(sharedPreferencesProvider.future);
+      SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
       await saveToPreferences(preferences, value);
     }
   }
 
   /// Loads the value from preferences.
-  Future<T> loadFromPreferences(SharedPreferences preferences) async {
+  Future<T> loadFromPreferences(SharedPreferencesWithPrefix preferences) async {
     assert(T == String || T == bool || T == int || T == double || T == List<String>);
     return preferences.get(key) as T;
   }
 
   /// Saves the value to preferences.
-  Future<void> saveToPreferences(SharedPreferences preferences, T value) async {
+  Future<void> saveToPreferences(SharedPreferencesWithPrefix preferences, T value) async {
     assert(T == String || T == bool || T == int || T == double || T == List<String>);
     if (T == String) {
       await preferences.setString(key, value as String);
@@ -74,16 +74,17 @@ abstract class EnumSettingsEntry<T extends Enum> extends SettingsEntry<T> {
   });
 
   @override
-  Future<T> loadFromPreferences(SharedPreferences preferences) async {
+  Future<T> loadFromPreferences(SharedPreferencesWithPrefix preferences) async {
     String? value = preferences.getString(key);
     return values.firstWhereOrNull((theme) => theme.name == value) ?? defaultValue;
   }
 
   @override
-  Future<void> saveToPreferences(SharedPreferences preferences, T value) async {
+  Future<void> saveToPreferences(SharedPreferencesWithPrefix preferences, T value) async {
     await preferences.setString(key, value.name);
   }
 
   /// Should return the enum values.
+  @protected
   List<T> get values;
 }
