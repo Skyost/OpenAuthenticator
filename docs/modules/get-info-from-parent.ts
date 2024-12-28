@@ -74,6 +74,18 @@ export default defineNuxtModule<ModuleOptions>({
         code: 'pt',
         name: 'Portuguese',
       },
+      {
+        code: 'de',
+        name: 'Deutsch',
+      },
+      {
+        code: 'it',
+        name: 'Italiano',
+      },
+      {
+        code: 'jp',
+        name: '日本語',
+      },
     ],
   },
   setup: async (options, nuxt) => {

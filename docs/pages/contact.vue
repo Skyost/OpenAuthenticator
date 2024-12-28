@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { load } from 'recaptcha-v3'
 import { contactPostUrl, recaptchaKey } from '~/site'
-import Spinner from '~/components/Spinner.vue'
 
 enum FormState {
   incomplete,
@@ -69,7 +68,8 @@ const onFormSubmit = async () => {
     )
     currentState.value = FormState.success
   }
-  catch (_) {
+  catch (ex) {
+    console.error(ex)
     currentState.value = FormState.error
   }
 }

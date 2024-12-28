@@ -28,17 +28,22 @@ const languages = computed<LanguageWithData[]>(() => {
   <div v-if="status === 'pending'">
     <slot name="pending" />
   </div>
-  <b-row v-else-if="data">
-    <b-col
-      v-for="language in languages"
-      :key="language.code"
-      sm="12"
-      md="4"
-      class="mb-3"
-    >
-      <language-card :language="language" />
-    </b-col>
-  </b-row>
+  <div v-else-if="data">
+    <b-row>
+      <b-col
+        v-for="language in languages"
+        :key="language.code"
+        sm="12"
+        md="4"
+        class="mb-3"
+      >
+        <language-card :language="language" />
+      </b-col>
+    </b-row>
+    <span class="credits">
+      Flags provided by <a href="https://flagpedia.net">Flagpedia</a>.
+    </span>
+  </div>
   <div v-else>
     <slot
       name="error"
@@ -46,3 +51,11 @@ const languages = computed<LanguageWithData[]>(() => {
     />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.credits {
+  display: block;
+  text-align: right;
+  font-size: 0.75rem;
+}
+</style>

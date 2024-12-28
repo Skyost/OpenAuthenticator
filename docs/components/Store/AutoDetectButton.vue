@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { storesLink, type OS } from '~/site'
-import Spinner from '~/components/Spinner.vue'
 
 defineProps<{
   moreButton?: string

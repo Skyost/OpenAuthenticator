@@ -180,7 +180,7 @@ const features = computed(() => {
                 <b-button
                   class="w-100"
                   variant="primary"
-                  to="/translate"
+                  to="/translate/"
                 >
                   <icon name="bi:translate" /> {{ t('index.openSource.linkButtons.translate') }}
                 </b-button>

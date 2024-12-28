@@ -6,6 +6,12 @@ const props = defineProps<{
   language: LanguageWithData
 }>()
 
+const progress = ref<number>(0)
+
+onMounted(() => {
+  setTimeout(() => progress.value = props.language.progress, 500)
+})
+
 const variant = computed<keyof BaseColorVariant>(() => {
   if (props.language.progress >= 0.75) {
     return 'success'
@@ -36,11 +42,11 @@ const animate = ref<boolean>(false)
       </b-card-text>
       <div class="d-flex align-items-center">
         <b-progress
-          class="flex-1 w-100"
+          class="progress"
           :max="1"
           striped
           :animated="animate"
-          :value="language.progress"
+          :value="progress"
           :variant="variant"
         />
         <span class="label ps-2">
@@ -63,6 +69,16 @@ a {
     .flag {
       height: 50px;
       margin-bottom: 10px;
+    }
+
+    .progress {
+      width: 100%;
+
+      :deep(.progress-bar) {
+        transition-duration: 800ms;
+        transition-property: width;
+        transition-timing-function: ease-in-out;
+      }
     }
   }
 
