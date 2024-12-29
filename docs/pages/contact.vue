@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { load } from 'recaptcha-v3'
 import { contactPostUrl, recaptchaKey } from '~/site'
 
@@ -11,9 +12,11 @@ enum FormState {
 }
 
 const { t, locale } = useI18n()
-const pageHead = () => usePageHead({ title: t('contact.title') })
-pageHead()
-watch(locale, pageHead)
+watch(
+  locale,
+  () => usePageHead({ title: t('contact.title') }),
+  { immediate: true },
+)
 
 const accountDeletion = 'accountDeletion'
 const subjects = [accountDeletion, 'moreInfoNeeded', 'commercial', 'other']

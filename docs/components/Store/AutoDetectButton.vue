@@ -3,8 +3,8 @@ import { storesLink, type OS } from '~/site'
 
 defineProps<{
   moreButton?: string
-  availableSoonTemplate?: string
-  availableOnTemplate?: string
+  availableSoonText?: (os: string) => string
+  availableOnText?: (os: string) => string
 }>()
 
 const os = computed<OS | null>(() => {
@@ -44,8 +44,8 @@ const oSToShow = computed<OS[]>(() => {
         <store-button
           class="mb-4"
           :os="os"
-          :available-on-template="availableOnTemplate"
-          :available-soon-template="availableSoonTemplate"
+          :available-on-text="availableOnText"
+          :available-soon-text="availableSoonText"
         />
       </div>
       <b-accordion v-if="moreButton">
@@ -63,8 +63,8 @@ const oSToShow = computed<OS[]>(() => {
             >
               <store-button
                 :os="storeOs"
-                :available-on-template="availableOnTemplate"
-                :available-soon-template="availableSoonTemplate"
+                :available-on-text="availableOnText"
+                :available-soon-text="availableSoonText"
               />
             </div>
           </div>
@@ -76,8 +76,8 @@ const oSToShow = computed<OS[]>(() => {
         v-for="(storeOs, index) in oSToShow"
         :key="`store-${index}`"
         :os="storeOs"
-        :available-on-template="availableOnTemplate"
-        :available-soon-template="availableSoonTemplate"
+        :available-on-text="availableOnText"
+        :available-soon-text="availableSoonText"
       />
     </div>
     <template #fallback>

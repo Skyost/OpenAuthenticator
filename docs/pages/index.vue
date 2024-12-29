@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import QrcodeVue from 'qrcode.vue'
 import AutoDetectButton from '~/components/Store/AutoDetectButton.vue'
 import { siteMeta } from '~/site'
@@ -111,8 +112,8 @@ const features = computed(() => {
               />
             </div>
             <auto-detect-button
-              :available-soon-template="t('index.download.storeButtons.availableSoonTemplate')"
-              :available-on-template="t('index.download.storeButtons.availableOnTemplate')"
+              :available-soon-text="(os: string) => t('index.download.storeButtons.availableSoonTemplate', { os: os })"
+              :available-on-text="(os: string) => t('index.download.storeButtons.availableOnTemplate', { os: os })"
               :more-button="t('index.download.storeButtons.morePlatformsButton')"
             />
           </b-col>

@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import type { LocaleObject } from '@nuxtjs/i18n'
+import { useI18n } from 'vue-i18n'
 import { siteMeta } from '~/site'
 
-const { locales, setLocale } = useI18n()
+const { locale, availableLocales } = useI18n()
 // const switchLocalePath = useSwitchLocalePath()
 const year = (new Date()).getFullYear()
 
-const getFlagUrl = (locale: LocaleObject) => {
-  let code: string = locale.code
-  if (code === 'en') {
-    code = 'gb'
+const getFlagUrl = (locale: string) => {
+  if (locale === 'en') {
+    locale = 'gb'
   }
-  return `https://flagcdn.com/${code.toLowerCase()}.svg`
+  return `https://flagcdn.com/${locale.toLowerCase()}.svg`
 }
 </script>
 
@@ -83,16 +82,16 @@ const getFlagUrl = (locale: LocaleObject) => {
           </h2>
           <ul class="icon-list">
             <li
-              v-for="locale in locales"
-              :key="locale.code"
+              v-for="availableLocale in availableLocales"
+              :key="availableLocale"
             >
               <a
                 href="#"
-                @click.prevent="setLocale(locale.code)"
+                @click.prevent="locale = availableLocale"
               >
                 <img
-                  :src="getFlagUrl(locale)"
-                  :alt="locale.code"
+                  :src="getFlagUrl(availableLocale)"
+                  :alt="availableLocale"
                   width="20"
                 >
               </a>

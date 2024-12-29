@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import LanguagePicker from '~/components/Translation/LanguagePicker.vue'
 import ErrorAlert from '~/components/Translation/ErrorAlert.vue'
 
-const { t } = useI18n()
-usePageHead({ title: t('translate.pageTitle') })
+const { t, locale } = useI18n()
+watch(
+  locale,
+  () => usePageHead({ title: t('translate.pageTitle') }),
+  { immediate: true },
+)
 </script>
 
 <template>

@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 const { t, locale } = useI18n()
-const pageHead = () => usePageHead({ title: t('termsOfService.title') })
-pageHead()
-watch(locale, pageHead)
+watch(
+  locale,
+  () => usePageHead({ title: t('termsOfService.title') }),
+  { immediate: true },
+)
 </script>
 
 <template>

@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 const { t, te, locale } = useI18n()
-const pageHead = () => usePageHead({ title: t('faq.title') })
-pageHead()
-watch(locale, pageHead)
+watch(
+  locale,
+  () => usePageHead({ title: t('faq.title') }),
+  { immediate: true },
+)
 
 const questions = computed(() => {
   const result = []

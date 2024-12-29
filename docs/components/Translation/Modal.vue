@@ -83,7 +83,7 @@ const modalCode = computed<string>(() => props.file ? generateJson(props.file.da
     >
       <ul class="mb-0">
         <li>
-          <strong>Title :</strong> <span v-html="$t('translate.modal.pullRequest.form.title').replace('(file)', file?.fileName ?? '').replace('(language)', file?.targetLanguage ?? '')" />
+          <strong>Title :</strong> <span v-html="$t('translate.modal.pullRequest.form.title', { file: file?.fileName, language: file?.targetLanguage })" />
         </li>
         <li>
           <strong>Message :</strong> <span v-html="$t('translate.modal.pullRequest.form.message')" />

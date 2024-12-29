@@ -11,12 +11,17 @@ const title = computed(() => {
   return result
 })
 
-// onMounted(() => console.error(props.error))
+onMounted(() => console.error(props.error))
+
+watch (
+  title,
+  newTitle => usePageHead({ title: newTitle }),
+  { immediate: true },
+)
 </script>
 
 <template>
   <nuxt-layout>
-    <page-head :title="title" />
     <b-container class="pt-5 pb-5">
       <error-display :error="error" />
     </b-container>

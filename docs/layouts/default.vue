@@ -1,15 +1,13 @@
 <script setup lang="ts">
-const head = useLocaleHead({
-  addDirAttribute: true,
-  identifierAttribute: 'id',
-  addSeoAttributes: true,
-})
+import { useI18n } from 'vue-i18n'
+
+const { locale } = useI18n()
 </script>
 
 <template>
   <Html
-    :lang="head.htmlAttrs?.lang"
-    :dir="head.htmlAttrs?.dir"
+    :lang="locale"
+    dir="ltr"
   >
     <page-navbar />
     <slot />

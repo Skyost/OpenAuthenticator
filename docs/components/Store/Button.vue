@@ -3,8 +3,8 @@ import { storesLink, type StoreInfo, type OS } from '~/site'
 
 const props = defineProps<{
   os: OS
-  availableSoonTemplate?: string
-  availableOnTemplate?: string
+  availableSoonText?: (os: string) => string
+  availableOnText?: (os: string) => string
 }>()
 
 interface ExtendedStoreInfo extends StoreInfo {
@@ -42,10 +42,10 @@ const store = computed<ExtendedStoreInfo>(() => {
 })
 
 const tip = computed(() => {
-  if (!props.availableOnTemplate || !props.availableSoonTemplate) {
+  if (!props.availableOnText || !props.availableSoonText) {
     return null
   }
-  return (store.value.url ? props.availableOnTemplate : props.availableSoonTemplate).replace('%s', store.value.target)
+  return (store.value.url ? props.availableOnText : props.availableSoonText)(store.value.target)
 })
 </script>
 

@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 // @ts-expect-error `dot-object` is not a TS library.
 import * as dot from 'dot-object'
-import { createResolver, defineNuxtModule, useLogger } from '@nuxt/kit'
+import { createResolver, defineNuxtModule, extendRouteRules, useLogger } from '@nuxt/kit'
 import * as yaml from 'yaml'
 
 /**
@@ -167,13 +167,18 @@ export default defineNuxtModule<ModuleOptions>({
     //   logger.info(`Found ${language}.`)
     // }
     // logger.success(`Done.`)
-    logger.info('Registering module directory...')
+    logger.info('Registering module directory and routes...')
     nuxt.options.nitro.publicAssets = nuxt.options.nitro.publicAssets || []
     nuxt.options.nitro.publicAssets.push({
       baseURL: `/${options.destinationDirectory}/`,
       dir: destinationDir,
       fallthrough: true,
     })
+    for (const language in languagesFileContent) {
+      extendRouteRules(`/translate/${language}/`, {
+        prerender: true,
+      })
+    }
     logger.success(`Done.`)
   },
 })

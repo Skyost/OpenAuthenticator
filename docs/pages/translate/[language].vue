@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import ErrorAlert from '~/components/Translation/ErrorAlert.vue'
 
-const { t } = useI18n()
-const hasChanged = ref<boolean>(false)
+const { t, locale } = useI18n()
+watch(
+  locale,
+  () => usePageHead({ title: t('translate.pageTitle') }),
+  { immediate: true },
+)
 
-usePageHead({ title: t('translate.pageTitle') })
+const hasChanged = ref<boolean>(false)
 const router = useRouter()
 const removeGuard = router.beforeEach((to, from, next) => {
   if (!hasChanged.value) {

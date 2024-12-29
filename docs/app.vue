@@ -1,15 +1,24 @@
 <script setup lang="ts">
-if (import.meta.client) {
-  onMounted(() => {
-    const i18n = useI18n()
-    const browserLocale = i18n.getBrowserLocale()
-    const locales = i18n.locales
-    const locale = locales.value.find(({ code }) => code === browserLocale)
-    if (locale) {
-      i18n.setLocale(locale.code)
+import { useI18n } from 'vue-i18n'
+
+const { availableLocales, locale } = useI18n()
+
+onMounted(() => {
+  const i18nCookieValue = useCookie('locale')
+  let wantedLanguage = availableLocales[0]
+  if (i18nCookieValue.value && availableLocales.includes(i18nCookieValue.value)) {
+    wantedLanguage = i18nCookieValue.value
+  }
+  else {
+    const userLanguage = navigator.language || navigator.userLanguage
+    const languageCode = userLanguage.indexOf('-') === -1 ? userLanguage : userLanguage.split('-')[0]
+    if (availableLocales.includes(languageCode)) {
+      wantedLanguage = languageCode
     }
-  })
-}
+  }
+  locale.value = wantedLanguage
+  watch (locale, newLocale => i18nCookieValue.value = newLocale)
+})
 </script>
 
 <template>
