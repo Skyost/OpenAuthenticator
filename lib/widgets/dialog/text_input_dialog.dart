@@ -243,7 +243,7 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
   /// Triggered when the ok button has been pressed.
   Future<void> onOkPressed({String? password}) async {
     password ??= this.password;
-    oldPasswordValidationResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(password);
+    oldPasswordValidationResult = await (await ref.read(passwordVerificationProvider.future)).isPasswordValid(password);
     if (!formFieldKey.currentState!.validate() || !mounted) {
       return;
     }

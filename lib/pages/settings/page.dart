@@ -183,8 +183,8 @@ class _DangerZoneListTileState extends ConsumerState<DangerZoneListTile> with Br
 mixin RequiresAuthenticationProvider on ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<FirebaseAuthenticationProvider> providers = ref.read(userAuthenticationProviders.notifier).availableProviders;
-    return providers.isEmpty ? const SizedBox.shrink() : buildWidgetWithAuthenticationProviders(context, ref);
+    bool hasProvider = ref.watch(userAuthenticationProviders.select((providers) => providers.availableProviders.isNotEmpty));
+    return hasProvider ? buildWidgetWithAuthenticationProviders(context, ref) : SizedBox.shrink();
   }
 
   /// Builds the widget when authentication providers are available.

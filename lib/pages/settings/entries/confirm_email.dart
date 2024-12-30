@@ -25,9 +25,9 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     if (state is! FirebaseAuthenticationStateLoggedOut) {
       return const SizedBox.shrink();
     }
-    ref.watch(emailLinkAuthenticationProvider);
+    EmailLinkAuthenticationProvider authenticationProvider = ref.watch(emailLinkAuthenticationProvider);
     return FutureBuilder(
-      future: ref.read(emailLinkAuthenticationProvider.notifier).readEmailToConfirmFromPreferences(),
+      future: authenticationProvider.readEmailToConfirmFromPreferences(),
       builder: (context, snapshot) {
         if (snapshot.data == null) {
           return const SizedBox.shrink();
@@ -74,7 +74,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     }
     Result result = await showWaitingOverlay(
       context,
-      future: ref.read(emailLinkAuthenticationProvider.notifier).cancelConfirmation(),
+      future: ref.read(emailLinkAuthenticationProvider).cancelConfirmation(),
     );
     if (context.mounted) {
       context.showSnackBarForResult(result, retryIfError: true);
@@ -92,7 +92,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     if (emailLink == null || !context.mounted) {
       return;
     }
-    EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
+    EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider);
     Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, emailLink);
     if (context.mounted) {
       AccountUtils.handleAuthenticationResult(context, ref, result);

@@ -414,7 +414,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
 
   /// Adds the TOTP to the repository.
   Future<Result> addTotp() async {
-    bool willExceed = await ref.read(totpLimitExceededProvider.notifier).willExceedIfAddMore(count: 1);
+    bool willExceed = (await ref.read(totpLimitProvider.future)).willExceedIfAddMore(count: 1);
     if (willExceed) {
       if (mounted) {
         await TotpLimitDialog.show(

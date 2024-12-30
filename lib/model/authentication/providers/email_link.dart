@@ -16,16 +16,29 @@ import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// The email link authentication provider.
-final emailLinkAuthenticationProvider = NotifierProvider<EmailLinkAuthenticationProvider, FirebaseAuthenticationState>(EmailLinkAuthenticationProvider.new);
+final emailLinkAuthenticationProvider = Provider<EmailLinkAuthenticationProvider>(
+  (ref) => EmailLinkAuthenticationProvider(
+    ref: ref,
+  ),
+);
+
+/// The email link authentication state provider.
+final emailLinkAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationProviderNotifier, FirebaseAuthenticationState>(
+  () => FirebaseAuthenticationProviderNotifier(emailLinkAuthenticationProvider),
+);
 
 /// The provider that allows to sign-in using an email link.
 class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider with ConfirmationProvider<String> {
   /// The preferences key where the email is temporally stored.
   static const String _kFirebaseAuthenticationEmailKey = 'firebaseAuthenticationEmail';
 
+  /// The Riverpod ref instance.
+  final Ref ref;
+
   /// Creates a new email link authentication provider instance.
-  EmailLinkAuthenticationProvider()
-      : super(
+  const EmailLinkAuthenticationProvider({
+    required this.ref,
+  }) : super(
           availablePlatforms: const [
             Platform.android,
             Platform.iOS,
@@ -122,7 +135,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     }
     SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
     await preferences.setString(_kFirebaseAuthenticationEmailKey, email);
-    ref.invalidateSelf();
+    ref.invalidate(emailLinkAuthenticationStateProvider);
     return ResultSuccess(
       value: AuthenticationObject(
         email: email,
@@ -145,7 +158,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     try {
       SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
       await preferences.remove(_kFirebaseAuthenticationEmailKey);
-      ref.invalidateSelf();
+      ref.invalidate(emailLinkAuthenticationStateProvider);
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(
@@ -187,7 +200,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
       future: FirebaseAuth.instance.signInWith(method),
     );
     await preferences.remove(_kFirebaseAuthenticationEmailKey);
-    ref.invalidateSelf();
+    ref.invalidate(emailLinkAuthenticationStateProvider);
     return ResultSuccess(
       value: AuthenticationObject(
         email: signInResult.email,

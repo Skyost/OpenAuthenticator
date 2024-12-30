@@ -90,7 +90,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
       return const ResultCancelled();
     }
 
-    Result<bool> passwordCheckResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(password);
+    Result<bool> passwordCheckResult = await (await ref.read(passwordVerificationProvider.future)).isPasswordValid(password);
     if (passwordCheckResult is! ResultSuccess || !(passwordCheckResult as ResultSuccess<bool>).value) {
       return ResultError();
     }

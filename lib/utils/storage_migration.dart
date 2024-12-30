@@ -34,7 +34,7 @@ class StorageMigrationUtils {
       }
       backupPassword ??= result.backupPassword;
     }
-    Result<bool> passwordCheckResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(currentStorageMasterPassword);
+    Result<bool> passwordCheckResult = await (await ref.read(passwordVerificationProvider.future)).isPasswordValid(currentStorageMasterPassword);
     if (passwordCheckResult is! ResultSuccess<bool> || !passwordCheckResult.value) {
       if (!context.mounted) {
         return false;

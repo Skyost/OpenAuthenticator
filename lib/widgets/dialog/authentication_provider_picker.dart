@@ -8,6 +8,7 @@ import 'package:open_authenticator/model/authentication/providers/google.dart';
 import 'package:open_authenticator/model/authentication/providers/microsoft.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/authentication/providers/twitter.dart';
+import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 
@@ -27,14 +28,15 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<FirebaseAuthenticationProvider> currentProviders = ref.watch(userAuthenticationProviders);
+    Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState> authenticationProviders = ref.watch(userAuthenticationProviders);
+    List<FirebaseAuthenticationProvider> currentProviders = authenticationProviders.loggedInProviders;
     return AlertDialog(
       title: Text(translations.authentication.providerPickerDialog.title),
       scrollable: true,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (FirebaseAuthenticationProvider provider in ref.read(userAuthenticationProviders.notifier).availableProviders)
+          for (FirebaseAuthenticationProvider provider in authenticationProviders.availableProviders)
             if (dialogMode._shouldDisplay(currentProviders, provider))
               _createListTile(
                 provider,

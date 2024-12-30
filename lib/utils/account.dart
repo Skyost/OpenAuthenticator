@@ -36,7 +36,7 @@ class AccountUtils {
     if (provider == null || !context.mounted) {
       return;
     }
-    bool unlink = ref.read(userAuthenticationProviders).contains(provider);
+    bool unlink = ref.read(userAuthenticationProviders).loggedInProviders.contains(provider);
     if (unlink &&
         !(await ConfirmationDialog.ask(
           context,

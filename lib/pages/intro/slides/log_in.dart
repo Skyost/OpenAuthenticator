@@ -43,7 +43,7 @@ class LogInIntroPageSlide extends IntroPageSlide {
 
   @override
   Future<bool> shouldSkip(WidgetRef ref) async {
-    if (ref.read(userAuthenticationProviders.notifier).availableProviders.isEmpty) {
+    if (ref.read(userAuthenticationProviders).availableProviders.isEmpty) {
       return true;
     }
     TotpList totps = await ref.read(totpRepositoryProvider.future);

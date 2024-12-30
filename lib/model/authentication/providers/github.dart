@@ -9,12 +9,17 @@ import 'package:open_authenticator/utils/validation/sign_in/github.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 
 /// The Github authentication provider.
-final githubAuthenticationProvider = NotifierProvider<GithubAuthenticationProvider, FirebaseAuthenticationState>(GithubAuthenticationProvider.new);
+final githubAuthenticationProvider = Provider<GithubAuthenticationProvider>((ref) => GithubAuthenticationProvider());
+
+/// The Github authentication provider.
+final githubAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationProviderNotifier, FirebaseAuthenticationState>(
+  () => FirebaseAuthenticationProviderNotifier(githubAuthenticationProvider),
+);
 
 /// The provider that allows to sign-in using Github.
 class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider, FallbackAuthenticationProvider<GithubSignIn> {
   /// Creates a new Github authentication provider instance.
-  GithubAuthenticationProvider()
+  const GithubAuthenticationProvider()
       : super(
           availablePlatforms: const [
             Platform.android,

@@ -229,11 +229,9 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
   /// Merges the [totp] to the current TOTP list.
   List<Totp> _mergeToCurrentList(TotpList totpList, {Totp? totp, List<Totp>? totps}) {
     List<Totp> from = [
-      if (totp != null)
-        totp,
+      if (totp != null) totp,
       if (totps != null)
-        for (Totp totp in totps)
-          totp,
+        for (Totp totp in totps) totp,
     ];
     Set<String> uuids = from.map((totp) => totp.uuid).toSet();
     return [
@@ -311,51 +309,63 @@ class TotpList extends Iterable<Totp> {
   }
 }
 
-/// The TOTP limit reached provider.
-final totpLimitExceededProvider = AsyncNotifierProvider.autoDispose<TotpLimitExceededNotifier, bool>(TotpLimitExceededNotifier.new);
+/// The TOTP limit provider.
+final totpLimitProvider = FutureProvider<TotpLimit>((ref) async {
+  StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
+  ContributorPlanState contributorPlanState = await ref.watch(contributorPlanStateProvider.future);
+  TotpList totps = await ref.watch(totpRepositoryProvider.future);
+  return TotpLimit(
+    storageType: storageType,
+    contributorPlanState: contributorPlanState,
+    currentTotpCount: totps.length,
+  );
+});
 
-/// The TOTP limit reached notifier.
-class TotpLimitExceededNotifier extends AutoDisposeAsyncNotifier<bool> {
-  @override
-  Future<bool> build() async {
-    StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
-    ContributorPlanState contributorPlanState = await ref.watch(contributorPlanStateProvider.future);
-    TotpList totps = await ref.watch(totpRepositoryProvider.future);
-    return await willExceedIfAddMore(
-      count: 0,
-      storageType: storageType,
-      contributorPlanState: contributorPlanState,
-      currentTotpCount: totps.length,
-    );
-  }
+/// The class that allows to check whether TOTP limit has been reached.
+class TotpLimit {
+  /// The storage type.
+  final StorageType storageType;
+
+  /// The contributor plan state.
+  final ContributorPlanState contributorPlanState;
+
+  /// The current TOTP count.
+  final int currentTotpCount;
+
+  /// Creates a new TOTP limit instance.
+  const TotpLimit({
+    required this.storageType,
+    required this.contributorPlanState,
+    required this.currentTotpCount,
+  });
 
   /// Returns whether the limit will be exceeded if one more TOTP is added.
-  Future<bool> willExceedIfAddMore({
+  bool _willExceedIfAddMore({
     int count = 1,
     StorageType? storageType,
-    ContributorPlanState? contributorPlanState,
-    int? currentTotpCount,
-  }) async {
-    storageType ??= await ref.read(storageTypeSettingsEntryProvider.future);
-    if (storageType == StorageType.local) {
+  }) {
+    if ((storageType ?? this.storageType) == StorageType.local || contributorPlanState == ContributorPlanState.active) {
       return false;
     }
-    contributorPlanState ??= await ref.read(contributorPlanStateProvider.future);
-    if (contributorPlanState == ContributorPlanState.active) {
-      return false;
-    }
-    currentTotpCount ??= (await ref.read(totpRepositoryProvider.future)).length;
     return currentTotpCount + count > App.freeTotpsLimit;
   }
 
+  /// Returns whether the limit will be exceeded if one more TOTP is added.
+  bool willExceedIfAddMore({int count = 1}) => _willExceedIfAddMore(
+        count: count,
+      );
+
   /// Returns whether the user should be able to change the current storage type.
-  Future<bool> canChangeStorageType(StorageType currentStorageType) async {
+  bool canChangeStorageType(StorageType currentStorageType) {
     if (currentStorageType == StorageType.online) {
       return true;
     }
-    return !(await willExceedIfAddMore(
+    return !_willExceedIfAddMore(
       count: 0,
       storageType: currentStorageType == StorageType.online ? StorageType.local : StorageType.online,
-    ));
+    );
   }
+
+  /// Returns whether the TOTP limit is exceeded.
+  bool get isExceeded => willExceedIfAddMore(count: 0);
 }

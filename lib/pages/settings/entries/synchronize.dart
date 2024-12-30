@@ -40,7 +40,11 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     FirebaseAuthenticationState? state = ref.watch(firebaseAuthenticationProvider);
-    if (state is! FirebaseAuthenticationStateLoggedIn || ref.read(userAuthenticationProviders.notifier).availableProviders.isEmpty) {
+    if (state is! FirebaseAuthenticationStateLoggedIn) {
+      return const SizedBox.shrink();
+    }
+    bool hasProvider = ref.watch(userAuthenticationProviders.select((providers) => providers.availableProviders.isNotEmpty));
+    if (!hasProvider) {
       return const SizedBox.shrink();
     }
     return super.build(context, ref);
@@ -55,7 +59,6 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
         enabled: false,
       );
     }
-    ref.watch(totpLimitExceededProvider);
     AsyncValue<ContributorPlanState> state = ref.watch(contributorPlanStateProvider);
     StorageType storageType = value;
     switch (state) {
@@ -63,12 +66,12 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
         switch (value) {
           case ContributorPlanState.inactive:
             return FutureBuilder(
-              future: ref.read(totpLimitExceededProvider.notifier).canChangeStorageType(storageType),
+              future: ref.watch(totpLimitProvider.future),
               builder: (context, snapshot) => super.createListTile(
                 context,
                 ref,
                 value: storageType,
-                enabled: snapshot.data == true,
+                enabled: snapshot.data?.isExceeded != true,
               ),
             );
           case ContributorPlanState.active:

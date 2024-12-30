@@ -33,7 +33,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
   }) async {
     try {
-      Result<bool> passwordCheckResult = await ref.read(passwordVerificationProvider.notifier).isPasswordValid(masterPassword);
+      Result<bool> passwordCheckResult = await (await ref.read(passwordVerificationProvider.future)).isPasswordValid(masterPassword);
       if (passwordCheckResult is! ResultSuccess || !(passwordCheckResult as ResultSuccess<bool>).value) {
         throw (passwordCheckResult as ResultError).exception ?? CurrentStoragePasswordMismatchException();
       }

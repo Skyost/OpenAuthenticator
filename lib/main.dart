@@ -263,12 +263,11 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         );
       }
       ref.listenManual(
-        totpLimitExceededProvider,
+        totpLimitProvider,
         (previous, next) async {
-          if (next.valueOrNull != true) {
-            return;
+          if (next.valueOrNull?.isExceeded == true && mounted) {
+            TotpLimitDialog.showAndBlock(context);
           }
-          TotpLimitDialog.showAndBlock(context);
         },
         fireImmediately: true,
       );
@@ -315,7 +314,7 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     String? mode = link.queryParameters['mode'];
     switch (mode) {
       case 'signIn':
-        EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider.notifier);
+        EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider);
         if (!(await emailAuthenticationProvider.isWaitingForConfirmation())) {
           return;
         }

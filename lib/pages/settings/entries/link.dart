@@ -21,7 +21,7 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget with RequiresAuthent
     if (state is! FirebaseAuthenticationStateLoggedIn) {
       return const SizedBox.shrink();
     }
-    List<FirebaseAuthenticationProvider> providers = ref.watch(userAuthenticationProviders);
+    List<FirebaseAuthenticationProvider> providers = ref.watch(userAuthenticationProviders.select((providers) => providers.loggedInProviders));
     return ListTile(
       leading: const Icon(Icons.link),
       title: Text(translations.settings.synchronization.accountLink.title),

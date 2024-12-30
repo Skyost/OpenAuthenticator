@@ -33,7 +33,8 @@ class SharedPreferencesWithPrefix {
 
   /// Returns all keys in the cache.
   Set<String> get keys => {
-        for (String key in _sharedPreferences.keys) key.substring(prefix.length),
+        for (String key in _sharedPreferences.keys)
+          if (key.startsWith(prefix)) key.substring(prefix.length),
       };
 
   /// Reads a value of any type from the cache.

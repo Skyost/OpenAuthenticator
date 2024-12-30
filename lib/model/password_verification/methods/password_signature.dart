@@ -9,43 +9,62 @@ import 'package:simple_secure_storage/simple_secure_storage.dart';
 import 'package:webcrypto/webcrypto.dart';
 
 /// The provider instance.
-final passwordSignatureVerificationMethodProvider = AsyncNotifierProvider.autoDispose<PasswordSignatureVerificationMethod, bool>(PasswordSignatureVerificationMethod.new);
+final passwordSignatureVerificationMethodProvider =
+    AsyncNotifierProvider.autoDispose<PasswordSignatureVerificationMethodNotifier, PasswordSignatureVerificationMethod>(PasswordSignatureVerificationMethodNotifier.new);
 
 /// Allows to verify the master password using the saved password signature.
-class PasswordSignatureVerificationMethod extends PasswordVerificationMethod {
+class PasswordSignatureVerificationMethodNotifier extends AutoDisposeAsyncNotifier<PasswordSignatureVerificationMethod> {
   /// The password signature.
   static const String _kPasswordSignatureKey = 'passwordSignature';
 
   @override
-  FutureOr<bool> build() => SimpleSecureStorage.has(_kPasswordSignatureKey);
+  FutureOr<PasswordSignatureVerificationMethod> build() async => PasswordSignatureVerificationMethod(
+        passwordSignature: await SimpleSecureStorage.read(_kPasswordSignatureKey),
+      );
 
-  @override
-  Future<bool> verify(String password) async {
-    Salt? salt = await Salt.readFromLocalStorage();
-    if (salt == null) {
-      return false;
-    }
-    String? signature = await SimpleSecureStorage.read(_kPasswordSignatureKey);
-    Uint8List decodedSignature = base64.decode(signature!);
-    HmacSecretKey hmacSecretKey = await CryptoStore.createHmacKey(password, salt);
-    return await hmacSecretKey.verifyBytes(decodedSignature, utf8.encode(password));
-  }
-
-  /// Enables this method.
+  /// Enables the password signature verification method.
   Future<bool> enable(String? password) async {
     Salt? salt = await Salt.readFromLocalStorage();
     if (password == null || salt == null) {
       return false;
     }
     HmacSecretKey hmacSecretKey = await CryptoStore.createHmacKey(password, salt);
-    await SimpleSecureStorage.write(_kPasswordSignatureKey, base64.encode(await hmacSecretKey.signBytes(utf8.encode(password))));
-    state = const AsyncData(true);
+    String passwordSignature = base64.encode(await hmacSecretKey.signBytes(utf8.encode(password)));
+    await SimpleSecureStorage.write(_kPasswordSignatureKey, passwordSignature);
+    state = AsyncData(PasswordSignatureVerificationMethod(passwordSignature: passwordSignature));
     return true;
   }
 
-  /// Enables this method.
+  /// Disables the password signature verification method.
   Future<void> disable() async {
     await SimpleSecureStorage.delete(_kPasswordSignatureKey);
-    state = const AsyncData(false);
+    state = const AsyncData(PasswordSignatureVerificationMethod(passwordSignature: null));
+  }
+}
+
+/// Allows to verify the master password using the saved password signature.
+class PasswordSignatureVerificationMethod with PasswordVerificationMethod {
+  /// The password signature.
+  final String? passwordSignature;
+
+  const PasswordSignatureVerificationMethod({
+    this.passwordSignature,
+  });
+
+  @override
+  bool get enabled => passwordSignature != null;
+
+  @override
+  Future<bool> verify(String password) async {
+    if (!(await super.verify(password))) {
+      return false;
+    }
+    Salt? salt = await Salt.readFromLocalStorage();
+    if (salt == null) {
+      return false;
+    }
+    Uint8List decodedSignature = base64.decode(passwordSignature!);
+    HmacSecretKey hmacSecretKey = await CryptoStore.createHmacKey(password, salt);
+    return await hmacSecretKey.verifyBytes(decodedSignature, utf8.encode(password));
   }
 }

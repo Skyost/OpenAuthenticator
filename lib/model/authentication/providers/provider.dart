@@ -17,70 +17,79 @@ import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Contains all the user authentication providers.
-final userAuthenticationProviders = NotifierProvider<UserAuthenticationProviders, List<FirebaseAuthenticationProvider>>(UserAuthenticationProviders.new);
-
-/// The class that handles the listening of authentication providers.
-class UserAuthenticationProviders extends Notifier<List<FirebaseAuthenticationProvider>> {
-  @override
-  List<FirebaseAuthenticationProvider> build() {
-    List<NotifierProvider<FirebaseAuthenticationProvider, FirebaseAuthenticationState>> providers = [
-      emailLinkAuthenticationProvider,
-      googleAuthenticationProvider,
-      appleAuthenticationProvider,
-      microsoftAuthenticationProvider,
-      twitterAuthenticationProvider,
-      githubAuthenticationProvider,
-    ];
-    List<FirebaseAuthenticationProvider> result = [];
-    for (NotifierProvider<FirebaseAuthenticationProvider, FirebaseAuthenticationState> provider in providers) {
-      FirebaseAuthenticationState state = ref.watch(provider);
-      if (state is FirebaseAuthenticationStateLoggedIn) {
-        result.add(ref.read(provider.notifier));
-      }
-    }
-    return result;
+final userAuthenticationProviders = Provider<Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState>>((ref) {
+  List<NotifierProvider<FirebaseAuthenticationProviderNotifier, FirebaseAuthenticationState>> providers = [
+    emailLinkAuthenticationStateProvider,
+    googleAuthenticationStateProvider,
+    appleAuthenticationStateProvider,
+    microsoftAuthenticationStateProvider,
+    twitterAuthenticationStateProvider,
+    githubAuthenticationStateProvider,
+  ];
+  Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState> result = {};
+  for (NotifierProvider<FirebaseAuthenticationProviderNotifier, FirebaseAuthenticationState> provider in providers) {
+    FirebaseAuthenticationProvider authenticationProvider = ref.watch(ref.read(provider.notifier)._providerOfAuthenticationProvider);
+    result[authenticationProvider] = ref.watch(provider);
   }
+  return result;
+});
+
+/// Contains various useful fields and methods to use with [userAuthenticationProviders].
+extension AuthenticationProvidersUtils on Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState> {
+  /// Contains all authentication providers where the user is logged in.
+  List<FirebaseAuthenticationProvider> get loggedInProviders => [
+    for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
+      if (entry.value is FirebaseAuthenticationStateLoggedIn)
+        entry.key,
+  ];
 
   /// Contains all available authentication providers.
   List<FirebaseAuthenticationProvider> get availableProviders => [
-        ref.read(emailLinkAuthenticationProvider.notifier),
-        ref.read(googleAuthenticationProvider.notifier),
-        ref.read(appleAuthenticationProvider.notifier),
-        ref.read(microsoftAuthenticationProvider.notifier),
-        ref.read(twitterAuthenticationProvider.notifier),
-        ref.read(githubAuthenticationProvider.notifier),
-      ].where((provider) => provider.isAvailable).toList();
+    for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
+      if (entry.key.isAvailable)
+        entry.key,
+  ];
 }
 
-/// Allows to configure Firebase authentication provider.
-abstract class FirebaseAuthenticationProvider extends Notifier<FirebaseAuthenticationState> {
-  /// The platforms on which this provider is available.
-  final List<Platform> availablePlatforms;
+/// A Firebase authentication provider notifier.
+class FirebaseAuthenticationProviderNotifier<T extends FirebaseAuthenticationProvider> extends Notifier<FirebaseAuthenticationState> {
+  /// The authentication provider instance.
+  final Provider<T> _providerOfAuthenticationProvider;
 
-  /// Creates a new Firebase authentication provider instance.
-  FirebaseAuthenticationProvider({
-    required this.availablePlatforms,
-  });
+  /// Creates a new Firebase authentication provider notifier instance.
+  FirebaseAuthenticationProviderNotifier(this._providerOfAuthenticationProvider);
 
   @override
   FirebaseAuthenticationState build() {
-    StreamSubscription subscription = FirebaseAuth.instance.userChanges.listen((user) => state = _getState(user));
+    T authenticationProvider = ref.watch(_providerOfAuthenticationProvider);
+    StreamSubscription subscription = FirebaseAuth.instance.userChanges.listen((user) => state = _getState(authenticationProvider, user));
     ref.onDispose(subscription.cancel);
-    return _getState();
+    return _getState(authenticationProvider);
   }
 
   /// Returns whether this provider is linked to the user.
-  FirebaseAuthenticationState _getState([User? user]) {
+  FirebaseAuthenticationState _getState(T authenticationProvider, [User? user]) {
     user ??= FirebaseAuth.instance.currentUser;
     if (user != null) {
       for (String provider in user.providers) {
-        if (provider == providerId) {
+        if (provider == authenticationProvider.providerId) {
           return FirebaseAuthenticationStateLoggedIn(user: user);
         }
       }
     }
     return FirebaseAuthenticationStateLoggedOut();
   }
+}
+
+/// A Firebase authentication provider.
+abstract class FirebaseAuthenticationProvider {
+  /// The platforms on which this provider is available.
+  final List<Platform> availablePlatforms;
+
+  /// Creates a new Firebase authentication provider instance.
+  const FirebaseAuthenticationProvider({
+    required this.availablePlatforms,
+  });
 
   /// Returns whether this provider is available for the current platform.
   bool get isAvailable => availablePlatforms.contains(currentPlatform);

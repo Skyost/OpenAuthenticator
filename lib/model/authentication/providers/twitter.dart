@@ -10,12 +10,17 @@ import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 import 'package:open_authenticator/utils/validation/sign_in/twitter.dart';
 
 /// The Twitter authentication provider.
-final twitterAuthenticationProvider = NotifierProvider<TwitterAuthenticationProvider, FirebaseAuthenticationState>(TwitterAuthenticationProvider.new);
+final twitterAuthenticationProvider = Provider<TwitterAuthenticationProvider>((ref) => TwitterAuthenticationProvider());
+
+/// The Twitter authentication provider.
+final twitterAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationProviderNotifier, FirebaseAuthenticationState>(
+  () => FirebaseAuthenticationProviderNotifier(twitterAuthenticationProvider),
+);
 
 /// The provider that allows to sign-in using Twitter.
 class TwitterAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider, FallbackAuthenticationProvider<TwitterSignIn> {
   /// Creates a new Twitter authentication provider instance.
-  TwitterAuthenticationProvider()
+  const TwitterAuthenticationProvider()
       : super(
           availablePlatforms: const [
             Platform.android,
@@ -28,22 +33,22 @@ class TwitterAuthenticationProvider extends FirebaseAuthenticationProvider with 
   String get providerId => TwitterAuthMethod.providerId;
 
   @override
-  TwitterAuthMethod createDefaultAuthMethod(BuildContext context, { List<String> scopes = const [] }) => TwitterAuthMethod.defaultMethod(
-    customParameters: {
-      'lang': TranslationProvider.of(context).flutterLocale.languageCode,
-    },
-  );
+  TwitterAuthMethod createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []}) => TwitterAuthMethod.defaultMethod(
+        customParameters: {
+          'lang': TranslationProvider.of(context).flutterLocale.languageCode,
+        },
+      );
 
   @override
   TwitterAuthMethod createRestAuthMethod(BuildContext context, OAuth2Response response) => TwitterAuthMethod.rest(
-    accessToken: response.accessToken,
-  );
+        accessToken: response.accessToken,
+      );
 
   @override
   TwitterSignIn createFallbackAuthProvider() => TwitterSignIn(
-    clientId: AppCredentials.twitterSignInClientId,
-    timeout: fallbackTimeout,
-  );
+        clientId: AppCredentials.twitterSignInClientId,
+        timeout: fallbackTimeout,
+      );
 
   @override
   bool get isTrusted => false;
