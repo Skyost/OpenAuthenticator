@@ -78,6 +78,10 @@
       "3": {
         "question": "Qu'est-ce que l'Abonnement Contributeur ?",
         "answer": "<p>Comme vous le savez peut-être, les serveurs ne sont pas gratuits. Dans notre cas, comme nous nous appuyons sur Firebase, plus nous avons\nd'utilisateurs, plus nous devons payer. Donc, soit nous :</p>\n<ol>\n  <li>mettons des publicités dans notre application ;</li>\n  <li>comptons exclusivement sur les dons ;</li>\n  <li>demandons à nos utilisateurs de payer un peu d'argent.</li>\n</ol>\n<p>L'option 2 n'est pas réaliste du tout. L'option 1 pourrait être une solution, mais les publicités entraînent généralement une mauvaise\nexpérience utilisateur. Par conséquent, le choix que nous avons fait pour amortir les coûts est de créer un modèle d'abonnement\nappelé <q>Abonnement Contributeur</q>. Actuellement, vous pouvez stocker et synchroniser jusqu'à six TOTPs gratuitement,\navec tous vos appareils. En vous abonnant au Abonnement Contributeur, vous pourrez synchroniser autant de TOTPs que vous le souhaitez.</p>\n<p>À l'avenir, nous espérons pouvoir lever ces limitations, voire les supprimer ! Dans tous les cas, vous\npouvez utiliser l'application en local sans aucune limitation ni publicité.</p>"
+      },
+      "4": {
+        "question": "Est-ce que je dois télécharger ceci même si mon gestionnaire de mot de passe prend en charge les TOTPs ?",
+        "answer": "<p>Oui, vous devriez. Si votre gestionnaire de mot de passe venait à être compromis, alors vos mots de passe et vos TOTPs seront exposés. Par conséquent, le second facteur d'authentification ne fonctionnera pas comme il le devrait.</p><p><em>Ne mettez pas tous vos œufs dans le même panier !</em></p>"
       }
     },
     "questionLeft": {

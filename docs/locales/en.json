@@ -78,6 +78,10 @@
       "3": {
         "question": "What is the Contributor Plan ?",
         "answer": "<p>As you may know, servers are not free. In our case, because we rely on Firebase, the more users we have,\nthe more we have to pay. So, either we :</p>\n<ol>\n  <li>put ads in our app ;</li>\n  <li>rely exclusively on donations ;</li>\n  <li>ask our users to pay some money.</li>\n</ol>\n<p>Option 2. is not realistic at all. Option 1. could be a solution, but ads generally result in a bad user\nexperience. Therefore, the choice we made to be able to be sustainable enough is to create a subscription\nbased model called <q>Contributor Plan</q>. Currently, you can store and synchronize up to six TOTPs for free,\nwith all your devices. By subscribing to the Contributor Plan, you get unlimited TOTP synchronization.</p>\n<p>In the future, we hope to be able to raise these limitations, or even to remove them ! Anyway, you can\ntotally use the app locally without any limitation nor any ad.</p>"
+      },
+      "4": {
+        "question": "Should I download this if my password manager does generate TOTPs ?",
+        "answer": "<p>Yes, you should. If your password manager ever get compromised, then both your passwords and your TOTPs will be exposed. Therefore, the second authentication factor will not act as it should.</p><p><em>Don't put all your eggs in one basket !</em></p>"
       }
     },
     "questionLeft": {
