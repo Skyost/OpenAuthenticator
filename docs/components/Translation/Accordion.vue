@@ -170,9 +170,9 @@ const download = (index: number) => {
           v-model="files[index]"
           @update="emit('update')"
         />
-        <b-row class="mb-5">
-          <b-col class="d-flex align-items-center">
-            <b-button-group>
+        <b-row class="mb-0 mb-md-5">
+          <b-col class="d-flex align-items-center mb-2 mb-md-0">
+            <b-button-group class="w-100 w-md-auto">
               <b-button
                 variant="dark"
                 @click="load(index)"
@@ -189,6 +189,7 @@ const download = (index: number) => {
           </b-col>
           <b-col class="d-flex align-items-center justify-content-end">
             <b-button
+              class="w-100 w-md-auto"
               variant="primary"
               :disabled="!files[index].complete"
               @click="openTranslationModal(files[index])"

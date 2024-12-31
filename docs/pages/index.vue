@@ -186,9 +186,9 @@ const features = computed(() => {
                   <icon name="bi:translate" /> {{ t('index.openSource.linkButtons.translate') }}
                 </b-button>
               </b-col>
-              <b-col>
+              <b-col class="mt-2 mt-lg-3">
                 <b-button
-                  class="mt-3 w-100"
+                  class="w-100"
                   variant="light"
                   href="https://paypal.me/Skyost"
                 >
