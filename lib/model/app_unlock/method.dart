@@ -9,8 +9,10 @@ import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
+import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
+import 'package:window_manager/window_manager.dart';
 
 /// Allows to unlock the app.
 sealed class AppUnlockMethod {
@@ -33,6 +35,11 @@ class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
     LocalAuthentication auth = LocalAuthentication();
     if (!(await auth.isDeviceSupported())) {
       return ResultError();
+    }
+    if (currentPlatform.isDesktop) {
+      await windowManager.ensureInitialized();
+      await windowManager.focus();
+      await windowManager.setAlwaysOnTop(true);
     }
     if (!context.mounted) {
       return const ResultCancelled();
@@ -61,6 +68,14 @@ class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
         const WindowsAuthMessages(),
       ],
     );
+    if (currentPlatform.isDesktop) {
+      if (currentPlatform == Platform.macOS || currentPlatform == Platform.windows) {
+        // See https://github.com/flutter/flutter/issues/122322.
+        await windowManager.blur();
+        await windowManager.focus();
+      }
+      await windowManager.setAlwaysOnTop(false);
+    }
     return result ? const ResultSuccess() : const ResultCancelled();
   }
 
