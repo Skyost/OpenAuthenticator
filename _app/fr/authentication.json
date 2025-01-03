@@ -1,0 +1,47 @@
+{
+  "emailDialog": {
+    "title": "Votre adresse mail",
+    "message": "Veuillez entrer votre adresse mail, nous vous enverrons un lien de connexion."
+  },
+  "logIn": {
+    "waitingLoginMessage": "Veuillez vous connecter dans la fenêtre qui vient de s'ouvrir. Ne fermez pas l'application.",
+    "waitingConfirmationMessage": "Nous vous avons envoyé un lien de confirmation par email. Veuillez cliquer dessus pour continuer. Ne fermez pas l'application.",
+    "successNeedConfirmation": "Succès ! Vous recevrez un email de confirmation bientôt. Veuillez cliquer sur le lien qui se trouve à l'intérieur avec cet appareil pour poursuivre la connexion.",
+    "success": "Connecté avec succès !"
+  },
+  "unlinkConfirmationDialog": {
+    "title": "Supprimer la liaison au fournisseur",
+    "message": "Voulez-vous vraiment supprimer la liaison e votre compte à ce fournisseur d'authentification ?"
+  },
+  "deleteConfirmationDialog": {
+    "title": "Supprimer votre compte",
+    "message": "Voulez-vous vraiment supprimer votre compte ? Veuillez noter que, parce qu'il s'agit d'une action sensible, vous devez vous réautentifier avant de continuer."
+  },
+  "providerPickerDialog": {
+    "title": "Choisissez une méthode de connexion",
+    "email": {
+      "title": "Email",
+      "subtitle": "Utilisez votre adresse mail pour vous connecter. Pas besoin de mot de passe, nous vous enverrons un lien de confirmation."
+    },
+    "google": {
+      "title": "Google",
+      "subtitle": "Connectez-vous avec votre compte Google."
+    },
+    "apple": {
+      "title": "Apple",
+      "subtitle": "Connectez-vous avec votre compte Apple."
+    },
+    "microsoft": {
+      "title": "Microsoft",
+      "subtitle": "Connectez-vous avec votre compte Microsoft."
+    },
+    "twitter": {
+      "title": "X",
+      "subtitle": "Connectez-vous avec votre compte X."
+    },
+    "github": {
+      "title": "Github",
+      "subtitle": "Connectez-vous avec votre compte Github."
+    }
+  }
+}
