@@ -101,7 +101,7 @@ class Backup implements Comparable<Backup> {
 
       CryptoStore cryptoStore = await CryptoStore.fromPassword(password, Salt.fromRawValue(value: base64.decode(jsonData[kSaltKey])));
       HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(await cryptoStore.key.exportRawKey(), Hash.sha256);
-      if(!(await hmacSecretKey.verifyBytes(base64.decode(jsonData[kPasswordSignatureKey]), utf8.encode(password)))) {
+      if (!(await hmacSecretKey.verifyBytes(base64.decode(jsonData[kPasswordSignatureKey]), utf8.encode(password)))) {
         throw _InvalidPasswordException();
       }
 
@@ -150,7 +150,9 @@ class Backup implements Comparable<Backup> {
       file.writeAsString(jsonEncode({
         kPasswordSignatureKey: base64.encode(await hmacSecretKey.signBytes(utf8.encode(password))),
         kSaltKey: base64.encode(newStore.salt.value),
-        kTotpsKey: toBackup.map((totp) => totp.toJson()).toList(),
+        kTotpsKey: [
+          for (Totp totp in toBackup) totp.toJson(),
+        ],
       }));
       return const ResultSuccess();
     } catch (ex, stacktrace) {
@@ -194,7 +196,9 @@ class _BackupFileDoesNotExistException implements Exception {
   final String path;
 
   /// Creates a new backup file doesn't exist exception instance.
-  _BackupFileDoesNotExistException({required this.path,});
+  _BackupFileDoesNotExistException({
+    required this.path,
+  });
 
   @override
   String toString() => 'Backup file does not exist : "$path"';
@@ -218,7 +222,9 @@ class _EncryptionError implements Exception {
   final String operationName;
 
   /// Creates a new encryption error instance.
-  _EncryptionError({required this.operationName,});
+  _EncryptionError({
+    required this.operationName,
+  });
 
   @override
   String toString() => 'Error while doing $operationName.';

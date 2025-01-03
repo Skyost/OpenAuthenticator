@@ -42,7 +42,6 @@
   },
   "storageMigration(map)": {
     "backupError": "An error occurred while doing the backup. Please try again.",
-    "saltError": "\"Salt\" error while migrating your data. Please try again later.",
     "currentStoragePasswordMismatch": "Invalid master password entered.",
     "encryptionKeyChangeFailed": "An error occurred while encrypting your data. Please try again later.",
     "genericError": "An error occurred while migrating your data. Please try again later."

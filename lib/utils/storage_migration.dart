@@ -122,11 +122,9 @@ class StorageMigrationUtils {
               storageMigrationDeletedTotpPolicy: enteredStorageMigrationDeletedTotpPolicy,
             );
           case BackupException():
-          case SaltError():
           case CurrentStoragePasswordMismatchException():
           case EncryptionKeyChangeFailedError():
           case GenericMigrationError():
-          default:
             SnackBarIcon.showErrorSnackBar(context, text: translations.error.storageMigration[exception.code] ?? 'An error occurred.');
             return false;
         }

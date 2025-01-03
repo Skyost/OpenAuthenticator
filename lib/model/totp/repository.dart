@@ -233,7 +233,9 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
       if (totps != null)
         for (Totp totp in totps) totp,
     ];
-    Set<String> uuids = from.map((totp) => totp.uuid).toSet();
+    Set<String> uuids = {
+      for (Totp totp in from) totp.uuid,
+    };
     return [
       ...from,
       for (Totp totp in totpList._list)

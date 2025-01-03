@@ -51,7 +51,7 @@ class Totps extends Table {
 final localStorageProvider = Provider.autoDispose<LocalStorage>((ref) {
   LocalStorage storage = LocalStorage();
   ref.onDispose(storage.close);
-  ref.cacheFor(const Duration(seconds: 3));
+  ref.cacheFor(const Duration(seconds: 1));
   return storage;
 });
 
@@ -116,15 +116,28 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
-  Future<List<Totp>> listTotps() async {
-    List<_DriftTotp> list = await (select(totps)..orderBy([(table) => OrderingTerm(expression: table.issuer)])).get();
-    return list.map((totp) => totp.asTotp).toList();
+  Future<List<Totp>> listTotps({int? limit}) async {
+    List<_DriftTotp> list = await _listDriftTotps(limit: limit);
+    return [
+      for (_DriftTotp driftTotp in list) driftTotp.asTotp,
+    ];
   }
 
   @override
-  Future<List<String>> listUuids() async {
-    List<_DriftTotp> list = await (select(totps)..orderBy([(table) => OrderingTerm(expression: table.issuer)])).get();
-    return list.map((totp) => totp.uuid).toList();
+  Future<List<String>> listUuids({int? limit}) async {
+    List<_DriftTotp> list = await _listDriftTotps(limit: limit);
+    return [
+      for (_DriftTotp driftTotp in list) driftTotp.uuid,
+    ];
+  }
+
+  /// List the Drift TOTPs.
+  Future<List<_DriftTotp>> _listDriftTotps({int? limit}) async {
+    SimpleSelectStatement<$TotpsTable, _DriftTotp> query = select(totps)..orderBy([(table) => OrderingTerm(expression: table.issuer)]);
+    if (limit != null) {
+      query = query..limit(limit);
+    }
+    return await query.get();
   }
 
   @override
@@ -132,15 +145,6 @@ class LocalStorage extends _$LocalStorage with Storage {
         batch.deleteAll(totps);
         batch.insertAll(totps, newTotps.map((totp) => totp.asDriftTotp));
       });
-
-  @override
-  Future<Salt?> readSecretsSalt() async => await Salt.readFromLocalStorage();
-
-  @override
-  Future<void> saveSecretsSalt(Salt salt) => salt.saveToLocalStorage();
-
-  @override
-  Future<void> deleteSecretsSalt() => Salt.deleteFromLocalStorage();
 
   @override
   Future<void> onStorageTypeChanged({bool close = true}) async {

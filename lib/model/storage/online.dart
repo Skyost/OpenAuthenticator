@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
-import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/json.dart';
@@ -32,9 +29,6 @@ class OnlineStorage with Storage {
 
   /// The last updated key.
   static const String _kUpdatedKey = 'updated';
-
-  /// The salt key.
-  static const String _kSaltKey = 'salt';
 
   /// The user id.
   final String? _userId;
@@ -108,10 +102,10 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<List<Totp>> listTotps({GetOptions? getOptions}) async {
-    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get(getOptions);
+  Future<List<Totp>> listTotps({int? limit, GetOptions? getOptions}) async {
+    List<QueryDocumentSnapshot> docs = await _listTotpDocs(limit: limit, getOptions: getOptions);
     List<Totp> totps = [];
-    for (QueryDocumentSnapshot doc in result.docs) {
+    for (QueryDocumentSnapshot doc in docs) {
       Totp? totp = _FirestoreTotp.fromFirestore(doc);
       if (totp != null) {
         totps.add(totp);
@@ -121,16 +115,26 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<List<String>> listUuids() async {
-    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get();
+  Future<List<String>> listUuids({int? limit}) async {
+    List<QueryDocumentSnapshot> docs = await _listTotpDocs(limit: limit);
     List<String> uuids = [];
-    for (QueryDocumentSnapshot snapshot in result.docs) {
+    for (QueryDocumentSnapshot snapshot in docs) {
       Object? data = snapshot.data();
       if (data is Map<String, Object?> && data.containsKey(Totp.kUuidKey)) {
         uuids.add(data[Totp.kUuidKey]!.toString());
       }
     }
     return uuids;
+  }
+
+  /// List the TOTPs documents.
+  Future<List<QueryDocumentSnapshot>> _listTotpDocs({int? limit, GetOptions? getOptions}) async {
+    Query query = _totpsCollection.orderBy(Totp.kIssuerKey);
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+    QuerySnapshot result = await query.get(getOptions);
+    return result.docs;
   }
 
   @override
@@ -145,43 +149,6 @@ class OnlineStorage with Storage {
       batch.set(collection.doc(totp.uuid), totp.toFirestore());
     }
     await batch.commit();
-  }
-
-  @override
-  Future<Salt?> readSecretsSalt() async {
-    DocumentSnapshot<Map<String, dynamic>> userDoc = await _userDocument.get();
-    if (!userDoc.exists) {
-      return null;
-    }
-    List salt = (userDoc.data() as Map<String, dynamic>)[_kSaltKey];
-    return Salt.fromRawValue(value: Uint8List.fromList(salt.cast<int>()));
-  }
-
-  @override
-  Future<void> saveSecretsSalt(Salt salt) async {
-    DocumentReference<Map<String, dynamic>> userDoc = _userDocument;
-    await userDoc.set(
-      {
-        _kSaltKey: salt.value,
-        _kUpdatedKey: FieldValue.serverTimestamp(),
-      },
-      SetOptions(merge: true),
-    );
-  }
-
-  @override
-  Future<void> deleteSecretsSalt() async {
-    DocumentSnapshot<Map<String, dynamic>> userDoc = await _userDocument.get();
-    if (!userDoc.exists) {
-      return;
-    }
-    Map<String, dynamic> data = userDoc.data() as Map<String, dynamic>;
-    data.remove(_kSaltKey);
-    if (data.isEmpty || (data.keys.length == 1 && data.keys.first == _kUpdatedKey)) {
-      await _userDocument.delete();
-    } else {
-      await _userDocument.set(data);
-    }
   }
 
   @override

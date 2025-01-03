@@ -27,25 +27,24 @@ dependencies:
   jovial_svg: ^1.1.24
   mobile_scanner: ^6.0.2
   path_provider: ^2.1.5
-  shared_preferences: ^2.3.4
+  shared_preferences: ^2.3.5
   uuid: ^4.5.1
   webcrypto: ^0.5.7
   equatable: ^2.0.7
   drift: ^2.23.0
-  sqlite3_flutter_libs: ^0.5.28
+  drift_flutter: ^0.2.4
   path: ^1.9.0
   local_auth: ^2.3.0
   package_info_plus: ^8.1.2
   http: ^1.2.2
   qr_flutter: ^4.1.0
   intl: any
-  sqlite3: ^2.5.0
   url_launcher: ^6.3.1
   firebase_app_check: ^0.3.1
   purchases_flutter: ^8.4.0
   firebase_crashlytics: ^4.2.0
   window_manager: ^0.4.3
-  slang: ^4.4.0
+  slang: ^4.4.1
   slang_flutter: ^4.4.0
   purchases_ui_flutter: ^8.4.0
   rate_my_app: ^2.2.0

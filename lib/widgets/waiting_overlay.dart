@@ -59,7 +59,6 @@ class _WaitingDialog extends StatefulWidget {
 
   /// Creates a new waiting dialog instance.
   const _WaitingDialog({
-    super.key,
     this.message,
     this.timeout,
     this.timeoutMessage,

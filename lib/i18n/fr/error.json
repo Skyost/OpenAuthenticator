@@ -42,7 +42,6 @@
   },
   "storageMigration(map)": {
     "backupError": "Une erreur est survenue durant la sauvegarde. Veuillez réessayer.",
-    "saltError": "Erreur de \"Sel\" pendant la migration de vos données. Veuillez réessayer plus tard.",
     "currentStoragePasswordMismatch": "Mot de passe maître invalide.",
     "encryptionKeyChangeFailed": "Une erreur est survenue pendant le chiffrement de vos données. Veuillez réessayer plus tard.",
     "genericError": "Une erreur est survenue pendant la migration de vos données. Veuillez réessayer plus tard."

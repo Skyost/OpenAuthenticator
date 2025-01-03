@@ -75,7 +75,9 @@ class FirebaseAuthUser extends User {
   String get email => _firebaseUser.email!;
 
   @override
-  List<String> get providers => _firebaseUser.providerData.map((info) => info.providerId).toList();
+  List<String> get providers => [
+        for (firebase_auth.UserInfo userInfo in _firebaseUser.providerData) userInfo.providerId,
+      ];
 
   @override
   Future<String?> getIdToken({bool forceRefresh = false}) async => await _firebaseUser.getIdToken(forceRefresh);
