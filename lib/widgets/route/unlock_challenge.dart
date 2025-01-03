@@ -54,7 +54,7 @@ class _UnlockChallengeRouteWidgetState extends ConsumerState<UnlockChallengeRout
 
   /// Tries to unlock the app.
   Future<void> tryUnlockIfNeeded() async {
-    bool isUnlocked = await ref.watch(appUnlockStateProvider.future);
+    bool isUnlocked = await ref.read(appUnlockStateProvider.future);
     if (isUnlocked || !mounted) {
       return;
     }

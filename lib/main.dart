@@ -213,7 +213,7 @@ class _RouteWidget extends ConsumerStatefulWidget {
   /// The route widget.
   final Widget child;
 
-  /// Listen to [appLinksListenerProvider] and [totpLimitExceededProvider].
+  /// Listen to [appLinksListenerProvider] and [totpLimitProvider].
   final bool listen;
 
   /// Whether to provide an [UnlockChallengeRouteWidget].

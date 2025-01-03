@@ -7,9 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
-import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/backup.dart';
+import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
 import 'package:open_authenticator/model/storage/local.dart';
 import 'package:open_authenticator/model/totp/image_cache.dart';
@@ -43,8 +43,8 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
             return;
           }
 
-          AppUnlockState unlockState = ref.read(appUnlockStateProvider.notifier);
-          Result unlockResult = await unlockState.tryUnlockWithCurrentMethod(context, UnlockReason.sensibleAction);
+          AppUnlockMethodSettingsEntry appUnlockerMethodsSettingsEntry = ref.read(appUnlockMethodSettingsEntryProvider.notifier);
+          Result unlockResult = await appUnlockerMethodsSettingsEntry.unlockWithCurrentMethod(context, UnlockReason.sensibleAction);
           if (unlockResult is! ResultSuccess || !context.mounted) {
             return;
           }

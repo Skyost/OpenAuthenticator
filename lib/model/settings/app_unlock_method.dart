@@ -42,20 +42,46 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
   @override
   Future<void> saveToPreferences(SharedPreferencesWithPrefix preferences, AppUnlockMethod value) async => await preferences.setString(key, value.serialize());
 
+  /// Tries to unlock the app with the current method, handling errors.
+  Future<Result> unlockWithCurrentMethod(BuildContext context, UnlockReason unlockReason, {bool? forceNotNone}) async {
+    try {
+      return _tryUnlockWithCurrentMethod(context, unlockReason, forceNotNone: forceNotNone);
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
+    }
+  }
+
+  /// Tries to unlock the app with the current method.
+  Future<Result> _tryUnlockWithCurrentMethod(BuildContext context, UnlockReason unlockReason, {bool? forceNotNone}) async {
+    forceNotNone ??= unlockReason == UnlockReason.sensibleAction;
+    AppUnlockMethod unlockMethod = await future;
+    if (forceNotNone && unlockMethod is NoneAppUnlockMethod) {
+      unlockMethod = MasterPasswordAppUnlockMethod();
+    }
+    if (!context.mounted) {
+      return const ResultCancelled();
+    }
+    Result result = await unlockMethod.unlock(context, ref, unlockReason);
+    return result;
+  }
+
   /// Changes the entry value but check for unlock success before.
   Future<Result> changeValueIfUnlockSucceed(AppUnlockMethod newMethod, BuildContext context) async {
     AppUnlockMethod currentMethod = await future;
     if (!context.mounted) {
       return const ResultCancelled();
     }
-    Result disableResult = await currentMethod.tryUnlock(context, ref, UnlockReason.disable);
+    Result disableResult = await currentMethod.unlock(context, ref, UnlockReason.disable);
     if (disableResult is! ResultSuccess) {
       return disableResult;
     }
     if (!context.mounted) {
       return const ResultCancelled();
     }
-    Result enableResult = await newMethod.tryUnlock(context, ref, UnlockReason.enable);
+    Result enableResult = await newMethod.unlock(context, ref, UnlockReason.enable);
     if (enableResult is! ResultSuccess) {
       return enableResult;
     }
@@ -64,7 +90,7 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
   }
 
   @override
-  Future<void> changeValue(AppUnlockMethod value, { ResultSuccess? enableResult, ResultSuccess? disableResult }) async {
+  Future<void> changeValue(AppUnlockMethod value, {ResultSuccess? enableResult, ResultSuccess? disableResult}) async {
     switch (value) {
       case NoneAppUnlockMethod():
         await SimpleSecureStorage.delete(key);

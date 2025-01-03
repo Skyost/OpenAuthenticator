@@ -16,8 +16,22 @@ import 'package:window_manager/window_manager.dart';
 
 /// Allows to unlock the app.
 sealed class AppUnlockMethod {
+  /// Unlock the app, handling errors.
+  /// [context] is required so that we can interact with the user.
+  Future<Result> unlock(BuildContext context, Ref ref, UnlockReason reason) async {
+    try {
+      return await tryUnlock(context, ref, reason);
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: ex,
+        stacktrace: stacktrace,
+      );
+    }
+  }
+
   /// Tries to unlock the app.
   /// [context] is required so that we can interact with the user.
+  @protected
   Future<Result> tryUnlock(BuildContext context, Ref ref, UnlockReason reason);
 
   /// Triggered when this method has been chosen has the app unlock method.
