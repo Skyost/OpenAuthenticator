@@ -20,7 +20,7 @@ sealed class AppUnlockMethod {
   /// [context] is required so that we can interact with the user.
   Future<Result> unlock(BuildContext context, Ref ref, UnlockReason reason) async {
     try {
-      return await tryUnlock(context, ref, reason);
+      return await _tryUnlock(context, ref, reason);
     } catch (ex, stacktrace) {
       return ResultError(
         exception: ex,
@@ -31,8 +31,7 @@ sealed class AppUnlockMethod {
 
   /// Tries to unlock the app.
   /// [context] is required so that we can interact with the user.
-  @protected
-  Future<Result> tryUnlock(BuildContext context, Ref ref, UnlockReason reason);
+  Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason);
 
   /// Triggered when this method has been chosen has the app unlock method.
   /// [unlockResult] is the result of the [tryUnlock] call.
@@ -45,7 +44,7 @@ sealed class AppUnlockMethod {
 /// Local authentication.
 class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
   @override
-  Future<Result> tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
+  Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
     LocalAuthentication auth = LocalAuthentication();
     if (!(await auth.isDeviceSupported())) {
       return ResultError();
@@ -100,7 +99,7 @@ class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
 /// Enter master password.
 class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
   @override
-  Future<Result> tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
+  Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
     if (reason != UnlockReason.openApp && reason != UnlockReason.sensibleAction) {
       TotpList totps = await ref.read(totpRepositoryProvider.future);
       if (totps.isEmpty) {
@@ -153,7 +152,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
 /// No unlock.
 class NoneAppUnlockMethod extends AppUnlockMethod {
   @override
-  Future<Result> tryUnlock(BuildContext context, Ref ref, UnlockReason reason) => Future.value(const ResultSuccess());
+  Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason) => Future.value(const ResultSuccess());
 }
 
 /// Configures the unlock reason for [UnlockChallenge]s.

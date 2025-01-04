@@ -1,5 +1,8 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 
@@ -44,8 +47,17 @@ class ResultError<T> extends Result<T> {
   ResultError({
     this.exception,
     StackTrace? stacktrace,
+    bool? sendToCrashlytics,
   }) : stacktrace = stacktrace ?? StackTrace.current {
     handleException(exception, stacktrace);
+    sendToCrashlytics ??= !kDebugMode && (currentPlatform.isMobile || currentPlatform == Platform.macOS);
+    if (sendToCrashlytics) {
+      FirebaseCrashlytics.instance.recordError(
+        exception,
+        stacktrace,
+        printDetails: false,
+      );
+    }
   }
 
   /// Creates a new result error instance from another [result].

@@ -43,9 +43,9 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
   Future<void> saveToPreferences(SharedPreferencesWithPrefix preferences, AppUnlockMethod value) async => await preferences.setString(key, value.serialize());
 
   /// Tries to unlock the app with the current method, handling errors.
-  Future<Result> unlockWithCurrentMethod(BuildContext context, UnlockReason unlockReason, {bool? forceNotNone}) async {
+  Future<Result> unlockWithCurrentMethod(BuildContext context, UnlockReason unlockReason, {bool? allowNone}) async {
     try {
-      return _tryUnlockWithCurrentMethod(context, unlockReason, forceNotNone: forceNotNone);
+      return _tryUnlockWithCurrentMethod(context, unlockReason, allowNone: allowNone);
     } catch (ex, stacktrace) {
       return ResultError(
         exception: ex,
@@ -55,10 +55,10 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
   }
 
   /// Tries to unlock the app with the current method.
-  Future<Result> _tryUnlockWithCurrentMethod(BuildContext context, UnlockReason unlockReason, {bool? forceNotNone}) async {
-    forceNotNone ??= unlockReason == UnlockReason.sensibleAction;
+  Future<Result> _tryUnlockWithCurrentMethod(BuildContext context, UnlockReason unlockReason, {bool? allowNone}) async {
+    allowNone ??= unlockReason != UnlockReason.sensibleAction;
     AppUnlockMethod unlockMethod = await future;
-    if (forceNotNone && unlockMethod is NoneAppUnlockMethod) {
+    if (!allowNone && unlockMethod is NoneAppUnlockMethod) {
       unlockMethod = MasterPasswordAppUnlockMethod();
     }
     if (!context.mounted) {

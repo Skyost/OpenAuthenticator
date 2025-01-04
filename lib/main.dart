@@ -12,6 +12,7 @@ import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_links.dart';
+import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
@@ -29,7 +30,7 @@ import 'package:open_authenticator/utils/rate_my_app.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/totp_limit.dart';
-import 'package:open_authenticator/widgets/route/unlock_challenge.dart';
+import 'package:open_authenticator/widgets/unlock_challenge.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
@@ -173,7 +174,6 @@ class OpenAuthenticatorApp extends ConsumerWidget {
           ),
           routes: {
             IntroPage.name: (_) => _RouteWidget(
-                  listen: currentPlatform.isMobile || kDebugMode,
                   child: const IntroPage(),
                 ),
             HomePage.name: (_) => _RouteWidget(
@@ -213,11 +213,8 @@ class _RouteWidget extends ConsumerStatefulWidget {
   /// The route widget.
   final Widget child;
 
-  /// Listen to [appLinksListenerProvider] and [totpLimitProvider].
+  /// Listen to [appLinksListenerProvider], [totpLimitProvider] and [appUnlockStateProvider].
   final bool listen;
-
-  /// Whether to provide an [UnlockChallengeRouteWidget].
-  final bool unlock;
 
   /// Whether to initialize and run RateMyApp.
   final bool rateMyApp;
@@ -226,7 +223,6 @@ class _RouteWidget extends ConsumerStatefulWidget {
   const _RouteWidget({
     required this.child,
     this.listen = false,
-    this.unlock = true,
     this.rateMyApp = false,
   });
 
@@ -247,60 +243,63 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         ref.listenManual(
           appLinksListenerProvider,
           (previous, next) async {
-            if (next.valueOrNull == null || previous == next) {
+            if (previous == next || next is! AsyncData<Uri?> || next.value == null) {
               return;
             }
             Uri uri = next.value!;
             if (uri.host == Uri.parse(App.firebaseLoginUrl).host) {
-              handleLoginLink(uri);
+              WidgetsBinding.instance.addPostFrameCallback((_) => handleLoginLink(uri));
               return;
             }
             if (uri.scheme == 'otpauth') {
-              handleTotpLink(uri);
+              WidgetsBinding.instance.addPostFrameCallback((_) => handleTotpLink(uri));
               return;
             }
           },
+          fireImmediately: true,
         );
       }
       ref.listenManual(
         totpLimitProvider,
         (previous, next) async {
-          if (next.valueOrNull?.isExceeded == true && mounted) {
-            TotpLimitDialog.showAndBlock(context);
+          if (previous == next || next is! AsyncData<TotpLimit> || !next.value.isExceeded) {
+            return;
           }
+          WidgetsBinding.instance.addPostFrameCallback((_) => handleTotpLimitExceeded());
+        },
+        fireImmediately: true,
+      );
+      ref.listenManual(
+        appUnlockStateProvider,
+        (previous, next) async {
+          if (previous == next || next is! AsyncData<bool> || next.value) {
+            return;
+          }
+          WidgetsBinding.instance.addPostFrameCallback((_) => handleAppLocked());
         },
         fireImmediately: true,
       );
     }
-    if (widget.rateMyApp) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => initializeRateMyApp());
-    }
   }
 
   @override
-  Widget build(BuildContext context) => widget.unlock
-      ? UnlockChallengeRouteWidget(
-          child: widget.child,
+  Widget build(BuildContext context) => widget.rateMyApp
+      ? RateMyAppBuilder(
+          onInitialized: (context, rateMyApp) {
+            if (rateMyApp.shouldOpenDialog) {
+              rateMyApp.showRateDialog(context);
+            }
+          },
+          rateMyApp: RateMyApp.customConditions(
+            appStoreIdentifier: Stores.appStoreIdentifier,
+            googlePlayIdentifier: Stores.googlePlayIdentifier,
+            conditions: [
+              SupportedPlatformsCondition(),
+            ],
+          )..populateWithDefaultConditions(),
+          builder: (context) => widget.child,
         )
       : widget.child;
-
-  /// Initializes [RateMyApp] and shows the dialog, if needed.
-  Future<void> initializeRateMyApp() async {
-    if (rateMyApp == null) {
-      rateMyApp = RateMyApp.customConditions(
-        appStoreIdentifier: Stores.appStoreIdentifier,
-        googlePlayIdentifier: Stores.googlePlayIdentifier,
-        conditions: [
-          SupportedPlatformsCondition(),
-        ],
-      );
-      rateMyApp!.populateWithDefaultConditions();
-      await rateMyApp!.init();
-    }
-    if (rateMyApp!.shouldOpenDialog && mounted) {
-      rateMyApp!.showRateDialog(context);
-    }
-  }
 
   /// Handles a login link.
   Future<void> handleLoginLink(Uri loginLink) async {
@@ -336,6 +335,20 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         context,
         future: TotpPage.openFromUri(context, ref, totpLink),
       );
+    }
+  }
+
+  /// Handles TOTP limit exceeded.
+  Future<void> handleTotpLimitExceeded() async {
+    if (mounted) {
+      TotpLimitDialog.showAndBlock(context);
+    }
+  }
+
+  /// Handles the app locked state.
+  Future<void> handleAppLocked() async {
+    if (mounted) {
+      UnlockChallengeOverlay.display(context);
     }
   }
 }

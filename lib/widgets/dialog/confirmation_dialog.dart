@@ -38,7 +38,7 @@ class ConfirmationDialog extends StatelessWidget {
     required String title,
     required String message,
   }) async =>
-      (await showDialog(
+      (await showDialog<bool>(
         context: context,
         builder: (context) => ConfirmationDialog(
           title: title,
