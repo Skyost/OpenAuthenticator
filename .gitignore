@@ -50,15 +50,16 @@ msix.bat
 
 # Generated files
 lib/app.dart
-lib/firebase_options.dart
 **/*.g.dart
 /assets/images/*.si
 /assets/images/**/*.si
+
+# Firebase files
+firebase
+lib/firebase_options.dart
 /macos/firebase_app_id_file.json
 /ios/firebase_app_id_file.json
 /ios/Runner/GoogleService-Info.plist
 /macos/Runner/GoogleService-Info.plist
 /android/app/google-services.json
-
-# Firebase files
-firebase
+firebase.json
