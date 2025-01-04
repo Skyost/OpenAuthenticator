@@ -32,7 +32,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 /// The home page.
 class HomePage extends ConsumerStatefulWidget {
   /// The home page name.
-  static const String name = '/';
+  static const String name = Navigator.defaultRouteName;
 
   /// Creates a new home page instance.
   const HomePage({

@@ -44,7 +44,7 @@ enum IntroPageSlideType {
   password(create: PasswordIntroPageSlide.new),
 
   /// The slide that allows the user to login to Firebase.
-  login(create: LogInIntroPageSlide.new);
+  logIn(create: LogInIntroPageSlide.new);
 
   /// Allows to create a new intro page slide instance.
   final IntroPageSlide Function() create;
