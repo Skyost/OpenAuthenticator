@@ -4,42 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/blur.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/title.dart';
 
-/// An overlay that is shown waiting for the user to solve the unlock challenge.
-class UnlockChallengeOverlay {
-  /// The current overlay entry, if inserted.
-  static OverlayEntry? _currentEntry;
-
-  /// Displays the unlock challenge overlay.
-  static void display(BuildContext context) {
-    if (_currentEntry != null) {
-      return;
-    }
-    _currentEntry = OverlayEntry(
-      builder: (context) => _UnlockChallengeOverlayWidget(
-        onUnlock: () {
-          _currentEntry?.remove();
-          _currentEntry = null;
-        },
-      ),
-    );
-    Overlay.of(context).insert(_currentEntry!);
-  }
-}
-
 /// The unlock challenge widget.
-class _UnlockChallengeOverlayWidget extends ConsumerStatefulWidget {
-  /// Triggered when unlocked.
-  final VoidCallback? onUnlock;
+class UnlockChallengeWidget extends ConsumerStatefulWidget {
+  /// The child widget.
+  final Widget child;
 
-  /// Creates a new unlock challenge route widget instance.
-  const _UnlockChallengeOverlayWidget({
-    this.onUnlock,
+  /// Creates a new unlock challenge widget instance.
+  const UnlockChallengeWidget({
+    super.key,
+    required this.child,
   });
 
   @override
@@ -47,81 +27,71 @@ class _UnlockChallengeOverlayWidget extends ConsumerStatefulWidget {
 }
 
 /// The master password unlock route widget state.
-class _UnlockChallengeWidgetState extends ConsumerState<_UnlockChallengeOverlayWidget> {
-  /// Whether the unlock challenge has started.
-  bool unlockChallengedStarted = false;
-
+class _UnlockChallengeWidgetState extends ConsumerState<UnlockChallengeWidget> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       tryUnlockIfNeeded();
     });
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Colors.transparent,
-        body: BlurWidget(
-          above: Center(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: TitleWidget(
-                    textAlign: TextAlign.center,
-                    textStyle: Theme.of(context).textTheme.headlineLarge,
+  Widget build(BuildContext context) {
+    AsyncValue<AppLockState> appLockState = ref.watch(appLockStateProvider);
+    return switch (appLockState) {
+      AsyncData<AppLockState>(:final value) => value == AppLockState.unlocked
+          ? widget.child
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: BlurWidget(
+                above: Center(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: TitleWidget(
+                          textAlign: TextAlign.center,
+                          textStyle: Theme.of(context).textTheme.headlineLarge,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Text(
+                          translations.appUnlock.widget.text(app: App.appName),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Align(
+                        child: SizedBox(
+                          width: math.min(MediaQuery.of(context).size.width, 300),
+                          child: FilledButton.icon(
+                            onPressed: value == AppLockState.unlockChallengedStarted ? null : tryUnlockIfNeeded,
+                            label: Text(translations.appUnlock.widget.button),
+                            icon: const Icon(Icons.key),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Text(
-                    translations.appUnlock.widget.text(app: App.appName),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Align(
-                  child: SizedBox(
-                    width: math.min(MediaQuery.of(context).size.width, 300),
-                    child: FilledButton.icon(
-                      onPressed: unlockChallengedStarted ? null : tryUnlockIfNeeded,
-                      label: Text(translations.appUnlock.widget.button),
-                      icon: const Icon(Icons.key),
-                    ),
-                  ),
-                ),
-              ],
+                below: widget.child,
+              ),
             ),
-          ),
-        ),
-      );
+      _ => widget.child,
+    };
+  }
 
   /// Tries to unlock the app.
   Future<void> tryUnlockIfNeeded() async {
-    bool isUnlocked = await ref.read(appUnlockStateProvider.future);
-    if (!mounted) {
+    AppLockState lockState = await ref.read(appLockStateProvider.future);
+    if (!mounted || lockState != AppLockState.locked) {
       return;
     }
-    if (isUnlocked) {
-      widget.onUnlock?.call();
-      return;
-    }
-    setState(() => unlockChallengedStarted = true);
-    Result result = await ref.read(appUnlockStateProvider.notifier).unlock(context);
-    if (!mounted) {
-      return;
-    }
-    setState(() => unlockChallengedStarted = false);
-    switch (result) {
-      case ResultSuccess():
-        widget.onUnlock?.call();
-        break;
-      case ResultError():
-        SnackBarIcon.showErrorSnackBar(context, text: translations.error.appUnlock);
-        break;
-      default:
-        break;
+    Result result = await ref.read(appLockStateProvider.notifier).unlock(context);
+    if (result is ResultError && mounted) {
+      SnackBarIcon.showErrorSnackBar(context, text: translations.error.appUnlock);
     }
   }
 }

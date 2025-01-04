@@ -33,12 +33,25 @@ sealed class AppUnlockMethod {
   /// [context] is required so that we can interact with the user.
   Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason);
 
+  /// The default app state.
+  AppLockState get defaultState => AppLockState.locked;
+
   /// Triggered when this method has been chosen has the app unlock method.
   /// [unlockResult] is the result of the [tryUnlock] call.
   Future<void> onMethodChosen(Ref ref, {ResultSuccess? enableResult}) => Future.value();
 
   /// Triggered when a new method will be used for app unlocking.
   Future<void> onMethodChanged(Ref ref, {ResultSuccess? disableResult}) => Future.value();
+}
+
+/// Represents an app state.
+enum AppLockState {
+  /// If the app is locked, waiting for unlock.
+  locked,
+  /// If the app has been unlocked.
+  unlocked,
+  /// If an unlock challenge has started.
+  unlockChallengedStarted;
 }
 
 /// Local authentication.
@@ -153,6 +166,9 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
 class NoneAppUnlockMethod extends AppUnlockMethod {
   @override
   Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason) => Future.value(const ResultSuccess());
+
+  @override
+  AppLockState get defaultState => AppLockState.unlocked;
 }
 
 /// Configures the unlock reason for [UnlockChallenge]s.

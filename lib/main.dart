@@ -12,7 +12,6 @@ import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/firebase_options.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_links.dart';
-import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
@@ -269,37 +268,32 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         },
         fireImmediately: true,
       );
-      ref.listenManual(
-        appUnlockStateProvider,
-        (previous, next) async {
-          if (previous == next || next is! AsyncData<bool> || next.value) {
-            return;
-          }
-          WidgetsBinding.instance.addPostFrameCallback((_) => handleAppLocked());
-        },
-        fireImmediately: true,
-      );
     }
   }
 
   @override
-  Widget build(BuildContext context) => widget.rateMyApp
-      ? RateMyAppBuilder(
-          onInitialized: (context, rateMyApp) {
-            if (rateMyApp.shouldOpenDialog) {
-              rateMyApp.showRateDialog(context);
-            }
-          },
-          rateMyApp: RateMyApp.customConditions(
-            appStoreIdentifier: Stores.appStoreIdentifier,
-            googlePlayIdentifier: Stores.googlePlayIdentifier,
-            conditions: [
-              SupportedPlatformsCondition(),
-            ],
-          )..populateWithDefaultConditions(),
-          builder: (context) => widget.child,
-        )
-      : widget.child;
+  Widget build(BuildContext context) {
+    Widget child = UnlockChallengeWidget(
+      child: widget.child,
+    );
+    return widget.rateMyApp
+        ? RateMyAppBuilder(
+            onInitialized: (context, rateMyApp) {
+              if (rateMyApp.shouldOpenDialog) {
+                rateMyApp.showRateDialog(context);
+              }
+            },
+            rateMyApp: RateMyApp.customConditions(
+              appStoreIdentifier: Stores.appStoreIdentifier,
+              googlePlayIdentifier: Stores.googlePlayIdentifier,
+              conditions: [
+                SupportedPlatformsCondition(),
+              ],
+            )..populateWithDefaultConditions(),
+            builder: (context) => child,
+          )
+        : child;
+  }
 
   /// Handles a login link.
   Future<void> handleLoginLink(Uri loginLink) async {
@@ -342,13 +336,6 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
   Future<void> handleTotpLimitExceeded() async {
     if (mounted) {
       TotpLimitDialog.showAndBlock(context);
-    }
-  }
-
-  /// Handles the app locked state.
-  Future<void> handleAppLocked() async {
-    if (mounted) {
-      UnlockChallengeOverlay.display(context);
     }
   }
 }

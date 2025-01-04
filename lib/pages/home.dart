@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/main.dart';
+import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/display_copy_button.dart';
@@ -159,7 +160,7 @@ class _HomePageBody extends ConsumerWidget {
     AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
     switch (totps) {
       case AsyncData(:final value):
-        bool isUnlocked = ref.watch(appUnlockStateProvider).valueOrNull ?? false;
+        bool isUnlocked = ref.watch(appLockStateProvider).valueOrNull == AppLockState.unlocked;
         bool displayCopyButton = ref.watch(displayCopyButtonSettingsEntryProvider).valueOrNull ?? true;
         Widget child = value.isEmpty
             ? CustomScrollView(
