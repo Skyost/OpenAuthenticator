@@ -269,6 +269,7 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     if (widget.rateMyApp) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         RateMyApp rateMyApp = RateMyApp.customConditions(
+          preferencesPrefix: kDebugMode ? 'flutterDebug.rateMyApp.' : 'flutter.rateMyApp.',
           appStoreIdentifier: Stores.appStoreIdentifier,
           googlePlayIdentifier: Stores.googlePlayIdentifier,
           conditions: [
