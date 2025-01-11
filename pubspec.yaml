@@ -15,15 +15,15 @@ environment:
 
 dependencies:
   animations: ^2.0.11
-  cloud_firestore: ^5.6.0
-  firebase_auth: ^5.3.4
-  firebase_core: ^3.9.0
+  cloud_firestore: ^5.6.1
+  firebase_auth: ^5.4.0
+  firebase_core: ^3.10.0
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
   flutter_riverpod: ^2.6.1
-  simple_secure_storage: ^0.3.1
+  simple_secure_storage: ^0.3.2
   jovial_svg: ^1.1.24
   mobile_scanner: ^6.0.2
   path_provider: ^2.1.5
@@ -31,7 +31,7 @@ dependencies:
   uuid: ^4.5.1
   webcrypto: ^0.5.7
   equatable: ^2.0.7
-  drift: ^2.23.0
+  drift: ^2.23.1
   drift_flutter: ^0.2.4
   path: ^1.9.0
   local_auth: ^2.3.0
@@ -40,14 +40,14 @@ dependencies:
   qr_flutter: ^4.1.0
   intl: any
   url_launcher: ^6.3.1
-  firebase_app_check: ^0.3.1
+  firebase_app_check: ^0.3.2
   purchases_flutter: ^8.4.0
-  firebase_crashlytics: ^4.2.0
+  firebase_crashlytics: ^4.3.0
   window_manager: ^0.4.3
   slang: ^4.4.1
   slang_flutter: ^4.4.0
   purchases_ui_flutter: ^8.4.0
-  rate_my_app: ^2.2.0
+  rate_my_app: ^2.3.1
   app_links: ^6.3.3
   hashlib: ^1.21.1
   hashlib_codecs: ^2.6.0
@@ -62,7 +62,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   build_runner: ^2.4.14
-  drift_dev: ^2.23.0
+  drift_dev: ^2.23.1
   flutter_lints: ^5.0.0
   msix: ^3.16.8
   slang_build_runner: ^4.4.0

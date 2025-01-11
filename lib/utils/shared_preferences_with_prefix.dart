@@ -18,13 +18,47 @@ class SharedPreferencesWithPrefix {
   /// Creates a new instance with the given options and reloads the cache from the platform data.
   static Future<SharedPreferencesWithPrefix> create({
     String prefix = kDebugMode ? 'flutter_debug.' : 'flutter.',
-  }) async =>
-      SharedPreferencesWithPrefix._(
-        sharedPreferences: await SharedPreferencesWithCache.create(
-          cacheOptions: SharedPreferencesWithCacheOptions(),
-        ),
-        prefix: prefix,
-      );
+  }) async {
+    SharedPreferencesWithPrefix sharedPreferencesWithPrefix = SharedPreferencesWithPrefix._(
+      sharedPreferences: await SharedPreferencesWithCache.create(
+        cacheOptions: SharedPreferencesWithCacheOptions(),
+      ),
+      prefix: prefix,
+    );
+    await _migrate(sharedPreferencesWithPrefix);
+    return sharedPreferencesWithPrefix;
+  }
+
+  /// Migrates from [SharedPreferences] to [SharedPreferencesWithCache].
+  /// See https://github.com/flutter/flutter/issues/150732.
+  static Future<void> _migrate(SharedPreferencesWithPrefix sharedPreferencesWithPrefix) async {
+    SharedPreferences legacyPreferences = await SharedPreferences.getInstance();
+    bool hasMigrated = legacyPreferences.getBool('legacyPreferencesDidMigrate') == true;
+    if (hasMigrated) {
+      return;
+    }
+    Set<String> keys = legacyPreferences.getKeys();
+    for (String key in keys) {
+      Object? value = legacyPreferences.get(key);
+      bool canMigrate = value is String || value is bool || value is int || value is double || value is List<String>;
+      if (!canMigrate) {
+        continue;
+      }
+      await legacyPreferences.remove(key);
+      if (value is String) {
+        await sharedPreferencesWithPrefix.setString(key, value);
+      } else if (value is bool) {
+        await sharedPreferencesWithPrefix.setBool(key, value);
+      } else if (value is int) {
+        await sharedPreferencesWithPrefix.setInt(key, value);
+      } else if (value is double) {
+        await sharedPreferencesWithPrefix.setDouble(key, value);
+      } else if (value is List<String>) {
+        await sharedPreferencesWithPrefix.setStringList(key, value);
+      }
+    }
+    legacyPreferences.setBool('legacyPreferencesDidMigrate', true);
+  }
 
   /// Returns true if cache contains the given [key].
   ///

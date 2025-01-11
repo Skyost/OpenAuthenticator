@@ -231,9 +231,6 @@ class _RouteWidget extends ConsumerStatefulWidget {
 
 /// The route widget state.
 class _RouteWidgetState extends ConsumerState<_RouteWidget> {
-  /// The [RateMyApp] instance.
-  RateMyApp? rateMyApp;
-
   @override
   void initState() {
     super.initState();
@@ -269,31 +266,27 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         fireImmediately: true,
       );
     }
+    if (widget.rateMyApp) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        RateMyApp rateMyApp = RateMyApp.customConditions(
+          appStoreIdentifier: Stores.appStoreIdentifier,
+          googlePlayIdentifier: Stores.googlePlayIdentifier,
+          conditions: [
+            SupportedPlatformsCondition(),
+          ],
+        )..populateWithDefaultConditions();
+        await rateMyApp.init();
+        if (rateMyApp.shouldOpenDialog && mounted) {
+          rateMyApp.showRateDialog(context);
+        }
+      });
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    Widget child = UnlockChallengeWidget(
-      child: widget.child,
-    );
-    return widget.rateMyApp
-        ? RateMyAppBuilder(
-            onInitialized: (context, rateMyApp) {
-              if (rateMyApp.shouldOpenDialog) {
-                rateMyApp.showRateDialog(context);
-              }
-            },
-            rateMyApp: RateMyApp.customConditions(
-              appStoreIdentifier: Stores.appStoreIdentifier,
-              googlePlayIdentifier: Stores.googlePlayIdentifier,
-              conditions: [
-                SupportedPlatformsCondition(),
-              ],
-            )..populateWithDefaultConditions(),
-            builder: (context) => child,
-          )
-        : child;
-  }
+  Widget build(BuildContext context) => UnlockChallengeWidget(
+        child: widget.child,
+      );
 
   /// Handles a login link.
   Future<void> handleLoginLink(Uri loginLink) async {
