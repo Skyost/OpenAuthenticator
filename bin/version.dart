@@ -2,10 +2,13 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+// ignore: depend_on_referenced_packages
 import 'package:conventional_commit/conventional_commit.dart';
+// ignore: depend_on_referenced_packages
 import 'package:dotenv/dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+// ignore: depend_on_referenced_packages
 import 'package:yaml_magic/yaml_magic.dart';
 
 /// The Github repo.

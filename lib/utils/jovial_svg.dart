@@ -2,10 +2,14 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
+// ignore: depend_on_referenced_packages
 import 'package:jovial_misc/io_utils.dart';
 import 'package:jovial_svg/jovial_svg.dart';
+// ignore: implementation_imports
 import 'package:jovial_svg/src/compact.dart';
+// ignore: implementation_imports
 import 'package:jovial_svg/src/compact_noui.dart';
+// ignore: implementation_imports
 import 'package:jovial_svg/src/svg_parser.dart';
 import 'package:open_authenticator/utils/utils.dart';
 
