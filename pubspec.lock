@@ -1011,7 +1011,7 @@ packages:
     source: hosted
     version: "2.1.5"
   pubspec_parse:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: pubspec_parse
       sha256: "0560ba233314abbed0a48a2956f7f022cce7c3e1e73df540277da7544cad4082"
@@ -1647,14 +1647,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.3"
-  yaml_magic:
+  yaml_edit:
     dependency: "direct dev"
     description:
-      name: yaml_magic
-      sha256: "6f281c7fd58492e8f30f9a7335697193d61269313952fc43e3baa784860062f3"
+      name: yaml_edit
+      sha256: fb38626579fb345ad00e674e2af3a5c9b0cc4b9bfb8fd7f7ff322c7c9e62aef5
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6"
+    version: "2.2.2"
 sdks:
   dart: ">=3.6.0 <4.0.0"
   flutter: ">=3.27.0"

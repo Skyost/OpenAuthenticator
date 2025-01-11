@@ -9,7 +9,11 @@ import 'package:dotenv/dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 // ignore: depend_on_referenced_packages
-import 'package:yaml_magic/yaml_magic.dart';
+import 'package:pub_semver/pub_semver.dart';
+// ignore: depend_on_referenced_packages
+import 'package:pubspec_parse/pubspec_parse.dart';
+// ignore: depend_on_referenced_packages
+import 'package:yaml_edit/yaml_edit.dart';
 
 /// The Github repo.
 String repo = 'https://github.com/Skyost/OpenAuthenticator';
@@ -27,13 +31,13 @@ Future<void> main() async {
     stderr.writeln('Cannot find pubspec.yaml at "${pubspecFile.path}".');
     return;
   }
-  YamlMagic yamlMagic = YamlMagic.load(pubspecFile.path, noWatermarkComment: true);
-  if (yamlMagic['version'] == null) {
+  String pubspecContent = pubspecFile.readAsStringSync();
+  Pubspec pubspec = Pubspec.parse(pubspecContent);
+  if (pubspec.version == null) {
     stderr.writeln('Cannot find current version.');
     return;
   }
-  Version version = await Version.parse(yamlMagic['version']);
-  stdout.writeln('Current version is "$version".');
+  stdout.writeln('Current version is "${pubspec.version}".');
   String? lastTag = await findLastTag();
   if (lastTag == null) {
     stderr.writeln('Cannot find last tag.');
@@ -55,18 +59,14 @@ Future<void> main() async {
   } else {
     stdout.writeln('Found no breaking change.');
   }
-  Version newVersion = version.bump(changeLogEntry);
+  Version newVersion = pubspec.version!.bump(changeLogEntry);
   stdout.write('Proposed new version is "$newVersion", enter "Y" to continue or type a new version proposal. Type "N" to cancel. ');
   String input = stdin.readLineSync(encoding: utf8)?.toUpperCase() ?? 'N';
   if (input == 'N') {
     return;
   }
   if (input != 'Y') {
-    if (!Version._versionRegex.hasMatch(input)) {
-      stderr.writeln('Invalid input.');
-      return;
-    }
-    newVersion = await Version.parse(input);
+    newVersion = Version.parse(input);
   }
   String defaultIgnoredScopes = 'docs,version,deps';
   stdout.write('Enter a comma separated list of scopes to ignore (default is "$defaultIgnoredScopes") or "Y" to continue. ');
@@ -75,7 +75,7 @@ Future<void> main() async {
     input = defaultIgnoredScopes;
   }
   DateTime now = DateTime.now();
-  String markdownEntryTitle = '## v${newVersion.toString(includeBuild: false)}';
+  String markdownEntryTitle = '## v${newVersion.buildName(includeBuild: false)}';
   String markdownEntryHeader = '''$markdownEntryTitle
 Released on ${DateFormat.yMMMd().format(now)}.
 ''';
@@ -98,14 +98,10 @@ ${fileContent.substring(changeLogHeader.length + 2)}''';
   stdout.writeln('Writing changelog content...');
   changeLogFile.writeAsStringSync(changeLogContent);
   stdout.writeln('Done.');
-  yamlMagic['version'] = newVersion.toString();
+  YamlEditor editor = YamlEditor(pubspecContent);
+  editor.update(['version'], newVersion.toString());
   stdout.writeln('Writing version to "pubspec.yaml" and running `flutter pub get`...');
-  await yamlMagic.save();
-  String pubspecContent = pubspecFile.readAsStringSync();
-  if (pubspecContent.endsWith('\n\n')) {
-    pubspecContent = pubspecContent.substring(0, pubspecContent.length - '\n'.length);
-    pubspecFile.writeAsStringSync(pubspecContent);
-  }
+  pubspecFile.writeAsStringSync(editor.toString());
   await Process.run('dart', ['pub', 'get']);
   stdout.writeln('Done.');
   bool commit = askYNQuestion('Do you want to commit the changes ?');
@@ -137,8 +133,8 @@ ${fileContent.substring(changeLogHeader.length + 2)}''';
               'X-GitHub-Api-Version': '2022-11-28',
             },
             body: jsonEncode({
-              'tag_name': newVersion.toString(includeBuild: false, includePreRelease: false),
-              'name': 'v${newVersion.toString(includeBuild: false, includePreRelease: false)}',
+              'tag_name': newVersion.buildName(includeBuild: false, includePreRelease: false),
+              'name': 'v${newVersion.buildName(includeBuild: false, includePreRelease: false)}',
               'body': markdownEntryContent,
             })
           );
@@ -300,188 +296,30 @@ class ChangeLogEntry {
   }
 }
 
-/// Thanks to https://github.com/dartninja/version/blob/master/lib/version.dart.
-class Version implements Comparable<Version> {
-  /// The version regex.
-  static final RegExp _versionRegex = RegExp(r'^([\d.]+)(-([0-9A-Za-z\-.]+))?(\+([0-9A-Za-z\-.]+))?$');
-
-  /// The major number of the version, incremented when making breaking changes.
-  final int major;
-
-  /// The minor number of the version, incremented when adding new functionality in a backwards-compatible manner.
-  final int minor;
-
-  /// The patch number of the version, incremented when making backwards-compatible bug fixes.
-  final int patch;
-
-  /// Build information relevant to the version. Does not contribute to sorting.
-  final String? build;
-
-  /// Whether this is an alpha, a beta, a pre-release, ...
-  final List<String> preRelease;
-
-  /// Creates a new protocol version using the specified parameters.
-  const Version._internal({
-    required this.major,
-    required this.minor,
-    required this.patch,
-    this.preRelease = const [],
-    this.build = '',
-  });
-
-  /*{
-    assert(major != null),
-    assert(minor != null),
-    assert(patch != null),
-    assert(build != null),
-    assert(preRelease != null)
-    for (int i = 0; i < preRelease.length; i++) {
-      assert(preRelease[i] != null && preRelease[i].toString().trim().isNotEmpty);
-      preRelease[i] = preRelease[i].toString();
-      assert(_preReleaseRegex.hasMatch(preRelease[i]));
-    }
-
-    assert(build.isEmpty || _buildRegex.hasMatch(build));
-    assert(major >= 0 && minor >= 0 && patch >= 0);
-    assert(major > 0 || minor > 0 || patch > 0);
-  }*/
-
-  /// Creates a new version instance.
-  static Future<Version> parse(String semanticVersion) async {
-    RegExpMatch? match = _versionRegex.firstMatch(semanticVersion);
-    String? version = match?.group(1);
-
-    int? major, minor, patch;
-    List<String>? parts = version?.split('.');
-    if (parts != null) {
-      major = int.parse(parts[0]);
-      if (parts.length > 1) {
-        minor = int.parse(parts[1]);
-        if (parts.length > 2) {
-          patch = int.parse(parts[2]);
-        }
-      }
-    }
-
-    String? preReleaseString = match?.group(3) ?? '';
-    List<String> preReleaseList = [];
-    if (preReleaseString.trim().isNotEmpty) {
-      preReleaseList = preReleaseString.split('.');
-    }
-
-    String build = match?.group(5) ?? '';
-    return Version._internal(
-      major: major ?? 0,
-      minor: minor ?? 0,
-      patch: patch ?? 0,
-      build: build,
-      preRelease: preReleaseList,
+/// Contains some useful methods to work with [Version].
+extension VersionUtils on Version {
+  /// Creates a new version, bumped from the current one.
+  Version bump(ChangeLogEntry changeLogEntry) {
+    int? buildNumber = int.tryParse(build.join());
+    return Version(
+      major,
+      changeLogEntry.hasBreakingChange ? (minor + 1) : minor,
+      changeLogEntry.hasBreakingChange ? patch : (patch + 1),
+      build: buildNumber == null ? null : (buildNumber + 1).toString(),
     );
   }
 
-  @override
-  String toString({ bool includePreRelease = true, bool includeBuild = true }) {
+  /// Builds the version name, to use in changelogs.
+  String buildName({ bool includeBuild = false, bool includePreRelease = false }) {
     StringBuffer output = StringBuffer('$major.$minor.$patch');
     if (includePreRelease && preRelease.isNotEmpty) {
       output.write("-${preRelease.join('.')}");
     }
-    if (includeBuild && build != null && build!.trim().isNotEmpty) {
-      output.write('+${build!.trim()}');
+    String build = this.build.join();
+    if (includeBuild && build.trim().isNotEmpty) {
+      output.write('+$build');
     }
     return output.toString();
-  }
-
-  @override
-  int get hashCode => toString().hashCode;
-
-  int _comparePreReleases(Version other) {
-    if (preRelease.isEmpty) {
-      if (other.preRelease.isEmpty) {
-        return 0;
-      } else {
-        return 1;
-      }
-    } else if (other.preRelease.isEmpty) {
-      return -1;
-    } else {
-      int preReleaseMax = preRelease.length;
-      if (other.preRelease.length > preRelease.length) {
-        preReleaseMax = other.preRelease.length;
-      }
-
-      for (int i = 0; i < preReleaseMax; i++) {
-        if (other.preRelease.length <= i) {
-          return 1;
-        } else if (preRelease.length <= i) {
-          return -1;
-        }
-
-        if (preRelease[i] == other.preRelease[i]) {
-          continue;
-        }
-
-        double? aNumber = double.tryParse(preRelease[i]);
-        bool aNumeric = aNumber != null;
-        double? bNumber = double.tryParse(other.preRelease[i]);
-        bool bNumeric = bNumber != null;
-
-        if (aNumeric && bNumeric) {
-          if (aNumber > bNumber) {
-            return 1;
-          } else {
-            return -1;
-          }
-        } else if (bNumeric) {
-          return 1;
-        } else if (aNumeric) {
-          return -1;
-        } else {
-          return preRelease[i].compareTo(other.preRelease[i]);
-        }
-      }
-    }
-    return 0;
-  }
-
-  @override
-  int compareTo(Version other) {
-    if (major > other.major) return 1;
-    if (major < other.major) return -1;
-
-    if (minor > other.minor) return 1;
-    if (minor < other.minor) return -1;
-
-    if (patch > other.patch) return 1;
-    if (patch < other.patch) return -1;
-
-    return _comparePreReleases(other);
-  }
-
-  /// Determines whether the left-hand protocol version represents a lower precedence than the right-hand protocol version.
-  bool operator <(dynamic other) => other is Version && compareTo(other) < 0;
-
-  /// Determines whether the left-hand protocol version represents an equal or lower precedence than the right-hand protocol version.
-  bool operator <=(dynamic other) => other is Version && compareTo(other) <= 0;
-
-  /// Determines whether the left-hand protocol version represents an equal precedence to the right-hand protocol version.
-  @override
-  bool operator ==(Object other) => other is Version && compareTo(other) == 0;
-
-  /// Determines whether the left-hand protocol version represents a greater precedence than the right-hand protocol version.
-  bool operator >(dynamic other) => other is Version && compareTo(other) > 0;
-
-  /// Determines whether the left-hand protocol version represents an equal or greater precedence than the right-hand protocol version.
-  bool operator >=(dynamic other) => other is Version && compareTo(other) >= 0;
-
-  /// Creates a new version, bumped from the current one.
-  Version bump(ChangeLogEntry changeLogEntry) {
-    int? buildNumber = int.tryParse(build ?? '');
-    return Version._internal(
-      major: major,
-      minor: changeLogEntry.hasBreakingChange ? (minor + 1) : minor,
-      patch: changeLogEntry.hasBreakingChange ? patch : (patch + 1),
-      build: buildNumber == null ? null : (buildNumber + 1).toString(),
-    );
   }
 }
 
