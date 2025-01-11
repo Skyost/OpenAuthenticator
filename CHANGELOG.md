@@ -1,5 +1,20 @@
 # 📰 Open Authenticator Changelog
 
+## v1.1.0
+Released on Jan 11, 2025.
+
+* **REFACTOR** : More coherence with `try` functions in unlock methods. ([#02c29fd](https://github.com/Skyost/OpenAuthenticator/commit/02c29fd))
+* **REFACTOR** : Riverpod notifiers fields are now private. ([#f1fbe0b](https://github.com/Skyost/OpenAuthenticator/commit/f1fbe0b))
+* **REFACTOR** : Using `Navigator.defaultRouteName` instead of `/` and `logIn` instead of `login`. ([#f83d479](https://github.com/Skyost/OpenAuthenticator/commit/f83d479))
+* **FEAT** : Added a link to the translation platform in the app settings. ([#c0013eb](https://github.com/Skyost/OpenAuthenticator/commit/c0013eb))
+* **FEAT** : Now allowing to decrypt and save more than one TOTP on home page. ([#a73b9db](https://github.com/Skyost/OpenAuthenticator/commit/a73b9db))
+* **FIX** : Fixed a bug where text fields were not accepting any input after local authentication. ([#152628e](https://github.com/Skyost/OpenAuthenticator/commit/152628e))
+* **FIX** : Only scanning one QR code at once. ([#82e0770](https://github.com/Skyost/OpenAuthenticator/commit/82e0770))
+* **FIX** : Various fixes with deep links. ([#4da5b09](https://github.com/Skyost/OpenAuthenticator/commit/4da5b09))
+* **CHORE** : Improved Windows icon. ([#250c50f](https://github.com/Skyost/OpenAuthenticator/commit/250c50f))
+* **CHORE** : Not storing the common salt using `Storage`. ([#f23577a](https://github.com/Skyost/OpenAuthenticator/commit/f23577a))
+* **CHORE** : Saving shared preferences in a different file in debug mode. ([#7ea7b1e](https://github.com/Skyost/OpenAuthenticator/commit/7ea7b1e))
+
 ## v1.0.8
 Released on Nov 4, 2024.
 
