@@ -102,8 +102,20 @@ class LocalStorage extends _$LocalStorage with Storage {
   }
 
   @override
-  Future<void> updateTotp(String uuid, Totp totp) async {
+  Future<void> updateTotp(Totp totp) async {
     await update(totps).replace(totp.asDriftTotp);
+  }
+
+  @override
+  Future<void> updateTotps(List<Totp> totps) async {
+    await batch((batch) {
+      batch.replaceAll(
+        this.totps,
+        [
+          for (Totp totp in totps) totp.asDriftTotp,
+        ],
+      );
+    });
   }
 
   @override

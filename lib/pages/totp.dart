@@ -442,7 +442,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
     if (totp == null) {
       return ResultError();
     }
-    return await ref.read(totpRepositoryProvider.notifier).updateTotp(widget.totp!.uuid, totp);
+    return await ref.read(totpRepositoryProvider.notifier).updateTotp(totp);
   }
 
   /// Creates a [DecryptedTotp] corresponding to the current fields.

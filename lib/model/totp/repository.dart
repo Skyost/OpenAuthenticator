@@ -32,13 +32,17 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
   }
 
   /// Tries to decrypt all TOTPs with the given [cryptoStore].
-  Future<void> tryDecryptAll(CryptoStore? cryptoStore) async {
+  /// Returns all newly decrypted TOTPs.
+  Future<Set<DecryptedTotp>> tryDecryptAll(CryptoStore? cryptoStore) async {
     TotpList totpList = await future;
     state = const AsyncLoading();
-    state = AsyncData(TotpList._(
+    TotpList newTotpList = TotpList._(
       list: await totpList._list.decrypt(cryptoStore),
       operationThreshold: totpList.operationThreshold,
-    ));
+    );
+    Set<DecryptedTotp> difference = newTotpList.decryptedTotps.toSet().difference(totpList.decryptedTotps.toSet());
+    state = AsyncData(newTotpList);
+    return difference;
   }
 
   /// Refreshes the current state.
@@ -133,18 +137,33 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
     }
   }
 
-  /// Updates the TOTP associated with the specified [uuid].
-  Future<Result<Totp>> updateTotp(String uuid, DecryptedTotp totp) async {
+  /// Updates the [totp].
+  Future<Result<Totp>> updateTotp(DecryptedTotp totp) async => await _updateTotps([totp]);
+
+  /// Updates the [totps].
+  Future<Result<Totp>> updateTotps(List<Totp> totps) async => await _updateTotps(totps);
+
+  /// Updates the [totps].
+  Future<Result<Totp>> _updateTotps(List<Totp> totps) async {
     try {
+      if (totps.isEmpty) {
+        return const ResultSuccess();
+      }
       TotpList totpList = await future;
       await totpList.waitBeforeNextOperation();
       Storage storage = await ref.read(storageProvider.future);
-      await storage.updateTotp(uuid, totp);
+      if (totps.length > 1) {
+        await storage.updateTotps(totps);
+      } else {
+        await storage.updateTotp(totps.first);
+      }
       TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
-      await totpImageCacheManager.cacheImage(totp);
+      for (Totp totp in totps) {
+        await totpImageCacheManager.cacheImage(totp);
+      }
       state = AsyncData(
         TotpList._fromListAndStorage(
-          list: _mergeToCurrentList(totpList, totp: totp),
+          list: _mergeToCurrentList(totpList, totps: totps),
           storage: storage,
         ),
       );
@@ -188,7 +207,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
     String password, {
     String? backupPassword,
     Uint8List? salt,
-    updateTotps = true,
+    bool updateTotps = true,
   }) async {
     try {
       TotpList totpList = await future;
@@ -309,6 +328,12 @@ class TotpList extends Iterable<Totp> {
     }
     return Future.delayed(nextPossibleOperationTime.difference(now));
   }
+
+  /// Returns the decrypted TOTPs list.
+  List<DecryptedTotp> get decryptedTotps => [
+        for (Totp totp in _list)
+          if (totp.isDecrypted) totp as DecryptedTotp,
+      ];
 }
 
 /// The TOTP limit provider.

@@ -27,11 +27,21 @@
   },
   "totpKeyDialog": {
     "title": "Déchiffrement réussi",
-    "message": "Souhaitez-vous changer votre mot de passe maître ou chiffrer ce TOTP avec votre clé de chiffrement actuelle ?",
+    "message": {
+      "one": "Souhaitez-vous changer votre mot de passe maître ou chiffrer ce TOTP avec votre clé de chiffrement actuelle ?",
+      "other": "Ce TOTP a été déchiffré avec succès, et le mot de passe a permis de déchiffrer plus de TOTPs. Que souhaitez-vous faire ?"
+    },
     "choices": {
+      "changeAllDecryptedTotpsKey": {
+        "title": "Chiffrer les TOTPs avec votre clé actuelle",
+        "subtitle": "Changer la clé de chiffrement utilisée pour ce TOTP ainsi que pour ceux qui ont pu être déchiffrés, et utiliser la votre à la place."
+      },
       "changeTotpKey": {
-        "title": "Chiffrer ce TOTP avec votre clé actuelle",
-        "subtitle": "Changer la clé de chiffrement utilisée pour ce TOTP, et utiliser la votre à la place."
+        "title": {
+          "one": "Chiffrer ce TOTP avec votre clé actuelle",
+          "other": "Chiffrer seulement ce TOTP avec votre clé actuelle"
+        },
+        "subtitle": "Changer la clé de chiffrement utilisée pour ce TOTP, et utiliser la votre à la place. Les autres TOTPs déchiffrés seront utilisables jusqu'à la fermeture de l'application."
       },
       "changeMasterPassword": {
         "title": "Changer votre mot de passe maître",

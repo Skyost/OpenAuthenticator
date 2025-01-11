@@ -87,9 +87,19 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<void> updateTotp(String uuid, Totp totp) async {
+  Future<void> updateTotp(Totp totp) async {
     CollectionReference? collection = _totpsCollection;
-    await collection.doc(uuid).set(totp.toFirestore());
+    await collection.doc(totp.uuid).set(totp.toFirestore());
+  }
+
+  @override
+  Future<void> updateTotps(List<Totp> totps) async {
+    CollectionReference? collection = _totpsCollection;
+    WriteBatch batch = _firestore.batch();
+    for (Totp totp in totps) {
+      batch.set(collection.doc(totp.uuid), totp.toFirestore());
+    }
+    await batch.commit();
   }
 
   @override

@@ -311,55 +311,93 @@ class _HomePageBody extends ConsumerWidget {
       return;
     }
 
-    late CryptoStore previousCryptoStore;
     TotpRepository repository = ref.read(totpRepositoryProvider.notifier);
-    Totp decrypted = await showWaitingOverlay(
+    (CryptoStore, List<DecryptedTotp>) decryptedTotps = await showWaitingOverlay(
       context,
       future: () async {
-        previousCryptoStore = await CryptoStore.fromPassword(password, totp.encryptedData.encryptionSalt);
-        return await totp.decrypt(previousCryptoStore);
+        CryptoStore previousCryptoStore = await CryptoStore.fromPassword(password, totp.encryptedData.encryptionSalt);
+        Totp targetTotp = await totp.decrypt(previousCryptoStore);
+        if (!targetTotp.isDecrypted) {
+          return (previousCryptoStore, <DecryptedTotp>[]);
+        }
+        Set<DecryptedTotp> decryptedTotps = await repository.tryDecryptAll(previousCryptoStore);
+        return (
+          previousCryptoStore,
+          [
+            targetTotp as DecryptedTotp,
+            for (DecryptedTotp decryptedTotp in decryptedTotps)
+              if (targetTotp.uuid != decryptedTotp.uuid) decryptedTotp,
+          ],
+        );
       }(),
     );
     if (!context.mounted) {
       return;
     }
-    if (!decrypted.isDecrypted) {
+    if (decryptedTotps.$2.isEmpty) {
       SnackBarIcon.showErrorSnackBar(context, text: translations.error.totpDecrypt);
       return;
     }
 
     _TotpKeyDialogResult? choice = await showDialog<_TotpKeyDialogResult>(
       context: context,
-      builder: (context) => _TotpKeyDialog(),
+      builder: (context) => _TotpKeyDialog(
+        decryptedTotps: decryptedTotps.$2,
+      ),
     );
+
+    if (!context.mounted) {
+      return;
+    }
+
+    Future<Result> changeTotpsKey(CryptoStore oldCryptoStore, List<DecryptedTotp> totps) async {
+      try {
+        CryptoStore? currentCryptoStore = await ref.read(cryptoStoreProvider.future);
+        if (currentCryptoStore == null) {
+          throw Exception('Unable to get current crypto store.');
+        }
+        List<DecryptedTotp> toUpdate = [];
+        for (DecryptedTotp totp in totps) {
+          DecryptedTotp? decryptedTotpWithNewKey = await totp.changeEncryptionKey(oldCryptoStore, currentCryptoStore);
+          if (decryptedTotpWithNewKey == null || !decryptedTotpWithNewKey.isDecrypted) {
+            throw Exception('Failed to encrypt TOTP with current crypto store.');
+          }
+          toUpdate.add(decryptedTotpWithNewKey);
+        }
+        return await repository.updateTotps(toUpdate);
+      } catch (ex, stacktrace) {
+        return ResultError(
+          exception: ex,
+          stacktrace: stacktrace,
+        );
+      }
+    }
 
     switch (choice) {
       case _TotpKeyDialogResult.changeTotpKey:
-        CryptoStore? currentCryptoStore = await ref.read(cryptoStoreProvider.future);
-        if (currentCryptoStore == null) {
-          if (context.mounted) {
-            SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
-          }
-          break;
+        Result result = await showWaitingOverlay(
+          context,
+          future: changeTotpsKey(decryptedTotps.$1, [decryptedTotps.$2.first]),
+        );
+        if (context.mounted) {
+          context.showSnackBarForResult(result, retryIfError: true);
         }
-        DecryptedTotp? decryptedTotpWithNewKey = await totp.changeEncryptionKey(previousCryptoStore, currentCryptoStore);
-        if (decryptedTotpWithNewKey == null || !decryptedTotpWithNewKey.isDecrypted) {
-          if (context.mounted) {
-            SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.tryAgain);
-          }
-          break;
+        break;
+      case _TotpKeyDialogResult.changeAllTotpsKey:
+        Result result = await showWaitingOverlay(
+          context,
+          future: changeTotpsKey(decryptedTotps.$1, decryptedTotps.$2),
+        );
+        if (context.mounted) {
+          context.showSnackBarForResult(result, retryIfError: true);
         }
-        await repository.updateTotp(totp.uuid, decryptedTotpWithNewKey);
         break;
       case _TotpKeyDialogResult.changeMasterPassword:
-        if (context.mounted) {
-          await MasterPasswordUtils.changeMasterPassword(context, ref, password: password);
-        }
+        await MasterPasswordUtils.changeMasterPassword(context, ref, password: password);
         break;
       default:
         break;
     }
-    await repository.tryDecryptAll(previousCryptoStore);
   }
 }
 
@@ -508,6 +546,14 @@ enum _AddTotpDialogResult {
 
 /// Allows the user to choose an action to execute when a TOTP decryption has been done with success.
 class _TotpKeyDialog extends StatelessWidget {
+  /// Contains all decrypted TOTPs.
+  final List<DecryptedTotp> decryptedTotps;
+
+  /// Creates a new TOTP key dialog instance.
+  const _TotpKeyDialog({
+    this.decryptedTotps = const [],
+  });
+
   @override
   Widget build(BuildContext context) => AlertDialog(
         title: Text(translations.totp.totpKeyDialog.title),
@@ -516,12 +562,19 @@ class _TotpKeyDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              translations.totp.totpKeyDialog.message,
+              translations.totp.totpKeyDialog.message(n: decryptedTotps.length),
             ),
+            if (decryptedTotps.length > 1)
+              ListTile(
+                leading: const Icon(Icons.done_all),
+                onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeAllTotpsKey),
+                title: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.title),
+                subtitle: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.subtitle),
+              ),
             ListTile(
               leading: const Icon(Icons.key),
               onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeTotpKey),
-              title: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.title),
+              title: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.title(n: decryptedTotps.length)),
               subtitle: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.subtitle),
             ),
             ListTile(
@@ -551,6 +604,9 @@ class _TotpKeyDialog extends StatelessWidget {
 enum _TotpKeyDialogResult {
   /// Allows to change the TOTP key.
   changeTotpKey,
+
+  /// Allows to change all TOTPs key (the current one and those that have been decrypted additionally).
+  changeAllTotpsKey,
 
   /// Allows to change the current master password.
   changeMasterPassword;

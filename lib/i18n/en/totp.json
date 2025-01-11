@@ -27,11 +27,21 @@
   },
   "totpKeyDialog": {
     "title": "Decrypted with success",
-    "message": "Do you want to change your master password or to encrypt this TOTP with your current encryption key ?",
+    "message": {
+      "one": "Do you want to change your master password or to encrypt this TOTP with your current encryption key ?",
+      "other": "This TOTP has been decrypted with success, and the password has successfully decrypted more TOTPs. What do you want to do ?"
+    },
     "choices": {
+      "changeAllDecryptedTotpsKey": {
+        "title": "Encrypt TOTPs with your current key",
+        "subtitle": "Change this TOTP encryption key as well as those that have been decrypted, and use yours instead."
+      },
       "changeTotpKey": {
-        "title": "Encrypt this TOTP with your current key",
-        "subtitle": "Change this TOTP encryption key, and use yours instead."
+        "title": {
+          "one": "Encrypt this TOTP with your current key",
+          "other": "Encrypt only this TOTP with your current key"
+        },
+        "subtitle": "Change this TOTP encryption key, and use yours instead. The other decrypted TOTPs will be usable as long as you leave the app opened."
       },
       "changeMasterPassword": {
         "title": "Change your current master password",

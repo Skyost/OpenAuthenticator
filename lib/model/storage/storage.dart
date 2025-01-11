@@ -218,8 +218,11 @@ mixin Storage {
   /// Stores the given [totps].
   Future<void> addTotps(List<Totp> totps);
 
-  /// Updates the TOTP associated with the specified [uuid].
-  Future<void> updateTotp(String uuid, Totp totp);
+  /// Updates the [totp].
+  Future<void> updateTotp(Totp totp);
+
+  /// Updates all [totps].
+  Future<void> updateTotps(List<Totp> totps);
 
   /// Deletes the TOTP associated to the given [uuid].
   Future<void> deleteTotp(String uuid);
