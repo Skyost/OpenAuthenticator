@@ -1,5 +1,10 @@
 # 📰 Open Authenticator Changelog
 
+## v1.1.1
+Released on Jan 13, 2025.
+
+* **FIX** : Better handling of HTTPS links in the app settings. ([#78c5cf3](https://github.com/Skyost/OpenAuthenticator/commit/78c5cf3))
+
 ## v1.1.0
 Released on Jan 11, 2025.
 
