@@ -82,6 +82,9 @@ class App {
 
   /// The Github repository URL.
   static const String githubRepositoryUrl = 'https://github.com/Skyost/OpenAuthenticator';
+
+  /// The app translation URL.
+  static const String appTranslationUrl = 'https://openauthenticator.app/translate/';
 }
 
 /// The stores identifiers.
