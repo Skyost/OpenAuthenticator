@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/settings/cache_totp_pictures.dart';
-import 'package:open_authenticator/pages/settings/entries/bool_entry.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 
 /// Allows to configure [cacheTotpPicturesSettingsEntryProvider].
 class CacheTotpPicturesSettingsEntryWidget extends BoolSettingsEntryWidget<CacheTotpPicturesSettingsEntry> {

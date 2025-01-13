@@ -13,5 +13,6 @@
       "text": "Mot de passe de la sauvegarde",
       "hint": "Entrez le mot de passe de la sauvegarde"
     }
-  }
+  },
+  "urlCopiedToClipboard": "URL copié dans le presse-papier !"
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/pages/settings/entries/uri_settings_entry.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 
 /// Takes the user to the app translation page.
 class TranslateSettingsEntryWidget extends UriSettingsEntry {

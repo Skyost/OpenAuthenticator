@@ -10,7 +10,7 @@ import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
-import 'package:open_authenticator/pages/settings/entries/bool_entry.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 
 /// Allows the user to choose its storage type.

@@ -4,7 +4,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
-import 'package:open_authenticator/pages/settings/entries/bool_entry.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/result.dart';
 
 /// Allows to configure [saveDerivedKeySettingsEntryProvider].

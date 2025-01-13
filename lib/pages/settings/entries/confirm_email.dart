@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
@@ -21,10 +20,6 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
 
   @override
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
-    FirebaseAuthenticationState state = ref.watch(firebaseAuthenticationProvider);
-    if (state is! FirebaseAuthenticationStateLoggedOut) {
-      return const SizedBox.shrink();
-    }
     EmailLinkAuthenticationProvider authenticationProvider = ref.watch(emailLinkAuthenticationProvider);
     return FutureBuilder(
       future: authenticationProvider.readEmailToConfirmFromPreferences(),
@@ -61,6 +56,9 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
       },
     );
   }
+
+  @override
+  bool isAuthenticationStateValid(FirebaseAuthenticationState authenticationState) => authenticationState is FirebaseAuthenticationStateLoggedOut;
 
   /// Tries to cancel the confirmation.
   Future<void> _tryCancelConfirmation(BuildContext context, WidgetRef ref) async {

@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
+import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/pages/settings/entries/about.dart';
 import 'package:open_authenticator/pages/settings/entries/backup_now.dart';
 import 'package:open_authenticator/pages/settings/entries/cache_totp_pictures.dart';
@@ -24,7 +26,6 @@ import 'package:open_authenticator/pages/settings/entries/save_derived_key.dart'
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/pages/settings/entries/theme.dart';
 import 'package:open_authenticator/pages/settings/entries/translate.dart';
-import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/platform.dart';
 
 /// Allows to configure the app.
@@ -115,77 +116,20 @@ class _SynchronizationSectionTitle extends ConsumerWidget with RequiresAuthentic
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) => _SettingsPageSectionTitle(title: translations.settings.synchronization.title);
 }
 
-/// A list tile that is written in red.
-class DangerZoneListTile extends ConsumerStatefulWidget {
-  /// The title.
-  final String? title;
-
-  /// The subtitle.
-  final String? subtitle;
-
-  /// The icon.
-  final IconData? icon;
-
-  /// Whether the tile is enabled.
-  final bool enabled;
-
-  /// Triggered when tapped on.
-  final VoidCallback? onTap;
-
-  /// Creates a new danger zone list tile instance.
-  const DangerZoneListTile({
-    super.key,
-    this.title,
-    this.subtitle,
-    this.icon,
-    this.enabled = true,
-    this.onTap,
-  });
-
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _DangerZoneListTileState();
-}
-
-/// The danger zone list state.
-class _DangerZoneListTileState extends ConsumerState<DangerZoneListTile> with BrightnessListener {
-  @override
-  Widget build(BuildContext context) {
-    Color? textColor;
-    if (widget.enabled) {
-      textColor = currentBrightness == Brightness.light ? Colors.red.shade900 : Colors.red.shade400;
-    }
-    return ListTile(
-      leading: widget.icon == null
-          ? null
-          : Icon(
-              widget.icon,
-              color: textColor,
-            ),
-      title: widget.title == null
-          ? null
-          : Text(
-              widget.title!,
-              style: TextStyle(color: textColor),
-            ),
-      subtitle: widget.subtitle == null
-          ? null
-          : Text(
-              widget.subtitle!,
-              style: TextStyle(color: textColor),
-            ),
-      enabled: widget.enabled,
-      onTap: widget.enabled ? widget.onTap : null,
-    );
-  }
-}
-
 /// A widget that needs some authentication providers.
 mixin RequiresAuthenticationProvider on ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool hasProvider = ref.watch(userAuthenticationProviders.select((providers) => providers.availableProviders.isNotEmpty));
-    return hasProvider ? buildWidgetWithAuthenticationProviders(context, ref) : SizedBox.shrink();
+    if (!hasProvider) {
+      return SizedBox.shrink();
+    }
+    FirebaseAuthenticationState authenticationState = ref.watch(firebaseAuthenticationProvider);
+    return isAuthenticationStateValid(authenticationState) ? buildWidgetWithAuthenticationProviders(context, ref) : SizedBox.shrink();
   }
+
+  /// Whether this settings entry requires a specific state to be displayed.
+  bool isAuthenticationStateValid(FirebaseAuthenticationState authenticationState) => true;
 
   /// Builds the widget when authentication providers are available.
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref);

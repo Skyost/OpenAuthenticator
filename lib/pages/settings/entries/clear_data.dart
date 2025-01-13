@@ -13,7 +13,7 @@ import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
 import 'package:open_authenticator/model/storage/local.dart';
 import 'package:open_authenticator/model/totp/image_cache.dart';
-import 'package:open_authenticator/pages/settings/page.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';

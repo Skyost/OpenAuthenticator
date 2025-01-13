@@ -13,5 +13,6 @@
       "text": "Backup password",
       "hint": "Enter the backup password"
     }
-  }
+  },
+  "urlCopiedToClipboard": "URL copied to clipboard !"
 }

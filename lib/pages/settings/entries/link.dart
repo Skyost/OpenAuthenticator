@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
@@ -17,10 +16,6 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget with RequiresAuthent
 
   @override
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
-    FirebaseAuthenticationState state = ref.watch(firebaseAuthenticationProvider);
-    if (state is! FirebaseAuthenticationStateLoggedIn) {
-      return const SizedBox.shrink();
-    }
     List<FirebaseAuthenticationProvider> providers = ref.watch(userAuthenticationProviders.select((providers) => providers.loggedInProviders));
     return ListTile(
       leading: const Icon(Icons.link),
@@ -56,4 +51,7 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget with RequiresAuthent
       onTap: () => AccountUtils.tryToggleLink(context, ref),
     );
   }
+
+  @override
+  bool isAuthenticationStateValid(FirebaseAuthenticationState authenticationState) => authenticationState is FirebaseAuthenticationStateLoggedIn;
 }

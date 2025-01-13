@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/storage/type.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/account.dart';
 
@@ -17,10 +17,6 @@ class DeleteAccountSettingsEntryWidget extends ConsumerWidget with RequiresAuthe
 
   @override
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
-    FirebaseAuthenticationState state = ref.watch(firebaseAuthenticationProvider);
-    if (state is! FirebaseAuthenticationStateLoggedIn) {
-      return const SizedBox.shrink();
-    }
     AsyncValue<StorageType> storageType = ref.watch(storageTypeSettingsEntryProvider);
     bool enabled = storageType is AsyncData<StorageType> && storageType.value != StorageType.online;
     return DangerZoneListTile(
@@ -31,4 +27,8 @@ class DeleteAccountSettingsEntryWidget extends ConsumerWidget with RequiresAuthe
       onTap: () => AccountUtils.tryDeleteAccount(context, ref),
     );
   }
+
+
+  @override
+  bool isAuthenticationStateValid(FirebaseAuthenticationState authenticationState) => authenticationState is FirebaseAuthenticationStateLoggedIn;
 }
