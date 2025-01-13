@@ -11,4 +11,4 @@ PRODUCT_NAME = Open Authenticator
 PRODUCT_BUNDLE_IDENTIFIER = app.openauthenticator
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2024 Skyost. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 Skyost. All rights reserved.

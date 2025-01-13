@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "open_authenticator" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "open_authenticator" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 Skyost. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 Skyost. All rights reserved." "\0"
             VALUE "OriginalFilename", "open_authenticator.exe" "\0"
             VALUE "ProductName", "Open Authenticator" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
