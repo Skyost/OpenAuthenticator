@@ -138,14 +138,18 @@
         "title": "Delete backup",
         "message": "Do you want to delete this backup ?"
       },
-      "exportBackupDialog": {
+      "shareBackupDialog": {
         "subject": "Export backup",
-        "text": "Export the backup to save it or to share it."
+        "text": "Share the backup."
       },
+      "importBackupDialogTitle": "Import a backup",
+      "exportBackupDialogTitle": "Export a backup",
       "button": {
+        "import": "Import a backup",
+        "restore": "Restore",
+        "share": "Share",
         "export": "Export",
-        "delete": "Delete",
-        "restore": "Restore"
+        "delete": "Delete"
       }
     }
   },

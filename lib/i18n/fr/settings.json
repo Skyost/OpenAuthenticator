@@ -138,14 +138,18 @@
         "title": "Supprimer la sauvegarde",
         "message": "Voulez-vous vraiment supprimer cette sauvegarde ?"
       },
-      "exportBackupDialog": {
-        "subject": "Exporter la sauvegarde",
-        "text": "Exporter la sauvegarde pour l'enregistrer ou la partager."
+      "shareBackupDialog": {
+        "subject": "Partager la sauvegarde",
+        "text": "Partager la sauvegarde."
       },
+      "importBackupDialogTitle": "Importer une sauvegarde",
+      "exportBackupDialogTitle": "Exporter une sauvegarde",
       "button": {
+        "import": "Importer une sauvegarde",
+        "restore": "Restaurer",
+        "share": "share",
         "export": "Exporter",
-        "delete": "Supprimer",
-        "restore": "Restaurer"
+        "delete": "Supprimer"
       }
     }
   },

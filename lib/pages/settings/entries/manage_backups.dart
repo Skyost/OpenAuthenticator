@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +13,7 @@ import 'package:open_authenticator/widgets/centered_circular_progress_indicator.
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/list/expand_list_tile.dart';
+import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -28,7 +32,7 @@ class ManageBackupSettingsEntryWidget extends ConsumerWidget {
       leading: const Icon(Icons.access_time),
       title: Text(translations.settings.backups.manageBackups.title),
       subtitle: Text(translations.settings.backups.manageBackups.subtitle(n: backupCount)),
-      enabled: backups.hasValue && backupCount > 0,
+      enabled: backups.hasValue,
       onTap: () {
         showDialog(
           context: context,
@@ -66,6 +70,16 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
             key: listKey,
             shrinkWrap: true,
             children: [
+              if (value.isEmpty)
+                ListTilePadding(
+                  top: 20,
+                  bottom: 20,
+                  child: Text(
+                    translations.settings.backups.manageBackups.subtitle(n: 0),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontStyle: FontStyle.italic),
+                  ),
+                ),
               for (Backup backup in value)
                 ExpandListTile(
                   title: Text(
@@ -94,6 +108,10 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
       ),
       actions: [
         TextButton(
+          onPressed: importBackup,
+          child: Text(translations.settings.backups.manageBackups.button.import),
+        ),
+        TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(MaterialLocalizations.of(context).closeButtonLabel),
         ),
@@ -111,9 +129,15 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
         ),
         ListTile(
           dense: true,
+          onTap: () => shareBackup(backup),
+          title: Text(translations.settings.backups.manageBackups.button.share),
+          leading: const Icon(Icons.share),
+        ),
+        ListTile(
+          dense: true,
           onTap: () => exportBackup(backup),
           title: Text(translations.settings.backups.manageBackups.button.export),
-          leading: const Icon(Icons.share),
+          leading: const Icon(Icons.import_export),
         ),
         ListTile(
           dense: true,
@@ -122,6 +146,40 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
           leading: const Icon(Icons.delete),
         ),
       ];
+
+  /// Allows to import a backup.
+  Future<void> importBackup() async {
+    Result result = ResultCancelled();
+    try {
+      FilePickerResult? filePickerResult = await showWaitingOverlay(
+        context,
+        future: (() async {
+          Directory directory = await BackupStore.getBackupsDirectory(create: true);
+          return FilePicker.platform.pickFiles(
+            dialogTitle: translations.settings.backups.manageBackups.importBackupDialogTitle,
+            initialDirectory: directory.path,
+            type: FileType.custom,
+            allowedExtensions: ['bak'],
+            lockParentWindow: true,
+          );
+        })(),
+      );
+      String? backupFilePath = filePickerResult?.files.firstOrNull?.path;
+      if (backupFilePath == null || !mounted) {
+        return;
+      }
+      result = await showWaitingOverlay(
+        context,
+        future: ref.read(backupStoreProvider.notifier).import(File(backupFilePath)),
+      );
+    } catch (ex, stacktrace) {
+      result = ResultError(exception: ex, stacktrace: stacktrace);
+    } finally {
+      if (mounted) {
+        context.showSnackBarForResult(result);
+      }
+    }
+  }
 
   /// Asks the user for the given [backup] restoring.
   Future<void> restoreBackup(Backup backup) async {
@@ -144,8 +202,8 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
     }
   }
 
-  /// Asks the user for the given [backup] export.
-  Future<void> exportBackup(Backup backup) async {
+  /// Asks the user for the given [backup] share.
+  Future<void> shareBackup(Backup backup) async {
     RenderBox? box = listKey.currentContext?.findRenderObject() as RenderBox?;
     File file = await backup.getBackupPath();
     await Share.shareXFiles(
@@ -155,10 +213,43 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
           mimeType: 'application/json',
         ),
       ],
-      subject: translations.settings.backups.manageBackups.exportBackupDialog.subject,
-      text: translations.settings.backups.manageBackups.exportBackupDialog.text,
+      subject: translations.settings.backups.manageBackups.shareBackupDialog.subject,
+      text: translations.settings.backups.manageBackups.shareBackupDialog.text,
       sharePositionOrigin: box == null ? Rect.zero : (box.localToGlobal(Offset.zero) & box.size),
     );
+  }
+
+  /// Asks the user for the given [backup] export.
+  Future<void> exportBackup(Backup backup) async {
+    Result result = ResultCancelled();
+    try {
+      String? outputFilePath = await showWaitingOverlay(
+        context,
+        future: (() async {
+          Directory directory = await BackupStore.getBackupsDirectory(create: true);
+          return FilePicker.platform.saveFile(
+            dialogTitle: translations.settings.backups.manageBackups.exportBackupDialogTitle,
+            initialDirectory: directory.path,
+            fileName: backup.filename,
+            bytes: Uint8List(0),
+            allowedExtensions: ['.bak'],
+            lockParentWindow: true,
+          );
+        })(),
+      );
+      if (outputFilePath == null) {
+        return;
+      }
+      File backupFile = await backup.getBackupPath();
+      backupFile.copySync(outputFilePath);
+      result = ResultSuccess();
+    } catch (ex, stacktrace) {
+      result = ResultError(exception: ex, stacktrace: stacktrace);
+    } finally {
+      if (mounted) {
+        context.showSnackBarForResult(result);
+      }
+    }
   }
 
   /// Asks the user for the given [backup] deletion.
@@ -174,17 +265,6 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
     Result deleteResult = await backup.delete();
     if (mounted) {
       context.showSnackBarForResult(deleteResult);
-      if (deleteResult is ResultSuccess) {
-        await closeIfNoRemainingBackup();
-      }
-    }
-  }
-
-  /// Closes this dialog if there is no remaining backup.
-  Future<void> closeIfNoRemainingBackup() async {
-    List<Backup> backups = await ref.read(backupStoreProvider.future);
-    if (backups.isEmpty && mounted) {
-      Navigator.pop(context);
     }
   }
 }

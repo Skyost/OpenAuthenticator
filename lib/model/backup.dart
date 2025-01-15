@@ -20,8 +20,22 @@ final backupStoreProvider = AsyncNotifierProvider<BackupStore, List<Backup>>(Bac
 
 /// Contains all backups.
 class BackupStore extends AsyncNotifier<List<Backup>> {
+  /// The backup filename regex.
+  static const String _kBackupFilenameRegex = r'\d{10}\.bak';
+
   @override
   FutureOr<List<Backup>> build() => _listBackups();
+
+  /// Imports the [backupFile].
+  Future<Result<Backup>> import(File backupFile) async {
+    if (!Backup.isValidBackup(backupFile)) {
+      return ResultError(exception: _InvalidBackupContentException());
+    }
+    DateTime? dateTime = _fromBackupFilename(backupFile);
+    Backup backup = Backup._(ref: ref, dateTime: dateTime ?? DateTime.now());
+    state = AsyncData([...(await future), backup]..sort());
+    return ResultSuccess(value: backup);
+  }
 
   /// Do a backup with the given password.
   Future<Result<Backup>> doBackup(String password) async {
@@ -37,23 +51,32 @@ class BackupStore extends AsyncNotifier<List<Backup>> {
   /// Lists available backups.
   Future<List<Backup>> _listBackups() async {
     List<Backup> result = [];
-    Directory directory = await _getBackupsDirectory();
+    Directory directory = await getBackupsDirectory();
     if (!directory.existsSync()) {
       return result;
     }
-    RegExp backupRegex = RegExp(r'\d{10}\.bak');
     for (FileSystemEntity entity in directory.listSync(followLinks: false)) {
-      String name = entity.uri.pathSegments.last;
-      if (backupRegex.hasMatch(name)) {
-        DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(name.substring(0, name.length - '.bak'.length)));
+      DateTime? dateTime = _fromBackupFilename(entity);
+      if (dateTime != null) {
         result.add(Backup._(ref: ref, dateTime: dateTime));
       }
     }
-    return result..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    return result..sort();
+  }
+
+  /// Constructs a [DateTime] from a [file], if possible.
+  DateTime? _fromBackupFilename(FileSystemEntity file) {
+    RegExp backupRegex = RegExp(_kBackupFilenameRegex);
+    String filename = file.uri.pathSegments.last;
+    if (backupRegex.hasMatch(filename)) {
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(filename.substring(0, filename.length - '.bak'.length)));
+      return dateTime;
+    }
+    return null;
   }
 
   /// Returns the backup directory.
-  static Future<Directory> _getBackupsDirectory({bool create = false}) async {
+  static Future<Directory> getBackupsDirectory({bool create = false}) async {
     String name = '${App.appName} Backups${kDebugMode ? ' (Debug)' : ''}';
     Directory directory = Directory(join((await getApplicationDocumentsDirectory()).path, name));
     if (create && !directory.existsSync()) {
@@ -86,6 +109,15 @@ class Backup implements Comparable<Backup> {
     required this.dateTime,
   }) : _ref = ref;
 
+  /// Returns whether the given [file] is a valid backup file.
+  static bool isValidBackup(File file) {
+    if (!file.existsSync()) {
+      return false;
+    }
+    Map<String, dynamic> jsonData = jsonDecode(file.readAsStringSync());
+    return jsonData[kTotpsKey] is List && jsonData[kSaltKey] is String && jsonData[kPasswordSignatureKey] is String;
+  }
+
   /// Restore this backup.
   Future<Result> restore(String password) async {
     try {
@@ -94,11 +126,11 @@ class Backup implements Comparable<Backup> {
         throw _BackupFileDoesNotExistException(path: file.path);
       }
 
-      Map<String, dynamic> jsonData = jsonDecode(file.readAsStringSync());
-      if (jsonData[kTotpsKey] is! List || jsonData[kSaltKey] is! String || jsonData[kPasswordSignatureKey] is! String) {
+      if (!isValidBackup(file)) {
         throw _InvalidBackupContentException();
       }
 
+      Map<String, dynamic> jsonData = jsonDecode(file.readAsStringSync());
       CryptoStore cryptoStore = await CryptoStore.fromPassword(password, Salt.fromRawValue(value: base64.decode(jsonData[kSaltKey])));
       HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(await cryptoStore.key.exportRawKey(), Hash.sha256);
       if (!(await hmacSecretKey.verifyBytes(base64.decode(jsonData[kPasswordSignatureKey]), utf8.encode(password)))) {
@@ -180,10 +212,13 @@ class Backup implements Comparable<Backup> {
     }
   }
 
+  /// Returns the backup filename.
+  String get filename => '${dateTime.millisecondsSinceEpoch}.bak';
+
   /// Returns the backup path (TOTPs and salt).
   Future<File> getBackupPath({bool createDirectory = false}) async {
-    Directory directory = await BackupStore._getBackupsDirectory(create: createDirectory);
-    return File(join(directory.path, '${dateTime.millisecondsSinceEpoch}.bak'));
+    Directory directory = await BackupStore.getBackupsDirectory(create: createDirectory);
+    return File(join(directory.path, filename));
   }
 
   @override
