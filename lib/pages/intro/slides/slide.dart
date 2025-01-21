@@ -119,8 +119,8 @@ class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerP
         textAlign: TextAlign.center,
         child: Center(
           child: ListView(
-            padding: const EdgeInsets.only(
-              top: 80,
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).size.width <= 768 ? 40 : 20,
               right: 20,
               left: 20,
               bottom: 20,
