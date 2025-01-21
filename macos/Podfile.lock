@@ -1402,10 +1402,10 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (8.4.1):
+  - purchases_flutter (8.4.2):
     - FlutterMacOS
-    - PurchasesHybridCommon (= 13.15.1)
-  - PurchasesHybridCommon (13.15.1):
+    - PurchasesHybridCommon (= 13.15.2)
+  - PurchasesHybridCommon (13.15.2):
     - RevenueCat (= 5.14.5)
   - rate_my_app (2.3.0):
     - Flutter
@@ -1421,21 +1421,21 @@ PODS:
   - simple_secure_storage_darwin (0.0.1):
     - Flutter
     - FlutterMacOS
-  - sqlite3 (3.47.2):
-    - sqlite3/common (= 3.47.2)
-  - sqlite3/common (3.47.2)
-  - sqlite3/dbstatvtab (3.47.2):
+  - sqlite3 (3.48.0):
+    - sqlite3/common (= 3.48.0)
+  - sqlite3/common (3.48.0)
+  - sqlite3/dbstatvtab (3.48.0):
     - sqlite3/common
-  - sqlite3/fts5 (3.47.2):
+  - sqlite3/fts5 (3.48.0):
     - sqlite3/common
-  - sqlite3/perf-threadsafe (3.47.2):
+  - sqlite3/perf-threadsafe (3.48.0):
     - sqlite3/common
-  - sqlite3/rtree (3.47.2):
+  - sqlite3/rtree (3.48.0):
     - sqlite3/common
   - sqlite3_flutter_libs (0.0.1):
     - Flutter
     - FlutterMacOS
-    - sqlite3 (~> 3.47.2)
+    - sqlite3 (~> 3.48.0)
     - sqlite3/dbstatvtab
     - sqlite3/fts5
     - sqlite3/perf-threadsafe
@@ -1592,16 +1592,16 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: 772953221259b85cb193bf8c2ff3af5afd2dc889
-  PurchasesHybridCommon: 734baecf69d858f811ccd01488a9cf6c1e1c4f6b
+  purchases_flutter: 64a065c9a66abd8b7f557caca036d715a19c40f4
+  PurchasesHybridCommon: 8af6bb6d85b794dc47ccef1b536ed0e677c789ea
   rate_my_app: 79b255442c34c58affc733ccf39bb37fb74a198f
   RevenueCat: 4c0e809f7c7428cbe8d79cbb9a0dc7551e71e74e
   screen_retriever_macos: 776e0fa5d42c6163d2bf772d22478df4b302b161
   share_plus: 1fa619de8392a4398bfaf176d441853922614e89
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   simple_secure_storage_darwin: a0ae551f37462248ee6693eac8c9be1f12a16899
-  sqlite3: 7559e33dae4c78538df563795af3a86fc887ee71
-  sqlite3_flutter_libs: 58ae36c0dd086395d066b4fe4de9cdca83e717b3
+  sqlite3: 3da10a59910c809fb584a93aa46a3f05b785e12e
+  sqlite3_flutter_libs: 5f386339eccc9516a12ab10e4aa925cbef5f2dcf
   url_launcher_macos: c82c93949963e55b228a30115bd219499a6fe404
   wakelock_plus: 4783562c9a43d209c458cb9b30692134af456269
   webcrypto: f44963fa2d88f93deea971a9f59f2e21c2301689
