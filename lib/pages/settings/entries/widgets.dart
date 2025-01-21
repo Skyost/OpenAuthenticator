@@ -123,7 +123,7 @@ class UriSettingsEntry extends StatelessWidget {
 
   /// Creates the list tile widget.
   Widget createListTile(BuildContext context, bool? canLaunchUri) => ListTile(
-        leading: const Icon(Icons.translate),
+        leading: Icon(icon),
         title: Text(title),
         subtitle: subtitle == null ? null : Text(subtitle!),
         onTap: canLaunchUri == null
