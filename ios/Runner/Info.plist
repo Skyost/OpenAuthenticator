@@ -100,5 +100,9 @@
 	</array>
 	<key>FlutterDeepLinkingEnabled</key>
     <false/>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>We need access to your media library to find a backup there.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to find a backup there.</string>
 </dict>
 </plist>
