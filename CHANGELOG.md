@@ -1,5 +1,13 @@
 # 📰 Open Authenticator Changelog
 
+## v1.1.2
+Released on Jan 21, 2025.
+
+* **REFACTOR** : Put all settings entry widgets at the same place and copying URLs if they can't be opened. ([#f1d51c6](https://github.com/Skyost/OpenAuthenticator/commit/f1d51c6))
+* **FEAT** : Improved backup manager. ([#6f0e559](https://github.com/Skyost/OpenAuthenticator/commit/6f0e559))
+* **FIX** : Fixed some icons display in the settings page. ([#38de554](https://github.com/Skyost/OpenAuthenticator/commit/38de554))
+* **CHORE** : Updated top padding on intro page. ([#3404fbd](https://github.com/Skyost/OpenAuthenticator/commit/3404fbd))
+
 ## v1.1.1
 Released on Jan 13, 2025.
 
