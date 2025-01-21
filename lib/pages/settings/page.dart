@@ -23,6 +23,7 @@ import 'package:open_authenticator/pages/settings/entries/log_in.dart';
 import 'package:open_authenticator/pages/settings/entries/manage_backups.dart';
 import 'package:open_authenticator/pages/settings/entries/refresh_id_token.dart';
 import 'package:open_authenticator/pages/settings/entries/save_derived_key.dart';
+import 'package:open_authenticator/pages/settings/entries/show_intro_page.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/pages/settings/entries/theme.dart';
 import 'package:open_authenticator/pages/settings/entries/translate.dart';
@@ -78,6 +79,7 @@ class SettingsPage extends ConsumerWidget {
               const ClearDataSettingsEntryWidget(),
               if (kDebugMode) ...[
                 const _SettingsPageSectionTitle(title: 'Debug'),
+                const ShowIntroPageSettingsEntryWidget(),
                 const ContributorPlanStateEntryWidget(),
                 const LocaleEntryWidget(),
                 const RefreshUserSettingsEntryWidget(),
