@@ -1,5 +1,11 @@
 # 📰 Open Authenticator Changelog
 
+## v1.1.3
+Released on Jan 21, 2025.
+
+* **FIX** : Fixed a problem with permissions on iOS. ([#6f330ab](https://github.com/Skyost/OpenAuthenticator/commit/6f330ab))
+* **FIX** : Fixed various problems with backups. ([#68e16bd](https://github.com/Skyost/OpenAuthenticator/commit/68e16bd))
+
 ## v1.1.2
 Released on Jan 21, 2025.
 
