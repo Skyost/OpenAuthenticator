@@ -232,7 +232,8 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
             initialDirectory: directory.path,
             fileName: backup.filename,
             bytes: Uint8List(0),
-            allowedExtensions: ['.bak'],
+            type: FileType.custom,
+            allowedExtensions: ['bak'],
             lockParentWindow: true,
           );
         })(),
