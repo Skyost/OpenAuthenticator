@@ -206,7 +206,7 @@ class RevenueCatRestClient extends RevenueCatClient {
   }
 
   @override
-  Future<String> getManagementUrl() => Future.value(AppContributorPlan.stripeCustomerPortalLink);
+  Future<String> getManagementUrl(String entitlementId) => Future.value(AppContributorPlan.stripeCustomerPortalLink);
 
   /// Contains all common request headers.
   Map<String, String> get _revenueCatHeaders => {

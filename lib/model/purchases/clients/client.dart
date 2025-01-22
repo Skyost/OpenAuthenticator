@@ -85,7 +85,7 @@ abstract class RevenueCatClient {
   Future<Result> restorePurchases();
 
   /// Returns the user management URL.
-  Future<String?> getManagementUrl();
+  Future<String?> getManagementUrl(String entitlementId);
 
   /// Invalidates the user info.
   Future<void> invalidateUserInfo() => Future.value();

@@ -1,3 +1,4 @@
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
@@ -81,9 +82,15 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
   }
 
   @override
-  Future<String?> getManagementUrl() async {
+  Future<String?> getManagementUrl(String entitlementId) async {
     CustomerInfo customerInfo = await Purchases.getCustomerInfo();
-    return customerInfo.managementURL;
+    EntitlementInfo? entitlement = customerInfo.entitlements.active[entitlementId];
+    switch (entitlement?.store) {
+      case Store.stripe:
+        return AppContributorPlan.stripeCustomerPortalLink;
+      default:
+        return customerInfo.managementURL;
+    }
   }
 
   @override
