@@ -147,7 +147,7 @@
       "button": {
         "import": "Importer une sauvegarde",
         "restore": "Restaurer",
-        "share": "share",
+        "share": "Partager",
         "export": "Exporter",
         "delete": "Supprimer"
       }
