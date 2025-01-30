@@ -1,0 +1,21 @@
+{
+  "confirmDialog": {
+    "title": "Confirmation",
+    "message": {
+      "enable": "Voulez-vous vraiment synchroniser vos TOTPs ? Ils seront disponibles sur tous les appareils reliés à votre compte.",
+      "disable": "Voulez-vous vraiment arrêter de synchroniser vos TOTPs ? Tous les changements effectués sur cette instance de l'application ne seront plus synchronisés avec les autres appareils."
+    }
+  },
+  "deletedTotpPolicyPickerDialog": {
+    "title": "Migrer les TOTPs",
+    "message": "Certains TOTPs ont été supprimés sur votre appareil, mais pas sur le stockage distant. Que voulez-vous faire ?",
+    "delete": {
+      "title": "Les supprimer",
+      "subtitle": "Supprimer les TOTPs conflictuels. Cette action est irréversible."
+    },
+    "restore": {
+      "title": "Les garder",
+      "subtitle": "Annule la suppression et garde tous vos TOTPs."
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "autoDialog": {
+    "title": "Limite de TOTPs",
+    "message": "Vous synchronisez actuellement vos TOTPs et avez une limite de $count TOTPs avant de devoir souscrire à l'Abonnement Contributeur. Donc, ou bien vous les stockez localement (cela veut dire plus de synchronisation), ou bien vous pouvez souscrire à l'Abonnement Contributeur.",
+    "actions": {
+      "subscribe": "Souscrire",
+      "stopSynchronization": "Stopper la synchronisation"
+    }
+  },
+  "addDialog": {
+    "title": "Limite de TOTPs",
+    "message": "Vous synchronisez actuellement vos TOTPs et avez une limite de $count TOTPs avant de devoir souscrire à l'Abonnement Contributeur. Donc vous devez, ou bien les stocker localement (cela veut dire plus de synchronisation), ou souscrire à l'Abonnement Contributeur pour ajouter un nouveau TOTP.",
+    "actions": {
+      "subscribe": "Souscrire",
+      "stopSynchronization": "Stopper la synchronisation",
+      "cancel": "Annuler"
+    }
+  }
+}

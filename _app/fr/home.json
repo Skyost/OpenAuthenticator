@@ -1,0 +1,15 @@
+{
+  "empty": "Pas de TOTP pour le moment.\nEssayez d'en ajouter un !",
+  "refreshButton": "Rafraîchir",
+  "addDialog": {
+    "title": "Ajouter un TOTP",
+    "qrCode": {
+      "title": "Ajouter avec un QR code",
+      "subtitle": "Scanner le QR code d'un TOTP et ajoutez le automatiquement à l'application !"
+    },
+    "manually": {
+      "title": "Ajouter manuellement",
+      "subtitle": "Entrer manuellement les détails du TOTP (ex. secret, étiquette, émetteur, ...)."
+    }
+  }
+}
