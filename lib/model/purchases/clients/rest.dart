@@ -236,7 +236,7 @@ class _InvalidResponseCodeException implements Exception {
   final int code;
 
   /// Creates a new invalid response code exception instance.
-  _InvalidResponseCodeException({
+  const _InvalidResponseCodeException({
     required this.code,
   });
 

@@ -9,9 +9,13 @@
     "successNeedConfirmation": "Succès ! Vous recevrez un email de confirmation bientôt. Veuillez cliquer sur le lien qui se trouve à l'intérieur avec cet appareil pour poursuivre la connexion.",
     "success": "Connecté avec succès !"
   },
-  "unlinkConfirmationDialog": {
-    "title": "Supprimer la liaison au fournisseur",
-    "message": "Voulez-vous vraiment supprimer la liaison e votre compte à ce fournisseur d'authentification ?"
+  "link": {
+    "linkSuccess": "Fournisseur lié avec succès.",
+    "unlinkSuccess": "Fournisseur délié avec succès.",
+    "unlinkConfirmationDialog": {
+      "title": "Supprimer la liaison au fournisseur",
+      "message": "Voulez-vous vraiment supprimer la liaison e votre compte à ce fournisseur d'authentification ?"
+    }
   },
   "deleteConfirmationDialog": {
     "title": "Supprimer votre compte",

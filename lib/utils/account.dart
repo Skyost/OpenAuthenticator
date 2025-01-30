@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
+import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/model/storage/online.dart';
@@ -40,8 +41,8 @@ class AccountUtils {
     if (unlink &&
         !(await ConfirmationDialog.ask(
           context,
-          title: translations.authentication.unlinkConfirmationDialog.title,
-          message: translations.authentication.unlinkConfirmationDialog.message,
+          title: translations.authentication.link.unlinkConfirmationDialog.title,
+          message: translations.authentication.link.unlinkConfirmationDialog.message,
         ))) {
       return;
     }
@@ -52,6 +53,7 @@ class AccountUtils {
       context,
       ref,
       provider,
+      defaultSuccessMessage: unlink ? translations.authentication.link.unlinkSuccess : translations.authentication.link.linkSuccess,
       waitingDialogMessage: unlink ? null : translations.authentication.logIn.waitingLoginMessage,
       action: unlink ? ((context, provider) => provider.unlink(context)) : ((context, provider) => provider.link(context)),
       timeoutMessage: unlink ? translations.error.timeout.unlink : translations.error.timeout.authentication,
@@ -127,6 +129,7 @@ class AccountUtils {
     WidgetRef ref,
     T provider, {
     required Future<Result<AuthenticationObject>> Function(BuildContext, T) action,
+    String? defaultSuccessMessage,
     String? waitingDialogMessage,
     String? timeoutMessage,
     bool handleResult = true,
@@ -148,6 +151,7 @@ class AccountUtils {
         context,
         ref,
         result,
+        defaultSuccessMessage: defaultSuccessMessage,
         handleDifferentCredentialError: true,
       );
     }
@@ -159,15 +163,23 @@ class AccountUtils {
     BuildContext context,
     WidgetRef ref,
     Result<AuthenticationObject> result, {
+    String? defaultSuccessMessage,
     bool handleDifferentCredentialError = false,
   }) async {
     switch (result) {
       case ResultSuccess(:final value):
-        context.showSnackBarForResult(
-          result,
-          retryIfError: true,
-          successMessage: value.needValidation ? translations.authentication.logIn.successNeedConfirmation : translations.authentication.logIn.success,
-        );
+        if (value is EmailLinkAuthenticationObject && value.needValidation) {
+          ref.read(emailLinkConfirmationStateProvider.notifier).markNeedsConfirmation(value.email);
+          context.showSnackBarForResult(
+            result,
+            successMessage: translations.authentication.logIn.successNeedConfirmation,
+          );
+        } else {
+          context.showSnackBarForResult(
+            result,
+            successMessage: defaultSuccessMessage ?? translations.authentication.logIn.success,
+          );
+        }
         break;
       case ResultCancelled(:final timedOut):
         if (timedOut) {

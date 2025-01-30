@@ -231,7 +231,7 @@ class _BackupFileDoesNotExistException implements Exception {
   final String path;
 
   /// Creates a new backup file doesn't exist exception instance.
-  _BackupFileDoesNotExistException({
+  const _BackupFileDoesNotExistException({
     required this.path,
   });
 
@@ -257,7 +257,7 @@ class _EncryptionError implements Exception {
   final String operationName;
 
   /// Creates a new encryption error instance.
-  _EncryptionError({
+  const _EncryptionError({
     required this.operationName,
   });
 

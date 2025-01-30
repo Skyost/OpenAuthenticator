@@ -112,7 +112,7 @@ sealed class StorageMigrationException implements Exception {
   final String code;
 
   /// Creates a new storage migration exception instance.
-  StorageMigrationException({
+  const StorageMigrationException({
     required this.code,
   });
 }

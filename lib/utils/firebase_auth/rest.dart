@@ -61,11 +61,11 @@ class FirebaseAuthRest extends FirebaseAuth {
   @override
   Future<SignInResult> signInWith(FirebaseAuthMethod method) async {
     SignInResult result = await super.signInWith(method);
-    if (result.idToken == null || result.refreshToken == null || result.expiresIn == null) {
+    if (result.localId == null || result.idToken == null || result.email == null || result.refreshToken == null || result.expiresIn == null) {
       throw Exception('Invalid sign-in result.');
     }
     _currentUser?.dispose();
-    _currentUser = await RestUser.fromSignInResult(result);
+    _currentUser = await RestUser._fromSignInResult(result);
     _currentUser?.addListener(_onUserChanged);
     _onUserChanged();
     return result;
@@ -207,7 +207,7 @@ class RestUser extends User with ChangeNotifier {
         _idToken = idToken;
 
   /// Creates a new REST user instance from a Sign-in result.
-  static Future<RestUser?> fromSignInResult(SignInResult signInResult) async {
+  static Future<RestUser?> _fromSignInResult(SignInResult signInResult) async {
     RestUser user = RestUser._(
       uid: signInResult.localId!,
       email: signInResult.email!,

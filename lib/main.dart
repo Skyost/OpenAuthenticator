@@ -301,14 +301,11 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     String? mode = link.queryParameters['mode'];
     switch (mode) {
       case 'signIn':
-        EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider);
-        if (!(await emailAuthenticationProvider.isWaitingForConfirmation())) {
+        AsyncValue<String?> emailToConfirm = ref.watch(emailLinkConfirmationStateProvider);
+        if (emailToConfirm.valueOrNull == null || !mounted) {
           return;
         }
-        if (!mounted) {
-          return;
-        }
-        Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, link.toString());
+        Result<AuthenticationObject> result = await ref.read(emailLinkConfirmationStateProvider.notifier).confirm(context, link.toString());
         if (mounted) {
           AccountUtils.handleAuthenticationResult(context, ref, result);
         }

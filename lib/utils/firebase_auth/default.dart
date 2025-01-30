@@ -149,9 +149,7 @@ class AppleAuthMethodDefault extends AppleAuthMethod with _ProviderAuthMethod {
   @override
   firebase_auth.AppleAuthProvider _createAuthProvider() {
     firebase_auth.AppleAuthProvider appleProvider = firebase_auth.AppleAuthProvider();
-    for (String scope in scopes) {
-      appleProvider.addScope(scope);
-    }
+    scopes.forEach(appleProvider.addScope);
     appleProvider.addScope('email');
     appleProvider.setCustomParameters(customParameters);
     return appleProvider;
@@ -214,9 +212,7 @@ class GithubAuthMethodDefault extends GithubAuthMethod with _ProviderAuthMethod 
   @override
   firebase_auth.GithubAuthProvider _createAuthProvider() {
     firebase_auth.GithubAuthProvider githubAuthProvider = firebase_auth.GithubAuthProvider();
-    for (String scope in scopes) {
-      githubAuthProvider.addScope(scope);
-    }
+    scopes.forEach(githubAuthProvider.addScope);
     githubAuthProvider.setCustomParameters(customParameters);
     return githubAuthProvider;
   }
@@ -239,9 +235,7 @@ class GoogleAuthMethodDefault extends GoogleAuthMethod with _ProviderAuthMethod 
   @override
   firebase_auth.GoogleAuthProvider _createAuthProvider() {
     firebase_auth.GoogleAuthProvider googleAuthProvider = firebase_auth.GoogleAuthProvider();
-    for (String scope in scopes) {
-      googleAuthProvider.addScope(scope);
-    }
+    scopes.forEach(googleAuthProvider.addScope);
     googleAuthProvider.setCustomParameters(customParameters);
     return googleAuthProvider;
   }
@@ -264,9 +258,7 @@ class MicrosoftAuthMethodDefault extends MicrosoftAuthMethod with _ProviderAuthM
   @override
   firebase_auth.MicrosoftAuthProvider _createAuthProvider() {
     firebase_auth.MicrosoftAuthProvider microsoftAuthProvider = firebase_auth.MicrosoftAuthProvider();
-    for (String scope in scopes) {
-      microsoftAuthProvider.addScope(scope);
-    }
+    scopes.forEach(microsoftAuthProvider.addScope);
     microsoftAuthProvider.setCustomParameters(customParameters);
     return microsoftAuthProvider;
   }

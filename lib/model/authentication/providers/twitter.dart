@@ -9,12 +9,9 @@ import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 import 'package:open_authenticator/utils/validation/sign_in/twitter.dart';
 
-/// The Twitter authentication provider.
-final twitterAuthenticationProvider = Provider<TwitterAuthenticationProvider>((ref) => TwitterAuthenticationProvider());
-
-/// The Twitter authentication provider.
-final twitterAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationProviderNotifier, FirebaseAuthenticationState>(
-  () => FirebaseAuthenticationProviderNotifier(twitterAuthenticationProvider),
+/// The Twitter authentication state provider.
+final twitterAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState>(
+  () => FirebaseAuthenticationStateNotifier(TwitterAuthenticationProvider()),
 );
 
 /// The provider that allows to sign-in using Twitter.

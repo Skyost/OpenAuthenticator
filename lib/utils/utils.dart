@@ -31,6 +31,9 @@ void handleException(Object? ex, StackTrace? stacktrace) {
   }
 }
 
+/// Returns whether the given type [S] is a subtype of type [T].
+bool isSubtype<S, T>() => <S>[] is List<T>;
+
 /// Generates a random string.
 String generateRandomString([int length = 20]) {
   String chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';

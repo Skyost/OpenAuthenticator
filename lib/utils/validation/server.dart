@@ -216,7 +216,7 @@ class ValidationException implements Exception {
   final String code;
 
   /// Creates a new validation exception instance.
-  ValidationException({
+  const ValidationException({
     this.code = kErrorGeneric,
   });
 

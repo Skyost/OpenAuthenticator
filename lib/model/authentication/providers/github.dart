@@ -8,12 +8,9 @@ import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/validation/sign_in/github.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 
-/// The Github authentication provider.
-final githubAuthenticationProvider = Provider<GithubAuthenticationProvider>((ref) => GithubAuthenticationProvider());
-
-/// The Github authentication provider.
-final githubAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationProviderNotifier, FirebaseAuthenticationState>(
-  () => FirebaseAuthenticationProviderNotifier(githubAuthenticationProvider),
+/// The Github authentication state provider.
+final githubAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState>(
+  () => FirebaseAuthenticationStateNotifier(GithubAuthenticationProvider()),
 );
 
 /// The provider that allows to sign-in using Github.

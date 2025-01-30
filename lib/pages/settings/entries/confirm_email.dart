@@ -20,39 +20,34 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
 
   @override
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
-    EmailLinkAuthenticationProvider authenticationProvider = ref.watch(emailLinkAuthenticationProvider);
-    return FutureBuilder(
-      future: authenticationProvider.readEmailToConfirmFromPreferences(),
-      builder: (context, snapshot) {
-        if (snapshot.data == null) {
-          return const SizedBox.shrink();
-        }
-        return ListTile(
-          leading: const Icon(Icons.email),
-          title: Text(translations.settings.synchronization.confirmEmail.title),
-          subtitle: Text.rich(
-            translations.settings.synchronization.confirmEmail.subtitle(
-              email: TextSpan(
-                text: snapshot.data,
-                style: const TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
+    AsyncValue<String?> emailToConfirm = ref.watch(emailLinkConfirmationStateProvider);
+    if (emailToConfirm.valueOrNull == null) {
+      return const SizedBox.shrink();
+    }
+    return ListTile(
+      leading: const Icon(Icons.email),
+      title: Text(translations.settings.synchronization.confirmEmail.title),
+      subtitle: Text.rich(
+        translations.settings.synchronization.confirmEmail.subtitle(
+          email: TextSpan(
+            text: emailToConfirm.value,
+            style: const TextStyle(fontStyle: FontStyle.italic),
           ),
-          onTap: () async {
-            _ConfirmAction? confirmAction = await _ConfirmActionPickerDialog.openDialog(context);
-            if (confirmAction == null || !context.mounted) {
-              return;
-            }
-            switch (confirmAction) {
-              case _ConfirmAction.tryConfirm:
-                _tryConfirm(context, ref);
-                break;
-              case _ConfirmAction.cancelConfirmation:
-                _tryCancelConfirmation(context, ref);
-                break;
-            }
-          },
-        );
+        ),
+      ),
+      onTap: () async {
+        _ConfirmAction? confirmAction = await _ConfirmActionPickerDialog.openDialog(context);
+        if (confirmAction == null || !context.mounted) {
+          return;
+        }
+        switch (confirmAction) {
+          case _ConfirmAction.tryConfirm:
+            _tryConfirm(context, ref);
+            break;
+          case _ConfirmAction.cancelConfirmation:
+            _tryCancelConfirmation(context, ref);
+            break;
+        }
       },
     );
   }
@@ -72,7 +67,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     }
     Result result = await showWaitingOverlay(
       context,
-      future: ref.read(emailLinkAuthenticationProvider).cancelConfirmation(),
+      future: ref.read(emailLinkConfirmationStateProvider.notifier).cancelConfirmation(),
     );
     if (context.mounted) {
       context.showSnackBarForResult(result, retryIfError: true);
@@ -90,8 +85,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     if (emailLink == null || !context.mounted) {
       return;
     }
-    EmailLinkAuthenticationProvider emailAuthenticationProvider = ref.read(emailLinkAuthenticationProvider);
-    Result<AuthenticationObject> result = await emailAuthenticationProvider.confirm(context, emailLink);
+    Result<AuthenticationObject> result = await ref.read(emailLinkConfirmationStateProvider.notifier).confirm(context, emailLink);
     if (context.mounted) {
       AccountUtils.handleAuthenticationResult(context, ref, result);
     }

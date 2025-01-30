@@ -2,12 +2,9 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/utils.dart';
-import 'package:rate_my_app/rate_my_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences_linux/shared_preferences_linux.dart';
-// ignore: depend_on_referenced_packages
-import 'package:shared_preferences_platform_interface/types.dart';
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences_windows/shared_preferences_windows.dart';
 

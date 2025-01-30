@@ -13,12 +13,13 @@ import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Contains all the user authentication providers.
 final userAuthenticationProviders = Provider<Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState>>((ref) {
-  List<NotifierProvider<FirebaseAuthenticationProviderNotifier, FirebaseAuthenticationState>> providers = [
+  List<NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState>> providers = [
     emailLinkAuthenticationStateProvider,
     googleAuthenticationStateProvider,
     appleAuthenticationStateProvider,
@@ -27,8 +28,8 @@ final userAuthenticationProviders = Provider<Map<FirebaseAuthenticationProvider,
     githubAuthenticationStateProvider,
   ];
   Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState> result = {};
-  for (NotifierProvider<FirebaseAuthenticationProviderNotifier, FirebaseAuthenticationState> provider in providers) {
-    FirebaseAuthenticationProvider authenticationProvider = ref.watch(ref.read(provider.notifier)._providerOfAuthenticationProvider);
+  for (NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState> provider in providers) {
+    FirebaseAuthenticationProvider authenticationProvider = ref.read(provider.notifier)._authenticationProvider;
     result[authenticationProvider] = ref.watch(provider);
   }
   return result;
@@ -38,41 +39,38 @@ final userAuthenticationProviders = Provider<Map<FirebaseAuthenticationProvider,
 extension AuthenticationProvidersUtils on Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState> {
   /// Contains all authentication providers where the user is logged in.
   List<FirebaseAuthenticationProvider> get loggedInProviders => [
-    for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
-      if (entry.value is FirebaseAuthenticationStateLoggedIn)
-        entry.key,
-  ];
+        for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
+          if (entry.value is FirebaseAuthenticationStateLoggedIn) entry.key,
+      ];
 
   /// Contains all available authentication providers.
   List<FirebaseAuthenticationProvider> get availableProviders => [
-    for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
-      if (entry.key.isAvailable)
-        entry.key,
-  ];
+        for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
+          if (entry.key.isAvailable) entry.key,
+      ];
 }
 
-/// A Firebase authentication provider notifier.
-class FirebaseAuthenticationProviderNotifier<T extends FirebaseAuthenticationProvider> extends Notifier<FirebaseAuthenticationState> {
+/// A Firebase authentication state notifier.
+class FirebaseAuthenticationStateNotifier<T extends FirebaseAuthenticationProvider> extends Notifier<FirebaseAuthenticationState> {
   /// The authentication provider instance.
-  final Provider<T> _providerOfAuthenticationProvider;
+  final T _authenticationProvider;
 
-  /// Creates a new Firebase authentication provider notifier instance.
-  FirebaseAuthenticationProviderNotifier(this._providerOfAuthenticationProvider);
+  /// Creates a new Firebase authentication state notifier instance.
+  FirebaseAuthenticationStateNotifier(this._authenticationProvider);
 
   @override
   FirebaseAuthenticationState build() {
-    T authenticationProvider = ref.watch(_providerOfAuthenticationProvider);
-    StreamSubscription subscription = FirebaseAuth.instance.userChanges.listen((user) => state = _getState(authenticationProvider, user));
+    StreamSubscription subscription = FirebaseAuth.instance.userChanges.listen((user) => state = _getState(user));
     ref.onDispose(subscription.cancel);
-    return _getState(authenticationProvider);
+    return _getState();
   }
 
   /// Returns whether this provider is linked to the user.
-  FirebaseAuthenticationState _getState(T authenticationProvider, [User? user]) {
+  FirebaseAuthenticationState _getState([User? user]) {
     user ??= FirebaseAuth.instance.currentUser;
     if (user != null) {
       for (String provider in user.providers) {
-        if (provider == authenticationProvider.providerId) {
+        if (provider == _authenticationProvider.providerId) {
           return FirebaseAuthenticationStateLoggedIn(user: user);
         }
       }
@@ -136,31 +134,6 @@ abstract class FirebaseAuthenticationProvider {
   bool get isTrusted => true;
 }
 
-/// Allows to confirm a login.
-mixin ConfirmationProvider<T> on FirebaseAuthenticationProvider {
-  /// Returns whether this provider is waiting for confirmation.
-  Future<bool> isWaitingForConfirmation() => Future.value(false);
-
-  /// Confirms the log in, with the given [code], if needed.
-  Future<Result<AuthenticationObject>> confirm(BuildContext context, T? code) async {
-    try {
-      return await tryConfirm(context, code);
-    } catch (ex, stacktrace) {
-      return ResultError(
-        exception: FirebaseAuthenticationException(ex),
-        stacktrace: stacktrace,
-      );
-    }
-  }
-
-  /// Tries to confirm the log in, with the given [code], if needed.
-  @protected
-  Future<Result<AuthenticationObject>> tryConfirm(BuildContext context, T? code);
-
-  /// Cancels the confirmation.
-  Future<Result> cancelConfirmation();
-}
-
 /// Allows to link an account.
 mixin LinkProvider on FirebaseAuthenticationProvider {
   /// Links the current provider.
@@ -196,7 +169,7 @@ mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
   T createFallbackAuthProvider();
 
   /// The fallback provider timeout.
-  Duration? get fallbackTimeout => T is OAuth2SignInServer ? const Duration(minutes: 5) : null;
+  Duration? get fallbackTimeout => isSubtype<T, OAuth2SignInServer>() ? const Duration(minutes: 5) : null;
 
   /// Whether we should use a [T] instead of directly calling `method.signIn`.
   bool get shouldFallback => currentPlatform == Platform.windows || currentPlatform == Platform.linux;
@@ -284,13 +257,9 @@ class AuthenticationObject {
   /// The email.
   final String? email;
 
-  /// Whether the email needs validation.
-  final bool needValidation;
-
   /// Creates a new authentication object instance.
   const AuthenticationObject({
-    required this.email,
-    this.needValidation = false,
+    this.email,
   });
 }
 
@@ -300,7 +269,7 @@ sealed class FirebaseAuthenticationException implements Exception {
   final Object? exception;
 
   /// Creates a new Firebase authentication result error instance.
-  FirebaseAuthenticationException._(this.exception);
+  const FirebaseAuthenticationException._(this.exception);
 
   /// Creates a new error instance from the given [exception].
   factory FirebaseAuthenticationException([Object? exception]) {

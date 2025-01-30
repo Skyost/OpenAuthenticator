@@ -140,7 +140,7 @@ class _InvalidPaywallResult implements Exception {
   final PaywallResult result;
 
   /// Creates a new invalid paywall result instance.
-  _InvalidPaywallResult({
+  const _InvalidPaywallResult({
     required this.result,
   });
 
