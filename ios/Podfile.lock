@@ -1157,7 +1157,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.36):
     - BoringSSL-GRPC/Interface (= 0.0.36)
   - BoringSSL-GRPC/Interface (0.0.36)
-  - cloud_firestore (5.6.1):
+  - cloud_firestore (5.6.2):
     - Firebase/Firestore (= 11.6.0)
     - firebase_core
     - Flutter
@@ -1206,19 +1206,19 @@ PODS:
   - Firebase/Firestore (11.6.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 11.6.0)
-  - firebase_app_check (0.3.2):
+  - firebase_app_check (0.3.2-1):
     - Firebase/CoreOnly (~> 11.6.0)
     - firebase_core
     - FirebaseAppCheck (~> 11.6.0)
     - Flutter
-  - firebase_auth (5.4.0):
+  - firebase_auth (5.4.1):
     - Firebase/Auth (= 11.6.0)
     - firebase_core
     - Flutter
-  - firebase_core (3.10.0):
+  - firebase_core (3.10.1):
     - Firebase/CoreOnly (= 11.6.0)
     - Flutter
-  - firebase_crashlytics (4.3.0):
+  - firebase_crashlytics (4.3.1):
     - Firebase/Crashlytics (= 11.6.0)
     - firebase_core
     - Flutter
@@ -1458,24 +1458,24 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (8.4.2):
+  - purchases_flutter (8.4.4):
     - Flutter
-    - PurchasesHybridCommon (= 13.15.2)
-  - purchases_ui_flutter (8.4.2):
+    - PurchasesHybridCommon (= 13.16.2)
+  - purchases_ui_flutter (8.4.4):
     - Flutter
-    - PurchasesHybridCommonUI (= 13.15.2)
-  - PurchasesHybridCommon (13.15.2):
-    - RevenueCat (= 5.14.5)
-  - PurchasesHybridCommonUI (13.15.2):
-    - PurchasesHybridCommon (= 13.15.2)
-    - RevenueCatUI (= 5.14.5)
+    - PurchasesHybridCommonUI (= 13.16.2)
+  - PurchasesHybridCommon (13.16.2):
+    - RevenueCat (= 5.15.0)
+  - PurchasesHybridCommonUI (13.16.2):
+    - PurchasesHybridCommon (= 13.16.2)
+    - RevenueCatUI (= 5.15.0)
   - rate_my_app (2.3.0):
     - Flutter
     - FlutterMacOS
   - RecaptchaInterop (100.0.0)
-  - RevenueCat (5.14.5)
-  - RevenueCatUI (5.14.5):
-    - RevenueCat (= 5.14.5)
+  - RevenueCat (5.15.0)
+  - RevenueCatUI (5.15.0):
+    - RevenueCat (= 5.15.0)
   - SDWebImage (5.20.0):
     - SDWebImage/Core (= 5.20.0)
   - SDWebImage/Core (5.20.0)
@@ -1636,15 +1636,15 @@ SPEC CHECKSUMS:
   app_links: e7a6750a915a9e161c58d91bc610e8cd1d4d0ad0
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
   BoringSSL-GRPC: ca6a8e5d04812fce8ffd6437810c2d46f925eaeb
-  cloud_firestore: f02547e5b28138821eb44a48e3c5f034ebb5411b
+  cloud_firestore: d1ec4183fa44c06b38ca55d8723abe930468ee0d
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
-  file_picker: 09aa5ec1ab24135ccd7a1621c46c84134bfd6655
+  file_picker: b159e0c068aef54932bb15dc9fd1571818edaf49
   Firebase: 374a441a91ead896215703a674d58cdb3e9d772b
-  firebase_app_check: 28939a1047b5f967efa00a71462a01f76810bbf6
-  firebase_auth: 223c0d5afbd4eba3cd202177ec872436437549ba
-  firebase_core: feb37e79f775c2bd08dd35e02d83678291317e10
-  firebase_crashlytics: 609a5f6f4a2f5af9e40a68182e0c1be3ca2a02f6
+  firebase_app_check: 8c464d23c5487ee93455f680c347585f2c313b9f
+  firebase_auth: 9927cecefe4daaf92b0fbe5d1d283e9329445177
+  firebase_core: e2aa06dbd854d961f8ce46c2e20933bee1bf2d2b
+  firebase_crashlytics: 868f9aa408c704313eebff880c26c1446081679e
   FirebaseAppCheck: 44803909e253d677481e9e16eb719b0f58a7ddc2
   FirebaseAppCheckInterop: 2376d3ec5cb4267facad4fe754ab4f301a5a519b
   FirebaseAuth: 0304982cfe00df8d49bf533bc4becd3de36c7122
@@ -1679,14 +1679,14 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: ba79db4c048e48f2d9f6ce36f8c27175cc4aadd6
-  purchases_ui_flutter: a417a000ce089932e66a19b6865c2f20e6fc0f06
-  PurchasesHybridCommon: 8af6bb6d85b794dc47ccef1b536ed0e677c789ea
-  PurchasesHybridCommonUI: 7166156bfd855d2debcadee45c7087b3238b1129
+  purchases_flutter: 65fd04a8d218300ae57a6163810f35c3b333c2c1
+  purchases_ui_flutter: b2a0e2a518ea9684a9add9c82e1873a4c72ff183
+  PurchasesHybridCommon: 9fbb4c76f20b8e9b74f13b9045c6ed90727f935b
+  PurchasesHybridCommonUI: 9cbd1c8a7077e20726fdf0a61749dad11e9b1451
   rate_my_app: 79b255442c34c58affc733ccf39bb37fb74a198f
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
-  RevenueCat: 4c0e809f7c7428cbe8d79cbb9a0dc7551e71e74e
-  RevenueCatUI: 3a9872584dfb7b50897c3a7d2d40f3e02b0e5ae4
+  RevenueCat: 90e7642834cabc3e04e396117776bfb3f50debbf
+  RevenueCatUI: 8b7f4635f5c1de202b4395eca2b5efc33583c0ce
   SDWebImage: 73c6079366fea25fa4bb9640d5fb58f0893facd8
   share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78

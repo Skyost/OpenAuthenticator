@@ -1157,10 +1157,12 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.36):
     - BoringSSL-GRPC/Interface (= 0.0.36)
   - BoringSSL-GRPC/Interface (0.0.36)
-  - cloud_firestore (5.6.1):
+  - cloud_firestore (5.6.2):
     - Firebase/CoreOnly (~> 11.6.0)
     - Firebase/Firestore (~> 11.6.0)
     - firebase_core
+    - FlutterMacOS
+  - file_picker (0.0.1):
     - FlutterMacOS
   - Firebase/AppCheck (11.6.0):
     - Firebase/CoreOnly
@@ -1176,20 +1178,20 @@ PODS:
   - Firebase/Firestore (11.6.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 11.6.0)
-  - firebase_app_check (0.3.2):
+  - firebase_app_check (0.3.2-1):
     - Firebase/AppCheck (~> 11.6.0)
     - Firebase/CoreOnly (~> 11.6.0)
     - firebase_core
     - FlutterMacOS
-  - firebase_auth (5.4.0):
+  - firebase_auth (5.4.1):
     - Firebase/Auth (~> 11.6.0)
     - Firebase/CoreOnly (~> 11.6.0)
     - firebase_core
     - FlutterMacOS
-  - firebase_core (3.10.0):
+  - firebase_core (3.10.1):
     - Firebase/CoreOnly (~> 11.6.0)
     - FlutterMacOS
-  - firebase_crashlytics (4.3.0):
+  - firebase_crashlytics (4.3.1):
     - Firebase/CoreOnly (~> 11.6.0)
     - Firebase/Crashlytics (~> 11.6.0)
     - firebase_core
@@ -1382,7 +1384,7 @@ PODS:
     - gRPC-Core/Privacy (= 1.65.5)
   - gRPC-Core/Interface (1.65.5)
   - gRPC-Core/Privacy (1.65.5)
-  - GTMSessionFetcher/Core (4.2.0)
+  - GTMSessionFetcher/Core (4.3.0)
   - leveldb-library (1.22.6)
   - local_auth_darwin (0.0.1):
     - Flutter
@@ -1402,15 +1404,15 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - purchases_flutter (8.4.2):
+  - purchases_flutter (8.4.4):
     - FlutterMacOS
-    - PurchasesHybridCommon (= 13.15.2)
-  - PurchasesHybridCommon (13.15.2):
-    - RevenueCat (= 5.14.5)
+    - PurchasesHybridCommon (= 13.16.2)
+  - PurchasesHybridCommon (13.16.2):
+    - RevenueCat (= 5.15.0)
   - rate_my_app (2.3.0):
     - Flutter
     - FlutterMacOS
-  - RevenueCat (5.14.5)
+  - RevenueCat (5.15.0)
   - screen_retriever_macos (0.0.1):
     - FlutterMacOS
   - share_plus (0.0.1):
@@ -1453,6 +1455,7 @@ PODS:
 DEPENDENCIES:
   - app_links (from `Flutter/ephemeral/.symlinks/plugins/app_links/macos`)
   - cloud_firestore (from `Flutter/ephemeral/.symlinks/plugins/cloud_firestore/macos`)
+  - file_picker (from `Flutter/ephemeral/.symlinks/plugins/file_picker/macos`)
   - firebase_app_check (from `Flutter/ephemeral/.symlinks/plugins/firebase_app_check/macos`)
   - firebase_auth (from `Flutter/ephemeral/.symlinks/plugins/firebase_auth/macos`)
   - firebase_core (from `Flutter/ephemeral/.symlinks/plugins/firebase_core/macos`)
@@ -1512,6 +1515,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/app_links/macos
   cloud_firestore:
     :path: Flutter/ephemeral/.symlinks/plugins/cloud_firestore/macos
+  file_picker:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_picker/macos
   firebase_app_check:
     :path: Flutter/ephemeral/.symlinks/plugins/firebase_app_check/macos
   firebase_auth:
@@ -1558,12 +1563,13 @@ SPEC CHECKSUMS:
   app_links: 10e0a0ab602ffaf34d142cd4862f29d34b303b2a
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
   BoringSSL-GRPC: ca6a8e5d04812fce8ffd6437810c2d46f925eaeb
-  cloud_firestore: 2ba70ce389e7fb062109585c6ed689d16d5b7763
+  cloud_firestore: 8e9e38e3939cb234eeb31f78d11a5e7fe0d8d300
+  file_picker: e716a70a9fe5fd9e09ebc922d7541464289443af
   Firebase: 374a441a91ead896215703a674d58cdb3e9d772b
-  firebase_app_check: c5349abdc6777ad40f5f0a842536c6cdbc5ca7b0
-  firebase_auth: 34e903201f1002a3e65e13aebc5cac36b4d84339
-  firebase_core: 6d9bb8b0ea817e8fe0d928177d42275b45fdba6f
-  firebase_crashlytics: 4c480eded64c7329360144f2356d491838e5e18a
+  firebase_app_check: e80bddd82995b3218c4e4c8a071a9fb2c291d4ec
+  firebase_auth: 73c100082ec72d01a3d1f27cb08a689fc1eed855
+  firebase_core: 75e003524565fb5bd80c9960bc5892e8475821cd
+  firebase_crashlytics: 420735806e1509220a2230d4280dc52b78e2f63b
   FirebaseAppCheck: 44803909e253d677481e9e16eb719b0f58a7ddc2
   FirebaseAppCheckInterop: 2376d3ec5cb4267facad4fe754ab4f301a5a519b
   FirebaseAuth: 0304982cfe00df8d49bf533bc4becd3de36c7122
@@ -1583,7 +1589,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   "gRPC-C++": 2fa52b3141e7789a28a737f251e0c45b4cb20a87
   gRPC-Core: a27c294d6149e1c39a7d173527119cfbc3375ce4
-  GTMSessionFetcher: 4cb0aa086996858328a1fca61f9bfe81cfdfdfa9
+  GTMSessionFetcher: 257ead9ba8e15a2d389d79496e02b9cc5dd0c62c
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
   local_auth_darwin: 66e40372f1c29f383a314c738c7446e2f7fdadc3
   mobile_scanner: 07710d6b9b2c220ae899de2d7ecf5d77ffa56333
@@ -1592,10 +1598,10 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  purchases_flutter: 64a065c9a66abd8b7f557caca036d715a19c40f4
-  PurchasesHybridCommon: 8af6bb6d85b794dc47ccef1b536ed0e677c789ea
+  purchases_flutter: 1fb5bb33776cc7f94cdec638ed574e6fcda7acb6
+  PurchasesHybridCommon: 9fbb4c76f20b8e9b74f13b9045c6ed90727f935b
   rate_my_app: 79b255442c34c58affc733ccf39bb37fb74a198f
-  RevenueCat: 4c0e809f7c7428cbe8d79cbb9a0dc7551e71e74e
+  RevenueCat: 90e7642834cabc3e04e396117776bfb3f50debbf
   screen_retriever_macos: 776e0fa5d42c6163d2bf772d22478df4b302b161
   share_plus: 1fa619de8392a4398bfaf176d441853922614e89
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
