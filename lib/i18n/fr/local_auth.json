@@ -12,7 +12,8 @@
     "goToSettingsDescription": "L'authentification par biométrie n'est pas configurée sur votre appareil. Allez dans 'Paramètres > Sécurité' pour activer l'authentification par biométrie."
   },
   "ios": {
-    "lockOut": "'authentification par biométrie est désactivée. Veuillez verrouiller puis déverrouiller votre appareil pour l'activer.",
+    "lockOut": "L'authentification par biométrie est désactivée. Veuillez verrouiller puis déverrouiller votre appareil pour l'activer.",
     "goToSettingsDescription": "L'authentification par biométrie n'est pas configurée sur votre appareil. Veuillez activer Touch ID ou Face ID sur votre téléphone."
-  }
+  },
+  "fallbackMessage": "Une erreur est survenue pendant la vérification de l'authentification locale. Veuillez entrer votre mot de passe maître ci-dessous pour continuer et pour désactiver l'authentification locale."
 }

@@ -63,9 +63,9 @@ class _UnlockChallengeWidgetState extends ConsumerState<UnlockChallengeWidget> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      Align(
+                      Center(
                         child: SizedBox(
-                          width: math.min(MediaQuery.of(context).size.width, 300),
+                          width: math.min(MediaQuery.of(context).size.width - 20, 300),
                           child: FilledButton.icon(
                             onPressed: value == AppLockState.unlockChallengedStarted ? null : tryUnlockIfNeeded,
                             label: Text(translations.appUnlock.widget.button),

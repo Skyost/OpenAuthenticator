@@ -65,7 +65,7 @@ Future<void> main() async {
     }
   }
   await SimpleSecureStorage.initialize(_OpenAuthenticatorSSSInitializationOptions());
-  LocaleSettings.useDeviceLocale();
+  await LocaleSettings.useDeviceLocale();
   runApp(
     ProviderScope(
       child: TranslationProvider(

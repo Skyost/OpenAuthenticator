@@ -11,6 +11,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
+import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -51,10 +52,29 @@ sealed class AppUnlockMethod {
 enum AppLockState {
   /// If the app is locked, waiting for unlock.
   locked,
+
   /// If the app has been unlocked.
   unlocked,
+
   /// If an unlock challenge has started.
   unlockChallengedStarted;
+}
+
+/// Prompts master password for unlock.
+Future<Result<String>> _promptMasterPasswordForUnlock(BuildContext context, Ref ref, String? message) async {
+  String? password = await MasterPasswordInputDialog.prompt(
+    context,
+    message: message,
+  );
+  if (password == null) {
+    return const ResultCancelled();
+  }
+
+  Result<bool> passwordCheckResult = await (await ref.read(passwordVerificationProvider.future)).isPasswordValid(password);
+  if (passwordCheckResult is! ResultSuccess || !(passwordCheckResult as ResultSuccess<bool>).value) {
+    return ResultError();
+  }
+  return ResultSuccess<String>(value: password);
 }
 
 /// Local authentication.
@@ -63,7 +83,17 @@ class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
   Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
     LocalAuthentication auth = LocalAuthentication();
     if (!(await auth.isDeviceSupported())) {
-      return ResultError();
+      if (!context.mounted) {
+        return ResultCancelled();
+      }
+      Result result = await _promptMasterPasswordForUnlock(context, ref, translations.localAuth.fallbackMessage);
+      if (!context.mounted) {
+        return ResultCancelled();
+      }
+      if (result is ResultSuccess) {
+        ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValue(NoneAppUnlockMethod());
+      }
+      return result;
     }
     if (currentPlatform.isDesktop) {
       await windowManager.ensureInitialized();
@@ -126,17 +156,9 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
       return const ResultCancelled();
     }
 
-    String? password = await MasterPasswordInputDialog.prompt(
-      context,
-      message: reason == UnlockReason.openApp ? translations.appUnlock.masterPasswordDialogMessage : null,
-    );
-    if (password == null) {
-      return const ResultCancelled();
-    }
-
-    Result<bool> passwordCheckResult = await (await ref.read(passwordVerificationProvider.future)).isPasswordValid(password);
-    if (passwordCheckResult is! ResultSuccess || !(passwordCheckResult as ResultSuccess<bool>).value) {
-      return ResultError();
+    Result<String> result = await _promptMasterPasswordForUnlock(context, ref, reason == UnlockReason.openApp ? translations.appUnlock.masterPasswordDialogMessage : null);
+    if (result is! ResultSuccess<String>) {
+      return result;
     }
 
     if (reason == UnlockReason.openApp) {
@@ -144,10 +166,10 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod {
       if (salt == null) {
         return ResultError();
       }
-      ref.read(cryptoStoreProvider.notifier).use(await CryptoStore.fromPassword(password, salt));
+      ref.read(cryptoStoreProvider.notifier).use(await CryptoStore.fromPassword(result.value, salt));
     }
 
-    return ResultSuccess(value: password);
+    return ResultSuccess(value: result.value);
   }
 
   @override
