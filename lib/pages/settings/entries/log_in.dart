@@ -22,7 +22,7 @@ class AccountLogInSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
       case FirebaseAuthenticationStateLoggedOut():
         return const _LogInListTile();
       case FirebaseAuthenticationStateLoggedIn(:final user):
-        return _LogOutListTile(email: user.email);
+        return _LogOutListTile(user: user.email ?? user.uid);
     }
   }
 }
@@ -43,12 +43,12 @@ class _LogInListTile extends ConsumerWidget {
 
 /// The logout list tile.
 class _LogOutListTile extends ConsumerWidget {
-  /// The user email.
-  final String? email;
+  /// The user.
+  final String? user;
 
   /// Creates a new logout list tile instance.
   const _LogOutListTile({
-    required this.email,
+    required this.user,
   });
 
   @override
@@ -58,7 +58,7 @@ class _LogOutListTile extends ConsumerWidget {
         subtitle: Text.rich(
           translations.settings.synchronization.accountLogin.logOut.subtitle(
             email: TextSpan(
-              text: email,
+              text: user,
               style: const TextStyle(fontStyle: FontStyle.italic),
             ),
           ),

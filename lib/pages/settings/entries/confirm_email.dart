@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
-import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -51,9 +50,6 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
       },
     );
   }
-
-  @override
-  bool isAuthenticationStateValid(FirebaseAuthenticationState authenticationState) => authenticationState is FirebaseAuthenticationStateLoggedOut;
 
   /// Tries to cancel the confirmation.
   Future<void> _tryCancelConfirmation(BuildContext context, WidgetRef ref) async {

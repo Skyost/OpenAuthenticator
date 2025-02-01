@@ -9,20 +9,26 @@ class FirebaseAuthDefault extends FirebaseAuth {
   /// The current user instance.
   FirebaseAuthUser? _currentUser;
 
+  /// The instance user stream subscription.
+  StreamSubscription<FirebaseAuthUser?>? _userStreamSubscription;
+
+  /// The user changes stream controller.
+  final StreamController<FirebaseAuthUser?> _userChangesStreamController = StreamController<FirebaseAuthUser?>.broadcast();
+
   @override
   void initialize() {
     super.initialize();
     firebase_auth.FirebaseAuth.instance.setLanguageCode(locale);
+    firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+    _currentUser = _createUserFromFirebaseUser(user);
+    _userStreamSubscription = firebase_auth.FirebaseAuth.instance.userChanges().map(_createUserFromFirebaseUser).listen((user) {
+      _currentUser = user;
+      _userChangesStreamController.add(user);
+    });
   }
 
   @override
-  FirebaseAuthUser? get currentUser {
-    firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
-    if (user?.uid != _currentUser?.uid) {
-      _currentUser = _createUserFromFirebaseUser(user);
-    }
-    return _currentUser;
-  }
+  FirebaseAuthUser? get currentUser => _currentUser;
 
   @override
   void onLocaleChange(String newLocale) {
@@ -49,7 +55,15 @@ class FirebaseAuthDefault extends FirebaseAuth {
   Future<void> deleteUser() async => await _currentUser?._firebaseUser.delete();
 
   @override
-  Stream<FirebaseAuthUser?> get userChanges => firebase_auth.FirebaseAuth.instance.userChanges().map(_createUserFromFirebaseUser);
+  Stream<FirebaseAuthUser?> get userChanges => _userChangesStreamController.stream;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _userStreamSubscription?.cancel();
+    _userStreamSubscription = null;
+    _userChangesStreamController.close();
+  }
 
   /// Creates an [FirebaseAuthUser] instance from a Firebase user instance.
   FirebaseAuthUser? _createUserFromFirebaseUser(firebase_auth.User? firebaseUser) {
@@ -72,7 +86,7 @@ class FirebaseAuthUser extends User {
   String get uid => _firebaseUser.uid;
 
   @override
-  String get email => _firebaseUser.email!;
+  String? get email => _firebaseUser.email;
 
   @override
   List<String> get providers => [

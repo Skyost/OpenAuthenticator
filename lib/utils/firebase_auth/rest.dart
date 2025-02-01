@@ -78,20 +78,21 @@ class FirebaseAuthRest extends FirebaseAuth {
     }
     http.Response response = await http.post(
       Uri.https(
-        'securetoken.googleapis.com',
+        'identitytoolkit.googleapis.com',
         '/v1/accounts:update',
         {
           'key': DefaultFirebaseOptions.currentPlatform.apiKey,
         },
       ),
       headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
         FirebaseAuthRest.kLocaleHeader: locale,
       },
-      body: {
+      body: jsonEncode({
         'idToken': _currentUser!._idToken,
         'deleteProvider': [providerId],
       },
-    );
+    ));
     if (response.statusCode != 200) {
       throw Exception(_invalidResponseErrorMessage(response));
     }
@@ -179,7 +180,7 @@ class RestUser extends User with ChangeNotifier {
   String _uid;
 
   /// Matches [User.email].
-  String _email;
+  String? _email;
 
   /// Matches [User.providers].
   List<String> _providers;
@@ -196,7 +197,7 @@ class RestUser extends User with ChangeNotifier {
   /// Creates a new REST user instance.
   RestUser._({
     required String uid,
-    required String email,
+    String? email,
     required List<String> providers,
     required String idToken,
     required this.refreshToken,
@@ -210,7 +211,7 @@ class RestUser extends User with ChangeNotifier {
   static Future<RestUser?> _fromSignInResult(SignInResult signInResult) async {
     RestUser user = RestUser._(
       uid: signInResult.localId!,
-      email: signInResult.email!,
+      email: signInResult.email,
       providers: [],
       idToken: signInResult.idToken!,
       refreshToken: signInResult.refreshToken!,
@@ -237,7 +238,7 @@ class RestUser extends User with ChangeNotifier {
   String get uid => _uid;
 
   @override
-  String get email => _email;
+  String? get email => _email;
 
   @override
   List<String> get providers => _providers;

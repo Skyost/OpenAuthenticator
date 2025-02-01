@@ -14,7 +14,7 @@ final microsoftAuthenticationStateProvider = NotifierProvider<FirebaseAuthentica
 );
 
 /// The provider that allows to sign-in using Microsoft.
-class MicrosoftAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider, FallbackAuthenticationProvider<MicrosoftSignIn> {
+class MicrosoftAuthenticationProvider extends FallbackAuthenticationProvider<MicrosoftSignIn> {
   /// Creates a new Microsoft authentication provider instance.
   const MicrosoftAuthenticationProvider()
       : super(

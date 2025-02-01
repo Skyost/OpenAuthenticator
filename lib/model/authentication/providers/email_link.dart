@@ -107,7 +107,7 @@ final emailLinkAuthenticationStateProvider = NotifierProvider<FirebaseAuthentica
 );
 
 /// The provider that allows to sign-in using an email link.
-class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider {
+class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider {
   /// Creates a new email link authentication provider instance.
   const EmailLinkAuthenticationProvider()
       : super(
@@ -146,7 +146,20 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider {
     if (!context.mounted) {
       return const ResultCancelled();
     }
-    return await _tryAuthenticate(context, user.email);
+    String? email;
+    if (user.email == null) {
+      email = await TextInputDialog.prompt(
+        context,
+        title: translations.authentication.emailDialog.title,
+        message: translations.authentication.emailDialog.message,
+        validator: TextInputDialog.validateEmail,
+        keyboardType: TextInputType.emailAddress,
+      );
+    }
+    if (email == null || !context.mounted) {
+      return const ResultCancelled();
+    }
+    return await _tryAuthenticate(context, email);
   }
 
   /// Tries to authenticate the user with the given [email].
@@ -212,6 +225,9 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider {
 
   @override
   String get providerId => EmailLinkAuthMethod.providerId;
+
+  @override
+  Future<Result<AuthenticationObject>> tryLink(BuildContext context) async => await tryReAuthenticate(context);
 }
 
 /// An email link authentication object.

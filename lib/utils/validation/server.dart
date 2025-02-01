@@ -31,7 +31,7 @@ abstract class AbstractValidationServer<T> {
   });
 
   /// The server URL.
-  String get url => 'http://localhost:$port/$path/';
+  String get url => 'http://localhost:${_server?.port ?? port}/$path/';
 
   /// Starts the validation server.
   Future<void> start() async {

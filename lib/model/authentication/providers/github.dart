@@ -14,7 +14,7 @@ final githubAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticatio
 );
 
 /// The provider that allows to sign-in using Github.
-class GithubAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider, FallbackAuthenticationProvider<GithubSignIn> {
+class GithubAuthenticationProvider extends FallbackAuthenticationProvider<GithubSignIn> {
   /// Creates a new Github authentication provider instance.
   const GithubAuthenticationProvider()
       : super(

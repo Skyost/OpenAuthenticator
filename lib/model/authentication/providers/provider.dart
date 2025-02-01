@@ -164,7 +164,12 @@ mixin LinkProvider on FirebaseAuthenticationProvider {
 }
 
 /// Allows to authenticate using an OAuth2 provider.
-mixin FallbackAuthenticationProvider<T extends OAuth2SignIn> on LinkProvider {
+abstract class FallbackAuthenticationProvider<T extends OAuth2SignIn> extends FirebaseAuthenticationProvider with LinkProvider {
+  /// Creates a new fallback authentication provider instance.
+  const FallbackAuthenticationProvider({
+    required super.availablePlatforms,
+  });
+
   /// Creates the fallback auth provider.
   T createFallbackAuthProvider();
 

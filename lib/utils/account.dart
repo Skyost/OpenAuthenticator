@@ -17,27 +17,27 @@ import 'package:open_authenticator/widgets/waiting_overlay.dart';
 class AccountUtils {
   /// Prompts the user to choose an authentication provider, and use it to login.
   static Future<void> trySignIn(BuildContext context, WidgetRef ref) async {
-    FirebaseAuthenticationProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context);
-    if (provider == null || !context.mounted) {
+    AuthenticationProviderSignIn? action = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.signIn);
+    if (action == null || !context.mounted) {
       return;
     }
     await _tryTo(
       context,
       ref,
-      provider,
+      action.provider,
       waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
-      action: (context, provider) => provider.signIn(context),
+      action: action.action,
       timeoutMessage: translations.error.timeout.authentication,
     );
   }
 
   /// Prompts the user to choose an authentication provider, and use it to link or unlink its current account.
   static Future<void> tryToggleLink(BuildContext context, WidgetRef ref) async {
-    LinkProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.link) as LinkProvider?;
-    if (provider == null || !context.mounted) {
+    AuthenticationProviderToggleLink? action = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.toggleLink);
+    if (action == null || !context.mounted) {
       return;
     }
-    bool unlink = ref.read(userAuthenticationProviders).loggedInProviders.contains(provider);
+    bool unlink = !action.link;
     if (unlink &&
         !(await ConfirmationDialog.ask(
           context,
@@ -52,10 +52,11 @@ class AccountUtils {
     await _tryTo<LinkProvider>(
       context,
       ref,
-      provider,
+      action.provider,
+      showLoadingDialog: unlink ? true : null,
       defaultSuccessMessage: unlink ? translations.authentication.link.unlinkSuccess : translations.authentication.link.linkSuccess,
       waitingDialogMessage: unlink ? null : translations.authentication.logIn.waitingLoginMessage,
-      action: unlink ? ((context, provider) => provider.unlink(context)) : ((context, provider) => provider.link(context)),
+      action: action.action,
       timeoutMessage: unlink ? translations.error.timeout.unlink : translations.error.timeout.authentication,
     );
   }
@@ -77,16 +78,16 @@ class AccountUtils {
       return;
     }
 
-    FirebaseAuthenticationProvider? provider = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.reAuthenticate);
-    if (provider == null || !context.mounted) {
+    AuthenticationProviderReAuthenticate? action = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.reAuthenticate);
+    if (action == null || !context.mounted) {
       return;
     }
     Result<AuthenticationObject> reAuthenticationResult = await _tryTo(
       context,
       ref,
-      provider,
+      action.provider,
       waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
-      action: (context, provider) => provider.reAuthenticate(context),
+      action: action.action,
       timeoutMessage: translations.error.timeout.authentication,
       handleResult: false,
     );
@@ -129,13 +130,14 @@ class AccountUtils {
     WidgetRef ref,
     T provider, {
     required Future<Result<AuthenticationObject>> Function(BuildContext, T) action,
+    bool? showLoadingDialog,
     String? defaultSuccessMessage,
     String? waitingDialogMessage,
     String? timeoutMessage,
     bool handleResult = true,
   }) async {
     Result<AuthenticationObject> result;
-    if (provider.showLoadingDialog) {
+    if (showLoadingDialog ?? provider.showLoadingDialog) {
       result = await showWaitingOverlay(
         context,
         future: action(context, provider),

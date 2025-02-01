@@ -78,7 +78,7 @@ abstract class User {
   String get uid;
 
   /// The user email.
-  String get email;
+  String? get email;
 
   /// The user providers list.
   List<String> get providers;

@@ -144,7 +144,7 @@ mixin OAuth2SignInVerifyFragment on OAuth2SignInServer {
 
   /// The HTML / JS code that allows to verify the fragment.
   String get _verifyFragmentHtml => '''<!DOCTYPE html>
-<html lang="en">
+<html lang="${translations.$meta.locale.languageCode}">
 <head>
   <title>${translations.validation.oauth2.title(name: name)}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
