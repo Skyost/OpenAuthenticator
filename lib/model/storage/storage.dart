@@ -69,21 +69,35 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
         }
       }
 
-      List<Totp> currentTotps = await currentStorage.listTotps();
-      Totp? firstTotp = (await newStorage.listTotps(limit: 1)).firstOrNull;
+      List<Totp> currentStorageTotps = await currentStorage.listTotps();
+      List<Totp> newStorageTotps = await newStorage.listTotps();
       List<Totp> toAdd = [];
-      if (firstTotp == null) {
-        toAdd.addAll(currentTotps);
+      if (newStorageTotps.isEmpty) {
+        toAdd.addAll(currentStorageTotps);
       } else {
         CryptoStore? currentCryptoStore = ref.read(cryptoStoreProvider).value;
-        CryptoStore newCryptoStore = await CryptoStore.fromPassword(masterPassword, firstTotp.encryptedData.encryptionSalt);
-        for (Totp totp in currentTotps) {
-          CryptoStore oldCryptoStore = currentCryptoStore?.salt == totp.encryptedData.encryptionSalt
-              ? currentCryptoStore!
-              : await CryptoStore.fromPassword(
-                  masterPassword,
-                  totp.encryptedData.encryptionSalt,
-                );
+        CryptoStore? newCryptoStore;
+        for (Totp totp in newStorageTotps) {
+          CryptoStore cryptoStore = await CryptoStore.fromPassword(masterPassword, totp.encryptedData.encryptionSalt);
+          if (await totp.encryptedData.canDecryptData(cryptoStore)) {
+            newCryptoStore = cryptoStore;
+            break;
+          }
+        }
+        newCryptoStore ??= await CryptoStore.fromPassword(masterPassword, newStorageTotps.first.encryptedData.encryptionSalt);
+
+        for (Totp totp in currentStorageTotps) {
+          CryptoStore oldCryptoStore;
+          if (currentCryptoStore != null && await totp.encryptedData.canDecryptData(currentCryptoStore)) {
+            oldCryptoStore = currentCryptoStore;
+          } else if (await totp.encryptedData.canDecryptData(newCryptoStore)) {
+            oldCryptoStore = newCryptoStore;
+          } else {
+            oldCryptoStore = await CryptoStore.fromPassword(
+              masterPassword,
+              totp.encryptedData.encryptionSalt,
+            );
+          }
           DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(oldCryptoStore, newCryptoStore);
           toAdd.add(decryptedTotp ?? totp);
         }
