@@ -1,0 +1,13 @@
+{
+  "masterPasswordDialogMessage": "Bitte geben Sie Ihr Master-Passwort ein, um die App zu entsperren.",
+  "widget": {
+    "text": "$app ist gesperrt.",
+    "button": "Freischalten"
+  },
+  "localAuthentication(map)": {
+    "openApp": "Authentifizieren Sie sich, um auf die App zuzugreifen.",
+    "sensibleAction": "Authentifizieren Sie sich, um fortzufahren.",
+    "enable": "Authentifizieren, um die lokale Authentifizierung zu aktivieren.",
+    "disable": "Authentifizieren, um die lokale Authentifizierung zu deaktivieren."
+  }
+}
