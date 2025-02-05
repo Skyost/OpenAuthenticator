@@ -1,0 +1,21 @@
+{
+  "confirmDialog": {
+    "title": "Bestätigung",
+    "message": {
+      "enable": "Möchten Sie Ihre TOTPs wirklich synchronisieren? Sie werden auf all Ihren synchronisierten Geräten verfügbar sein.",
+      "disable": "Möchten Sie wirklich aufhören, Ihre TOTPs zu synchronisieren? Jede Änderung, die auf dieser Instanz der App vorgenommen wird, wird nicht mehr auf den anderen verknüpften Geräten übernommen."
+    }
+  },
+  "deletedTotpPolicyPickerDialog": {
+    "title": "TOTPs migrieren",
+    "message": "Einige TOTPs wurden auf diesem Gerät gelöscht, aber nicht auf dem entfernten Speicher. Was wollen Sie mit ihnen machen?",
+    "delete": {
+      "title": "Sie löschen",
+      "subtitle": "Löschen Sie die widersprüchlichen TOTPs. Dies kann nicht rückgängig gemacht werden."
+    },
+    "restore": {
+      "title": "Sie behalten",
+      "subtitle": "Machen Sie die Löschung rückgängig, und behalten Sie alle TOTPs."
+    }
+  }
+}
