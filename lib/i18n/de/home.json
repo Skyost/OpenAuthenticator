@@ -1,0 +1,15 @@
+{
+  "empty": "Im Moment gibt es keinen TOTP.\nFühlen Sie sich frei, einen hinzuzufügen!",
+  "refreshButton": "Aktualisieren",
+  "addDialog": {
+    "title": "TOTP hinzufügen",
+    "qrCode": {
+      "title": "Hinzufügen mit einem QR-Code",
+      "subtitle": "Scannen Sie einen TOTP QR-Code und fügen Sie ihn automatisch zur App hinzu!"
+    },
+    "manually": {
+      "title": "Manuell hinzufügen",
+      "subtitle": "Geben Sie Ihre TOTP-Details manuell ein (z. B. Schlüssel, Bezeichnung, Aussteller, ...),"
+    }
+  }
+}
