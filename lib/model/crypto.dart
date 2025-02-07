@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hashlib/hashlib.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
+import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
@@ -43,30 +44,38 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
   /// Uses the [cryptoStore] as [state].
   void use(CryptoStore cryptoStore) => state = AsyncData(cryptoStore);
 
-  /// Saves the [cryptoStore] on disk and use it as [state].
-  Future<void> saveAndUse(CryptoStore cryptoStore, {bool checkSettings = true}) async {
-    await _saveOnLocalStorage(cryptoStore, checkSettings: checkSettings);
-    use(cryptoStore);
-  }
-
-  /// Saves the current [state] on disk.
-  Future<bool> saveCurrentOnLocalStorage({bool checkSettings = true}) async {
-    CryptoStore? cryptoStore = await future;
-    if (cryptoStore == null) {
-      return false;
+  /// Changes the current crypto store password, preserving the current salt if possible.
+  Future<CryptoStore> changeCryptoStore(String newPassword, {CryptoStore? newCryptoStore, bool checkSettings = true}) async {
+    Salt? salt = newCryptoStore?.salt;
+    if (salt == null) {
+      CryptoStore? currentCryptoStore = await future;
+      salt = currentCryptoStore?.salt ?? (await Salt.generate());
     }
-    await _saveOnLocalStorage(cryptoStore, checkSettings: checkSettings);
-    return true;
+    if (newCryptoStore == null) {
+      newCryptoStore = await CryptoStore.fromPassword(newPassword, salt);
+    } else {
+      if (!(await newCryptoStore.checkPasswordValidity(newPassword))) {
+        throw Exception('Password mismatch.');
+      }
+    }
+    if (checkSettings) {
+      await salt.saveToLocalStorage();
+      AppUnlockMethod unlockMethod = await ref.read(appUnlockMethodSettingsEntryProvider.future);
+      if (unlockMethod is MasterPasswordAppUnlockMethod) {
+        await ref.read(passwordSignatureVerificationMethodProvider.notifier).enable(newPassword);
+      }
+    } else {
+      _saveOnLocalStorage(newCryptoStore);
+    }
+    use(newCryptoStore);
+    return newCryptoStore;
   }
-
 
   /// Saves the [cryptoStore] on disk.
-  Future<void> _saveOnLocalStorage(CryptoStore cryptoStore, {bool checkSettings = true}) async {
+  Future<CryptoStore> _saveOnLocalStorage(CryptoStore cryptoStore) async {
     await cryptoStore.salt.saveToLocalStorage();
-    if (checkSettings && (await ref.read(appUnlockMethodSettingsEntryProvider.future)) is MasterPasswordAppUnlockMethod) {
-      return;
-    }
     await SimpleSecureStorage.write(_kPasswordDerivedKeyKey, base64.encode(await cryptoStore.key.exportRawKey()));
+    return cryptoStore;
   }
 }
 
@@ -89,13 +98,6 @@ class CryptoStore {
     required this.key,
     required this.salt,
   });
-
-  /// Creates an HMAC secret key corresponding to the [password] with the [salt].
-  static Future<HmacSecretKey> createHmacKey(String password, Salt salt) async {
-    Uint8List derivedKey = await _deriveKey(password, salt);
-    HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(derivedKey, Hash.sha256);
-    return hmacSecretKey;
-  }
 
   /// Creates a [CryptoStoreWithPasswordSignature] from the given [password].
   static Future<CryptoStore> fromPassword(String password, Salt salt) async {
@@ -146,7 +148,7 @@ class CryptoStore {
 
   /// Checks if the given password is valid.
   Future<bool> checkPasswordValidity(String password) async {
-    Uint8List derivedKey =  await _deriveKey(password, salt);
+    Uint8List derivedKey = await _deriveKey(password, salt);
     return memEquals(derivedKey, await key.exportRawKey());
   }
 

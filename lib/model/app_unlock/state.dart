@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
@@ -13,14 +13,17 @@ final appLockStateProvider = AsyncNotifierProvider<AppLockStateNotifier, AppLock
 class AppLockStateNotifier extends AsyncNotifier<AppLockState> {
   @override
   FutureOr<AppLockState> build() async {
-    AppUnlockMethod unlockMethod = await ref.read(appUnlockMethodSettingsEntryProvider.future);
-    return unlockMethod.defaultState;
+    AppUnlockMethod unlockMethod = await ref.watch(appUnlockMethodSettingsEntryProvider.future);
+    return state.valueOrNull ?? unlockMethod.defaultAppLockState;
   }
 
   /// Tries to unlock the app.
-  Future<Result> unlock(BuildContext context, {UnlockReason unlockReason = UnlockReason.openApp}) async {
+  Future<Result> unlock(BuildContext context) async {
+    if ((await future) == AppLockState.unlockChallengedStarted || !context.mounted) {
+      return ResultCancelled();
+    }
     state = AsyncData(AppLockState.unlockChallengedStarted);
-    Result result = await ref.read(appUnlockMethodSettingsEntryProvider.notifier).unlockWithCurrentMethod(context, unlockReason);
+    Result result = await ref.read(appUnlockMethodSettingsEntryProvider.notifier).unlockWithCurrentMethod(context, UnlockReason.openApp);
     state = AsyncData(result is ResultSuccess ? AppLockState.unlocked : AppLockState.locked);
     return result;
   }

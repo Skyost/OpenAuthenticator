@@ -14,6 +14,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_links.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
+import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
@@ -102,6 +103,39 @@ class OpenAuthenticatorApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<bool> showIntro = ref.watch(showIntroSettingsEntryProvider);
     AsyncValue<ThemeMode> theme = ref.watch(themeSettingsEntryProvider);
+    Locale locale = TranslationProvider.of(context).flutterLocale;
+    return switch (showIntro) {
+      AsyncData(:bool value) => _createMaterialApp(
+          showIntroState: 'data',
+          theme: theme,
+          locale: locale,
+          initialRoute: value ? IntroPage.name : HomePage.name,
+        ),
+      AsyncError(:final error) => _createMaterialApp(
+          showIntroState: 'error',
+          theme: theme,
+          locale: locale,
+          home: Center(
+            child: Text('Error : $error.'),
+          ),
+        ),
+      _ => _createMaterialApp(
+          showIntroState: 'loading',
+          theme: theme,
+          locale: locale,
+          home: const CenteredCircularProgressIndicator(),
+        ),
+    };
+  }
+
+  /// Creates a [MaterialApp] widget.
+  Widget _createMaterialApp({
+    required String showIntroState,
+    required AsyncValue<ThemeMode> theme,
+    required Locale locale,
+    String? initialRoute,
+    Widget? home,
+  }) {
     ColorScheme light = ColorScheme.fromSeed(
       seedColor: Colors.green,
     );
@@ -109,101 +143,101 @@ class OpenAuthenticatorApp extends ConsumerWidget {
       seedColor: Colors.green,
       brightness: Brightness.dark,
     );
-    return switch (showIntro) {
-      AsyncData(:bool value) => MaterialApp(
-          title: App.appName,
-          locale: TranslationProvider.of(context).flutterLocale,
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: AppLocaleUtils.supportedLocales,
-          themeMode: theme.value,
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            appBarTheme: AppBarTheme(
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarIconBrightness: Brightness.light,
-                systemNavigationBarColor: dark.surface,
-              ),
-              shape: const RoundedRectangleBorder(),
-              surfaceTintColor: Colors.green,
-            ),
-            colorScheme: dark,
-            // iconButtonTheme: IconButtonThemeData(
-            //   style: ButtonStyle(
-            //     foregroundColor: MaterialStatePropertyAll(Colors.green.shade300),
-            //   ),
-            // ),
-            buttonTheme: const ButtonThemeData(
-              alignedDropdown: true,
-            ),
-            floatingActionButtonTheme: FloatingActionButtonThemeData(
-              shape: const CircleBorder(),
-              backgroundColor: Colors.green.shade700,
-              foregroundColor: Colors.green.shade50,
-            ),
+    return MaterialApp(
+      key: ValueKey('materialApp.$showIntroState'),
+      title: App.appName,
+      locale: locale,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      themeMode: theme.value,
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        appBarTheme: AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.light,
+            systemNavigationBarColor: dark.surface,
           ),
-          theme: ThemeData(
-            colorScheme: light,
-            appBarTheme: AppBarTheme(
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarIconBrightness: Brightness.dark,
-                systemNavigationBarColor: light.surface,
-              ),
-              shape: const RoundedRectangleBorder(),
-            ),
-            buttonTheme: const ButtonThemeData(
-              alignedDropdown: true,
-            ),
-            floatingActionButtonTheme: FloatingActionButtonThemeData(
-              shape: const CircleBorder(),
-              backgroundColor: Colors.green.shade50,
-              foregroundColor: Colors.green.shade700,
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              disabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.shade400),
-              ),
-            ),
-            dividerTheme: const DividerThemeData(
-              color: Colors.black12,
-            ),
-          ),
-          routes: {
-            IntroPage.name: (_) => _RouteWidget(
-                  child: const IntroPage(),
-                ),
-            HomePage.name: (_) => _RouteWidget(
-                  listen: currentPlatform.isMobile || kDebugMode,
-                  rateMyApp: true,
-                  child: const HomePage(),
-                ),
-            ScanPage.name: (_) => const _RouteWidget(
-                  child: ScanPage(),
-                ),
-            SettingsPage.name: (_) => const _RouteWidget(
-                  child: SettingsPage(),
-                ),
-            TotpPage.name: (context) {
-              Map<String, dynamic>? arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-              return _RouteWidget(
-                child: TotpPage(
-                  totp: arguments?[kRouteParameterTotp],
-                  add: arguments?[kRouteParameterAddTotp],
-                ),
-              );
-            },
-            ContributorPlanFallbackPaywallPage.name: (_) => const _RouteWidget(
-                  child: ContributorPlanFallbackPaywallPage(),
-                ),
-          },
-          initialRoute: value ? IntroPage.name : HomePage.name,
+          shape: const RoundedRectangleBorder(),
+          surfaceTintColor: Colors.green,
         ),
-      AsyncError(:final error) => Text('Error : $error.'),
-      _ => const CenteredCircularProgressIndicator(),
-    };
+        colorScheme: dark,
+        // iconButtonTheme: IconButtonThemeData(
+        //   style: ButtonStyle(
+        //     foregroundColor: MaterialStatePropertyAll(Colors.green.shade300),
+        //   ),
+        // ),
+        buttonTheme: const ButtonThemeData(
+          alignedDropdown: true,
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          shape: const CircleBorder(),
+          backgroundColor: Colors.green.shade700,
+          foregroundColor: Colors.green.shade50,
+        ),
+      ),
+      theme: ThemeData(
+        colorScheme: light,
+        appBarTheme: AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.dark,
+            systemNavigationBarColor: light.surface,
+          ),
+          shape: const RoundedRectangleBorder(),
+        ),
+        buttonTheme: const ButtonThemeData(
+          alignedDropdown: true,
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          shape: const CircleBorder(),
+          backgroundColor: Colors.green.shade50,
+          foregroundColor: Colors.green.shade700,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          disabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey.shade400),
+          ),
+        ),
+        dividerTheme: const DividerThemeData(
+          color: Colors.black12,
+        ),
+      ),
+      routes: home == null
+          ? {
+              IntroPage.name: (_) => _RouteWidget(
+                    child: const IntroPage(),
+                  ),
+              HomePage.name: (_) => _RouteWidget(
+                    listen: true,
+                    rateMyApp: true,
+                    child: const HomePage(),
+                  ),
+              ScanPage.name: (_) => const _RouteWidget(
+                    child: ScanPage(),
+                  ),
+              SettingsPage.name: (_) => const _RouteWidget(
+                    child: SettingsPage(),
+                  ),
+              TotpPage.name: (context) {
+                Map<String, dynamic>? arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+                return _RouteWidget(
+                  child: TotpPage(
+                    totp: arguments?[kRouteParameterTotp],
+                    add: arguments?[kRouteParameterAddTotp],
+                  ),
+                );
+              },
+              ContributorPlanFallbackPaywallPage.name: (_) => const _RouteWidget(
+                    child: ContributorPlanFallbackPaywallPage(),
+                  ),
+            }
+          : {},
+      initialRoute: home == null ? initialRoute : null,
+      home: home,
+    );
   }
 }
 
@@ -212,7 +246,7 @@ class _RouteWidget extends ConsumerStatefulWidget {
   /// The route widget.
   final Widget child;
 
-  /// Listen to [appLinksListenerProvider], [totpLimitProvider] and [appUnlockStateProvider].
+  /// Listen to [appLinksListenerProvider], [totpLimitProvider], [appUnlockStateProvider] and [cryptoStoreProvider].
   final bool listen;
 
   /// Whether to initialize and run RateMyApp.

@@ -11,5 +11,9 @@
       "title": "Ajouter manuellement",
       "subtitle": "Entrer manuellement les détails du TOTP (ex. secret, étiquette, émetteur, ...)."
     }
+  },
+  "noCryptoStore": {
+    "message": "Une erreur est survenue durant la lecture du crypto store. Cela veut dire qu'aucune opération de chiffrement / déchiffrement n'est possible. Veuillez redémarrer l'application ou entrer un nouveau mot de passe maître en utilisant le bouton ci-dessous.",
+    "resetButton": "Réinitialiser le mot de passe maître"
   }
 }

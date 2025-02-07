@@ -43,6 +43,7 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
   Future<void> saveToPreferences(SharedPreferencesWithPrefix preferences, AppUnlockMethod value) async => await preferences.setString(key, value.serialize());
 
   /// Tries to unlock the app with the current method, handling errors.
+  /// Errors may contain a [CannotUnlockException] if unlock has failed for a specific reason.
   Future<Result> unlockWithCurrentMethod(BuildContext context, UnlockReason unlockReason, {bool? allowNone}) async {
     try {
       return _tryUnlockWithCurrentMethod(context, unlockReason, allowNone: allowNone);

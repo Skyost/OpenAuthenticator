@@ -203,7 +203,7 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
 
   /// Changes the master password.
   /// Please consider doing a backup by passing a [backupPassword], and restore it in case of failure.
-  Future<Result> changeMasterPassword(
+  Future<Result<String>> changeMasterPassword(
     String password, {
     String? backupPassword,
     Uint8List? salt,
@@ -213,30 +213,27 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
       TotpList totpList = await future;
       await totpList.waitBeforeNextOperation();
       StoredCryptoStore storedCryptoStore = ref.read(cryptoStoreProvider.notifier);
-      CryptoStore? currentCryptoStore = await storedCryptoStore.future;
-      if (currentCryptoStore == null) {
-        return totpList.isEmpty ? const ResultSuccess() : ResultError();
-      }
-      Storage storage = await ref.read(storageProvider.future);
-      CryptoStore newCryptoStore = await CryptoStore.fromPassword(password, currentCryptoStore.salt);
       if (backupPassword != null) {
         Result<Backup> backupResult = await ref.read(backupStoreProvider.notifier).doBackup(backupPassword);
         if (backupResult is! ResultSuccess) {
           return backupResult.to((value) => null);
         }
       }
-      if (updateTotps) {
+      CryptoStore? currentCryptoStore = await storedCryptoStore.future;
+      if (updateTotps && currentCryptoStore != null) {
+        CryptoStore newCryptoStore = await CryptoStore.fromPassword(password, currentCryptoStore.salt);
+        Storage storage = await ref.read(storageProvider.future);
         List<Totp> newTotps = [];
         for (Totp totp in totpList) {
           DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newCryptoStore);
           newTotps.add(decryptedTotp ?? totp);
         }
         await storage.replaceTotps(newTotps);
-        await storedCryptoStore.saveAndUse(newCryptoStore);
+        await storedCryptoStore.changeCryptoStore(password, newCryptoStore: newCryptoStore);
       } else {
-        await storedCryptoStore.saveAndUse(newCryptoStore);
+        await storedCryptoStore.changeCryptoStore(password);
       }
-      return const ResultSuccess();
+      return ResultSuccess(value: password);
     } catch (ex, stacktrace) {
       return ResultError(
         exception: ex,

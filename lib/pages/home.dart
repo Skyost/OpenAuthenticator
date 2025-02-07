@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,48 +65,58 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
         appBar: AppBar(
           title: const TitleWidget(),
           actions: [
-            Builder(
-              builder: (context) => _SearchButton(
-                onTotpFound: (totp) async {
-                  TotpList totps = await ref.read(totpRepositoryProvider.future);
-                  int index = totps.indexOf(totp);
-                  if (index >= 0) {
-                    itemScrollController.jumpTo(index: index);
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (mounted) {
-                        setState(() => emphasis = totp);
-                      }
-                    });
-                  }
-                  if (!(await ref.read(displayCopyButtonSettingsEntryProvider.future)) && totp.isDecrypted && context.mounted) {
-                    _HomePageBody._copyCode(context, totp as DecryptedTotp);
-                  }
-                },
+            _RequireCryptoStore(
+              child: Builder(
+                builder: (context) => _SearchButton(
+                  onTotpFound: (totp) async {
+                    TotpList totps = await ref.read(totpRepositoryProvider.future);
+                    int index = totps.indexOf(totp);
+                    if (index >= 0) {
+                      itemScrollController.jumpTo(index: index);
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
+                          setState(() => emphasis = totp);
+                        }
+                      });
+                    }
+                    if (!(await ref.read(displayCopyButtonSettingsEntryProvider.future)) && totp.isDecrypted && context.mounted) {
+                      _HomePageBody._copyCode(context, totp as DecryptedTotp);
+                    }
+                  },
+                ),
               ),
             ),
             if (kDebugMode || currentPlatform != Platform.android)
-              IconButton(
-                onPressed: () => _onAddButtonPressed(context),
-                icon: const Icon(Icons.add),
+              _RequireCryptoStore(
+                child: IconButton(
+                  onPressed: () => _onAddButtonPressed(context),
+                  icon: const Icon(Icons.add),
+                ),
               ),
             if (currentPlatform.isDesktop)
-              IconButton(
-                onPressed: () => ref.read(totpRepositoryProvider.notifier).refresh(),
-                icon: const Icon(Icons.sync),
+              _RequireCryptoStore(
+                child: IconButton(
+                  onPressed: () => ref.read(totpRepositoryProvider.notifier).refresh(),
+                  icon: const Icon(Icons.sync),
+                ),
               ),
-            IconButton(
-              onPressed: () => Navigator.pushNamed(context, SettingsPage.name),
-              icon: const Icon(Icons.settings),
+            _RequireCryptoStore(
+              child: IconButton(
+                onPressed: () => Navigator.pushNamed(context, SettingsPage.name),
+                icon: const Icon(Icons.settings),
+              ),
             ),
           ],
         ),
-        floatingActionButton: currentPlatform == Platform.android || kDebugMode
-            ? FloatingActionButton(
-                child: const Icon(
-                  Icons.add,
-                  size: 32,
+        floatingActionButton: (currentPlatform == Platform.android || kDebugMode)
+            ? _RequireCryptoStore(
+                child: FloatingActionButton(
+                  child: const Icon(
+                    Icons.add,
+                    size: 32,
+                  ),
+                  onPressed: () => _onAddButtonPressed(context),
                 ),
-                onPressed: () => _onAddButtonPressed(context),
               )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -136,6 +148,37 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
   }
 }
 
+/// Allows to require a crypto store.
+class _RequireCryptoStore extends ConsumerWidget {
+  /// The child to show if the crypto store is non null.
+  final Widget child;
+
+  /// The child to show if the crypto store is null.
+  final Widget childIfAbsent;
+
+  /// Whether to display the child if the app is locked.
+  final bool showChildIfLocked;
+
+  /// Creates a new require crypto store widget instance.
+  const _RequireCryptoStore({
+    required this.child,
+    this.childIfAbsent = const SizedBox.shrink(),
+    this.showChildIfLocked = true,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (showChildIfLocked) {
+      bool isUnlocked = ref.watch(appLockStateProvider).valueOrNull == AppLockState.unlocked;
+      if (!isUnlocked) {
+        return child;
+      }
+    }
+    CryptoStore? cryptoStore = ref.watch(cryptoStoreProvider).valueOrNull;
+    return cryptoStore == null ? childIfAbsent : child;
+  }
+}
+
 /// The home page body, where all TOTPs are displayed.
 class _HomePageBody extends ConsumerWidget {
   /// The item scroll controller.
@@ -160,7 +203,7 @@ class _HomePageBody extends ConsumerWidget {
     AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
     switch (totps) {
       case AsyncData(:final value):
-        bool isUnlocked = ref.watch(appLockStateProvider).valueOrNull == AppLockState.unlocked;
+        bool isUnlocked = ref.watch(appLockStateProvider.select((state) => state.valueOrNull == AppLockState.unlocked));
         bool displayCopyButton = ref.watch(displayCopyButtonSettingsEntryProvider).valueOrNull ?? true;
         Widget child = value.isEmpty
             ? CustomScrollView(
@@ -206,39 +249,73 @@ class _HomePageBody extends ConsumerWidget {
                 },
                 separatorBuilder: (context, position) => const Divider(),
               );
-        return currentPlatform.isMobile
-            ? RefreshIndicator(
-                onRefresh: ref.read(totpRepositoryProvider.notifier).refresh,
-                child: child,
-              )
-            : child;
+        return _RequireCryptoStore(
+          childIfAbsent: _createErrorWidget(
+            context,
+            ref,
+            message: translations.home.noCryptoStore.message,
+            buttonLabel: translations.home.noCryptoStore.resetButton,
+            buttonIcon: Icons.key,
+            onButtonPressed: () => MasterPasswordUtils.changeMasterPassword(context, ref, askForUnlock: false),
+          ),
+          child: currentPlatform.isMobile
+              ? RefreshIndicator(
+                  onRefresh: ref.read(totpRepositoryProvider.notifier).refresh,
+                  child: child,
+                )
+              : child,
+        );
       case AsyncError(:final error):
         return error is NotLoggedInException
             ? const CenteredCircularProgressIndicator()
-            : Center(
-                child: ListView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(20),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Text(
-                        translations.error.generic.withException(exception: error),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    FilledButton.icon(
-                      onPressed: ref.read(totpRepositoryProvider.notifier).refresh,
-                      label: Text(translations.home.refreshButton),
-                      icon: const Icon(Icons.sync),
-                    ),
-                  ],
-                ),
+            : _createErrorWidget(
+                context,
+                ref,
+                message: translations.error.generic.withException(exception: error),
+                buttonLabel: translations.home.refreshButton,
+                buttonIcon: Icons.sync,
+                onButtonPressed: ref.read(totpRepositoryProvider.notifier).refresh,
               );
       default:
         return const CenteredCircularProgressIndicator();
     }
   }
+
+  /// Creates an error widget.
+  Widget _createErrorWidget(
+    BuildContext context,
+    WidgetRef ref, {
+    String? message,
+    String? buttonLabel,
+    IconData? buttonIcon,
+    VoidCallback? onButtonPressed,
+  }) =>
+      Center(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(20),
+          children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: buttonLabel == null ? 0 : 20),
+              child: Text(
+                message ?? translations.error.generic.noTryAgain,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            if (buttonLabel != null)
+              Center(
+                child: SizedBox(
+                  width: math.min(MediaQuery.of(context).size.width - 20, 300),
+                  child: FilledButton.icon(
+                    onPressed: onButtonPressed,
+                    label: Text(buttonLabel),
+                    icon: buttonIcon == null ? null : Icon(buttonIcon),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
 
   /// Allows to edit the TOTP.
   Future<void> _editTotp(BuildContext context, WidgetRef ref, Totp totp) async {

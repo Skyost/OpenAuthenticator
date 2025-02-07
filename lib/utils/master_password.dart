@@ -14,18 +14,21 @@ import 'package:open_authenticator/widgets/waiting_overlay.dart';
 /// Contains various useful methods about the master password.
 class MasterPasswordUtils {
   /// Prompts the user to change his master password.
-  static Future<Result> changeMasterPassword(
+  static Future<Result<String>> changeMasterPassword(
     BuildContext context,
     WidgetRef ref, {
+    bool askForUnlock = true,
     String? password,
   }) async {
-    AppUnlockMethodSettingsEntry appUnlockerMethodsSettingsEntry = ref.read(appUnlockMethodSettingsEntryProvider.notifier);
-    Result unlockResult = await appUnlockerMethodsSettingsEntry.unlockWithCurrentMethod(context, UnlockReason.sensibleAction);
-    if (unlockResult is! ResultSuccess) {
-      return unlockResult;
-    }
-    if (!context.mounted) {
-      return const ResultCancelled();
+    if (askForUnlock) {
+      AppUnlockMethodSettingsEntry appUnlockerMethodsSettingsEntry = ref.read(appUnlockMethodSettingsEntryProvider.notifier);
+      Result unlockResult = await appUnlockerMethodsSettingsEntry.unlockWithCurrentMethod(context, UnlockReason.sensibleAction);
+      if (unlockResult is! ResultSuccess) {
+        return unlockResult.to((value) => null);
+      }
+      if (!context.mounted) {
+        return const ResultCancelled();
+      }
     }
     _ChangeMasterPasswordDialogResult? result = await showDialog<_ChangeMasterPasswordDialogResult>(
       context: context,
@@ -36,7 +39,7 @@ class MasterPasswordUtils {
     if (result == null || result.newPassword == null || !context.mounted) {
       return const ResultCancelled();
     }
-    Result changeResult = await showWaitingOverlay(
+    Result<String> changeResult = await showWaitingOverlay(
       context,
       future: ref.read(totpRepositoryProvider.notifier).changeMasterPassword(result.newPassword!, backupPassword: result.backupPassword),
     );

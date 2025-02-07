@@ -9,5 +9,15 @@
     "enable": "Authenticate to enable local authentication.",
     "disable":  "Authenticate to disable local authentication."
   },
-  "masterPasswordDialogMessage": "Please enter your master password to unlock the app."
+  "masterPasswordDialogMessage": "Please enter your master password to unlock the app.",
+  "cannotUnlock": {
+    "localAuthentication": {
+      "deviceNotSupported": "Cannot unlock the app because your device is not supported by local authentication. Disable this locking method with the button below.",
+      "button": "Disable"
+    },
+    "masterPassword": {
+      "noPasswordVerificationMethodAvailable": "Cannot unlock the app with your password because the app data integrity has been altered. Please change your master password to continue.\nNote that your TOTPs will still need to be decrypted manually.",
+      "button": "Change master password"
+    }
+  }
 }

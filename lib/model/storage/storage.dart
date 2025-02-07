@@ -101,7 +101,7 @@ class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
           DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(oldCryptoStore, newCryptoStore);
           toAdd.add(decryptedTotp ?? totp);
         }
-        await ref.read(cryptoStoreProvider.notifier).saveAndUse(newCryptoStore);
+        await ref.read(cryptoStoreProvider.notifier).changeCryptoStore(masterPassword, newCryptoStore: newCryptoStore);
       }
 
       await newStorage.addTotps(toAdd);

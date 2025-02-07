@@ -51,7 +51,7 @@ class PasswordIntroPageSlide extends IntroPageSlide {
       return false;
     }
     StoredCryptoStore currentCryptoStore = ref.read(cryptoStoreProvider.notifier);
-    await currentCryptoStore.saveAndUse(await CryptoStore.fromPassword(_password!, await Salt.generate()));
+    await currentCryptoStore.changeCryptoStore(_password!);
     return true;
   }
 }

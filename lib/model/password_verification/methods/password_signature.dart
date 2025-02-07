@@ -28,8 +28,7 @@ class PasswordSignatureVerificationMethodNotifier extends AutoDisposeAsyncNotifi
     if (password == null || salt == null) {
       return false;
     }
-    HmacSecretKey hmacSecretKey = await CryptoStore.createHmacKey(password, salt);
-    String passwordSignature = base64.encode(await hmacSecretKey.signBytes(utf8.encode(password)));
+    String passwordSignature = await _generatePasswordSignature(password, salt);
     await SimpleSecureStorage.write(_kPasswordSignatureKey, passwordSignature);
     state = AsyncData(PasswordSignatureVerificationMethod(passwordSignature: passwordSignature));
     return true;
@@ -40,6 +39,14 @@ class PasswordSignatureVerificationMethodNotifier extends AutoDisposeAsyncNotifi
     await SimpleSecureStorage.delete(_kPasswordSignatureKey);
     state = const AsyncData(PasswordSignatureVerificationMethod(passwordSignature: null));
   }
+
+  /// Generates the [password] signature with the given [salt].
+  Future<String> _generatePasswordSignature(String password, Salt salt) async {
+    CryptoStore cryptoStore = await CryptoStore.fromPassword(password, salt);
+    HmacSecretKey hmacSecretKey = await cryptoStore.createHmacKey();
+    String passwordSignature = base64.encode(await hmacSecretKey.signBytes(utf8.encode(password)));
+    return passwordSignature;
+  }
 }
 
 /// Allows to verify the master password using the saved password signature.
@@ -47,6 +54,7 @@ class PasswordSignatureVerificationMethod with PasswordVerificationMethod {
   /// The password signature.
   final String? passwordSignature;
 
+  /// Creates a new password signature verification method instance.
   const PasswordSignatureVerificationMethod({
     this.passwordSignature,
   });
@@ -63,8 +71,18 @@ class PasswordSignatureVerificationMethod with PasswordVerificationMethod {
     if (salt == null) {
       return false;
     }
+    CryptoStore cryptoStore = await CryptoStore.fromPassword(password, salt);
+    HmacSecretKey hmacSecretKey = await cryptoStore.createHmacKey();
     Uint8List decodedSignature = base64.decode(passwordSignature!);
-    HmacSecretKey hmacSecretKey = await CryptoStore.createHmacKey(password, salt);
     return await hmacSecretKey.verifyBytes(decodedSignature, utf8.encode(password));
+  }
+}
+
+/// Allows to create HMAC keys from the current crypto store.
+extension _HmacKey on CryptoStore {
+  /// Returns the HMAC secret key corresponding to the [key] with the [salt].
+  Future<HmacSecretKey> createHmacKey() async {
+    HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(await key.exportRawKey(), Hash.sha256);
+    return hmacSecretKey;
   }
 }
