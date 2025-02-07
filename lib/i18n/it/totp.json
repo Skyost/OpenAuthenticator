@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "decrypt": "Decritta",
+    "mobileDialog": {
+      "title": "Azioni TOTP",
+      "edit": "Modifica TOTP",
+      "delete": "Elimina TOTP"
+    },
+    "desktopButtons": {
+      "copy": "Copia codice",
+      "edit": "Modifica",
+      "delete": "Elimina"
+    },
+    "copyConfirmation": "Copiato negli appunti.",
+    "editConfirmationDialog": {
+      "title": "Modifica questo TOTP",
+      "message": "Sembra che questo TOTP sia stato crittografato utilizzando una chiave diversa dalla tua attuale. Ciò può accadere se hai cambiato la tua password principale su un altro dispositivo. Se modifichi questo TOTP, verrà crittografato utilizzando la tua chiave attuale. Vuoi continuare?"
+    },
+    "deleteConfirmationDialog": {
+      "title": "Elimina questo TOTP",
+      "message": "Vuoi davvero eliminare questo TOTP?"
+    }
+  },
+  "decryptDialog": {
+    "title": "Decritta TOTP",
+    "message": "Questo TOTP è stato crittografato utilizzando una password principale diversa. Inseriscila qui sotto per decrittarlo."
+  },
+  "totpKeyDialog": {
+    "title": "Decrittato con successo",
+    "message": {
+      "one": "Vuoi cambiare la tua password principale o crittografare questo TOTP con la tua chiave di crittografia attuale?",
+      "other": "Questo TOTP è stato decrittato con successo e la password ha decrittato con successo più TOTP. Cosa vuoi fare?"
+    },
+    "choices": {
+      "changeAllDecryptedTotpsKey": {
+        "title": "Crittografa i TOTP con la tua chiave attuale",
+        "subtitle": "Cambia la chiave di crittografia di questo TOTP e di quelli che sono stati decrittati, e usa la tua al loro posto."
+      },
+      "changeTotpKey": {
+        "title": {
+          "one": "Crittografa questo TOTP con la tua chiave attuale",
+          "other": "Crittografa solo questo TOTP con la tua chiave attuale"
+        },
+        "subtitle": "Cambia la chiave di crittografia di questo TOTP e usa la tua al suo posto. Gli altri TOTP decrittati saranno utilizzabili finché lasci l'app aperta."
+      },
+      "changeMasterPassword": {
+        "title": "Cambia la tua password principale attuale",
+        "subtitle": "Usa la password inserita come nuova password principale e genera una chiave di crittografia da essa.\nTutti gli TOTP ancora crittografati con un'altra password dovranno essere decrittati manualmente."
+      },
+      "doNothing": {
+        "title": "Non fare nulla",
+        "subtitle": "Dovrai reinserire questa password per decrittare questo TOTP."
+      }
+    }
+  },
+  "page": {
+    "title": {
+      "edit": "Modifica TOTP",
+      "add": "Aggiungi un TOTP"
+    },
+    "label": {
+      "text": "Etichetta",
+      "hint": "me@example.com"
+    },
+    "secret": {
+      "text": "Chiave segreta",
+      "hint": "JBSWY3DPEHPK3PXP"
+    },
+    "issuer": {
+      "text": "Emittente",
+      "hint": "example.com"
+    },
+    "algorithm": "Algoritmo",
+    "digits": "Numero di cifre",
+    "validity": "Validità (in secondi)",
+    "advancedOptions": "Opzioni avanzate",
+    "showQrCode": "Mostra codice QR",
+    "save": "Salva",
+    "uriError": "Impossibile leggere questo TOTP. Sei sicuro che sia valido?"
+  }
+}
