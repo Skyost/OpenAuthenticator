@@ -4,20 +4,28 @@
     "message": "Bitte geben Sie Ihre E-Mail-Adresse ein, wir senden Ihnen dann einen Login-Link zu."
   },
   "logIn": {
-    "waitingLoginMessage": "Bitte melden Sie sich in dem geöffneten Fenster an. Schließen Sie die Anwendung nicht.",
-    "waitingConfirmationMessage": "Wir haben Ihnen einen Bestätigungslink per E-Mail geschickt. Bitte klicken Sie darauf, um fortzufahren. Schließen Sie die Anwendung nicht.",
-    "successNeedConfirmation": "Erfolgreich! Sie werden in Kürze eine Bestätigungs-E-Mail erhalten. Bitte klicken Sie auf den Link auf diesem Gerät, um sich anzumelden.",
-    "success": "Erfolgreich eingeloggt!"
+    "waitingLoginMessage": "Bitte melden Sie sich im geöffneten Fenster an. Bitte schließen Sie die Anwendung nicht.",
+    "waitingConfirmationMessage": "Wir haben Ihnen einen Bestätigungslink per E-Mail geschickt. Bitte klicken Sie darauf, um fortzufahren. Bitte schließen Sie die Anwendung nicht.",
+    "successNeedConfirmation": "Erfolgreich! Sie erhalten in Kürze eine Bestätigungs-E-Mail. Bitte klicken Sie auf den Link auf diesem Gerät, um sich anzumelden.",
+    "success": "Erfolgreich angemeldet!"
+  },
+  "link": {
+    "linkSuccess": "Anbieter erfolgreich verknüpft.",
+    "unlinkSuccess": "Anbieter erfolgreich getrennt.",
+    "unlinkConfirmationDialog": {
+      "title": "Anbieter trennen",
+      "message": "Möchten Sie diesen Authentifizierungsanbieter wirklich von Ihrem Konto trennen?"
+    }
   },
   "deleteConfirmationDialog": {
     "title": "Konto löschen",
-    "message": "Möchten Sie Ihr Konto wirklich löschen? Bitte beachten Sie, dass wir Sie bitten, sich erneut zu authentifizieren, bevor Sie fortfahren, da es sich um eine sensible Aktion handelt."
+    "message": "Möchten Sie Ihr Konto wirklich löschen? Bitte beachten Sie, dass wir eine erneute Authentifizierung verlangen, da es sich um eine sensible Aktion handelt."
   },
   "providerPickerDialog": {
     "title": "Wählen Sie eine Anmeldemethode",
     "email": {
       "title": "E-Mail",
-      "subtitle": "Verwenden Sie Ihre E-Mail zur Anmeldung. Es ist kein Passwort erforderlich, ein Bestätigungslink wird Ihnen zugesandt."
+      "subtitle": "Verwenden Sie Ihre E-Mail zur Anmeldung. Es ist kein Passwort erforderlich, ein Bestätigungslink wird Ihnen per E-Mail zugesandt."
     },
     "google": {
       "title": "Google",
@@ -36,8 +44,8 @@
       "subtitle": "Melden Sie sich mit Ihrem X-Konto an."
     },
     "github": {
-      "title": "Github",
-      "subtitle": "Melden Sie sich mit Ihrem Github-Konto an."
+      "title": "GitHub",
+      "subtitle": "Melden Sie sich mit Ihrem GitHub-Konto an."
     }
   }
 }

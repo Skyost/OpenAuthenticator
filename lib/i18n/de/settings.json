@@ -20,11 +20,11 @@
     },
     "cacheTotpPictures": {
       "title": "TOTP-Bilder im Cache",
-      "subtitle": "Stellen Sie sicher, dass Ihre TOTP-Bilder immer verfügbar sind, indem Sie sie auf Ihrem Gerät zwischenspeichern."
+      "subtitle": "Speichern Sie Ihre TOTP-Bilder auf dem Gerät, um deren Verfügbarkeit zu gewährleisten."
     },
     "displayCopyIconButton": {
       "title": "Schaltfläche „Kopieren“ anzeigen",
-      "subtitle": "Wenn diese Option aktiviert ist, wird eine Kopierschaltfläche neben Ihren TOTPs angezeigt. Andernfalls reicht ein einfaches Antippen, um den Code in Ihre Zwischenablage zu kopieren."
+      "subtitle": "Ist diese Option aktiviert, wird neben jedem TOTP ein Kopiersymbol angezeigt. Andernfalls kopiert ein einfaches Tippen den Code in die Zwischenablage."
     },
     "theme": {
       "title": "Thema",
@@ -43,7 +43,7 @@
     },
     "saveDerivedKey": {
       "title": "Verschlüsselungs-/Entschlüsselungscode speichern",
-      "subtitle": "Speichern Sie Ihren Verschlüsselungs-/Entschlüsselungsschlüssel, damit Sie Ihr Master-Passwort nicht jedes Mal neu eingeben müssen, wenn Sie die App öffnen."
+      "subtitle": "Speichern Sie Ihren Schlüssel, um das Master-Passwort nicht jedes Mal beim Öffnen der App eingeben zu müssen."
     },
     "changeMasterPassword": {
       "title": "Master-Kennwort ändern",
@@ -59,7 +59,7 @@
       "title": "Verknüpfung mit anderen Anbietern",
       "subtitle": {
         "text": "Verknüpfen Sie Ihr Konto mit anderen Authentifizierungsanbietern, damit Sie sich mit diesen anmelden können.",
-        "linkedProviders(rich)": "Konto derzeit verknüpft mit: $providers.",
+        "linkedProviders(rich)": "Aktuell verknüpft mit: $providers.",
         "providers(map)": {
           "emailLink": "E-Mail Adresse",
           "password": "E-Mail Adresse"
@@ -73,12 +73,12 @@
       },
       "logOut": {
         "title": "Ausloggen",
-        "subtitle(rich)": "Abmelden, um die Synchronisierung Ihrer TOTPs mit diesem Gerät zu beenden.\nDerzeit angemeldet als: $E-Mail."
+        "subtitle(rich)": "Melden Sie sich ab, um die Synchronisierung mit diesem Gerät zu beenden. Angemeldet als: $email."
       }
     },
     "confirmEmail": {
       "title": "E-Mail bestätigt.",
-      "subtitle(rich)": "Es wurde eine Bestätigungs-E-Mail an Ihre E-Mail-Adresse gesendet: $email.\nBitte klicken Sie auf den Link, um Ihre Anmeldung abzuschließen. Sie können auch auf diese Schaltfläche tippen, um sie manuell einzugeben.",
+      "subtitle(rich)": "Eine Bestätigungs-E-Mail wurde an $email gesendet. Klicken Sie auf den Link, um die Anmeldung abzuschließen, oder tippen Sie hier, um den Code manuell einzugeben.",
       "success": "E-Mail erfolgreich bestätigt.",
       "confirmActionPickerDialog": {
         "title": "Was möchten Sie tun?",
@@ -87,8 +87,8 @@
           "subtitle": "Fügen Sie den Link ein, den Sie per E-Mail erhalten haben, um Ihr Konto zu bestätigen."
         },
         "cancelConfirmation": {
-          "title": "Kontobestätigung stornieren",
-          "subtitle": "Stornieren Sie Ihre Kontobestätigung.",
+          "title": "Kontobestätigung aufheben",
+          "subtitle": "Heben Sie Ihre Kontobestätigung auf.",
           "validationDialog": {
             "title": "Bestätigung",
             "message": "Sind Sie sicher?"
@@ -106,7 +106,7 @@
         "description": "Synchronisieren Sie Ihre TOTPs mit all Ihren eingeloggten Geräten.",
         "totpLimit": {
           "limit(rich)": "Sie können bis zu $limit TOTPs synchronisieren. Sie haben derzeit $count TOTPs.",
-          "notEnabled": "Abonnieren Sie den Contributor Plan oder löschen Sie einige TOTPs, um diese Option zu aktivieren.",
+          "notEnabled": "Um diese Option zu aktivieren, abonnieren Sie den Contributor Plan oder löschen Sie einige TOTPs.",
           "enabled": "Abonnieren Sie den Contributor Plan, um mehr zu synchronisieren!"
         }
       }
@@ -116,23 +116,23 @@
     "title": "Sicherungskopien",
     "backupNow": {
       "title": "Jetzt sichern",
-      "subtitle": "Sichern Sie Ihre TOTPs jetzt .",
+      "subtitle": "Sichern Sie Ihre TOTPs jetzt.",
       "passwordDialog": {
         "title": "Sicherungskennwort",
-        "message": "Bitte geben Sie ein Passwort für Ihr Sicherung ein."
+        "message": "Bitte geben Sie das Passwort für die Sicherung ein."
       }
     },
     "manageBackups": {
       "title": "Sicherungen verwalten",
       "subtitle": {
         "zero": "Sie haben keine Sicherung gespeichert.",
-        "one": "Sie haben derzeit $n Sicherungen gespeichert.",
+        "one": "Sie haben derzeit $n Sicherung gespeichert.",
         "other": "Sie haben derzeit $n Sicherungen gespeichert."
       },
       "backupsDialogTitle": "Sicherungen verwalten",
       "restoreBackupPasswordDialog": {
         "title": "Sicherungskennwort",
-        "message": "Bitte geben Sie ein Passwort für Ihr Sicherung ein."
+        "message": "Bitte geben Sie das Passwort für die Sicherung ein."
       },
       "deleteBackupConfirmationDialog": {
         "title": "Sicherung löschen",

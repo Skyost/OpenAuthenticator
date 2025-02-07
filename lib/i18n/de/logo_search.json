@@ -1,9 +1,9 @@
 {
   "dialogTitle": "Wählen Sie ein Logo",
-  "credits": "Suchergebnisse bereitgestellt von $sources",
-  "noLogoFound": "Kein Logo gefunden. Bitte versuchen Sie andere Schlagworte!",
   "keywords": {
     "text": "Schlagwörter",
     "hint": "microsoft.com"
-  }
+  },
+  "credits": "Suchergebnisse bereitgestellt von $sources",
+  "noLogoFound": "Kein Logo gefunden. Bitte versuchen Sie andere Schlagworte!"
 }

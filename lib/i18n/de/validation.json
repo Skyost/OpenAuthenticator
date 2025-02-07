@@ -1,12 +1,12 @@
 {
-  "success": "Erfolgreich bestätigt. Sie können diese Registerkarte sicher schließen.",
+  "success": "Erfolgreich validiert. Sie können diese Registerkarte sicher schließen.",
   "oauth2": {
-    "title": "Anmeldung mit $name",
-    "loading": "Lade... Klicken Sie <a href=„$link“>hier</a>, wenn Sie nicht weitergeleitet werden."
+    "title": "Anmelden mit $name",
+    "loading": "Laden... Klicken Sie <a href=\"$link\">hier</a>, wenn Sie nicht weitergeleitet werden."
   },
   "githubCodeDialog": {
     "title": "Code",
-    "message": "Bitte geben Sie den folgenden Code in den geöffneten Browser-Tab ein, um die Anmeldung abzuschließen:",
-    "countdown(rich)": "Verbleibende Zeit : $countdown."
+    "message": "Bitte geben Sie den folgenden Code im geöffneten Browser-Tab ein, um die Anmeldung abzuschließen:",
+    "countdown(rich)": "Verbleibende Zeit: $countdown."
   }
 }

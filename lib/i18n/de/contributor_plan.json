@@ -6,13 +6,13 @@
   "fallbackPaywall": {
     "title(rich)": "${title(Contributor)} Plan",
     "features": [
-      "Synchronisieren Sie so viel TOTPs, wie Sie wollen.",
+      "Synchronisieren Sie so viele TOTPs, wie Sie möchten.",
       "Tragen Sie zu Open Source bei.",
       "Helfen Sie uns, die App zu verbessern."
     ],
     "packageType": {
-      "choose": "Wählen Sie Ihren Abrechnungstarif:",
-      "empty": "Es gibt keine Möglichkeit, den Contributor Plan zu abonnieren.",
+      "choose": "Wählen Sie Ihren Abrechnungsplan:",
+      "empty": "Es gibt keine Option, den Contributor Plan zu abonnieren.",
       "name(map)": {
         "annual": "Jährlich",
         "monthly": "Monatlich"
@@ -23,8 +23,8 @@
       },
       "priceSubtitle(rich)": "$subtitle\n$price / $interval.",
       "subtitle(map)": {
-        "annual": "Sie erhalten jedes Jahr eine Rechnung.",
-        "monthly": "Sie erhalten jeden Monat eine Rechnung."
+        "annual": "Abrechnung erfolgt jährlich.",
+        "monthly": "Abrechnung erfolgt monatlich."
       }
     },
     "button": {
@@ -32,6 +32,6 @@
       "termsOfService": "Allgemeine Geschäftsbedingungen",
       "restorePurchases": "Käufe wiederherstellen"
     },
-    "restorePurchasesSuccess": "Ihre Einkäufe wurden erfolgreich wiederhergestellt!"
+    "restorePurchasesSuccess": "Ihre Käufe wurden erfolgreich wiederhergestellt!"
   }
 }

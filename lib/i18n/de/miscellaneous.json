@@ -1,15 +1,15 @@
 {
   "urlCopiedToClipboard": "URL in die Zwischenablage kopiert!",
   "waitingDialog": {
-    "defaultMessage": "Bitte warten Sie...",
-    "countdown(rich)": "Verbleibende Zeit : $countdown."
+    "defaultMessage": "Bitte warten...",
+    "countdown(rich)": "Verbleibende Zeit: $countdown."
   },
   "masterPasswordDialog": {
-    "title": "Master-Kennwort",
+    "title": "Master-Passwort",
     "message": "Bitte geben Sie Ihr Master-Passwort ein, um fortzufahren."
   },
   "backupCheckbox": {
-    "checkbox": "Erstellen Sie ein Backup",
+    "checkbox": "Backup erstellen",
     "input": {
       "text": "Passwort für die Sicherung",
       "hint": "Geben Sie das Passwort für die Sicherung ein"

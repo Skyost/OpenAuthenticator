@@ -6,13 +6,14 @@
     "biometricHint": "Identität bestätigen",
     "biometricNotRecognized": "Nicht erkannt. Versuchen Sie es erneut.",
     "signInTitle": "Authentifizierung erforderlich",
-    "biometricRequiredTitle": "Biometrische Daten erforderlich",
-    "deviceCredentialsRequiredTitle": "Erforderliche Geräteanmeldedaten",
-    "deviceCredentialsSetupDescription": "Erforderliche Geräteanmeldedaten",
+    "biometricRequiredTitle": "Biometrische Authentifizierung erforderlich",
+    "deviceCredentialsRequiredTitle": "Geräteanmeldedaten erforderlich",
+    "deviceCredentialsSetupDescription": "Geräteanmeldedaten erforderlich",
     "goToSettingsDescription": "Die biometrische Authentifizierung ist auf Ihrem Gerät nicht eingerichtet. Gehen Sie zu „Einstellungen > Sicherheit“, um die biometrische Authentifizierung hinzuzufügen."
   },
   "ios": {
     "lockOut": "Die biometrische Authentifizierung ist deaktiviert. Bitte sperren und entsperren Sie Ihren Bildschirm, um sie zu aktivieren.",
-    "goToSettingsDescription": "Die biometrische Authentifizierung ist auf Ihrem Gerät nicht eingerichtet. Bitte aktivieren Sie entweder Touch ID oder Face ID auf Ihrem Telefon."
-  }
+    "goToSettingsDescription": "Die biometrische Authentifizierung ist auf Ihrem Gerät nicht eingerichtet. Bitte aktivieren Sie entweder Touch ID oder Face ID in den Einstellungen Ihres Geräts."
+  },
+  "fallbackMessage": "Beim Überprüfen der lokalen Authentifizierung auf Ihrem Gerät ist ein Fehler aufgetreten. Bitte geben Sie unten Ihr Master-Passwort ein, um fortzufahren und die lokale Authentifizierung zu deaktivieren."
 }
