@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
@@ -29,7 +28,7 @@ class GoogleAuthenticationProvider extends FallbackAuthenticationProvider<Google
   String get providerId => GoogleAuthMethod.providerId;
 
   @override
-  GoogleAuthMethod createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []}) {
+  GoogleAuthMethod createDefaultAuthMethod({List<String> scopes = const []}) {
     String? loginHint = FirebaseAuth.instance.currentUser?.email;
     return GoogleAuthMethod.defaultMethod(
       scopes: scopes,
@@ -40,7 +39,7 @@ class GoogleAuthenticationProvider extends FallbackAuthenticationProvider<Google
   }
 
   @override
-  GoogleAuthMethod createRestAuthMethod(BuildContext context, OAuth2Response response) => GoogleAuthMethod.rest(
+  GoogleAuthMethod createRestAuthMethod(OAuth2Response response) => GoogleAuthMethod.rest(
         idToken: response.idToken,
         accessToken: response.accessToken,
       );

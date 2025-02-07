@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
@@ -30,14 +29,14 @@ class TwitterAuthenticationProvider extends FallbackAuthenticationProvider<Twitt
   String get providerId => TwitterAuthMethod.providerId;
 
   @override
-  TwitterAuthMethod createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []}) => TwitterAuthMethod.defaultMethod(
+  TwitterAuthMethod createDefaultAuthMethod({List<String> scopes = const []}) => TwitterAuthMethod.defaultMethod(
         customParameters: {
-          'lang': TranslationProvider.of(context).flutterLocale.languageCode,
+          'lang': translations.$meta.locale.languageCode,
         },
       );
 
   @override
-  TwitterAuthMethod createRestAuthMethod(BuildContext context, OAuth2Response response) => TwitterAuthMethod.rest(
+  TwitterAuthMethod createRestAuthMethod(OAuth2Response response) => TwitterAuthMethod.rest(
         accessToken: response.accessToken,
       );
 

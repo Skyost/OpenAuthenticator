@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
@@ -29,7 +28,7 @@ class MicrosoftAuthenticationProvider extends FallbackAuthenticationProvider<Mic
   String get providerId => MicrosoftAuthMethod.providerId;
 
   @override
-  MicrosoftAuthMethod createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []}) {
+  MicrosoftAuthMethod createDefaultAuthMethod({List<String> scopes = const []}) {
     String? loginHint = FirebaseAuth.instance.currentUser?.email;
     return MicrosoftAuthMethod.defaultMethod(
       scopes: scopes,
@@ -40,7 +39,7 @@ class MicrosoftAuthenticationProvider extends FallbackAuthenticationProvider<Mic
   }
 
   @override
-  MicrosoftAuthMethod createRestAuthMethod(BuildContext context, OAuth2Response response) => MicrosoftAuthMethod.rest(
+  MicrosoftAuthMethod createRestAuthMethod(OAuth2Response response) => MicrosoftAuthMethod.rest(
         accessToken: response.accessToken,
         idToken: response.idToken,
         nonce: response.nonce,

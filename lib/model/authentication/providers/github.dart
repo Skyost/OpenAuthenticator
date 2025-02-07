@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
@@ -29,12 +28,12 @@ class GithubAuthenticationProvider extends FallbackAuthenticationProvider<Github
   String get providerId => GithubAuthMethod.providerId;
 
   @override
-  GithubAuthMethod createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []}) => GithubAuthMethod.defaultMethod(
+  GithubAuthMethod createDefaultAuthMethod({List<String> scopes = const []}) => GithubAuthMethod.defaultMethod(
         scopes: scopes,
       );
 
   @override
-  GithubAuthMethod createRestAuthMethod(BuildContext context, OAuth2Response response) => GithubAuthMethod.rest(
+  GithubAuthMethod createRestAuthMethod(OAuth2Response response) => GithubAuthMethod.rest(
         accessToken: response.accessToken,
       );
 

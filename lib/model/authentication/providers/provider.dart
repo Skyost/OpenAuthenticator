@@ -180,10 +180,10 @@ abstract class FallbackAuthenticationProvider<T extends OAuth2SignIn> extends Fi
   bool get shouldFallback => currentPlatform == Platform.windows || currentPlatform == Platform.linux;
 
   /// Creates the default auth method instance.
-  CanLinkTo createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []});
+  CanLinkTo createDefaultAuthMethod({List<String> scopes = const []});
 
   /// Creates the auth method from the [response].
-  CanLinkTo createRestAuthMethod(BuildContext context, OAuth2Response response);
+  CanLinkTo createRestAuthMethod(OAuth2Response response);
 
   @override
   @protected
@@ -232,7 +232,7 @@ abstract class FallbackAuthenticationProvider<T extends OAuth2SignIn> extends Fi
         case ResultSuccess(:final value):
           actionResult = await showWaitingOverlay(
             context,
-            future: action(createRestAuthMethod(context, value)),
+            future: action(createRestAuthMethod(value)),
           );
           break;
         case ResultCancelled():
@@ -246,7 +246,7 @@ abstract class FallbackAuthenticationProvider<T extends OAuth2SignIn> extends Fi
     } else {
       actionResult = await showWaitingOverlay(
         context,
-        future: action(createDefaultAuthMethod(context, scopes: fallbackAuthProvider.scopes)),
+        future: action(createDefaultAuthMethod(scopes: fallbackAuthProvider.scopes)),
       );
     }
     return ResultSuccess(

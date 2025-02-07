@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';
@@ -30,15 +29,15 @@ class AppleAuthenticationProvider extends FallbackAuthenticationProvider<AppleSi
   String get providerId => AppleAuthMethod.providerId;
 
   @override
-  AppleAuthMethod createDefaultAuthMethod(BuildContext context, {List<String> scopes = const []}) => AppleAuthMethod.defaultMethod(
+  AppleAuthMethod createDefaultAuthMethod({List<String> scopes = const []}) => AppleAuthMethod.defaultMethod(
         scopes: scopes,
         customParameters: {
-          'locale': TranslationProvider.of(context).flutterLocale.languageCode,
+          'locale': translations.$meta.locale.languageCode,
         },
       );
 
   @override
-  AppleAuthMethod createRestAuthMethod(BuildContext context, OAuth2Response response) => AppleAuthMethod.rest(
+  AppleAuthMethod createRestAuthMethod(OAuth2Response response) => AppleAuthMethod.rest(
         idToken: response.idToken,
         nonce: response.nonce,
       );
