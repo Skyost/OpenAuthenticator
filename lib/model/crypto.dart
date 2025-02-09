@@ -58,24 +58,20 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
         throw Exception('Password mismatch.');
       }
     }
+    Future<void> saveCryptoStoreOnLocalStorage() async => await SimpleSecureStorage.write(_kPasswordDerivedKeyKey, base64.encode(await newCryptoStore!.key.exportRawKey()));
+    await salt.saveToLocalStorage();
     if (checkSettings) {
-      await salt.saveToLocalStorage();
       AppUnlockMethod unlockMethod = await ref.read(appUnlockMethodSettingsEntryProvider.future);
       if (unlockMethod is MasterPasswordAppUnlockMethod) {
         await ref.read(passwordSignatureVerificationMethodProvider.notifier).enable(newPassword);
+      } else {
+        await saveCryptoStoreOnLocalStorage();
       }
     } else {
-      _saveOnLocalStorage(newCryptoStore);
+      await saveCryptoStoreOnLocalStorage();
     }
     use(newCryptoStore);
     return newCryptoStore;
-  }
-
-  /// Saves the [cryptoStore] on disk.
-  Future<CryptoStore> _saveOnLocalStorage(CryptoStore cryptoStore) async {
-    await cryptoStore.salt.saveToLocalStorage();
-    await SimpleSecureStorage.write(_kPasswordDerivedKeyKey, base64.encode(await cryptoStore.key.exportRawKey()));
-    return cryptoStore;
   }
 }
 
