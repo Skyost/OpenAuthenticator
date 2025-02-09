@@ -1,5 +1,36 @@
 # 📰 Open Authenticator Changelog
 
+## v1.2.0
+Released on Feb 9, 2025.
+
+* **REFACTOR** : Refactored authentication / confirmation providers. ([#5a0430b](https://github.com/Skyost/OpenAuthenticator/commit/5a0430b))
+* **REFACTOR** : `createDefaultAuthMethod` does not need `BuildContext` anymore. ([#6af1af0](https://github.com/Skyost/OpenAuthenticator/commit/6af1af0))
+* **FEAT** : Improved error handling (for instance : if crypto store cannot be loaded). ([#db48590](https://github.com/Skyost/OpenAuthenticator/commit/db48590))
+* **FEAT** : Now allowing the user to unlock the app if local auth is not available even though it has been enabled. ([#215b344](https://github.com/Skyost/OpenAuthenticator/commit/215b344))
+* **FEAT** : Translated `app_unlock.json` into `de`. ([#112de83](https://github.com/Skyost/OpenAuthenticator/commit/112de83))
+* **FEAT** : Translated `authentication.json` into `de`. ([#2c2b252](https://github.com/Skyost/OpenAuthenticator/commit/2c2b252))
+* **FEAT** : Translated `contributor_plan.json` into `de`. ([#f2cd8b3](https://github.com/Skyost/OpenAuthenticator/commit/f2cd8b3))
+* **FEAT** : Translated `error.json` into `de`. ([#c51b5d0](https://github.com/Skyost/OpenAuthenticator/commit/c51b5d0))
+* **FEAT** : Translated `home.json` into `de`. ([#c2608ae](https://github.com/Skyost/OpenAuthenticator/commit/c2608ae))
+* **FEAT** : Translated `intro.json` into `de`. ([#4247ce8](https://github.com/Skyost/OpenAuthenticator/commit/4247ce8))
+* **FEAT** : Translated `local_auth.json` into `de`. ([#e6ca2e4](https://github.com/Skyost/OpenAuthenticator/commit/e6ca2e4))
+* **FEAT** : Translated `logo_search.json` into `de`. ([#0f3cf53](https://github.com/Skyost/OpenAuthenticator/commit/0f3cf53))
+* **FEAT** : Translated `master_password.json` into `de`. ([#bbc1d88](https://github.com/Skyost/OpenAuthenticator/commit/bbc1d88))
+* **FEAT** : Translated `miscellaneous.json` into `de`. ([#049de5e](https://github.com/Skyost/OpenAuthenticator/commit/049de5e))
+* **FEAT** : Translated `settings.json` into `de`. ([#08ffaae](https://github.com/Skyost/OpenAuthenticator/commit/08ffaae))
+* **FEAT** : Translated `storage_migration.json` into `de`. ([#27399dd](https://github.com/Skyost/OpenAuthenticator/commit/27399dd))
+* **FEAT** : Translated `totp.json` into `de`. ([#0470586](https://github.com/Skyost/OpenAuthenticator/commit/0470586))
+* **FEAT** : Translated `totp_limit.json` into `de`. ([#5ca92e3](https://github.com/Skyost/OpenAuthenticator/commit/5ca92e3))
+* **FEAT** : Translated `validation.json` into `de`. ([#dadcf4c](https://github.com/Skyost/OpenAuthenticator/commit/dadcf4c))
+* **FIX** : Fixed a problem with theme brightness not always being updated. ([#bfe8b06](https://github.com/Skyost/OpenAuthenticator/commit/bfe8b06))
+* **FIX** : Fixed a typo. ([#cb870e2](https://github.com/Skyost/OpenAuthenticator/commit/cb870e2))
+* **FIX** : Fixed an error with `HttpServer.bind`. ([#04af98e](https://github.com/Skyost/OpenAuthenticator/commit/04af98e))
+* **FIX** : Fixed crypto store not being saved on local storage under certain circumstances. ([#eac2a1f](https://github.com/Skyost/OpenAuthenticator/commit/eac2a1f))
+* **FIX** : Fixed various problems with authentication. ([#97d2609](https://github.com/Skyost/OpenAuthenticator/commit/97d2609))
+* **FIX** : Now correctly opening Stripe management URL on mobile platforms. ([#72d28a0](https://github.com/Skyost/OpenAuthenticator/commit/72d28a0))
+* **CHORE** : Ignored various warnings. ([#930c195](https://github.com/Skyost/OpenAuthenticator/commit/930c195))
+* **CHORE** : Improved storage migration. ([#0f450dd](https://github.com/Skyost/OpenAuthenticator/commit/0f450dd))
+
 ## v1.1.3
 Released on Jan 21, 2025.
 
