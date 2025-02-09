@@ -163,6 +163,7 @@ class _RequireCryptoStore extends ConsumerWidget {
   const _RequireCryptoStore({
     required this.child,
     this.childIfAbsent = const SizedBox.shrink(),
+    // ignore: unused_element
     this.showChildIfLocked = true,
   });
 
