@@ -59,8 +59,20 @@ class IntroPageState extends ConsumerState<IntroPage> with BrightnessListener {
   }
 
   @override
-  set currentBrightness(Brightness brightness) {
-    super.currentBrightness = brightness;
+  void onBrightnessChange(Brightness brightness) {
+    super.onBrightnessChange(brightness);
+    _adaptSystemUiOverlayToBrightness();
+  }
+
+  @override
+  void onThemeSettingsEntryChange(AsyncValue<ThemeMode>? previous, AsyncValue<ThemeMode> next) {
+    super.onThemeSettingsEntryChange(previous, next);
+    _adaptSystemUiOverlayToBrightness();
+  }
+
+  /// Allows to adapt system UI overlay to the current brightness.
+  void _adaptSystemUiOverlayToBrightness() {
+    Brightness brightness = currentBrightness;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: brightness == Brightness.dark ? Brightness.light : Brightness.dark,

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 
 /// A list tile that allows to expand its content by tapping on it.
-class ExpandListTile extends StatefulWidget {
+class ExpandListTile extends ConsumerStatefulWidget {
   /// The tile title.
   final Widget title;
 
@@ -25,11 +26,11 @@ class ExpandListTile extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _ExpandListTileState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ExpandListTileState();
 }
 
 /// The expand list tile instance.
-class _ExpandListTileState extends State<ExpandListTile> with SingleTickerProviderStateMixin, BrightnessListener {
+class _ExpandListTileState extends ConsumerState<ExpandListTile> with SingleTickerProviderStateMixin, BrightnessListener {
   /// The expand controller.
   late AnimationController expandController;
 

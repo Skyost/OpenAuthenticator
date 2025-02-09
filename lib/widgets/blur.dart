@@ -1,10 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 
 /// Allows to blur a widget. Kudos to "jagritjkh/blur" for the initial implementation.
-class BlurWidget extends StatefulWidget {
+class BlurWidget extends ConsumerStatefulWidget {
   /// A widget to display below the blur effect.
   final Widget? below;
 
@@ -39,11 +40,11 @@ class BlurWidget extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _BlurWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _BlurWidgetState();
 }
 
 /// The blur widget state.
-class _BlurWidgetState extends State<BlurWidget> with BrightnessListener {
+class _BlurWidgetState extends ConsumerState<BlurWidget> with BrightnessListener {
   @override
   Widget build(BuildContext context) => ClipRRect(
         borderRadius: widget.borderRadius ?? BorderRadius.zero,

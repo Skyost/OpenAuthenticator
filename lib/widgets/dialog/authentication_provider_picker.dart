@@ -183,7 +183,7 @@ class AuthenticationProviderToggleLink extends AuthenticationProviderPickerDialo
 }
 
 /// A [FirebaseAuthenticationProvider] tile.
-class _ProviderTile extends StatefulWidget {
+class _ProviderTile extends ConsumerStatefulWidget {
   /// The provider.
   final FirebaseAuthenticationProvider provider;
 
@@ -208,6 +208,7 @@ class _ProviderTile extends StatefulWidget {
   /// Creates a new provider tile instance.
   const _ProviderTile({
     required this.provider,
+    // ignore: unused_element
     this.size = AuthenticationProviderPickerDialog._kDefaultIconSize,
     this.trailingIcon,
     required this.name,
@@ -217,11 +218,11 @@ class _ProviderTile extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _ProviderTileState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ProviderTileState();
 }
 
 /// The provider tile state.
-class _ProviderTileState extends State<_ProviderTile> with BrightnessListener {
+class _ProviderTileState extends ConsumerState<_ProviderTile> with BrightnessListener {
   @override
   Widget build(BuildContext context) {
     Widget image = SizedScalableImageWidget(

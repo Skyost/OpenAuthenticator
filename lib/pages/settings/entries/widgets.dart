@@ -142,7 +142,7 @@ class UriSettingsEntry extends StatelessWidget {
 }
 
 /// A list tile that is written in red.
-class DangerZoneListTile extends StatefulWidget {
+class DangerZoneListTile extends ConsumerStatefulWidget {
   /// The title.
   final String? title;
 
@@ -169,11 +169,11 @@ class DangerZoneListTile extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => _DangerZoneListTileState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _DangerZoneListTileState();
 }
 
 /// The danger zone list state.
-class _DangerZoneListTileState extends State<DangerZoneListTile> with BrightnessListener {
+class _DangerZoneListTileState extends ConsumerState<DangerZoneListTile> with BrightnessListener {
   @override
   Widget build(BuildContext context) {
     Color? textColor;

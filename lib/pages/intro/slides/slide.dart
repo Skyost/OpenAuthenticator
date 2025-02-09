@@ -56,7 +56,7 @@ enum IntroPageSlideType {
 }
 
 /// An intro page slide widget.
-class IntroPageSlideWidget extends StatefulWidget {
+class IntroPageSlideWidget extends ConsumerStatefulWidget {
   /// The slide instance.
   final IntroPageSlide slide;
 
@@ -78,11 +78,11 @@ class IntroPageSlideWidget extends StatefulWidget {
             );
 
   @override
-  State<StatefulWidget> createState() => IntroPageSlideWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => IntroPageSlideWidgetState();
 }
 
 /// An intro page slide widget state.
-class IntroPageSlideWidgetState extends State<IntroPageSlideWidget> with TickerProviderStateMixin, BrightnessListener {
+class IntroPageSlideWidgetState extends ConsumerState<IntroPageSlideWidget> with TickerProviderStateMixin, BrightnessListener {
   /// The image animation controller.
   late final AnimationController _imageAnimationController = AnimationController(
     duration: const Duration(seconds: 1),
