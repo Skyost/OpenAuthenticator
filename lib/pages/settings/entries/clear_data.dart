@@ -17,6 +17,7 @@ import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
@@ -102,12 +103,9 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
     await showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppDialog(
         title: Text(translations.settings.dangerZone.clearData.doneDialog.title),
-        content: Text(
-          canExitWithConfirmDialog ? translations.settings.dangerZone.clearData.doneDialog.message.appWillClose : translations.settings.dangerZone.clearData.doneDialog.message.closeAppManually,
-        ),
-        scrollable: true,
+        displayCloseButton: false,
         actions: canExitWithConfirmDialog
             ? [
                 TextButton(
@@ -116,6 +114,11 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
                 ),
               ]
             : null,
+        children: [
+          Text(
+            canExitWithConfirmDialog ? translations.settings.dangerZone.clearData.doneDialog.message.appWillClose : translations.settings.dangerZone.clearData.doneDialog.message.closeAppManually,
+          ),
+        ],
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:open_authenticator/model/authentication/providers/provider.dart'
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/authentication_provider_picker.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
@@ -187,14 +188,15 @@ class AccountUtils {
         if (timedOut) {
           showDialog(
             context: context,
-            builder: (context) => AlertDialog(
-              scrollable: true,
-              content: Text(translations.error.timeout.authentication),
+            builder: (context) => AppDialog(
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(MaterialLocalizations.of(context).okButtonLabel),
                 ),
+              ],
+              children: [
+                Text(translations.error.timeout.authentication),
               ],
             ),
           );
@@ -214,15 +216,16 @@ class AccountUtils {
             if (handleDifferentCredentialError) {
               showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
+                builder: (context) => AppDialog(
                   title: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.title),
-                  scrollable: true,
-                  content: Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: Text(MaterialLocalizations.of(context).closeButtonLabel),
                     ),
+                  ],
+                  children: [
+                    Text(translations.error.authentication.accountExistsWithDifferentCredentialsDialog.message),
                   ],
                 ),
               );

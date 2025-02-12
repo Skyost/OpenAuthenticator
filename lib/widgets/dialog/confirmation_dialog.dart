@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 
 /// A dialog that allows to choose whether to execute an action or not.
 class ConfirmationDialog extends StatelessWidget {
@@ -16,10 +17,8 @@ class ConfirmationDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(title),
-        scrollable: true,
-        content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, true),
@@ -29,6 +28,9 @@ class ConfirmationDialog extends StatelessWidget {
             onPressed: () => Navigator.pop(context, false),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
           ),
+        ],
+        children: [
+          Text(message),
         ],
       );
 

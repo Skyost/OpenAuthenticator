@@ -46,7 +46,7 @@ class ContributorPlanFallbackPaywallPage extends ConsumerWidget {
                 ),
               ),
               const ListTilePadding(
-                bottom: 10,
+                bottom: 20,
                 child: SizedBox(
                   height: 150,
                   child: SizedScalableImageWidget(
@@ -73,8 +73,8 @@ class ContributorPlanFallbackPaywallPage extends ConsumerWidget {
                   ),
                 ),
               ListTilePadding(
-                top: 10,
-                bottom: 10,
+                top: 20,
+                bottom: 20,
                 child: Text(
                   translations.contributorPlan.fallbackPaywall.packageType.choose,
                   textAlign: TextAlign.center,

@@ -5,6 +5,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -38,10 +39,8 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
               subtitle: Text(translations.settings.application.contributorPlan.subtitle.active),
               onTap: () => showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
+                builder: (context) => AppDialog(
                   title: Text(translations.settings.application.contributorPlan.subscriptionDialog.title),
-                  content: Text(translations.settings.application.contributorPlan.subscriptionDialog.message),
-                  scrollable: true,
                   actions: [
                     TextButton(
                       onPressed: () async {
@@ -67,6 +66,9 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
                       onPressed: () => Navigator.pop(context),
                       child: Text(MaterialLocalizations.of(context).closeButtonLabel),
                     ),
+                  ],
+                  children: [
+                    Text(translations.settings.application.contributorPlan.subscriptionDialog.message),
                   ],
                 ),
               ),

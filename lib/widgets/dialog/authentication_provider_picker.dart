@@ -11,6 +11,7 @@ import 'package:open_authenticator/model/authentication/providers/twitter.dart';
 import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 
 /// Allows to pick an authentication provider.
@@ -31,26 +32,23 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState> authenticationProviders = ref.watch(userAuthenticationProviders);
     List<FirebaseAuthenticationProvider> currentProviders = authenticationProviders.loggedInProviders;
-    return AlertDialog(
+    return AppDialog(
       title: Text(translations.authentication.providerPickerDialog.title),
-      scrollable: true,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (FirebaseAuthenticationProvider provider in authenticationProviders.availableProviders)
-            if (dialogMode._shouldDisplay(currentProviders, provider))
-              _createListTile(
-                context,
-                provider,
-                currentProviders,
-              ),
-        ],
-      ),
+      contentPadding: kClassicChoiceDialogPadding,
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
         ),
+      ],
+      children: [
+        for (FirebaseAuthenticationProvider provider in authenticationProviders.availableProviders)
+          if (dialogMode._shouldDisplay(currentProviders, provider))
+            _createListTile(
+              context,
+              provider,
+              currentProviders,
+            ),
       ],
     );
   }

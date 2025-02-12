@@ -20,7 +20,7 @@ dependencies:
   jovial_svg: ^1.1.25
   mobile_scanner: ^6.0.6
   path_provider: ^2.1.5
-  shared_preferences: ^2.5.1
+  shared_preferences: ^2.5.2
   uuid: ^4.5.1
   webcrypto: ^0.5.7
   equatable: ^2.0.7
@@ -47,12 +47,12 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   share_plus: ^10.1.4
   wakelock_plus: ^1.2.10
-  file_picker: ^8.3.3
+  file_picker: ^8.3.5
 
 dev_dependencies:
   flutter_lints: ^5.0.0
-  build_runner: ^2.4.14
-  drift_dev: ^2.25.0
+  build_runner: ^2.4.15
+  drift_dev: ^2.25.1
   msix: ^3.16.8
   slang_build_runner: ^4.4.2
   custom_lint: ^0.7.3

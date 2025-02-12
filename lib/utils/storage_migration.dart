@@ -8,6 +8,7 @@ import 'package:open_authenticator/model/storage/storage.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
@@ -169,39 +170,8 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
   String? backupPassword;
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(translations.storageMigration.confirmDialog.title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(widget.enable ? translations.storageMigration.confirmDialog.message.enable : translations.storageMigration.confirmDialog.message.disable),
-            ListTile(
-              title: Text(translations.miscellaneous.backupCheckbox.checkbox),
-              contentPadding: EdgeInsets.zero,
-              trailing: Checkbox(
-                value: createBackup,
-                onChanged: (value) {
-                  setState(() => createBackup = value ?? !createBackup);
-                },
-              ),
-            ),
-            if (createBackup)
-              Form(
-                key: backupPasswordFormKey,
-                child: PasswordFormField(
-                  initialValue: backupPassword,
-                  onChanged: (value) => backupPassword = value,
-                  validator: isBackupPasswordValid,
-                  decoration: FormLabelWithIcon(
-                    icon: Icons.save,
-                    text: translations.miscellaneous.backupCheckbox.input.text,
-                    hintText: translations.miscellaneous.backupCheckbox.input.hint,
-                  ),
-                ),
-              ),
-          ],
-        ),
-        scrollable: true,
         actions: [
           TextButton(
             onPressed: () {
@@ -216,6 +186,33 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
             onPressed: () => Navigator.pop(context, const _ConfirmationResult()),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
           ),
+        ],
+        children: [
+          Text(widget.enable ? translations.storageMigration.confirmDialog.message.enable : translations.storageMigration.confirmDialog.message.disable),
+          ListTile(
+            title: Text(translations.miscellaneous.backupCheckbox.checkbox),
+            contentPadding: EdgeInsets.zero,
+            trailing: Checkbox(
+              value: createBackup,
+              onChanged: (value) {
+                setState(() => createBackup = value ?? !createBackup);
+              },
+            ),
+          ),
+          if (createBackup)
+            Form(
+              key: backupPasswordFormKey,
+              child: PasswordFormField(
+                initialValue: backupPassword,
+                onChanged: (value) => backupPassword = value,
+                validator: isBackupPasswordValid,
+                decoration: FormLabelWithIcon(
+                  icon: Icons.save,
+                  text: translations.miscellaneous.backupCheckbox.input.text,
+                  hintText: translations.miscellaneous.backupCheckbox.input.hint,
+                ),
+              ),
+            ),
         ],
       );
 
@@ -246,33 +243,29 @@ class _ConfirmationResult {
 /// Allows the user to choose its [StorageMigrationDeletedTotpPolicy].
 class _StorageMigrationDeletedTotpPolicyPickerDialog extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(translations.storageMigration.deletedTotpPolicyPickerDialog.message),
-            ListTile(
-              leading: const Icon(Icons.delete),
-              title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.title),
-              subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.subtitle),
-              onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.delete),
-            ),
-            ListTile(
-              leading: const Icon(Icons.restore),
-              title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.title),
-              subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.subtitle),
-              onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.keep),
-            ),
-          ],
-        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
           ),
         ],
-        scrollable: true,
+        children: [
+          Text(translations.storageMigration.deletedTotpPolicyPickerDialog.message),
+          ListTile(
+            leading: const Icon(Icons.delete),
+            title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.title),
+            subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.subtitle),
+            onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.delete),
+          ),
+          ListTile(
+            leading: const Icon(Icons.restore),
+            title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.title),
+            subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.subtitle),
+            onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.keep),
+          ),
+        ],
       );
 
   /// Opens the dialog.

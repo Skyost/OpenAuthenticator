@@ -6,6 +6,7 @@ import 'package:open_authenticator/model/authentication/providers/provider.dart'
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
@@ -91,32 +92,28 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
 /// Picks for a confirmation action.
 class _ConfirmActionPickerDialog extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.check),
-              title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.title),
-              subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.subtitle),
-              onTap: () => Navigator.pop(context, _ConfirmAction.tryConfirm),
-            ),
-            ListTile(
-              leading: const Icon(Icons.clear),
-              title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.title),
-              subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.subtitle),
-              onTap: () => Navigator.pop(context, _ConfirmAction.cancelConfirmation),
-            ),
-          ],
-        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
           ),
         ],
-        scrollable: true,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.check),
+            title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.title),
+            subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.subtitle),
+            onTap: () => Navigator.pop(context, _ConfirmAction.tryConfirm),
+          ),
+          ListTile(
+            leading: const Icon(Icons.clear),
+            title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.title),
+            subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.subtitle),
+            onTap: () => Navigator.pop(context, _ConfirmAction.cancelConfirmation),
+          ),
+        ],
       );
 
   /// Opens the dialog.

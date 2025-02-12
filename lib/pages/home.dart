@@ -23,8 +23,10 @@ import 'package:open_authenticator/utils/master_password.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
+import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
 import 'package:open_authenticator/widgets/smooth_highlight.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/title.dart';
@@ -584,30 +586,26 @@ class _TotpSearchDelegate extends SearchDelegate<Totp> {
 /// A dialog that allows to choose a method to add a TOTP.
 class _AddTotpDialog extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(translations.home.addDialog.title),
-        scrollable: true,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.qr_code),
-              onTap: () => Navigator.pop(context, _AddTotpDialogResult.qrCode),
-              title: Text(translations.home.addDialog.qrCode.title),
-              subtitle: Text(translations.home.addDialog.qrCode.subtitle),
-            ),
-            ListTile(
-              leading: const Icon(Icons.short_text),
-              onTap: () => Navigator.pop(context, _AddTotpDialogResult.manually),
-              title: Text(translations.home.addDialog.manually.title),
-              subtitle: Text(translations.home.addDialog.manually.subtitle),
-            ),
-          ],
-        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+        ],
+        children: [
+          ListTile(
+            leading: const Icon(Icons.qr_code),
+            onTap: () => Navigator.pop(context, _AddTotpDialogResult.qrCode),
+            title: Text(translations.home.addDialog.qrCode.title),
+            subtitle: Text(translations.home.addDialog.qrCode.subtitle),
+          ),
+          ListTile(
+            leading: const Icon(Icons.short_text),
+            onTap: () => Navigator.pop(context, _AddTotpDialogResult.manually),
+            title: Text(translations.home.addDialog.manually.title),
+            subtitle: Text(translations.home.addDialog.manually.subtitle),
           ),
         ],
       );
@@ -633,46 +631,45 @@ class _TotpKeyDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(translations.totp.totpKeyDialog.title),
-        scrollable: true,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              translations.totp.totpKeyDialog.message(n: decryptedTotps.length),
-            ),
-            if (decryptedTotps.length > 1)
-              ListTile(
-                leading: const Icon(Icons.done_all),
-                onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeAllTotpsKey),
-                title: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.title),
-                subtitle: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.subtitle),
-              ),
-            ListTile(
-              leading: const Icon(Icons.key),
-              onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeTotpKey),
-              title: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.title(n: decryptedTotps.length)),
-              subtitle: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.subtitle),
-            ),
-            ListTile(
-              leading: const Icon(Icons.password),
-              onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeMasterPassword),
-              title: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.title),
-              subtitle: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.subtitle),
-            ),
-            ListTile(
-              leading: const Icon(Icons.close),
-              onTap: () => Navigator.pop(context),
-              title: Text(translations.totp.totpKeyDialog.choices.doNothing.title),
-              subtitle: Text(translations.totp.totpKeyDialog.choices.doNothing.subtitle),
-            ),
-          ],
-        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+        ],
+        children: [
+          ListTilePadding(
+            bottom: 10,
+            child: Text(
+              translations.totp.totpKeyDialog.message(n: decryptedTotps.length),
+            ),
+          ),
+          if (decryptedTotps.length > 1)
+            ListTile(
+              leading: const Icon(Icons.done_all),
+              onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeAllTotpsKey),
+              title: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.title),
+              subtitle: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.subtitle),
+            ),
+          ListTile(
+            leading: const Icon(Icons.key),
+            onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeTotpKey),
+            title: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.title(n: decryptedTotps.length)),
+            subtitle: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.subtitle),
+          ),
+          ListTile(
+            leading: const Icon(Icons.password),
+            onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeMasterPassword),
+            title: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.title),
+            subtitle: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.subtitle),
+          ),
+          ListTile(
+            leading: const Icon(Icons.close),
+            onTap: () => Navigator.pop(context),
+            title: Text(translations.totp.totpKeyDialog.choices.doNothing.title),
+            subtitle: Text(translations.totp.totpKeyDialog.choices.doNothing.subtitle),
           ),
         ],
       );

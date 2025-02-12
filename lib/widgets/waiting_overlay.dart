@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/widgets/countdown.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 
 /// Shows a waiting dialog.
 Future<T> showWaitingOverlay<T>(
@@ -11,24 +12,22 @@ Future<T> showWaitingOverlay<T>(
   String? timeoutMessage,
   bool Function()? onCancel,
 }) async {
-  OverlayEntry entry = OverlayEntry(
-    builder: (context) {
-      return Stack(
-        children: [
-          const ModalBarrier(
-            dismissible: false,
-            color: Colors.black54,
-          ),
-          _WaitingDialog(
-            message: message,
-            timeout: timeout,
-            timeoutMessage: timeoutMessage,
-            onCancel: onCancel,
-          ),
-        ],
-      );
-    }
-  );
+  OverlayEntry entry = OverlayEntry(builder: (context) {
+    return Stack(
+      children: [
+        const ModalBarrier(
+          dismissible: false,
+          color: Colors.black54,
+        ),
+        _WaitingDialog(
+          message: message,
+          timeout: timeout,
+          timeoutMessage: timeoutMessage,
+          onCancel: onCancel,
+        ),
+      ],
+    );
+  });
   Overlay.of(context).insert(entry);
   if (future != null) {
     try {
@@ -75,48 +74,9 @@ class _WaitingDialogState extends State<_WaitingDialog> {
   bool timedOut = false;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: MediaQuery.of(context).size.width,
-    child: AlertDialog(
-          content: PopScope(
-            canPop: false,
-            child: timedOut
-                ? Text(widget.timeoutMessage ?? translations.error.timeout.generic)
-                : Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(right: 24),
-                        child: CircularProgressIndicator(),
-                      ),
-                      Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(text: widget.message ?? translations.miscellaneous.waitingDialog.defaultMessage),
-                              if (widget.timeout != null) ...[
-                                const TextSpan(text: '\n'),
-                                translations.miscellaneous.waitingDialog.countdown(
-                                  countdown: WidgetSpan(
-                                    child: CountdownWidget(
-                                      duration: widget.timeout!,
-                                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                                      onFinished: () {
-                                        if (mounted) {
-                                          setState(() => timedOut = true);
-                                        }
-                                      },
-                                    ),
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
+  Widget build(BuildContext context) => PopScope(
+        canPop: false,
+        child: AppDialog(
           actions: widget.onCancel == null
               ? null
               : [
@@ -129,6 +89,45 @@ class _WaitingDialogState extends State<_WaitingDialog> {
                     },
                   ),
                 ],
+          children: [
+            if (timedOut)
+              Text(widget.timeoutMessage ?? translations.error.timeout.generic)
+            else
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(right: 24),
+                    child: CircularProgressIndicator(),
+                  ),
+                  Expanded(
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: widget.message ?? translations.miscellaneous.waitingDialog.defaultMessage),
+                          if (widget.timeout != null) ...[
+                            const TextSpan(text: '\n'),
+                            translations.miscellaneous.waitingDialog.countdown(
+                              countdown: WidgetSpan(
+                                child: CountdownWidget(
+                                  duration: widget.timeout!,
+                                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                                  onFinished: () {
+                                    if (mounted) {
+                                      setState(() => timedOut = true);
+                                    }
+                                  },
+                                ),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
         ),
-  );
+      );
 }

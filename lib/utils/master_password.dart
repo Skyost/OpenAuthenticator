@@ -7,6 +7,7 @@ import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/form/master_password_form.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
@@ -82,44 +83,8 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
   String? backupPassword;
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(translations.masterPassword.changeDialog.title),
-        scrollable: true,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            MasterPasswordForm(
-              formKey: newPasswordFormKey,
-              defaultPassword: widget.defaultPassword,
-              inputText: translations.masterPassword.changeDialog.newLabel,
-              onChanged: (value) => newPassword = value ?? '',
-            ),
-            ListTile(
-              title: Text(translations.miscellaneous.backupCheckbox.checkbox),
-              contentPadding: EdgeInsets.zero,
-              trailing: Checkbox(
-                value: createBackup,
-                onChanged: (value) {
-                  setState(() => createBackup = value ?? !createBackup);
-                },
-              ),
-            ),
-            if (createBackup)
-              Form(
-                key: backupPasswordFormKey,
-                child: PasswordFormField(
-                  initialValue: backupPassword,
-                  onChanged: (value) => backupPassword = value,
-                  validator: isBackupPasswordValid,
-                  decoration: FormLabelWithIcon(
-                    icon: Icons.save,
-                    text: translations.miscellaneous.backupCheckbox.input.text,
-                    hintText: translations.miscellaneous.backupCheckbox.input.hint,
-                  ),
-                ),
-              ),
-          ],
-        ),
         actions: [
           TextButton(
             onPressed: () async {
@@ -136,6 +101,38 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
             onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
           ),
+        ],
+        children: [
+          MasterPasswordForm(
+            formKey: newPasswordFormKey,
+            defaultPassword: widget.defaultPassword,
+            inputText: translations.masterPassword.changeDialog.newLabel,
+            onChanged: (value) => newPassword = value ?? '',
+          ),
+          ListTile(
+            title: Text(translations.miscellaneous.backupCheckbox.checkbox),
+            contentPadding: EdgeInsets.zero,
+            trailing: Checkbox(
+              value: createBackup,
+              onChanged: (value) {
+                setState(() => createBackup = value ?? !createBackup);
+              },
+            ),
+          ),
+          if (createBackup)
+            Form(
+              key: backupPasswordFormKey,
+              child: PasswordFormField(
+                initialValue: backupPassword,
+                onChanged: (value) => backupPassword = value,
+                validator: isBackupPasswordValid,
+                decoration: FormLabelWithIcon(
+                  icon: Icons.save,
+                  text: translations.miscellaneous.backupCheckbox.input.text,
+                  hintText: translations.miscellaneous.backupCheckbox.input.hint,
+                ),
+              ),
+            ),
         ],
       );
 

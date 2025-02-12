@@ -10,6 +10,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/list/expand_list_tile.dart';
@@ -55,57 +56,56 @@ class _RestoreBackupDialog extends ConsumerStatefulWidget {
 /// The restore backup dialog state.
 class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
   /// The list global key.
-  late GlobalKey listKey = GlobalKey();
+  late GlobalKey shareActionKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     DateFormat formatter = DateFormat(_RestoreBackupDialog.kDateFormat);
     AsyncValue<List<Backup>> backups = ref.watch(backupStoreProvider);
-    Widget content;
+    List<Widget> children;
+    EdgeInsets contentPadding;
     switch (backups) {
       case AsyncData(:final value):
-        content = SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: ListView(
-            key: listKey,
-            shrinkWrap: true,
-            children: [
-              if (value.isEmpty)
-                ListTilePadding(
-                  top: 20,
-                  bottom: 20,
-                  child: Text(
-                    translations.settings.backups.manageBackups.subtitle(n: 0),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-              for (Backup backup in value)
-                ExpandListTile(
-                  title: Text(
-                    formatter.format(backup.dateTime),
-                  ),
-                  children: createBackupActions(backup),
-                ),
-            ],
-          ),
-        );
+        children = [
+          if (value.isEmpty)
+            ListTilePadding(
+              key: shareActionKey,
+              top: 20,
+              bottom: 20,
+              child: Text(
+                translations.settings.backups.manageBackups.subtitle(n: 0),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+          for (Backup backup in value)
+            ExpandListTile(
+              title: Text(
+                formatter.format(backup.dateTime),
+              ),
+              children: createBackupActions(backup),
+            ),
+        ];
+        contentPadding = kClassicChoiceDialogPadding;
         break;
       case AsyncError(:final error):
-        content = Center(
-          child: Text(translations.error.generic.withException(exception: error)),
-        );
+        children = [
+          Center(
+            child: Text(translations.error.generic.withException(exception: error)),
+          ),
+        ];
+        contentPadding = kClassicContentPadding;
         break;
       default:
-        content = const CenteredCircularProgressIndicator();
+        children = [
+          const CenteredCircularProgressIndicator(),
+        ];
+        contentPadding = kClassicContentPadding;
         break;
     }
-    return AlertDialog(
+    return AppDialog(
       title: Text(translations.settings.backups.manageBackups.backupsDialogTitle),
-      content: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: content,
-      ),
+      contentPadding: contentPadding,
       actions: [
         TextButton(
           onPressed: importBackup,
@@ -116,6 +116,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
           child: Text(MaterialLocalizations.of(context).closeButtonLabel),
         ),
       ],
+      children: children,
     );
   }
 
@@ -204,7 +205,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
 
   /// Asks the user for the given [backup] share.
   Future<void> shareBackup(Backup backup) async {
-    RenderBox? box = listKey.currentContext?.findRenderObject() as RenderBox?;
+    RenderBox? box = shareActionKey.currentContext?.findRenderObject() as RenderBox?;
     File file = await backup.getBackupPath();
     await Share.shareXFiles(
       [

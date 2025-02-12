@@ -5,6 +5,7 @@ import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/totp/code.dart';
 import 'package:open_authenticator/widgets/totp/image.dart';
 
@@ -240,29 +241,25 @@ class _MobileActionsDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(translations.totp.actions.mobileDialog.title),
-        scrollable: true,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (canEdit)
-              ListTile(
-                leading: const Icon(Icons.edit),
-                onTap: editButtonEnabled ? (() => Navigator.pop(context, _MobileActionsDialogResult.edit)) : null,
-                title: Text(translations.totp.actions.mobileDialog.edit),
-              ),
-            ListTile(
-              leading: const Icon(Icons.delete),
-              onTap: deleteButtonEnabled ? (() => Navigator.pop(context, _MobileActionsDialogResult.delete)) : null,
-              title: Text(translations.totp.actions.mobileDialog.delete),
-            ),
-          ],
-        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+        ],
+        children: [
+          if (canEdit)
+            ListTile(
+              leading: const Icon(Icons.edit),
+              onTap: editButtonEnabled ? (() => Navigator.pop(context, _MobileActionsDialogResult.edit)) : null,
+              title: Text(translations.totp.actions.mobileDialog.edit),
+            ),
+          ListTile(
+            leading: const Icon(Icons.delete),
+            onTap: deleteButtonEnabled ? (() => Navigator.pop(context, _MobileActionsDialogResult.delete)) : null,
+            title: Text(translations.totp.actions.mobileDialog.delete),
           ),
         ],
       );

@@ -222,7 +222,7 @@ class Backup implements Comparable<Backup> {
   }
 
   @override
-  int compareTo(Backup other) => dateTime.compareTo(other.dateTime);
+  int compareTo(Backup other) => other.dateTime.compareTo(dateTime);
 }
 
 /// Thrown when the file does not exist.

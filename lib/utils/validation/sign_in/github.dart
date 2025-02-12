@@ -10,6 +10,7 @@ import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 import 'package:open_authenticator/widgets/countdown.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 /// Allows to sign in using Github.
@@ -81,25 +82,27 @@ class GithubSignIn with OAuth2SignIn {
     if (context.mounted) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => AppDialog(
           title: Text(translations.validation.githubCodeDialog.title),
-          scrollable: true,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Text(translations.validation.githubCodeDialog.message),
+          displayCloseButton: false,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Text(
+                translations.validation.githubCodeDialog.message,
+                textAlign: TextAlign.center,
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SelectableText(
                       userCode,
                       style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
+                      textAlign: TextAlign.center,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
@@ -114,18 +117,19 @@ class GithubSignIn with OAuth2SignIn {
                   ],
                 ),
               ),
-              Text.rich(
-                translations.validation.githubCodeDialog.countdown(
-                  countdown: WidgetSpan(
-                    child: CountdownWidget(
-                      duration: timeout,
-                      textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+            ),
+            Text.rich(
+              translations.validation.githubCodeDialog.countdown(
+                countdown: WidgetSpan(
+                  child: CountdownWidget(
+                    duration: timeout,
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-            ],
-          ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
         barrierDismissible: false,
       );

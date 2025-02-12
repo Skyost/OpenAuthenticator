@@ -5,6 +5,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 
 /// A dialog that blocks everything until the user has either changed its storage type or subscribed to the Contributor Plan.
 class TotpLimitDialog extends ConsumerWidget {
@@ -26,10 +27,9 @@ class TotpLimitDialog extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => AlertDialog(
+  Widget build(BuildContext context, WidgetRef ref) => AppDialog(
         title: Text(title),
-        scrollable: true,
-        content: Text(message),
+        displayCloseButton: false,
         actions: [
           TextButton(
             onPressed: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.local)),
@@ -44,6 +44,9 @@ class TotpLimitDialog extends ConsumerWidget {
               onPressed: () => Navigator.pop(context, false),
               child: Text(translations.totpLimit.addDialog.actions.cancel),
             ),
+        ],
+        children: [
+          Text(message),
         ],
       );
 

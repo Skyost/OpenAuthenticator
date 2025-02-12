@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/logo_search/widget.dart';
 
 /// Allows to pick a logo coming from a remote server.
@@ -18,20 +19,18 @@ class LogoPickerDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(translations.logoSearch.dialogTitle),
-        scrollable: true,
-        content: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: LogoSearchWidget(
-            initialSearchKeywords: initialSearchKeywords,
-            onLogoClicked: onLogoClicked,
-          ),
-        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+        ],
+        children: [
+          LogoSearchWidget(
+            initialSearchKeywords: initialSearchKeywords,
+            onLogoClicked: onLogoClicked,
           ),
         ],
       );

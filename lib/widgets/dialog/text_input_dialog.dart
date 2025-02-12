@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 
 /// Shows a dialog for prompting text.
@@ -82,40 +83,8 @@ class _TextInputDialogState extends State<TextInputDialog> {
   late bool valid = widget.validator == null ? true : (widget.validator!.call(value) != null);
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(widget.title),
-        scrollable: true,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              widget.message,
-              textAlign: TextAlign.left,
-            ),
-            if (widget.password)
-              PasswordFormField(
-                initialValue: value,
-                onChanged: onChanged,
-                autofocus: true,
-                onFieldSubmitted: (value) => Navigator.pop(context, value),
-                textInputAction: TextInputAction.go,
-                validator: widget.validator,
-                keyboardType: widget.keyboardType,
-                autovalidateMode: AutovalidateMode.always,
-              )
-            else
-              TextFormField(
-                initialValue: value,
-                onChanged: onChanged,
-                autofocus: true,
-                onFieldSubmitted: (value) => Navigator.pop(context, value),
-                textInputAction: TextInputAction.go,
-                validator: widget.validator,
-                keyboardType: widget.keyboardType,
-                autovalidateMode: AutovalidateMode.always,
-              ),
-          ],
-        ),
         actions: [
           TextButton(
             onPressed: valid ? (() => Navigator.pop(context, value)) : null,
@@ -125,6 +94,34 @@ class _TextInputDialogState extends State<TextInputDialog> {
             onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
           ),
+        ],
+        children: [
+          Text(
+            widget.message,
+            textAlign: TextAlign.left,
+          ),
+          if (widget.password)
+            PasswordFormField(
+              initialValue: value,
+              onChanged: onChanged,
+              autofocus: true,
+              onFieldSubmitted: (value) => Navigator.pop(context, value),
+              textInputAction: TextInputAction.go,
+              validator: widget.validator,
+              keyboardType: widget.keyboardType,
+              autovalidateMode: AutovalidateMode.always,
+            )
+          else
+            TextFormField(
+              initialValue: value,
+              onChanged: onChanged,
+              autofocus: true,
+              onFieldSubmitted: (value) => Navigator.pop(context, value),
+              textInputAction: TextInputAction.go,
+              validator: widget.validator,
+              keyboardType: widget.keyboardType,
+              autovalidateMode: AutovalidateMode.always,
+            ),
         ],
       );
 
@@ -204,30 +201,8 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
   Result<bool> oldPasswordValidationResult = const ResultSuccess(value: false);
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => AppDialog(
         title: Text(widget.title),
-        scrollable: true,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              widget.message,
-              textAlign: TextAlign.left,
-            ),
-            Form(
-              key: formFieldKey,
-              child: PasswordFormField(
-                initialValue: password,
-                onChanged: (value) => password = value,
-                autofocus: true,
-                onFieldSubmitted: (value) => onOkPressed(password: value),
-                textInputAction: TextInputAction.go,
-                validator: (_) => MasterPasswordInputDialog.validateMasterPassword(oldPasswordValidationResult),
-                autovalidateMode: AutovalidateMode.disabled,
-              ),
-            ),
-          ],
-        ),
         actions: [
           TextButton(
             onPressed: onOkPressed,
@@ -236,6 +211,24 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+        ],
+        children: [
+          Text(
+            widget.message,
+            textAlign: TextAlign.left,
+          ),
+          Form(
+            key: formFieldKey,
+            child: PasswordFormField(
+              initialValue: password,
+              onChanged: (value) => password = value,
+              autofocus: true,
+              onFieldSubmitted: (value) => onOkPressed(password: value),
+              textInputAction: TextInputAction.go,
+              validator: (_) => MasterPasswordInputDialog.validateMasterPassword(oldPasswordValidationResult),
+              autovalidateMode: AutovalidateMode.disabled,
+            ),
           ),
         ],
       );
