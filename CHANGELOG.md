@@ -1,5 +1,11 @@
 # 📰 Open Authenticator Changelog
 
+## v1.2.1
+Released on Feb 12, 2025.
+
+* **FEAT** : Improved app dialogs. ([#a0f764a](https://github.com/Skyost/OpenAuthenticator/commit/a0f764a))
+* **CHORE** : Added `de` localization to Xcode. ([#5366d36](https://github.com/Skyost/OpenAuthenticator/commit/5366d36))
+
 ## v1.2.0
 Released on Feb 9, 2025.
 

@@ -1,7 +1,7 @@
 name: open_authenticator
 description: A cross-platform OTP app, free and open-source.
 publish_to: none
-version: 1.2.0+16
+version: 1.2.1+17
 
 environment:
   sdk: ">=3.6.0 <4.0.0"
@@ -22,7 +22,7 @@ dependencies:
   path_provider: ^2.1.5
   shared_preferences: ^2.5.2
   uuid: ^4.5.1
-  webcrypto: ^0.5.7
+  webcrypto: ^0.5.8
   equatable: ^2.0.7
   drift: ^2.25.0
   drift_flutter: ^0.2.4
