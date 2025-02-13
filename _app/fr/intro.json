@@ -1,0 +1,30 @@
+{
+  "welcome": {
+    "firstParagraph": "Merci d'avoir téléchargé $app, une application open-source qui va vous aider à tranquillement gérer vos TOTPs (Time based One Time Password).",
+    "secondParagraph": "Vous allez pouvoir configurer l'application au cours des prochaines étapes pour qu'elle ressemble à ce que vous souhaitez.",
+    "thirdParagraph": "J'espère que vous aimerez utiliser cette application autant que j'ai aimé la créer !"
+  },
+  "logIn": {
+    "title": "Synchroniser vos TOTPs",
+    "firstParagraph": "Cliquer sur le bouton \"Connexion\" ci-dessous pour synchroniser vos TOTPs entre vos appareils.",
+    "secondParagraph": "Cette étape est complètement optionnelle.",
+    "thirdParagraph": "Veuillez noter que, si vous activez cette option, nous devrons vous limiter à $limit TOTPs afin d'éviter toute utilisation excessive.",
+    "fourthParagraph": "Cette limite peut être supprimée à tout moment en souscrivant à l'Abonnement Contributeur dans les paramètres d'$app.",
+    "button": {
+      "loggedOut": "Connexion",
+      "verifyEmail": "Confirmer adresse mail",
+      "loggedIn": "Connecté avec succès",
+      "error": "Impossible de se connecter"
+    }
+  },
+  "password": {
+    "title": "Gardez vos données au chaud",
+    "firstParagraph": "Pour que vos données restent sécurisées, nous devons vous demander de définir un mot de passe maître.",
+    "secondParagraph": "Ce mot de passe sera utilisé pour chiffrer vos données et ne sera jamais envoyé à aucun serveur distant.",
+    "thirdParagraph": "Ainsi, si vous l'oubliez, nous ne pourrons pas le retrouver pour vous. Assurez-vous de l'enregistrer dans un endroit sécurisé."
+  },
+  "button": {
+    "next": "Suivant",
+    "finish": "Terminer"
+  }
+}
