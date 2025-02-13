@@ -147,24 +147,24 @@ class TotpCountdownImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox.square(
-    dimension: size,
-    child: Stack(
-      children: [
-        Positioned.fill(
-          child: TotpImageWidget.fromTotp(
-            totp: totp,
-          ),
+        dimension: size,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: TotpImageWidget.fromTotp(
+                totp: totp,
+              ),
+            ),
+            Positioned.fill(
+              child: _TotpCountdownImageWidgetCircularProgress(
+                totp: totp,
+                size: size,
+                progressColor: progressColor,
+              ),
+            ),
+          ],
         ),
-        Positioned.fill(
-          child: _TotpCountdownImageWidgetCircularProgress(
-            totp: totp,
-            size: size,
-            progressColor: progressColor,
-          ),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 /// Displays the TOTP image with a countdown.
@@ -187,7 +187,7 @@ class _TotpCountdownImageWidgetCircularProgress extends TimeBasedTotpWidget {
 }
 
 /// The TOTP countdown image widget state.
-class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidgetState<_TotpCountdownImageWidgetCircularProgress> with TickerProviderStateMixin {
+class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidgetState<_TotpCountdownImageWidgetCircularProgress> with WidgetsBindingObserver, TickerProviderStateMixin {
   /// The progress indicator color.
   late Color color = widget.progressColor.shade700;
 
@@ -204,14 +204,23 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
       changeColors();
     }
     scheduleAnimation();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   Widget build(BuildContext context) => CircularProgressIndicator(
-    value: animationController.value / validity.inSeconds,
-    color: color,
-    backgroundColor: backgroundColor,
-  );
+        value: animationController.value / validity.inSeconds,
+        color: color,
+        backgroundColor: backgroundColor,
+      );
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      updateState(changeColors: false);
+    }
+  }
 
   @override
   void didUpdateWidget(covariant _TotpCountdownImageWidgetCircularProgress oldWidget) {
@@ -224,15 +233,16 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     cancelAnimation();
     super.dispose();
   }
 
   @override
-  void updateState({bool changeColors = true}) {
+  void updateState({double? start, bool changeColors = true}) {
     if (mounted) {
       animationController.duration = validity;
-      animationController.forward(from: 0);
+      animationController.forward(from: start ?? progress);
       setState(() {
         if (changeColors) {
           this.changeColors();
@@ -251,7 +261,7 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
       ..addListener(() {
         setState(() {});
       })
-      ..forward(from: (validity - calculateExpirationDuration()).inMilliseconds / 1000);
+      ..forward(from: progress);
   }
 
   /// Cancels the animation.
@@ -265,4 +275,7 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
     color = backgroundColor;
     backgroundColor = temporary;
   }
+
+  /// Returns the current progress.
+  double get progress => (validity - calculateExpirationDuration()).inMilliseconds / 1000;
 }
