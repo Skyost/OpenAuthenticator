@@ -3,6 +3,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
     unreachable_switch_default: ignore
+    unused_element_parameter: ignore
   plugins:
     - custom_lint
   exclude:

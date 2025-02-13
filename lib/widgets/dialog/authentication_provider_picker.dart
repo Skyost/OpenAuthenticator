@@ -134,7 +134,6 @@ class _ProviderTile extends ConsumerStatefulWidget {
   /// Creates a new provider tile instance.
   const _ProviderTile({
     required this.provider,
-    // ignore: unused_element
     this.size = 32,
     this.trailingIcon,
     this.onTap,

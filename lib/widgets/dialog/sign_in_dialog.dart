@@ -204,11 +204,8 @@ class _OtherProvidersWrap extends ConsumerWidget {
   /// Creates a new others providers wrap instance.
   const _OtherProvidersWrap({
     required this.onProviderSelected,
-    // ignore: unused_element
     this.circleButtonSize = 30,
-    // ignore: unused_element
     this.circleButtonSpace = 10,
-    // ignore: unused_element
     this.circleButtonPadding = 20,
   });
 
