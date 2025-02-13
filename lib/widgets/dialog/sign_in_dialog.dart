@@ -172,7 +172,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
         ),
         AppFilledButton(
           icon: Icon(Icons.send),
-          onPressed: TextInputDialog.validateEmail(email) == null ? (() => onEmailChosen(providers.getProvider<EmailLinkAuthenticationProvider>())) : null,
+          onPressed: email.trim().isNotEmpty && TextInputDialog.validateEmail(email) == null ? (() => onEmailChosen(providers.getProvider<EmailLinkAuthenticationProvider>())) : null,
           label: child,
         ),
       ],
