@@ -301,30 +301,54 @@ class _DesktopActionsWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Wrap(
-        alignment: WrapAlignment.end,
+  Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           if (totp.isDecrypted) ...[
-            TextButton.icon(
-              onPressed: onCopyPressed,
-              icon: const Icon(Icons.copy),
-              label: Text(translations.totp.actions.desktopButtons.copy),
+            Flexible(
+              child: TextButton.icon(
+                onPressed: onCopyPressed,
+                icon: const Icon(Icons.copy),
+                label: Text(
+                  translations.totp.actions.desktopButtons.copy,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
-            TextButton.icon(
-              onPressed: onEditPressed,
-              icon: const Icon(Icons.edit),
-              label: Text(translations.totp.actions.desktopButtons.edit),
+            Flexible(
+              child: TextButton.icon(
+                onPressed: onEditPressed,
+                icon: const Icon(Icons.edit),
+                label: Text(
+                  translations.totp.actions.desktopButtons.edit,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
           ] else
-            TextButton.icon(
-              onPressed: onDecryptPressed,
-              icon: const Icon(Icons.lock),
-              label: Text(translations.totp.actions.decrypt),
+            Flexible(
+              child: TextButton.icon(
+                onPressed: onDecryptPressed,
+                icon: const Icon(Icons.lock),
+                label: Text(
+                  translations.totp.actions.decrypt,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
-          TextButton.icon(
-            onPressed: onDeletePressed,
-            icon: const Icon(Icons.delete),
-            label: Text(translations.totp.actions.desktopButtons.delete),
+          Flexible(
+            child: TextButton.icon(
+              onPressed: onDeletePressed,
+              icon: const Icon(Icons.delete),
+              label: Text(
+                translations.totp.actions.desktopButtons.delete,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ),
         ],
       );

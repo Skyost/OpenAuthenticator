@@ -45,6 +45,7 @@ Future<void> main() async {
         const WindowOptions(
           title: App.appName,
           size: Size(800, 600),
+          minimumSize: Size(400, 400),
           center: true,
         ), () async {
       await windowManager.show();

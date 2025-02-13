@@ -26,6 +26,7 @@ import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
+import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 import 'package:open_authenticator/widgets/smooth_highlight.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/title.dart';
@@ -64,7 +65,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const TitleWidget(),
+          title: _AppBarTitle(),
           actions: [
             _RequireCryptoStore(
               child: Builder(
@@ -149,6 +150,33 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
   }
 }
 
+/// The app bar title.
+class _AppBarTitle extends StatelessWidget {
+  /// The text max width.
+  /// Above this value, the app logo will be displayed.
+  final double? textMaxWidth;
+
+  /// Creates a new app bar title instance.
+  const _AppBarTitle({
+    this.textMaxWidth = 210,
+  });
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, constraints) {
+          if (textMaxWidth != null && constraints.maxWidth <= textMaxWidth!) {
+            double size = Theme.of(context).textTheme.titleLarge?.fontSize ?? 32;
+            return SizedScalableImageWidget(
+              height: size,
+              width: size,
+              asset: 'assets/images/logo.si',
+            );
+          }
+          return const TitleWidget();
+        },
+      );
+}
+
 /// Allows to require a crypto store.
 class _RequireCryptoStore extends ConsumerWidget {
   /// The child to show if the crypto store is non null.
@@ -164,7 +192,6 @@ class _RequireCryptoStore extends ConsumerWidget {
   const _RequireCryptoStore({
     required this.child,
     this.childIfAbsent = const SizedBox.shrink(),
-    // ignore: unused_element
     this.showChildIfLocked = true,
   });
 
