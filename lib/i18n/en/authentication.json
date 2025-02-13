@@ -21,31 +21,46 @@
     "title": "Delete account",
     "message": "Do you really want to delete your account ? Note that, because it is a sensitive action, we require you to reauthenticate before proceeding."
   },
-  "providerPickerDialog": {
-    "title": "Pick a login method",
+  "firebaseAuthenticationProvider": {
     "email": {
-      "title": "Email",
-      "subtitle": "Use your email to login. No password required, a confirmation link will be sent."
+      "name": "Email",
+      "description": "Use your email to login. No password required, a confirmation link will be sent."
     },
     "google": {
-      "title": "Google",
-      "subtitle": "Sign in with your Google account."
+      "name": "Google",
+      "description": "Sign in with your Google account."
     },
     "apple": {
-      "title": "Apple",
-      "subtitle": "Sign in with your Apple account."
+      "name": "Apple",
+      "description": "Sign in with your Apple account."
     },
     "microsoft": {
-      "title": "Microsoft",
-      "subtitle": "Sign in with your Microsoft account."
+      "name": "Microsoft",
+      "description": "Sign in with your Microsoft account."
     },
     "twitter": {
-      "title": "X",
-      "subtitle": "Sign in with your X account."
+      "name": "X",
+      "description": "Sign in with your X account."
     },
     "github": {
-      "title": "Github",
-      "subtitle": "Sign in with your Github account."
+      "name": "Github",
+      "description": "Sign in with your Github account."
     }
-  }
+  },
+  "signInDialog": {
+    "title": "Sign in",
+    "email": {
+      "title": "Sign in with your email",
+      "hint": "Enter your email address here",
+      "description": {
+        "signIn": "Enter your email above. No password required, we'll send you a login link right away !",
+        "waitingForConfirmation": "You will receive a confirmation email soon. Please click the link inside with this device to continue logging in.",
+        "alreadySignedIn": "You are already signed in with your email address.",
+        "cannotUse": "Unable to sign in with your email address. Please try another method."
+      },
+      "button": "Send a link"
+    },
+    "separator": "Or :"
+  },
+  "providerPickerDialogTitle": "Pick a login method"
 }

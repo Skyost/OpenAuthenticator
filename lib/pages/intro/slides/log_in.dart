@@ -9,6 +9,7 @@ import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/utils/account.dart';
+import 'package:open_authenticator/widgets/app_filled_button.dart';
 
 /// The slide that allows the user to login to Firebase.
 class LogInIntroPageSlide extends IntroPageSlide {
@@ -61,15 +62,15 @@ class _LogInButton extends ConsumerWidget {
     FirebaseAuthenticationState authenticationState = ref.watch(firebaseAuthenticationProvider);
     switch (authenticationState) {
       case FirebaseAuthenticationStateLoggedOut():
-        return FilledButton.icon(
+        return AppFilledButton(
           onPressed: () => AccountUtils.trySignIn(context, ref),
-          icon: const Icon(Icons.login),
+          icon: Icon(Icons.login),
           label: Text(translations.intro.logIn.button.loggedOut),
         );
       case FirebaseAuthenticationStateLoggedIn():
-        return FilledButton.icon(
+        return AppFilledButton(
           onPressed: null,
-          icon: const Icon(Icons.check),
+          icon: Icon(Icons.check),
           label: Text(translations.intro.logIn.button.loggedIn),
         );
     }

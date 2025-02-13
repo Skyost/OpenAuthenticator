@@ -13,7 +13,7 @@ final twitterAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticati
   () => FirebaseAuthenticationStateNotifier(TwitterAuthenticationProvider()),
 );
 
-/// The provider that allows to sign-in using Twitter.
+/// The provider that allows to sign in using Twitter.
 class TwitterAuthenticationProvider extends FallbackAuthenticationProvider<TwitterSignIn> {
   /// Creates a new Twitter authentication provider instance.
   const TwitterAuthenticationProvider()

@@ -11,6 +11,7 @@ import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/authentication_provider_picker.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
+import 'package:open_authenticator/widgets/dialog/sign_in_dialog.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
@@ -18,27 +19,27 @@ import 'package:open_authenticator/widgets/waiting_overlay.dart';
 class AccountUtils {
   /// Prompts the user to choose an authentication provider, and use it to login.
   static Future<void> trySignIn(BuildContext context, WidgetRef ref) async {
-    AuthenticationProviderSignIn? action = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.signIn);
-    if (action == null || !context.mounted) {
+    SignInDialogResult? result = await SignInDialog.openDialog(context);
+    if (result == null || !context.mounted) {
       return;
     }
     await _tryTo(
       context,
       ref,
-      action.provider,
+      result.provider,
       waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
-      action: action.action,
+      action: result.signIn,
       timeoutMessage: translations.error.timeout.authentication,
     );
   }
 
   /// Prompts the user to choose an authentication provider, and use it to link or unlink its current account.
   static Future<void> tryToggleLink(BuildContext context, WidgetRef ref) async {
-    AuthenticationProviderToggleLink? action = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.toggleLink);
-    if (action == null || !context.mounted) {
+    AuthenticationProviderToggleLinkResult? result = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.toggleLink);
+    if (result == null || !context.mounted) {
       return;
     }
-    bool unlink = !action.link;
+    bool unlink = !result.link;
     if (unlink &&
         !(await ConfirmationDialog.ask(
           context,
@@ -53,11 +54,11 @@ class AccountUtils {
     await _tryTo<LinkProvider>(
       context,
       ref,
-      action.provider,
+      result.provider,
       showLoadingDialog: unlink ? true : null,
       defaultSuccessMessage: unlink ? translations.authentication.link.unlinkSuccess : translations.authentication.link.linkSuccess,
       waitingDialogMessage: unlink ? null : translations.authentication.logIn.waitingLoginMessage,
-      action: action.action,
+      action: result.action,
       timeoutMessage: unlink ? translations.error.timeout.unlink : translations.error.timeout.authentication,
     );
   }
@@ -79,16 +80,16 @@ class AccountUtils {
       return;
     }
 
-    AuthenticationProviderReAuthenticate? action = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.reAuthenticate);
-    if (action == null || !context.mounted) {
+    AuthenticationProviderReAuthenticateResult? result = await AuthenticationProviderPickerDialog.openDialog(context, dialogMode: DialogMode.reAuthenticate);
+    if (result == null || !context.mounted) {
       return;
     }
     Result<AuthenticationObject> reAuthenticationResult = await _tryTo(
       context,
       ref,
-      action.provider,
+      result.provider,
       waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
-      action: action.action,
+      action: result.action,
       timeoutMessage: translations.error.timeout.authentication,
       handleResult: false,
     );

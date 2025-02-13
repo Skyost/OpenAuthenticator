@@ -4,7 +4,9 @@ import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/app_filled_button.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
+import 'package:open_authenticator/widgets/divider_text.dart';
 import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 import 'package:open_authenticator/widgets/title.dart';
@@ -75,10 +77,12 @@ class ContributorPlanFallbackPaywallPage extends ConsumerWidget {
               ListTilePadding(
                 top: 20,
                 bottom: 20,
-                child: Text(
-                  translations.contributorPlan.fallbackPaywall.packageType.choose,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                child: DividerText(
+                  text: Text(
+                    translations.contributorPlan.fallbackPaywall.packageType.choose,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
               _ContributorPlanBillingPlans(
@@ -116,10 +120,11 @@ class ContributorPlanFallbackPaywallPage extends ConsumerWidget {
               ListTilePadding(
                 top: 20,
                 bottom: 20,
-                child: FilledButton.tonalIcon(
+                child: AppFilledButton(
+                  tonal: true,
                   onPressed: () => Navigator.pop(context, const ResultCancelled()),
                   label: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close),
                 ),
               ),
             ],

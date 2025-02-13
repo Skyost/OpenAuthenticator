@@ -23,7 +23,10 @@ class ChangeMasterPasswordSettingsEntryWidget extends ConsumerWidget {
           text: translations.settings.security.changeMasterPassword.subtitle.text,
           children: [
             if (storageType.valueOrNull == StorageType.online)
-              TextSpan(text: '\n${translations.settings.security.changeMasterPassword.subtitle.sync}', style: const TextStyle(fontStyle: FontStyle.italic)),
+              TextSpan(
+                text: '\n${translations.settings.security.changeMasterPassword.subtitle.sync}',
+                style: const TextStyle(fontStyle: FontStyle.italic),
+              ),
           ],
         ),
       ),

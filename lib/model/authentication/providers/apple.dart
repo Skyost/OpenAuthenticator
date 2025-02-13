@@ -12,7 +12,7 @@ final appleAuthenticationStateProvider = NotifierProvider<FirebaseAuthentication
   () => FirebaseAuthenticationStateNotifier(AppleAuthenticationProvider()),
 );
 
-/// The provider that allows to sign-in using Apple.
+/// The provider that allows to sign in using Apple.
 class AppleAuthenticationProvider extends FallbackAuthenticationProvider<AppleSignIn> {
   /// Creates a new Apple authentication provider instance.
   const AppleAuthenticationProvider()

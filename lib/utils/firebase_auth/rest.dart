@@ -207,7 +207,7 @@ class RestUser extends User with ChangeNotifier {
         _providers = providers,
         _idToken = idToken;
 
-  /// Creates a new REST user instance from a Sign-in result.
+  /// Creates a new REST user instance from a sign-in result.
   static Future<RestUser?> _fromSignInResult(SignInResult signInResult) async {
     RestUser user = RestUser._(
       uid: signInResult.localId!,

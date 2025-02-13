@@ -12,7 +12,7 @@ final googleAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticatio
   () => FirebaseAuthenticationStateNotifier(GoogleAuthenticationProvider()),
 );
 
-/// The provider that allows to sign-in using Google.
+/// The provider that allows to sign in using Google.
 class GoogleAuthenticationProvider extends FallbackAuthenticationProvider<GoogleSignIn> {
   /// Creates a new Google authentication provider instance.
   const GoogleAuthenticationProvider()

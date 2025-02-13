@@ -249,7 +249,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
                   }
                 }
               : null,
-          icon: const Icon(Icons.check),
+          icon: Icon(Icons.check),
           label: Text(translations.totp.page.save),
         ),
       );

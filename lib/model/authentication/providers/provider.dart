@@ -37,6 +37,12 @@ final userAuthenticationProviders = Provider<Map<FirebaseAuthenticationProvider,
 
 /// Contains various useful fields and methods to use with [userAuthenticationProviders].
 extension AuthenticationProvidersUtils on Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState> {
+  /// Returns the instance of [T].
+  T getProvider<T extends FirebaseAuthenticationProvider>() => keys.whereType<T>().first;
+
+  /// Returns the authentication state of the given [T].
+  FirebaseAuthenticationState getAuthenticationState<T extends FirebaseAuthenticationProvider>() => this[getProvider<T>()]!;
+
   /// Contains all authentication providers where the user is logged in.
   List<FirebaseAuthenticationProvider> get loggedInProviders => [
         for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)

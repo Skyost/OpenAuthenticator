@@ -40,7 +40,7 @@ class AppDialog extends StatelessWidget {
     this.ellipsisTitleOnOverflow,
     this.children = const [],
     this.actions,
-    this.borderRadius = 10,
+    this.borderRadius = 28,
     this.displayCloseButton,
     this.contentPadding,
   });
@@ -158,7 +158,7 @@ class _AppDialogTitleState extends ConsumerState<_AppDialogTitle> with Brightnes
   }
 
   /// Returns the padding.
-  EdgeInsets get padding => currentPlatform.isMobile ? EdgeInsets.all(24) : EdgeInsets.symmetric(horizontal: 24, vertical: 12);
+  EdgeInsets get padding => currentPlatform.isMobile ? EdgeInsets.all(24) : EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 
   /// Returns the text color.
   Color? get textColor => currentPlatform.isMobile ? null : Colors.white;

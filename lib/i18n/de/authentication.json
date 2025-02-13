@@ -21,31 +21,46 @@
     "title": "Konto löschen",
     "message": "Möchten Sie Ihr Konto wirklich löschen? Bitte beachten Sie, dass wir eine erneute Authentifizierung verlangen, da es sich um eine sensible Aktion handelt."
   },
-  "providerPickerDialog": {
-    "title": "Wählen Sie eine Anmeldemethode",
+  "firebaseAuthenticationProvider": {
     "email": {
-      "title": "E-Mail",
-      "subtitle": "Verwenden Sie Ihre E-Mail zur Anmeldung. Es ist kein Passwort erforderlich, ein Bestätigungslink wird Ihnen per E-Mail zugesandt."
+      "name": "E-Mail",
+      "description": "Verwenden Sie Ihre E-Mail zur Anmeldung. Es ist kein Passwort erforderlich, ein Bestätigungslink wird Ihnen per E-Mail zugesandt."
     },
     "google": {
-      "title": "Google",
-      "subtitle": "Melden Sie sich mit Ihrem Google-Konto an."
+      "name": "Google",
+      "description": "Melden Sie sich mit Ihrem Google-Konto an."
     },
     "apple": {
-      "title": "Apple",
-      "subtitle": "Melden Sie sich mit Ihrem Apple-Konto an."
+      "name": "Apple",
+      "description": "Melden Sie sich mit Ihrem Apple-Konto an."
     },
     "microsoft": {
-      "title": "Microsoft",
-      "subtitle": "Melden Sie sich mit Ihrem Microsoft-Konto an."
+      "name": "Microsoft",
+      "description": "Melden Sie sich mit Ihrem Microsoft-Konto an."
     },
     "twitter": {
-      "title": "X",
-      "subtitle": "Melden Sie sich mit Ihrem X-Konto an."
+      "name": "X",
+      "description": "Melden Sie sich mit Ihrem X-Konto an."
     },
     "github": {
-      "title": "GitHub",
-      "subtitle": "Melden Sie sich mit Ihrem GitHub-Konto an."
+      "name": "GitHub",
+      "description": "Melden Sie sich mit Ihrem GitHub-Konto an."
     }
-  }
+  },
+  "signInDialog": {
+    "title": "Anmeldung",
+    "email": {
+      "title": "Mit Ihrer E-Mail anmelden",
+      "hint": "Geben Sie hier Ihre E-Mail-Adresse ein",
+      "description": {
+        "signIn": "Geben Sie oben Ihre E-Mail-Adresse ein. Kein Passwort erforderlich, wir senden Ihnen sofort einen Anmeldelink!",
+        "waitingForConfirmation": "Sie erhalten bald eine Bestätigungs-E-Mail. Bitte klicken Sie auf den darin enthaltenen Link auf diesem Gerät, um die Anmeldung fortzusetzen.",
+        "alreadySignedIn": "Sie sind bereits mit Ihrer E-Mail-Adresse angemeldet.",
+        "cannotUse": "Anmeldung mit Ihrer E-Mail-Adresse nicht möglich. Bitte versuchen Sie eine andere Methode."
+      },
+      "button": "Senden Sie einen Link"
+    },
+    "separator": "Oder:"
+  },
+  "providerPickerDialogTitle": "Wählen Sie eine Anmeldemethode"
 }

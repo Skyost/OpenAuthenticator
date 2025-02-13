@@ -49,7 +49,7 @@ abstract class FirebaseAuth {
   /// Returns whether the user is logged in.
   bool get isLoggedIn => currentUser != null;
 
-  /// Sign-ins the user with a given method.
+  /// Sign ins the user with a given method.
   Future<SignInResult> signInWith(FirebaseAuthMethod method) => method.signIn();
 
   /// Unlinks the user from a given method.
@@ -98,7 +98,7 @@ abstract class User {
 
 /// A Firebase authentication method.
 mixin FirebaseAuthMethod {
-  /// Sign-ins using this method.
+  /// Sign ins using this method.
   @protected
   Future<SignInResult> signIn();
 
@@ -307,7 +307,7 @@ class SignInResult {
   /// The number of seconds in which the ID token expires.
   final int? expiresIn;
 
-  /// Creates a new Sign-In result instance.
+  /// Creates a new sign-in result instance.
   const SignInResult({
     this.email,
     this.emailVerified,

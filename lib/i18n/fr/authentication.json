@@ -21,31 +21,46 @@
     "title": "Supprimer votre compte",
     "message": "Voulez-vous vraiment supprimer votre compte ? Veuillez noter que, parce qu'il s'agit d'une action sensible, vous devez vous réautentifier avant de continuer."
   },
-  "providerPickerDialog": {
-    "title": "Choisissez une méthode de connexion",
+  "firebaseAuthenticationProvider": {
     "email": {
-      "title": "Email",
-      "subtitle": "Utilisez votre adresse mail pour vous connecter. Pas besoin de mot de passe, nous vous enverrons un lien de confirmation."
+      "name": "Email",
+      "description": "Utilisez votre adresse mail pour vous connecter. Pas besoin de mot de passe, nous vous enverrons un lien de confirmation."
     },
     "google": {
-      "title": "Google",
-      "subtitle": "Connectez-vous avec votre compte Google."
+      "name": "Google",
+      "description": "Connectez-vous avec votre compte Google."
     },
     "apple": {
-      "title": "Apple",
-      "subtitle": "Connectez-vous avec votre compte Apple."
+      "name": "Apple",
+      "description": "Connectez-vous avec votre compte Apple."
     },
     "microsoft": {
-      "title": "Microsoft",
-      "subtitle": "Connectez-vous avec votre compte Microsoft."
+      "name": "Microsoft",
+      "description": "Connectez-vous avec votre compte Microsoft."
     },
     "twitter": {
-      "title": "X",
-      "subtitle": "Connectez-vous avec votre compte X."
+      "name": "X",
+      "description": "Connectez-vous avec votre compte X."
     },
     "github": {
-      "title": "Github",
-      "subtitle": "Connectez-vous avec votre compte Github."
+      "name": "Github",
+      "description": "Connectez-vous avec votre compte Github."
     }
-  }
+  },
+  "signInDialog": {
+    "title": "Connexion",
+    "email": {
+      "title": "Connexion par adresse mail",
+      "hint": "Entrez votre adresse mail ici",
+      "description": {
+        "signIn": "Entrez votre adresse mail ci-dessus. Pas besoin de mot de passe, nous vous enverrons un lien de connexion aussitôt !",
+        "waitingForConfirmation": "Vous recevrez un email de confirmation bientôt. Veuillez cliquer sur le lien qui se trouve à l'intérieur avec cet appareil pour poursuivre la connexion.",
+        "alreadySignedIn": "Vous êtes déjà connecté avec votre adresse mail.",
+        "cannotUse": "Impossible de se connecter avec votre adresse mail. Veuillez essayer une autre méthode."
+      },
+      "button": "Envoyer un lien"
+    },
+    "separator": "Ou :"
+  },
+  "providerPickerDialogTitle": "Choisissez une méthode de connexion"
 }

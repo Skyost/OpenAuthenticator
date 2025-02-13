@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +20,7 @@ import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/master_password.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/app_filled_button.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
@@ -82,7 +81,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
                       });
                     }
                     if (!(await ref.read(displayCopyButtonSettingsEntryProvider.future)) && totp.isDecrypted && context.mounted) {
-                      _HomePageBody._copyCode(context, totp as DecryptedTotp);
+                      _HomePageBody.copyCode(context, totp as DecryptedTotp);
                     }
                   },
                 ),
@@ -91,7 +90,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
             if (kDebugMode || currentPlatform != Platform.android)
               _RequireCryptoStore(
                 child: IconButton(
-                  onPressed: () => _onAddButtonPressed(context),
+                  onPressed: () => onAddButtonPressed(context),
                   icon: const Icon(Icons.add),
                 ),
               ),
@@ -117,7 +116,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
                     Icons.add,
                     size: 32,
                   ),
-                  onPressed: () => _onAddButtonPressed(context),
+                  onPressed: () => onAddButtonPressed(context),
                 ),
               )
             : null,
@@ -134,7 +133,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
       );
 
   /// Triggered when the "Add" button is pressed.
-  void _onAddButtonPressed(BuildContext context) async {
+  void onAddButtonPressed(BuildContext context) async {
     if (!currentPlatform.isMobile && !kDebugMode) {
       Navigator.pushNamed(context, TotpPage.name);
       return;
@@ -235,11 +234,11 @@ class _HomePageBody extends ConsumerWidget {
                     key: ValueKey(value[position].uuid),
                     totp: totp,
                     displayCode: isUnlocked,
-                    onDecryptPressed: () => _tryDecryptTotp(context, ref, totp),
-                    onEditPressed: () => _editTotp(context, ref, totp),
-                    onDeletePressed: () => _deleteTotp(context, ref, totp),
-                    onTap: !displayCopyButton && totp.isDecrypted ? ((_) => _copyCode(context, totp as DecryptedTotp)) : null,
-                    onCopyPressed: displayCopyButton && totp.isDecrypted ? (() => _copyCode(context, totp as DecryptedTotp)) : null,
+                    onDecryptPressed: () => tryDecryptTotp(context, ref, totp),
+                    onEditPressed: () => editTotp(context, ref, totp),
+                    onDeletePressed: () => deleteTotp(context, ref, totp),
+                    onTap: !displayCopyButton && totp.isDecrypted ? ((_) => copyCode(context, totp as DecryptedTotp)) : null,
+                    onCopyPressed: displayCopyButton && totp.isDecrypted ? (() => copyCode(context, totp as DecryptedTotp)) : null,
                   );
                   return totp == emphasis
                       ? SmoothHighlight(
@@ -253,7 +252,7 @@ class _HomePageBody extends ConsumerWidget {
                 separatorBuilder: (context, position) => const Divider(),
               );
         return _RequireCryptoStore(
-          childIfAbsent: _createErrorWidget(
+          childIfAbsent: createErrorWidget(
             context,
             ref,
             message: translations.home.noCryptoStore.message,
@@ -271,7 +270,7 @@ class _HomePageBody extends ConsumerWidget {
       case AsyncError(:final error):
         return error is NotLoggedInException
             ? const CenteredCircularProgressIndicator()
-            : _createErrorWidget(
+            : createErrorWidget(
                 context,
                 ref,
                 message: translations.error.generic.withException(exception: error),
@@ -285,7 +284,7 @@ class _HomePageBody extends ConsumerWidget {
   }
 
   /// Creates an error widget.
-  Widget _createErrorWidget(
+  Widget createErrorWidget(
     BuildContext context,
     WidgetRef ref, {
     String? message,
@@ -307,13 +306,10 @@ class _HomePageBody extends ConsumerWidget {
             ),
             if (buttonLabel != null)
               Center(
-                child: SizedBox(
-                  width: math.min(MediaQuery.of(context).size.width - 20, 300),
-                  child: FilledButton.icon(
-                    onPressed: onButtonPressed,
-                    label: Text(buttonLabel),
-                    icon: buttonIcon == null ? null : Icon(buttonIcon),
-                  ),
+                child: AppFilledButton(
+                  onPressed: onButtonPressed,
+                  label: Text(buttonLabel),
+                  icon: buttonIcon == null ? null : Icon(buttonIcon),
                 ),
               ),
           ],
@@ -321,7 +317,7 @@ class _HomePageBody extends ConsumerWidget {
       );
 
   /// Allows to edit the TOTP.
-  Future<void> _editTotp(BuildContext context, WidgetRef ref, Totp totp) async {
+  Future<void> editTotp(BuildContext context, WidgetRef ref, Totp totp) async {
     CryptoStore? currentCryptoStore = await ref.read(cryptoStoreProvider.future);
     if (currentCryptoStore == null) {
       if (context.mounted) {
@@ -353,7 +349,7 @@ class _HomePageBody extends ConsumerWidget {
   }
 
   /// Allows to delete the TOTP.
-  Future<void> _deleteTotp(BuildContext context, WidgetRef ref, Totp totp) async {
+  Future<void> deleteTotp(BuildContext context, WidgetRef ref, Totp totp) async {
     bool confirmation = await ConfirmationDialog.ask(
       context,
       title: translations.totp.actions.deleteConfirmationDialog.title,
@@ -372,7 +368,7 @@ class _HomePageBody extends ConsumerWidget {
   }
 
   /// Allows to copy the code to the clipboard.
-  static Future<void> _copyCode(BuildContext context, DecryptedTotp totp) async {
+  static Future<void> copyCode(BuildContext context, DecryptedTotp totp) async {
     await Clipboard.setData(ClipboardData(text: totp.generateCode()));
     if (context.mounted) {
       SnackBarIcon.showSuccessSnackBar(context, text: translations.totp.actions.copyConfirmation);
@@ -380,7 +376,7 @@ class _HomePageBody extends ConsumerWidget {
   }
 
   /// Tries to decrypt the current TOTP.
-  Future<void> _tryDecryptTotp(BuildContext context, WidgetRef ref, Totp totp) async {
+  Future<void> tryDecryptTotp(BuildContext context, WidgetRef ref, Totp totp) async {
     String? password = await TextInputDialog.prompt(
       context,
       title: translations.totp.decryptDialog.title,

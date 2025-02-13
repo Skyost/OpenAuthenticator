@@ -33,8 +33,8 @@ class _LabelWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 6),
-    child: Row(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Row(
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 2, right: 6),
@@ -44,8 +44,14 @@ class _LabelWidget extends StatelessWidget {
                 size: 12,
               ),
             ),
-            Text(text),
+            Expanded(
+              child: Text(
+                text,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
           ],
         ),
-  );
+      );
 }

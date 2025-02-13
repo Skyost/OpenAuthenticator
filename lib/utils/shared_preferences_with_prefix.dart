@@ -1,7 +1,5 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:open_authenticator/utils/platform.dart';
-import 'package:open_authenticator/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences_linux/shared_preferences_linux.dart';
@@ -26,7 +24,7 @@ class SharedPreferencesWithPrefix {
   static Future<SharedPreferencesWithPrefix> create({
     String prefix = kDebugMode ? 'flutterDebug.' : 'flutter.',
   }) async {
-    SharedPreferencesWithPrefix sharedPreferencesWithPrefix = (await _migrate(prefix)) ?? (await _createSharedPreferencesWithPrefix(prefix));
+    SharedPreferencesWithPrefix sharedPreferencesWithPrefix = await _createSharedPreferencesWithPrefix(prefix);
     return sharedPreferencesWithPrefix;
   }
 
@@ -46,57 +44,6 @@ class SharedPreferencesWithPrefix {
         ),
         prefix: prefix,
       );
-
-  /// Migrates from [SharedPreferences] to [SharedPreferencesWithCache].
-  /// See https://github.com/flutter/flutter/issues/150732.
-  @Deprecated('Will be removed in a next release.')
-  static Future<SharedPreferencesWithPrefix?> _migrate(String prefix) async {
-    SharedPreferencesWithPrefix? sharedPreferencesWithPrefix;
-    try {
-      SharedPreferences.setPrefix(kDebugMode ? 'flutter_debug.' : 'flutter.');
-      SharedPreferences legacyPreferences = await SharedPreferences.getInstance();
-      bool hasMigrated = legacyPreferences.getBool('legacyPreferencesDidMigrate') == true;
-      if (hasMigrated) {
-        return null;
-      }
-      Set<String> keys = legacyPreferences.getKeys();
-      Map<String, Object> oldPreferences = {};
-      for (String key in keys) {
-        Object? value = legacyPreferences.get(key);
-        bool canMigrate = value is String || value is bool || value is int || value is double || value is List<String>;
-        if (!canMigrate) {
-          continue;
-        }
-        await legacyPreferences.remove(key);
-        oldPreferences[key] = value!;
-      }
-      await legacyPreferences.setBool('legacyPreferencesDidMigrate', true);
-      sharedPreferencesWithPrefix = await SharedPreferencesWithPrefix._createSharedPreferencesWithPrefix(prefix);
-      for (MapEntry<String, Object> entry in oldPreferences.entries) {
-        if (entry.value is String) {
-          await sharedPreferencesWithPrefix.setString(entry.key, entry.value as String);
-        } else if (entry.value is bool) {
-          await sharedPreferencesWithPrefix.setBool(entry.key, entry.value as bool);
-        } else if (entry.value is int) {
-          await sharedPreferencesWithPrefix.setInt(entry.key, entry.value as int);
-        } else if (entry.value is double) {
-          await sharedPreferencesWithPrefix.setDouble(entry.key, entry.value as double);
-        } else if (entry.value is List<String>) {
-          await sharedPreferencesWithPrefix.setStringList(entry.key, entry.value as List<String>);
-        }
-      }
-    } catch (ex, stacktrace) {
-      handleException(ex, stacktrace);
-      if (!kDebugMode) {
-        FirebaseCrashlytics.instance.recordError(
-          ex,
-          stacktrace,
-          printDetails: false,
-        );
-      }
-    }
-    return sharedPreferencesWithPrefix;
-  }
 
   /// Returns true if cache contains the given [key].
   ///

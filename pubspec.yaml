@@ -34,12 +34,12 @@ dependencies:
   intl: any
   url_launcher: ^6.3.1
   firebase_app_check: ^0.3.2
-  purchases_flutter: ^8.4.5
+  purchases_flutter: ^8.4.6
   firebase_crashlytics: ^4.3.2
   window_manager: ^0.4.3
   slang: ^4.4.1
   slang_flutter: ^4.4.0
-  purchases_ui_flutter: ^8.4.5
+  purchases_ui_flutter: ^8.4.6
   rate_my_app: ^2.3.1
   app_links: ^6.3.3
   hashlib: ^1.21.1

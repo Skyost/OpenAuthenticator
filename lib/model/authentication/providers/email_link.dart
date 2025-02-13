@@ -106,7 +106,7 @@ final emailLinkAuthenticationStateProvider = NotifierProvider<FirebaseAuthentica
   () => FirebaseAuthenticationStateNotifier(EmailLinkAuthenticationProvider()),
 );
 
-/// The provider that allows to sign-in using an email link.
+/// The provider that allows to sign in using an email link.
 class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider {
   /// Creates a new email link authentication provider instance.
   const EmailLinkAuthenticationProvider()
@@ -123,8 +123,21 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   bool get showLoadingDialog => false;
 
   @override
-  Future<Result<EmailLinkAuthenticationObject>> trySignIn(BuildContext context) async {
-    String? email = await TextInputDialog.prompt(
+  Future<Result<AuthenticationObject>> signIn(BuildContext context, { String? email }) async {
+    try {
+      return await trySignIn(context, email: email);
+    } catch (ex, stacktrace) {
+      return ResultError(
+        exception: FirebaseAuthenticationException(ex),
+        stacktrace: stacktrace,
+      );
+    }
+  }
+
+  @override
+  @protected
+  Future<Result<EmailLinkAuthenticationObject>> trySignIn(BuildContext context, { String? email }) async {
+    email ??= await TextInputDialog.prompt(
       context,
       title: translations.authentication.emailDialog.title,
       message: translations.authentication.emailDialog.message,
@@ -138,6 +151,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   }
 
   @override
+  @protected
   Future<Result<EmailLinkAuthenticationObject>> tryReAuthenticate(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
