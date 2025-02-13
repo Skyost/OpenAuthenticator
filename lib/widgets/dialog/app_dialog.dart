@@ -72,28 +72,21 @@ class AppDialog extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       content: SizedBox(
         width: MediaQuery.of(context).size.width,
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            listTileTheme: ListTileThemeData(
-              dense: currentPlatform.isDesktop,
-            ),
-          ),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              if (title != null)
-                Transform.translate(
-                  offset: Offset(0, -1),
-                  child: _AppDialogTitle(
-                    title: title!,
-                    ellipsisTitleOnOverflow: ellipsisTitleOnOverflow,
-                    displayCloseButton: displayCloseButton,
-                    borderRadius: borderRadius,
-                  ),
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            if (title != null)
+              Transform.translate(
+                offset: Offset(0, -1),
+                child: _AppDialogTitle(
+                  title: title!,
+                  ellipsisTitleOnOverflow: ellipsisTitleOnOverflow,
+                  displayCloseButton: displayCloseButton,
+                  borderRadius: borderRadius,
                 ),
-              ...children,
-            ],
-          ),
+              ),
+            ...children,
+          ],
         ),
       ),
       actions: actions,
