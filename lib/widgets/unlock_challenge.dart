@@ -11,8 +11,10 @@ import 'package:open_authenticator/model/password_verification/password_verifica
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/utils/master_password.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/app_filled_button.dart';
 import 'package:open_authenticator/widgets/blur.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
+import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
 import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/title.dart';
 
@@ -147,15 +149,18 @@ class _UnlockChallengeWidgetContent extends StatelessWidget {
         child: ListView(
           shrinkWrap: true,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: TitleWidget(
-                textAlign: TextAlign.center,
-                textStyle: Theme.of(context).textTheme.headlineLarge,
+            ListTilePadding(
+              bottom: 20,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: TitleWidget(
+                  textAlign: TextAlign.center,
+                  textStyle: Theme.of(context).textTheme.headlineLarge,
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
+            ListTilePadding(
+              bottom: 20,
               child: Text(
                 text,
                 textAlign: TextAlign.center,
@@ -164,7 +169,7 @@ class _UnlockChallengeWidgetContent extends StatelessWidget {
             Center(
               child: SizedBox(
                 width: math.min(MediaQuery.of(context).size.width - 20, 300),
-                child: FilledButton.icon(
+                child: AppFilledButton(
                   onPressed: onButtonPressed,
                   label: Text(buttonLabel),
                   icon: buttonIcon == null ? null : Icon(buttonIcon),
