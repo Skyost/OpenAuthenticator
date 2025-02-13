@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
@@ -53,6 +54,9 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
   /// Allows to scroll through the list of items.
   late final ItemScrollController itemScrollController = ItemScrollController();
 
+  /// Whether to display the floating action button.
+  bool showFloatingActionButton = currentPlatform == Platform.android || kDebugMode;
+
   /// The TOTP to emphasis, if any.
   Totp? emphasis;
 
@@ -63,75 +67,100 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: _AppBarTitle(),
-          actions: [
-            _RequireCryptoStore(
-              child: Builder(
-                builder: (context) => _SearchButton(
-                  onTotpFound: (totp) async {
-                    TotpList totps = await ref.read(totpRepositoryProvider.future);
-                    int index = totps.indexOf(totp);
-                    if (index >= 0) {
-                      itemScrollController.jumpTo(index: index);
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (mounted) {
-                          setState(() => emphasis = totp);
-                        }
-                      });
-                    }
-                    if (!(await ref.read(displayCopyButtonSettingsEntryProvider.future)) && totp.isDecrypted && context.mounted) {
-                      _HomePageBody.copyCode(context, totp as DecryptedTotp);
-                    }
-                  },
-                ),
+  Widget build(BuildContext context) {
+    Widget body = _HomePageBody(
+      itemScrollController: itemScrollController,
+      emphasis: emphasis,
+      onHighlightFinished: () {
+        if (mounted && emphasis != null) {
+          setState(() => emphasis = null);
+        }
+      },
+    );
+    if (currentPlatform == Platform.android || kDebugMode) {
+      body = NotificationListener<UserScrollNotification>(
+        onNotification: (notification) {
+          ScrollDirection direction = notification.direction;
+          if (direction == ScrollDirection.reverse) {
+            setState(() => showFloatingActionButton = false);
+          } else if (direction == ScrollDirection.forward) {
+            setState(() => showFloatingActionButton = true);
+          }
+          return true;
+        },
+        child: body,
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(
+        title: _AppBarTitle(),
+        actions: [
+          _RequireCryptoStore(
+            child: Builder(
+              builder: (context) => _SearchButton(
+                onTotpFound: (totp) async {
+                  TotpList totps = await ref.read(totpRepositoryProvider.future);
+                  int index = totps.indexOf(totp);
+                  if (index >= 0) {
+                    itemScrollController.jumpTo(index: index);
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        setState(() => emphasis = totp);
+                      }
+                    });
+                  }
+                  if (!(await ref.read(displayCopyButtonSettingsEntryProvider.future)) && totp.isDecrypted && context.mounted) {
+                    _HomePageBody.copyCode(context, totp as DecryptedTotp);
+                  }
+                },
               ),
             ),
-            if (kDebugMode || currentPlatform != Platform.android)
-              _RequireCryptoStore(
-                child: IconButton(
-                  onPressed: () => onAddButtonPressed(context),
-                  icon: const Icon(Icons.add),
-                ),
-              ),
-            if (currentPlatform.isDesktop)
-              _RequireCryptoStore(
-                child: IconButton(
-                  onPressed: () => ref.read(totpRepositoryProvider.notifier).refresh(),
-                  icon: const Icon(Icons.sync),
-                ),
-              ),
+          ),
+          if (kDebugMode || currentPlatform != Platform.android)
             _RequireCryptoStore(
               child: IconButton(
-                onPressed: () => Navigator.pushNamed(context, SettingsPage.name),
-                icon: const Icon(Icons.settings),
+                onPressed: () => onAddButtonPressed(context),
+                icon: const Icon(Icons.add),
               ),
             ),
-          ],
-        ),
-        floatingActionButton: (currentPlatform == Platform.android || kDebugMode)
-            ? _RequireCryptoStore(
-                child: FloatingActionButton(
-                  child: const Icon(
-                    Icons.add,
-                    size: 32,
+          if (currentPlatform.isDesktop)
+            _RequireCryptoStore(
+              child: IconButton(
+                onPressed: () => ref.read(totpRepositoryProvider.notifier).refresh(),
+                icon: const Icon(Icons.sync),
+              ),
+            ),
+          _RequireCryptoStore(
+            child: IconButton(
+              onPressed: () => Navigator.pushNamed(context, SettingsPage.name),
+              icon: const Icon(Icons.settings),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: (currentPlatform == Platform.android || kDebugMode)
+          ? _RequireCryptoStore(
+              child: AnimatedSlide(
+                duration: const Duration(milliseconds: 200),
+                offset: showFloatingActionButton ? Offset.zero : Offset(0, 2),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: showFloatingActionButton ? 1 : 0,
+                  child: FloatingActionButton(
+                    child: const Icon(
+                      Icons.add,
+                      size: 32,
+                    ),
+                    onPressed: () => onAddButtonPressed(context),
                   ),
-                  onPressed: () => onAddButtonPressed(context),
                 ),
-              )
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        body: _HomePageBody(
-          itemScrollController: itemScrollController,
-          emphasis: emphasis,
-          onHighlightFinished: () {
-            if (mounted && emphasis != null) {
-              setState(() => emphasis = null);
-            }
-          },
-        ),
-      );
+              ),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: body,
+    );
+  }
 
   /// Triggered when the "Add" button is pressed.
   void onAddButtonPressed(BuildContext context) async {
