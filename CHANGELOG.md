@@ -1,5 +1,14 @@
 # 📰 Open Authenticator Changelog
 
+## v1.2.2
+Released on Feb 13, 2025.
+
+* **FEAT** : Added a better sign-in dialog. ([#8e96185](https://github.com/Skyost/OpenAuthenticator/commit/8e96185))
+* **FEAT** : Better adaptation to small screens. ([#9f3934e](https://github.com/Skyost/OpenAuthenticator/commit/9f3934e))
+* **FEAT** : Improved `UnlockChallengeWidget`. ([#c55ba67](https://github.com/Skyost/OpenAuthenticator/commit/c55ba67))
+* **FIX** : Fixed various problems with TOTPs circular progress indicators. ([#c78d96c](https://github.com/Skyost/OpenAuthenticator/commit/c78d96c))
+* **CHORE** : Disabled `dense` property on `ListTile`s on desktop. ([#fa37adf](https://github.com/Skyost/OpenAuthenticator/commit/fa37adf))
+
 ## v1.2.1
 Released on Feb 12, 2025.
 
