@@ -76,7 +76,7 @@ export default defineNuxtModule<ModuleOptions>({
       },
       {
         code: 'de',
-        name: 'Deutsch',
+        name: 'German',
       },
       {
         code: 'it',
