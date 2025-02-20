@@ -1,0 +1,66 @@
+{
+  "emailDialog": {
+    "title": "Your email",
+    "message": "Please enter your email, we will send you a login link."
+  },
+  "logIn": {
+    "waitingLoginMessage": "Please login yourself in the opened window. Do not close the application.",
+    "waitingConfirmationMessage": "We have sent a confirmation link by email. Please click on it to continue. Do not close the application.",
+    "successNeedConfirmation": "Success ! You will receive a confirmation email soon. Please click on the link on this device in order to log in.",
+    "success": "Logged in with success !"
+  },
+  "link": {
+    "linkSuccess": "Provider linked with success.",
+    "unlinkSuccess": "Provider unlinked with success.",
+    "unlinkConfirmationDialog": {
+      "title": "Unlink provider",
+      "message": "Are you sure you want to unlink this authentication provider from your account ?"
+    }
+  },
+  "deleteConfirmationDialog": {
+    "title": "Delete account",
+    "message": "Do you really want to delete your account ? Note that, because it is a sensitive action, we require you to reauthenticate before proceeding."
+  },
+  "firebaseAuthenticationProvider": {
+    "email": {
+      "name": "Email",
+      "description": "Use your email to login. No password required, a confirmation link will be sent."
+    },
+    "google": {
+      "name": "Google",
+      "description": "Sign in with your Google account."
+    },
+    "apple": {
+      "name": "Apple",
+      "description": "Sign in with your Apple account."
+    },
+    "microsoft": {
+      "name": "Microsoft",
+      "description": "Sign in with your Microsoft account."
+    },
+    "twitter": {
+      "name": "X",
+      "description": "Sign in with your X account."
+    },
+    "github": {
+      "name": "Github",
+      "description": "Sign in with your Github account."
+    }
+  },
+  "signInDialog": {
+    "title": "Sign in",
+    "email": {
+      "title": "Sign in with your email",
+      "hint": "Enter your email address here",
+      "description": {
+        "signIn": "Enter your email above. No password required, we'll send you a login link right away !",
+        "waitingForConfirmation": "You will receive a confirmation email soon. Please click the link inside with this device to continue logging in.",
+        "alreadySignedIn": "You are already signed in with your email address.",
+        "cannotUse": "Unable to sign in with your email address. Please try another method."
+      },
+      "button": "Send a link"
+    },
+    "separator": "Or :"
+  },
+  "providerPickerDialogTitle": "Pick a login method"
+}

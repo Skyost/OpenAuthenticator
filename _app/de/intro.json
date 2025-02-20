@@ -1,0 +1,30 @@
+{
+  "welcome": {
+    "firstParagraph": "Vielen Dank, dass Sie $app heruntergeladen haben – eine Open-Source-Anwendung, die Ihnen hilft, Ihre TOTPs (Time-based One-Time Passwords) mühelos zu verwalten.",
+    "secondParagraph": "In den nächsten Schritten können Sie die App an Ihre Bedürfnisse anpassen.",
+    "thirdParagraph": "Ich hoffe, dass Sie diese App genauso genießen, wie ich es genossen habe, sie zu entwickeln!"
+  },
+  "logIn": {
+    "title": "Synchronisieren Sie Ihre TOTPs",
+    "firstParagraph": "Klicken Sie unten auf „Anmelden“, um Ihre TOTPs zwischen Ihren Geräten zu synchronisieren.",
+    "secondParagraph": "Dieser Vorgang ist vollkommen freiwillig.",
+    "thirdParagraph": "Beachten Sie, dass wir Sie bei Aktivierung dieser Option auf $limit TOTPs beschränken müssen, um eine übermäßige Serverauslastung zu verhindern.",
+    "fourthParagraph": "Dieses Limit kann jederzeit aufgehoben werden, indem Sie in den $app-Einstellungen den Mitwirkender-Plan abonnieren.",
+    "button": {
+      "loggedOut": "Einloggen",
+      "verifyEmail": "E-Mail-Adresse bestätigen",
+      "loggedIn": "Erfolgreich eingeloggt",
+      "error": "Authentifizierung nicht möglich"
+    }
+  },
+  "password": {
+    "title": "Schützen Sie Ihre Daten",
+    "firstParagraph": "Um die Sicherheit Ihrer Daten zu gewährleisten, müssen Sie ein Master-Passwort festlegen.",
+    "secondParagraph": "Dieses Passwort wird verwendet, um Ihre Daten zu verschlüsseln, und wird niemals an einen entfernten Server gesendet.",
+    "thirdParagraph": "Falls Sie es vergessen, können wir es nicht wiederherstellen. Bewahren Sie es daher an einem sicheren Ort auf."
+  },
+  "button": {
+    "next": "Weiter",
+    "finish": "Fertig"
+  }
+}
