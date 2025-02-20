@@ -112,12 +112,8 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
       return;
     }
 
-    String keywords = filteredSearchKeywords;
-    if (keywords.isEmpty) {
-      return;
-    }
-
     setState(searches.clear);
+    String keywords = filteredSearchKeywords;
     List<String> logos = await Source.sources.search(client, keywords);
     setState(() => searches.putIfAbsent(keywords, () => []));
     for (String logo in logos) {
