@@ -15,7 +15,7 @@
     "generic": "Es ist eine Zeitüberschreitung aufgetreten. Bitte versuchen Sie es später erneut.",
     "authentication": "Zeitüberschreitung bei der Anmeldung über den ausgewählten Anbieter. Bitte versuchen Sie es erneut.",
     "unlink": "Zeitüberschreitung beim Aufheben der Verknüpfung Ihres Kontos mit diesem Authentifizierungsanbieter. Bitte versuchen Sie es erneut.",
-    "contributorPlan": "Zeitüberschreitung beim Warten auf den Kauf Ihres Contributor Plan-Abonnements. Bitte versuchen Sie es erneut."
+    "contributorPlan": "Zeitüberschreitung beim Warten auf den Kauf Ihres Mitwirkender-Plan-Abonnements. Bitte versuchen Sie es erneut."
   },
   "generic": {
     "noTryAgain": "Ups, da ist etwas schiefgelaufen.",

@@ -1,0 +1,30 @@
+{
+  "welcome": {
+    "firstParagraph": "Obrigado por baixar o $app, um aplicativo de código aberto que ajudará você a gerenciar seus TOTPs (Senhas Únicas Baseadas no Tempo) com facilidade.",
+    "secondParagraph": "Nos próximos passos, você poderá configurá-lo para atender às suas necessidades.",
+    "thirdParagraph": "Espero que você aproveite este aplicativo tanto quanto eu gostei de criá-lo!"
+  },
+  "logIn": {
+    "title": "Sincronize seus TOTPs",
+    "firstParagraph": "Clique no botão \"Entrar\" abaixo para poder sincronizar seus TOTPs entre seus dispositivos.",
+    "secondParagraph": "Este passo é completamente opcional.",
+    "thirdParagraph": "Observe que, se você ativar esta opção, teremos que limitar você a $limit TOTPs para evitar o uso excessivo do servidor.",
+    "fourthParagraph": "Esse limite pode ser removido a qualquer momento assinando o Plano de Contribuidor nas configurações do $app.",
+    "button": {
+      "loggedOut": "Entrar",
+      "verifyEmail": "Confirmar endereço de e-mail",
+      "loggedIn": "Login realizado com sucesso",
+      "error": "Não foi possível autenticar"
+    }
+  },
+  "password": {
+    "title": "Mantenha seus dados seguros",
+    "firstParagraph": "Para manter seus dados seguros, precisamos que você defina uma senha mestra.",
+    "secondParagraph": "Essa senha será usada para criptografar seus dados e nunca será enviada para nenhum servidor remoto.",
+    "thirdParagraph": "Portanto, se você esquecê-la, não poderemos recuperá-la para você. Certifique-se de armazená-la em um local seguro."
+  },
+  "button": {
+    "next": "Próximo",
+    "finish": "Concluir"
+  }
+}

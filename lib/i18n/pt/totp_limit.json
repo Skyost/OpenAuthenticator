@@ -1,0 +1,19 @@
+{
+  "autoDialog": {
+    "title": "Limite de TOTPs atingido",
+    "message": "Atualmente, você está sincronizando seus TOTPs e ultrapassou o limite de $count TOTPs antes de precisar assinar o Plano de Contribuidor. Você deve escolher entre armazená-los localmente (o que significa que não haverá mais sincronização) ou assinar o Plano de Contribuidor.",
+    "actions": {
+      "subscribe": "Assinar",
+      "stopSynchronization": "Parar sincronização"
+    }
+  },
+  "addDialog": {
+    "title": "Limite de TOTPs atingido",
+    "message": "Atualmente, você está sincronizando seus TOTPs e tem um limite de $count TOTPs antes de precisar assinar o Plano de Contribuidor. Você deve escolher entre armazená-los localmente (o que significa que não haverá mais sincronização) ou assinar o Plano de Contribuidor para adicionar outro TOTP.",
+    "actions": {
+      "subscribe": "Assinar",
+      "stopSynchronization": "Parar sincronização",
+      "cancel": "Cancelar"
+    }
+  }
+}

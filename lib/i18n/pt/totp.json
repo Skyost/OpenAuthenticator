@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "decrypt": "Descriptografar",
+    "mobileDialog": {
+      "title": "Ações do TOTP",
+      "edit": "Editar TOTP",
+      "delete": "Excluir TOTP"
+    },
+    "desktopButtons": {
+      "copy": "Copiar código",
+      "edit": "Editar",
+      "delete": "Excluir"
+    },
+    "copyConfirmation": "Copiado para a área de transferência.",
+    "editConfirmationDialog": {
+      "title": "Editar este TOTP",
+      "message": "Parece que este TOTP foi criptografado com uma chave diferente da atual. Isso pode acontecer se você tiver alterado sua senha mestra em outro dispositivo. Se você editar este TOTP, ele será criptografado com sua chave atual. Deseja continuar?"
+    },
+    "deleteConfirmationDialog": {
+      "title": "Excluir este TOTP",
+      "message": "Você realmente deseja excluir este TOTP?"
+    }
+  },
+  "decryptDialog": {
+    "title": "Descriptografar TOTP",
+    "message": "Este TOTP foi criptografado com uma senha mestra diferente. Insira-a abaixo para descriptografá-lo."
+  },
+  "totpKeyDialog": {
+    "title": "Descriptografado com sucesso",
+    "message": {
+      "one": "Deseja alterar sua senha mestra ou criptografar este TOTP com sua chave de criptografia atual?",
+      "other": "Este TOTP foi descriptografado com sucesso, e a senha também descriptografou outros TOTPs. O que você deseja fazer?"
+    },
+    "choices": {
+      "changeAllDecryptedTotpsKey": {
+        "title": "Criptografar TOTPs com sua chave atual",
+        "subtitle": "Altere a chave de criptografia deste TOTP e de todos os outros que foram descriptografados, utilizando a sua chave atual."
+      },
+      "changeTotpKey": {
+        "title": {
+          "one": "Criptografar este TOTP com sua chave atual",
+          "other": "Criptografar apenas este TOTP com sua chave atual"
+        },
+        "subtitle": "Altere a chave de criptografia deste TOTP e use a sua atual. Os outros TOTPs descriptografados permanecerão utilizáveis enquanto o app estiver aberto."
+      },
+      "changeMasterPassword": {
+        "title": "Alterar sua senha mestra atual",
+        "subtitle": "Use a senha inserida como sua nova senha mestra e gere uma chave de criptografia a partir dela.\nTodos os TOTPs ainda criptografados com outra senha precisarão ser descriptografados manualmente."
+      },
+      "doNothing": {
+        "title": "Não fazer nada",
+        "subtitle": "Você terá que inserir essa senha novamente para descriptografar este TOTP."
+      }
+    }
+  },
+  "page": {
+    "title": {
+      "edit": "Editar TOTP",
+      "add": "Adicionar um TOTP"
+    },
+    "label": {
+      "text": "Rótulo",
+      "hint": "me@example.com"
+    },
+    "secret": {
+      "text": "Chave secreta",
+      "hint": "JBSWY3DPEHPK3PXP"
+    },
+    "issuer": {
+      "text": "Emissor",
+      "hint": "example.com"
+    },
+    "algorithm": "Algoritmo",
+    "digits": "Número de dígitos",
+    "validity": "Validade (em segundos)",
+    "advancedOptions": "Opções avançadas",
+    "showQrCode": "Mostrar código QR",
+    "save": "Salvar",
+    "uriError": "Não foi possível ler este TOTP. Tem certeza de que é válido?"
+  }
+}

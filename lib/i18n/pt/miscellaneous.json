@@ -1,0 +1,18 @@
+{
+  "waitingDialog": {
+    "defaultMessage": "Por favor, aguarde...",
+    "countdown(rich)": "Tempo restante: $countdown."
+  },
+  "masterPasswordDialog": {
+    "title": "Senha mestra",
+    "message": "Por favor, insira sua senha mestra para continuar."
+  },
+  "backupCheckbox": {
+    "checkbox": "Criar um backup",
+    "input": {
+      "text": "Senha do backup",
+      "hint": "Digite a senha do backup"
+    }
+  },
+  "urlCopiedToClipboard": "URL copiada para a área de transferência!"
+}

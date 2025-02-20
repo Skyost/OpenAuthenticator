@@ -1,0 +1,19 @@
+{
+  "common": {
+    "goToSettings": "Ir para configurações"
+  },
+  "android": {
+    "biometricHint": "Verifique sua identidade",
+    "biometricNotRecognized": "Não reconhecido. Tente novamente.",
+    "signInTitle": "Autenticação necessária",
+    "biometricRequiredTitle": "Biometria necessária",
+    "deviceCredentialsRequiredTitle": "Credenciais do dispositivo necessárias",
+    "deviceCredentialsSetupDescription": "Credenciais do dispositivo necessárias",
+    "goToSettingsDescription": "A autenticação biométrica não está configurada no seu dispositivo. Vá para 'Configurações > Segurança' para ativá-la."
+  },
+  "ios": {
+    "lockOut": "A autenticação biométrica está desativada. Bloqueie e desbloqueie a tela para ativá-la.",
+    "goToSettingsDescription": "A autenticação biométrica não está configurada no seu dispositivo. Ative o Touch ID ou Face ID no seu telefone."
+  },
+  "fallbackMessage": "Ocorreu um erro ao verificar a autenticação local no seu dispositivo. Insira sua senha mestra abaixo para continuar e também desativar a autenticação local."
+}

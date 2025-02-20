@@ -1,0 +1,66 @@
+{
+  "emailDialog": {
+    "title": "Seu e-mail",
+    "message": "Digite seu e-mail. Enviaremos um link de login para você."
+  },
+  "logIn": {
+    "waitingLoginMessage": "Faça login na janela aberta. Não feche o aplicativo.",
+    "waitingConfirmationMessage": "Enviamos um link de confirmação por e-mail. Clique nele para continuar. Não feche o aplicativo.",
+    "successNeedConfirmation": "Sucesso! Você receberá um e-mail de confirmação em breve. Clique no link neste dispositivo para fazer login.",
+    "success": "Login realizado com sucesso!"
+  },
+  "link": {
+    "linkSuccess": "Provedor vinculado com sucesso.",
+    "unlinkSuccess": "Provedor desvinculado com sucesso.",
+    "unlinkConfirmationDialog": {
+      "title": "Desvincular provedor",
+      "message": "Tem certeza de que deseja desvincular este provedor de autenticação da sua conta?"
+    }
+  },
+  "deleteConfirmationDialog": {
+    "title": "Excluir conta",
+    "message": "Deseja realmente excluir sua conta? Como esta é uma ação sensível, exigimos que você se reautentique antes de continuar."
+  },
+  "firebaseAuthenticationProvider": {
+    "email": {
+      "name": "E-mail",
+      "description": "Use seu e-mail para fazer login. Não é necessária senha, um link de confirmação será enviado."
+    },
+    "google": {
+      "name": "Google",
+      "description": "Entre com sua conta do Google."
+    },
+    "apple": {
+      "name": "Apple",
+      "description": "Entre com sua conta da Apple."
+    },
+    "microsoft": {
+      "name": "Microsoft",
+      "description": "Entre com sua conta da Microsoft."
+    },
+    "twitter": {
+      "name": "X",
+      "description": "Entre com sua conta do X."
+    },
+    "github": {
+      "name": "Github",
+      "description": "Entre com sua conta do Github."
+    }
+  },
+  "signInDialog": {
+    "title": "Entrar",
+    "email": {
+      "title": "Entrar com seu e-mail",
+      "hint": "Digite seu endereço de e-mail aqui",
+      "description": {
+        "signIn": "Digite seu e-mail acima. Não é necessária senha, enviaremos um link de login imediatamente!",
+        "waitingForConfirmation": "Você receberá um e-mail de confirmação em breve. Clique no link dentro dele com este dispositivo para continuar o login.",
+        "alreadySignedIn": "Você já está conectado com seu endereço de e-mail.",
+        "cannotUse": "Não foi possível entrar com seu endereço de e-mail. Tente outro método."
+      },
+      "button": "Enviar um link"
+    },
+    "separator": "Ou:"
+  },
+  "providerPickerDialogTitle": "Escolha um método de login"
+}

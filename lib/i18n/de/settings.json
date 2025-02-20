@@ -3,15 +3,15 @@
   "application": {
     "title": "Anwendung",
     "contributorPlan": {
-      "title": "Contributor Plan",
+      "title": "Mitwirkender-Plan",
       "subtitle": {
         "loading": "Überprüfen Sie Ihren Abonnementstatus...",
-        "active": "Sie haben sich für den Contributor Plan angemeldet. Herzlichen Dank!",
-        "inactive": "Sie haben derzeit kein Abonnement für den Contributor Plan."
+        "active": "Sie haben sich für den Mitwirkender-Plan angemeldet. Herzlichen Dank!",
+        "inactive": "Sie haben derzeit kein Abonnement für den Mitwirkender-Plan."
       },
       "subscriptionDialog": {
-        "title": "Ihr Contributor Plan",
-        "message": "Sie haben sich erfolgreich für den Contributor Plan angemeldet. Mit diesem Abonnement helfen Sie dieser kleinen Open-Source-Software, weiterzuwachsen. Herzlichen Dank!",
+        "title": "Ihr Mitwirkender-Plan",
+        "message": "Sie haben sich erfolgreich für den Mitwirkender-Plan angemeldet. Mit diesem Abonnement helfen Sie dieser kleinen Open-Source-Software, weiterzuwachsen. Herzlichen Dank!",
         "manageSubscription": {
           "button": "Abonnement verwalten",
           "error": "Die URL der Abonnementverwaltung kann nicht geöffnet werden. Wenn Sie auf einem anderen Gerät abonniert haben, versuchen Sie, diese Aktion auf dem anderen Gerät auszuführen."
@@ -106,8 +106,8 @@
         "description": "Synchronisieren Sie Ihre TOTPs mit all Ihren eingeloggten Geräten.",
         "totpLimit": {
           "limit(rich)": "Sie können bis zu $limit TOTPs synchronisieren. Sie haben derzeit $count TOTPs.",
-          "notEnabled": "Um diese Option zu aktivieren, abonnieren Sie den Contributor Plan oder löschen Sie einige TOTPs.",
-          "enabled": "Abonnieren Sie den Contributor Plan, um mehr zu synchronisieren!"
+          "notEnabled": "Um diese Option zu aktivieren, abonnieren Sie den Mitwirkender-Plan oder löschen Sie einige TOTPs.",
+          "enabled": "Abonnieren Sie den Mitwirkender-Plan, um mehr zu synchronisieren!"
         }
       }
     }

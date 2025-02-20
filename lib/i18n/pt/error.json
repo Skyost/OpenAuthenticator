@@ -1,0 +1,55 @@
+{
+  "noError": "Sucesso!",
+  "validation": {
+    "number": "Você deve inserir um número válido",
+    "empty": "Este campo é obrigatório",
+    "email": "E-mail inválido",
+    "secret": "Segredo inválido inserido",
+    "totpDigits": "Este número deve ser maior ou igual a 6",
+    "masterPassword": "Senha inválida inserida",
+    "confirmation": "A confirmação não corresponde"
+  },
+  "timeout": {
+    "generic": "Tempo limite excedido. Tente novamente mais tarde.",
+    "authentication": "Tempo limite excedido ao fazer login com o provedor selecionado. Tente novamente.",
+    "unlink": "Tempo limite excedido ao tentar desvincular sua conta deste provedor de autenticação. Tente novamente.",
+    "contributorPlan": "Tempo limite excedido ao aguardar a compra da sua assinatura do Plano Contributor. Tente novamente."
+  },
+  "appUnlock": "Falha ao desbloquear o aplicativo. Tente novamente.",
+  "generic": {
+    "noTryAgain": "Ops, algo deu errado.",
+    "tryAgain": "Algo deu errado. Tente novamente mais tarde.",
+    "withException": "Ocorreu um erro (exceção: $exception). Tente novamente mais tarde."
+  },
+  "authentication": {
+    "accountExistsWithDifferentCredentialsDialog": {
+      "title": "Uma conta já existe",
+      "message": "Uma conta com o mesmo endereço de e-mail já existe em nosso banco de dados, mas o provedor de autenticação selecionado ainda não foi vinculado a ela.\nTente fazer login usando um provedor de autenticação já vinculado."
+    },
+    "invalidCredential": "Credenciais inválidas fornecidas.",
+    "operationNotAllowed": "Operação não permitida. Isso não deveria acontecer, por favor, reporte este erro.",
+    "userDisabled": "Sua conta foi desativada.",
+    "firebaseException": "Ocorreu um erro ao tentar autenticar sua conta (exceção: $exception). Tente novamente mais tarde."
+  },
+  "scan": {
+    "noUri": "Falha ao ler este código QR. Certifique-se de que é um código QR TOTP válido.",
+    "accessDeniedDialog": {
+      "title": "Acesso negado",
+      "message": "Falha ao acessar sua câmera (acesso negado: $exception). Deseja tentar novamente?"
+    },
+    "controllerUninitialized": "Controlador não inicializado (código: $exception).",
+    "unsupported": "A digitalização não é suportada neste dispositivo (código: $exception)."
+  },
+  "storageMigration(map)": {
+    "backupError": "Ocorreu um erro ao fazer o backup. Tente novamente.",
+    "currentStoragePasswordMismatch": "Senha mestra inválida inserida.",
+    "encryptionKeyChangeFailed": "Ocorreu um erro ao criptografar seus dados. Tente novamente mais tarde.",
+    "genericError": "Ocorreu um erro ao migrar seus dados. Tente novamente mais tarde."
+  },
+  "authenticationValidation": {
+    "incorrectPath": "Algo deu errado (o caminho é '$path'). Por favor, reporte este erro.",
+    "generic": "Não foi possível validar a solicitação (exceção: $exception). Tente novamente mais tarde.",
+    "oauth2": "Não foi possível fazer login usando $name. Tente novamente mais tarde."
+  },
+  "totpDecrypt": "Falha ao descriptografar este TOTP. Certifique-se de que inseriu a senha correta."
+}

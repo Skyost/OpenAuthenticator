@@ -1,10 +1,10 @@
 {
   "subscribe": {
     "waitingDialogMessage": "Warten auf Ihren Kauf...",
-    "success": "Sie haben sich erfolgreich für den Contributor Plan angemeldet. Herzlichen Dank!"
+    "success": "Sie haben sich erfolgreich für den Mitwirkender-Plan angemeldet. Herzlichen Dank!"
   },
   "fallbackPaywall": {
-    "title(rich)": "${title(Contributor)} Plan",
+    "title(rich)": "${title(Mitwirkender)}-Plan",
     "features": [
       "Synchronisieren Sie so viele TOTPs, wie Sie möchten.",
       "Tragen Sie zu Open Source bei.",
@@ -12,7 +12,7 @@
     ],
     "packageType": {
       "choose": "Wählen Sie Ihren Abrechnungsplan:",
-      "empty": "Es gibt keine Option, den Contributor Plan zu abonnieren.",
+      "empty": "Es gibt keine Option, den Mitwirkender-Plan zu abonnieren.",
       "name(map)": {
         "annual": "Jährlich",
         "monthly": "Monatlich"
