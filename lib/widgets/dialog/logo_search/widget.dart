@@ -47,13 +47,13 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
   late String? searchKeywords = widget.initialSearchKeywords;
 
   /// All searches triggered by the user.
-  final Map<String, _SearchResults> searches = {};
+  final Map<String, List<String>> searches = {};
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      debounce.milliseconds(500, search);
+      debounce.milliseconds(100, search);
     });
   }
 
@@ -84,12 +84,12 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
               ),
             ),
           ),
-          if (searches[filteredSearchKeywords]?.logosToDisplay.isNotEmpty ?? false)
+          if (searches[filteredSearchKeywords]?.isNotEmpty == true)
             Wrap(
               alignment: WrapAlignment.center,
               spacing: widget.imageWidth / 10,
               children: [
-                for (String logo in searches[filteredSearchKeywords]!.logosToDisplay) //
+                for (String logo in searches[filteredSearchKeywords]!) //
                   buildImageWidget(logo),
               ],
             )
@@ -112,20 +112,24 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
       return;
     }
 
-    setState(searches.clear);
     String keywords = filteredSearchKeywords;
+    if (keywords.isEmpty) {
+      return;
+    }
+
+    setState(searches.clear);
     List<String> logos = await Source.sources.search(client, keywords);
-    setState(() => searches[keywords] ??= _SearchResults(List.of(logos)));
+    setState(() => searches.putIfAbsent(keywords, () => []));
     for (String logo in logos) {
       if (await Source.check(client, logo) && mounted && searches.containsKey(keywords)) {
-        setState(() {
-          searches[keywords]?.logosToCheck.remove(logo);
-          searches[keywords]?.logosToDisplay.add(logo);
-        });
+        setState(() => searches[keywords]?.add(logo));
       }
       if (!searches.containsKey(keywords)) {
         break;
       }
+    }
+    if (searches[keywords]?.isEmpty == true) {
+      setState(() => searches.remove(keywords));
     }
   }
 
@@ -152,16 +156,4 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
             ),
           );
   }
-}
-
-/// Allows to hold search results.
-class _SearchResults {
-  /// The logos to check.
-  final List<String> logosToCheck;
-
-  /// Contains the logos.
-  final List<String> logosToDisplay = [];
-
-  /// Creates a new search results instance.
-  _SearchResults(this.logosToCheck);
 }
