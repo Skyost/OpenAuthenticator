@@ -1,0 +1,19 @@
+{
+  "autoDialog": {
+    "title": "Limite TOTP raggiunto",
+    "message": "Stai attualmente sincronizzando i tuoi TOTP e hai superato il limite di $count TOTP prima di dover abbonarti al Piano Contributore. Pertanto, devi memorizzarli localmente (il che significa, nessuna ulteriore sincronizzazione), oppure abbonarti al Piano Contributore.",
+    "actions": {
+      "subscribe": "Abbonati",
+      "stopSynchronization": "Interrompi sincronizzazione"
+    }
+  },
+  "addDialog": {
+    "title": "Limite TOTP raggiunto",
+    "message": "Stai attualmente sincronizzando i tuoi TOTP e hai un limite di $count TOTP prima di dover abbonarti al Piano Contributore. Pertanto, devi memorizzarli localmente (il che significa, nessuna ulteriore sincronizzazione), oppure abbonarti al Piano Contributore per aggiungere un altro TOTP.",
+    "actions": {
+      "subscribe": "Abbonati",
+      "stopSynchronization": "Interrompi sincronizzazione",
+      "cancel": "Annulla"
+    }
+  }
+}

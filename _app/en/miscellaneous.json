@@ -1,0 +1,18 @@
+{
+  "waitingDialog": {
+    "defaultMessage": "Please wait...",
+    "countdown(rich)": "Time left : $countdown."
+  },
+  "masterPasswordDialog": {
+    "title": "Master password",
+    "message": "Please enter your master password to continue."
+  },
+  "backupCheckbox": {
+    "checkbox": "Create a backup",
+    "input": {
+      "text": "Backup password",
+      "hint": "Enter the backup password"
+    }
+  },
+  "urlCopiedToClipboard": "URL copied to clipboard !"
+}
