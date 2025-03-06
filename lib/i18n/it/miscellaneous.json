@@ -1,0 +1,18 @@
+{
+  "waitingDialog": {
+    "defaultMessage": "Attendere prego...",
+    "countdown(rich)": "Tempo rimanente: $countdown."
+  },
+  "masterPasswordDialog": {
+    "title": "Password principale",
+    "message": "Inserisci la tua password principale per continuare."
+  },
+  "backupCheckbox": {
+    "checkbox": "Crea un backup",
+    "input": {
+      "text": "Password per il backup",
+      "hint": "Inserisci la password del backup"
+    }
+  },
+  "urlCopiedToClipboard": "URL copiato negli appunti!"
+}

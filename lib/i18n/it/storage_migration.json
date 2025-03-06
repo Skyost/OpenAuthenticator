@@ -1,0 +1,21 @@
+{
+  "confirmDialog": {
+    "title": "Conferma",
+    "message": {
+      "enable": "Vuoi davvero sincronizzare i tuoi TOTP? Saranno disponibili su tutti i tuoi dispositivi sincronizzati.",
+      "disable": "Vuoi davvero interrompere la sincronizzazione dei tuoi TOTP? Qualsiasi modifica apportata a questa istanza dell'app non verrà più riflessa sugli altri dispositivi collegati."
+    }
+  },
+  "deletedTotpPolicyPickerDialog": {
+    "title": "Migra TOTP",
+    "message": "Alcuni TOTP sono stati eliminati su questo dispositivo, ma non nella memoria remota. Cosa vuoi fare con loro?",
+    "delete": {
+      "title": "Eliminali",
+      "subtitle": "Elimina i TOTP in conflitto. Questa operazione non può essere annullata."
+    },
+    "restore": {
+      "title": "Conservali",
+      "subtitle": "Annulla l'eliminazione e conserva tutti i TOTP."
+    }
+  }
+}
