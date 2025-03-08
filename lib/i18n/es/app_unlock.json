@@ -1,0 +1,23 @@
+{
+  "masterPasswordDialogMessage": "Ingrese su contraseña maestra para desbloquear la aplicación.",
+  "widget": {
+    "text": "$app está bloqueada.",
+    "button": "Desbloquear."
+  },
+  "localAuthentication(map)": {
+    "openApp": "Autenticarse para acceder a la aplicación.",
+    "sensibleAction": "Autenticar para continuar.",
+    "enable": "Autenticar para habilitar la autenticación local.",
+    "disable": "Autenticar para deshabilitar la autenticación local."
+  },
+  "cannotUnlock": {
+    "localAuthentication": {
+      "deviceNotSupported": "No se puede desbloquear la aplicación porque el dispositivo no es compatible con la autenticación local. Desactive este método de bloqueo con el botón que aparece a continuación.",
+      "button": "Desactivar"
+    },
+    "masterPassword": {
+      "noPasswordVerificationMethodAvailable": "No se puede desbloquear la aplicación con su contraseña porque se ha alterado la integridad de los datos de la aplicación. Cambie su contraseña maestra para continuar.\nTenga en cuenta que sus TOTP deberán descifrarse manualmente.",
+      "button": "Cambiar contraseña maestra"
+    }
+  }
+}
