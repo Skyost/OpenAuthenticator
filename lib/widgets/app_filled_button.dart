@@ -39,7 +39,7 @@ class AppFilledButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Align(
         child: SizedBox(
-          width: math.min(MediaQuery.of(context).size.width - 20, maxWidth),
+          width: math.min(MediaQuery.sizeOf(context).width - 20, maxWidth),
           child: tonal
               ? FilledButton.tonalIcon(
                   onPressed: onPressed,

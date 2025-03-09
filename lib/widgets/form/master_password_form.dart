@@ -68,7 +68,7 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
               validator: validatePassword,
             ),
             SizedBox(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery.sizeOf(context).width,
               child: Text(
                 translations.masterPassword.form.securityScore(score: '$securityScore/40'),
                 style: Theme.of(context).textTheme.labelSmall!.copyWith(

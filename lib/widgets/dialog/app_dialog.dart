@@ -71,7 +71,7 @@ class AppDialog extends StatelessWidget {
       ),
       contentPadding: EdgeInsets.zero,
       content: SizedBox(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.sizeOf(context).width,
         child: ListView(
           shrinkWrap: true,
           children: [

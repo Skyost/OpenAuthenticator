@@ -170,7 +170,7 @@ class TotpWidget extends StatelessWidget {
                   ),
                 if (footerWidgetBuilder != null)
                   SizedBox(
-                    width: MediaQuery.of(context).size.width - contentPadding.left - contentPadding.right - imageSize - space,
+                    width: MediaQuery.sizeOf(context).width - contentPadding.left - contentPadding.right - imageSize - space,
                     child: footerWidgetBuilder!.call(context),
                   ),
               ],

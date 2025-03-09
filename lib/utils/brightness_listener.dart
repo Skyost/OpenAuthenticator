@@ -23,7 +23,7 @@ mixin BrightnessListener<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Brightness brightness = MediaQuery.of(context).platformBrightness;
+    Brightness brightness = MediaQuery.platformBrightnessOf(context);
     if (currentBrightness != brightness) {
       onBrightnessChange(brightness);
     }

@@ -168,7 +168,7 @@ class _UnlockChallengeWidgetContent extends StatelessWidget {
             ),
             Center(
               child: SizedBox(
-                width: math.min(MediaQuery.of(context).size.width - 20, 300),
+                width: math.min(MediaQuery.sizeOf(context).width - 20, 300),
                 child: AppFilledButton(
                   onPressed: onButtonPressed,
                   label: Text(buttonLabel),

@@ -120,7 +120,7 @@ class IntroPageSlideWidgetState extends ConsumerState<IntroPageSlideWidget> with
         child: Center(
           child: ListView(
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).size.width <= 768 ? 40 : 20,
+              top: MediaQuery.sizeOf(context).width <= 768 ? 40 : 20,
               right: 20,
               left: 20,
               bottom: 20,
