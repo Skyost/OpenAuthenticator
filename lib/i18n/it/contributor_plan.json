@@ -1,10 +1,10 @@
 {
   "subscribe": {
     "waitingDialogMessage": "Completa il tuo acquisto...",
-    "success": "Contributor Plan sottoscritto con successo. Grazie mille!"
+    "success": "Piano Contributore sottoscritto con successo. Grazie mille!"
   },
   "fallbackPaywall": {
-    "title(rich)": "${title(Contributor)} Plan",
+    "title(rich)": "Piano ${title(Contributore)}",
     "features": [
       "Sincronizza tutti gli TOTP che desideri.",
       "Contribuisci all'Open Source.",
@@ -12,7 +12,7 @@
     ],
     "packageType": {
       "choose": "Scegli il piano di pagamento:",
-      "empty": "Non ci sono altre opzioni per sottoscrivere il Contributor Plan per te.",
+      "empty": "Non ci sono altre opzioni per sottoscrivere il Piano Contributore per te.",
       "name(map)": {
         "annual": "Annuale",
         "monthly": "Mensile"

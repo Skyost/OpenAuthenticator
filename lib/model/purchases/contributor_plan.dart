@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_flutter/purchases_flutter.dart' hide Price;
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 /// The Contributor Plan provider.
@@ -34,13 +34,35 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
   Duration? getPurchaseTimeout() => ref.read(revenueCatClientProvider)?.purchaseTimeout;
 
   /// Returns the prices of the contributor plan.
-  Future<Result<Map<PackageType, String>>> getPrices() async {
+  Future<Result<Prices>> getPrices() async {
     try {
       RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
       if (revenueCatClient == null) {
         throw _NoRevenueCatClientException();
       }
-      return ResultSuccess(value: await revenueCatClient.getPrices(Purchasable.contributorPlan));
+      Map<PackageType, Price> packagesPrice = await revenueCatClient.getPrices(Purchasable.contributorPlan);
+      List<PackageType> packages = List.of(packagesPrice.keys);
+      packages.sort((a, b) => b.index.compareTo(a.index));
+      PackageType? reference = packages.firstOrNull;
+      Map<PackageType, int> promotions = {};
+      if (reference != null && reference.inAYear != null) {
+        double referencePricePerYear = packagesPrice[reference]!.amount * reference.inAYear!;
+        for (MapEntry<PackageType, Price> entry in packagesPrice.entries) {
+          if (entry.key.inAYear == null) {
+            continue;
+          }
+          double pricePerYear = entry.value.amount * entry.key.inAYear!;
+          if (pricePerYear < referencePricePerYear) {
+            promotions[entry.key] = (((pricePerYear / referencePricePerYear) - 1) * 100).round();
+          }
+        }
+      }
+      return ResultSuccess(
+        value: Prices._(
+          packagesPrice: packagesPrice,
+          promotions: promotions,
+        ),
+      );
     } catch (ex, stacktrace) {
       return ResultError(
         exception: ex,
@@ -114,6 +136,35 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
       );
     }
   }
+}
+
+/// Allows to get the duration of a given package type.
+extension PackageTypeDuration on PackageType {
+  /// Returns the duration of the package.
+  int? get inAYear => switch (this) {
+        PackageType.weekly => 52,
+        PackageType.monthly => 12,
+        PackageType.twoMonth => 6,
+        PackageType.threeMonth => 4,
+        PackageType.sixMonth => 2,
+        PackageType.annual => 1,
+        _ => null,
+      };
+}
+
+/// The Contributor Plan prices.
+class Prices {
+  /// The price map.
+  final Map<PackageType, Price> packagesPrice;
+
+  /// The promotions map.
+  final Map<PackageType, int> promotions;
+
+  /// Creates a new prices instance.
+  const Prices._({
+    this.packagesPrice = const {},
+    this.promotions = const {},
+  });
 }
 
 /// The Contributor Plan state.

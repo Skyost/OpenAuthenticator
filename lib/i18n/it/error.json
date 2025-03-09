@@ -13,7 +13,7 @@
     "generic": "Si è verificato un timeout. Riprova più tardi.",
     "authentication": "Timeout durante l'accesso utilizzando il provider selezionato. Riprova.",
     "unlink": "Timeout durante il tentativo di scollegare il tuo account da questo provider di autenticazione. Riprova.",
-    "contributorPlan": "Timeout durante l'attesa dell'acquisto del tuo piano Contributor. Riprova."
+    "contributorPlan": "Timeout durante l'attesa dell'acquisto del tuo Piano Contributor. Riprova."
   },
   "appUnlock": "Impossibile sbloccare l'app. Riprova.",
   "generic": {

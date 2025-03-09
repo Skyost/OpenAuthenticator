@@ -79,7 +79,7 @@ abstract class RevenueCatClient {
   Future<List<String>> purchaseManually(Purchasable purchasable, PackageType packageType);
 
   /// Returns the prices of the [purchasable].
-  Future<Map<PackageType, String>> getPrices(Purchasable purchasable);
+  Future<Map<PackageType, Price>> getPrices(Purchasable purchasable);
 
   /// Restores the user purchases, if possible.
   Future<Result> restorePurchases();
@@ -89,6 +89,24 @@ abstract class RevenueCatClient {
 
   /// Invalidates the user info.
   Future<void> invalidateUserInfo() => Future.value();
+}
+
+/// Represents a price.
+class Price {
+  /// The raw amount.
+  final double amount;
+
+  /// The formatted amount, with the currency.
+  final String formattedAmount;
+
+  /// Creates a new price instance.
+  const Price({
+    required this.amount,
+    required this.formattedAmount,
+  });
+
+  @override
+  String toString() => formattedAmount;
 }
 
 /// Represents a purchasable item.

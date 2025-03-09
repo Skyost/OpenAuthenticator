@@ -10,7 +10,7 @@ import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_flutter/purchases_flutter.dart' hide Price;
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -151,10 +151,10 @@ class RevenueCatRestClient extends RevenueCatClient {
   List<String> _getEntitlementsFromJson(Map<String, dynamic> json) => List.of(json['subscriber']['entitlements'].keys).cast<String>();
 
   @override
-  Future<Map<PackageType, String>> getPrices(Purchasable purchasable, {String defaultCurrencyCode = 'USD'}) async {
+  Future<Map<PackageType, Price>> getPrices(Purchasable purchasable, {String defaultCurrencyCode = 'USD'}) async {
     NumberFormat format = NumberFormat.simpleCurrency(locale: Platform.localeName);
     String currencyCode = (format.currencyName ?? defaultCurrencyCode).toLowerCase();
-    Map<PackageType, String> result = {};
+    Map<PackageType, Price> result = {};
     for (PackageType packageType in purchasable.stripePrices.keys) {
       http.Response response = await _client.get(
         Uri.https(
@@ -192,7 +192,11 @@ class RevenueCatRestClient extends RevenueCatClient {
         name: currentCurrencyCode.toUpperCase(),
         decimalDigits: 2,
       );
-      result[packageType] = format.format(currentCurrencyOptions['unit_amount'] / 100).toString();
+      double amount = currentCurrencyOptions['unit_amount'] / 100;
+      result[packageType] = Price(
+        amount: amount,
+        formattedAmount: format.format(amount).toString(),
+      );
     }
     return result;
   }

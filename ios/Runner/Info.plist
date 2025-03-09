@@ -20,6 +20,8 @@
 	<array>
 		<string>en</string>
 		<string>fr</string>
+		<string>de</string>
+		<string>pt</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>Open&#x2002;Authenticator</string>
