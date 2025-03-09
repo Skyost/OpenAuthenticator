@@ -1,0 +1,66 @@
+{
+  "emailDialog": {
+    "title": "Ihre E-Mail",
+    "message": "Bitte geben Sie Ihre E-Mail-Adresse ein, wir senden Ihnen dann einen Login-Link zu."
+  },
+  "logIn": {
+    "waitingLoginMessage": "Bitte melden Sie sich im geöffneten Fenster an. Bitte schließen Sie die Anwendung nicht.",
+    "waitingConfirmationMessage": "Wir haben Ihnen einen Bestätigungslink per E-Mail geschickt. Bitte klicken Sie darauf, um fortzufahren. Bitte schließen Sie die Anwendung nicht.",
+    "successNeedConfirmation": "Erfolgreich! Sie erhalten in Kürze eine Bestätigungs-E-Mail. Bitte klicken Sie auf den Link auf diesem Gerät, um sich anzumelden.",
+    "success": "Erfolgreich angemeldet!"
+  },
+  "link": {
+    "linkSuccess": "Anbieter erfolgreich verknüpft.",
+    "unlinkSuccess": "Anbieter erfolgreich getrennt.",
+    "unlinkConfirmationDialog": {
+      "title": "Anbieter trennen",
+      "message": "Möchten Sie diesen Authentifizierungsanbieter wirklich von Ihrem Konto trennen?"
+    }
+  },
+  "deleteConfirmationDialog": {
+    "title": "Konto löschen",
+    "message": "Möchten Sie Ihr Konto wirklich löschen? Bitte beachten Sie, dass wir eine erneute Authentifizierung verlangen, da es sich um eine sensible Aktion handelt."
+  },
+  "firebaseAuthenticationProvider": {
+    "email": {
+      "name": "E-Mail",
+      "description": "Verwenden Sie Ihre E-Mail zur Anmeldung. Es ist kein Passwort erforderlich, ein Bestätigungslink wird Ihnen per E-Mail zugesandt."
+    },
+    "google": {
+      "name": "Google",
+      "description": "Melden Sie sich mit Ihrem Google-Konto an."
+    },
+    "apple": {
+      "name": "Apple",
+      "description": "Melden Sie sich mit Ihrem Apple-Konto an."
+    },
+    "microsoft": {
+      "name": "Microsoft",
+      "description": "Melden Sie sich mit Ihrem Microsoft-Konto an."
+    },
+    "twitter": {
+      "name": "X",
+      "description": "Melden Sie sich mit Ihrem X-Konto an."
+    },
+    "github": {
+      "name": "GitHub",
+      "description": "Melden Sie sich mit Ihrem GitHub-Konto an."
+    }
+  },
+  "signInDialog": {
+    "title": "Anmeldung",
+    "email": {
+      "title": "Mit Ihrer E-Mail anmelden",
+      "hint": "Geben Sie hier Ihre E-Mail-Adresse ein",
+      "description": {
+        "signIn": "Geben Sie oben Ihre E-Mail-Adresse ein. Kein Passwort erforderlich, wir senden Ihnen sofort einen Anmeldelink!",
+        "waitingForConfirmation": "Sie erhalten bald eine Bestätigungs-E-Mail. Bitte klicken Sie auf den darin enthaltenen Link auf diesem Gerät, um die Anmeldung fortzusetzen.",
+        "alreadySignedIn": "Sie sind bereits mit Ihrer E-Mail-Adresse angemeldet.",
+        "cannotUse": "Anmeldung mit Ihrer E-Mail-Adresse nicht möglich. Bitte versuchen Sie eine andere Methode."
+      },
+      "button": "Senden Sie einen Link"
+    },
+    "separator": "Oder:"
+  },
+  "providerPickerDialogTitle": "Wählen Sie eine Anmeldemethode"
+}
