@@ -63,7 +63,6 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
     DateFormat formatter = DateFormat(_RestoreBackupDialog.kDateFormat);
     AsyncValue<List<Backup>> backups = ref.watch(backupStoreProvider);
     List<Widget> children;
-    EdgeInsets contentPadding;
     switch (backups) {
       case AsyncData(:final value):
         children = [
@@ -86,7 +85,6 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
               children: createBackupActions(backup),
             ),
         ];
-        contentPadding = kClassicChoiceDialogPadding;
         break;
       case AsyncError(:final error):
         children = [
@@ -94,18 +92,15 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
             child: Text(translations.error.generic.withException(exception: error)),
           ),
         ];
-        contentPadding = kClassicContentPadding;
         break;
       default:
         children = [
           const CenteredCircularProgressIndicator(),
         ];
-        contentPadding = kClassicContentPadding;
         break;
     }
     return AppDialog(
       title: Text(translations.settings.backups.manageBackups.backupsDialogTitle),
-      contentPadding: contentPadding,
       actions: [
         TextButton(
           onPressed: importBackup,

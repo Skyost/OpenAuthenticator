@@ -32,7 +32,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
     List<FirebaseAuthenticationProvider> currentProviders = authenticationProviders.loggedInProviders;
     return AppDialog(
       title: Text(translations.authentication.providerPickerDialogTitle),
-      contentPadding: kClassicChoiceDialogPadding,
+      contentPadding: AppDialog.classicChoiceDialogPadding,
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),

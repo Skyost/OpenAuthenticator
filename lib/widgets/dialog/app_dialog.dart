@@ -2,16 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/widgets/list/expand_list_tile.dart';
 import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
 
-/// The classic content padding.
-const EdgeInsets kClassicContentPadding = EdgeInsets.symmetric(vertical: 24, horizontal: 16);
+/// The classic content dialog padding on mobile.
+const EdgeInsets kClassicContentDialogPaddingMobile = EdgeInsets.symmetric(
+  vertical: 12,
+  horizontal: 24,
+);
 
-/// The classic content padding.
-final EdgeInsets kClassicChoiceDialogPadding = currentPlatform.isMobile ? EdgeInsets.zero : EdgeInsets.symmetric(vertical: 12);
+/// The classic content dialog padding on desktop.
+const EdgeInsets kClassicContentDialogPaddingDesktop = EdgeInsets.symmetric(
+  vertical: 12,
+  horizontal: 24,
+);
+
+/// The classic list dialog padding on mobile.
+const EdgeInsets kClassicChoiceDialogPaddingMobile = EdgeInsets.zero;
+
+/// The classic list dialog padding on desktop.
+const EdgeInsets kClassicChoiceDialogPaddingDesktop = EdgeInsets.symmetric(
+  vertical: 12,
+  horizontal: 24,
+);
 
 /// A scrollable full-width app-styled and adaptive alert dialog.
 class AppDialog extends StatelessWidget {
+  /// The classic content padding.
+  static final EdgeInsets classicContentDialogPadding = currentPlatform.isMobile ? kClassicContentDialogPaddingMobile : kClassicContentDialogPaddingDesktop;
+
+  /// The classic content padding.
+  static final EdgeInsets classicChoiceDialogPadding = currentPlatform.isMobile ? kClassicChoiceDialogPaddingMobile : kClassicChoiceDialogPaddingDesktop;
+
   /// The dialog title.
   final Widget? title;
 
@@ -48,12 +70,16 @@ class AppDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     EdgeInsets? listViewPadding = contentPadding;
+    int listTileCount = this.children.where((child) => child is ListTile || child is ListTilePadding || child is ExpandListTile).length;
+    bool isListDialog = listTileCount == this.children.length;
     if (listViewPadding == null) {
-      int listTileCount = this.children.where((child) => child is ListTile || child is ListTilePadding).length;
-      if (listTileCount == this.children.length) {
-        listViewPadding = kClassicChoiceDialogPadding;
+      if (isListDialog) {
+        listViewPadding = classicChoiceDialogPadding;
       } else {
-        listViewPadding = kClassicContentPadding;
+        listViewPadding = classicContentDialogPadding;
+      }
+      if (title != null && currentPlatform.isMobile) {
+        listViewPadding = listViewPadding.copyWith(top: 0);
       }
     }
     List<Widget> children = [
@@ -63,7 +89,7 @@ class AppDialog extends StatelessWidget {
           child: this.children[i],
         ),
     ];
-    return AlertDialog(
+    Widget dialog = AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(borderRadius),
@@ -91,6 +117,17 @@ class AppDialog extends StatelessWidget {
       ),
       actions: actions,
     );
+    ThemeData theme = Theme.of(context);
+    return isListDialog && currentPlatform.isMobile
+        ? Theme(
+            data: theme.copyWith(
+              listTileTheme: theme.listTileTheme.copyWith(
+                contentPadding: EdgeInsets.symmetric(horizontal: 30),
+              ),
+            ),
+            child: dialog,
+          )
+        : dialog;
   }
 }
 
