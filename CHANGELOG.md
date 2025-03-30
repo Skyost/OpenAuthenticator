@@ -1,5 +1,16 @@
 # 📰 Open Authenticator Changelog
 
+## v1.3.0
+Released on Mar 30, 2025.
+
+* **FEAT** : Now hiding the home page floating action button on scroll. ([#62e5aba](https://github.com/Skyost/OpenAuthenticator/commit/62e5aba))
+* **FEAT** : Translated the app into `it`. ([#c765c8e](https://github.com/Skyost/OpenAuthenticator/commit/c765c8e))
+* **FEAT** : Translated the app into `pt`. ([#75615ea](https://github.com/Skyost/OpenAuthenticator/commit/75615ea))
+* **CHORE** : Improved the app dialogs. ([#04c89d4](https://github.com/Skyost/OpenAuthenticator/commit/04c89d4))
+* **CHORE** : Improved the fallback paywall. ([#289836e](https://github.com/Skyost/OpenAuthenticator/commit/289836e))
+* **CHORE** : Improved the logo search dialog. ([#0b2659e](https://github.com/Skyost/OpenAuthenticator/commit/0b2659e))
+* **CHORE** : Now got rid of `MediaQuery.of` when it's not needed. ([#081caf2](https://github.com/Skyost/OpenAuthenticator/commit/081caf2))
+
 ## v1.2.2
 Released on Feb 13, 2025.
 
