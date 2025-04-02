@@ -55,6 +55,9 @@ class AppDialog extends StatelessWidget {
   /// The content padding.
   final EdgeInsets? contentPadding;
 
+  /// Whether to put the content in a [ListView] instead of a [Column].
+  final bool scrollable;
+
   /// Creates a new app dialog instance.
   const AppDialog({
     super.key,
@@ -65,6 +68,7 @@ class AppDialog extends StatelessWidget {
     this.borderRadius = 28,
     this.displayCloseButton,
     this.contentPadding,
+    this.scrollable = true,
   });
 
   @override
@@ -89,6 +93,19 @@ class AppDialog extends StatelessWidget {
           child: this.children[i],
         ),
     ];
+    children = [
+      if (title != null)
+        Transform.translate(
+          offset: Offset(0, -1),
+          child: _AppDialogTitle(
+            title: title!,
+            ellipsisTitleOnOverflow: ellipsisTitleOnOverflow,
+            displayCloseButton: displayCloseButton,
+            borderRadius: borderRadius,
+          ),
+        ),
+      ...children,
+    ];
     Widget dialog = AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
@@ -98,22 +115,15 @@ class AppDialog extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       content: SizedBox(
         width: MediaQuery.sizeOf(context).width,
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            if (title != null)
-              Transform.translate(
-                offset: Offset(0, -1),
-                child: _AppDialogTitle(
-                  title: title!,
-                  ellipsisTitleOnOverflow: ellipsisTitleOnOverflow,
-                  displayCloseButton: displayCloseButton,
-                  borderRadius: borderRadius,
-                ),
+        child: scrollable
+            ? ListView(
+                shrinkWrap: true,
+                children: children,
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: children,
               ),
-            ...children,
-          ],
-        ),
       ),
       actions: actions,
     );

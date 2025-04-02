@@ -12,8 +12,8 @@ Future<T> showWaitingOverlay<T>(
   String? timeoutMessage,
   bool Function()? onCancel,
 }) async {
-  OverlayEntry entry = OverlayEntry(builder: (context) {
-    return Stack(
+  OverlayEntry entry = OverlayEntry(
+    builder: (context) => Stack(
       children: [
         const ModalBarrier(
           dismissible: false,
@@ -26,8 +26,8 @@ Future<T> showWaitingOverlay<T>(
           onCancel: onCancel,
         ),
       ],
-    );
-  });
+    ),
+  );
   Overlay.of(context).insert(entry);
   if (future != null) {
     try {
@@ -77,6 +77,7 @@ class _WaitingDialogState extends State<_WaitingDialog> {
   Widget build(BuildContext context) => PopScope(
         canPop: false,
         child: AppDialog(
+          scrollable: false,
           actions: widget.onCancel == null
               ? null
               : [

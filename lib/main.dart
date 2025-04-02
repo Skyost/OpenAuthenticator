@@ -18,7 +18,7 @@ import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/pages/contributor_plan_fallback_paywall.dart';
+import 'package:open_authenticator/pages/contributor_plan_paywall/page.dart';
 import 'package:open_authenticator/pages/home.dart';
 import 'package:open_authenticator/pages/intro/page.dart';
 import 'package:open_authenticator/pages/scan.dart';
@@ -231,8 +231,8 @@ class OpenAuthenticatorApp extends ConsumerWidget {
                   ),
                 );
               },
-              ContributorPlanFallbackPaywallPage.name: (_) => const _RouteWidget(
-                    child: ContributorPlanFallbackPaywallPage(),
+              ContributorPlanPaywallPage.name: (_) => const _RouteWidget(
+                    child: ContributorPlanPaywallPage(),
                   ),
             }
           : {},

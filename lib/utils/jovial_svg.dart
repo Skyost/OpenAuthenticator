@@ -25,7 +25,7 @@ class JovialSvgUtils {
       siCompactBuilder.si.writeToFile(outputSink);
       return true;
     } catch (ex, stacktrace) {
-      handleException(ex, stacktrace);
+      handleException(ex, stacktrace, sendToCrashlytics: false);
     } finally {
       await ioSink.close();
     }
