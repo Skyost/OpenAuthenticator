@@ -1,5 +1,13 @@
 # 📰 Open Authenticator Changelog
 
+## v1.3.1
+Released on Apr 2, 2025.
+
+* **FEAT** : Improved errors handling. ([#4cbbdca](https://github.com/Skyost/OpenAuthenticator/commit/4cbbdca))
+* **FEAT** : Improved the paywall. ([#f549ecb](https://github.com/Skyost/OpenAuthenticator/commit/f549ecb))
+* **FIX** : Fixed a bug with login links. ([#848f806](https://github.com/Skyost/OpenAuthenticator/commit/848f806))
+* **CHORE** : Improved some dialogs. ([#6cdd405](https://github.com/Skyost/OpenAuthenticator/commit/6cdd405))
+
 ## v1.3.0
 Released on Mar 30, 2025.
 
