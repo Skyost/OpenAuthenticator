@@ -11,7 +11,6 @@ import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/utils/validation/server.dart';
 import 'package:purchases_flutter/purchases_flutter.dart' hide Price;
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -52,19 +51,7 @@ class RevenueCatRestClient extends RevenueCatClient {
 
   @override
   Future<List<PackageType>> getAvailablePackageTypes(String offeringId) async {
-    http.Response response = await _client.get(
-      Uri.https(
-        'api.revenuecat.com',
-        '/v1/subscribers/${purchasesConfiguration.appUserID}/offerings',
-      ),
-      headers: _revenueCatHeaders,
-    );
-
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw _InvalidResponseCodeException(code: response.statusCode);
-    }
-
-    List jsonOfferings = jsonDecode(response.body)['value']['offerings'];
+    List jsonOfferings = await _getJsonOfferings();
     Map<String, dynamic>? jsonOffering = jsonOfferings.firstWhereOrNull((jsonOffering) => jsonOffering[offeringId]);
     if (jsonOffering == null) {
       return [];
@@ -82,9 +69,6 @@ class RevenueCatRestClient extends RevenueCatClient {
     }
     return result;
   }
-
-  @override
-  Future<PaywallResult> presentPaywall(Purchasable purchasable) => Future.value(PaywallResult.error);
 
   @override
   Future<List<String>> purchaseManually(Purchasable purchasable, PackageType packageType) async {
@@ -149,6 +133,33 @@ class RevenueCatRestClient extends RevenueCatClient {
 
   /// Returns the user entitlements from the given [json] map.
   List<String> _getEntitlementsFromJson(Map<String, dynamic> json) => List.of(json['subscriber']['entitlements'].keys).cast<String>();
+
+  /// Returns the list of offerings.
+  Future<List> _getJsonOfferings() async {
+    http.Response response = await _client.get(
+      Uri.https(
+        'api.revenuecat.com',
+        '/v1/subscribers/${purchasesConfiguration.appUserID}/offerings',
+      ),
+      headers: _revenueCatHeaders,
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw _InvalidResponseCodeException(code: response.statusCode);
+    }
+
+    return jsonDecode(response.body)['value']['offerings'];
+  }
+
+  @override
+  Future<Map<String, Offering>> getOfferings() async {
+    List jsonOfferings = await _getJsonOfferings();
+    Map<String, Offering> result = {};
+    for (Map<String, dynamic> jsonOffering in jsonOfferings) {
+      result[jsonOffering['identifier']] = Offering.fromJson(jsonOffering);
+    }
+    return result;
+  }
 
   @override
   Future<Map<PackageType, Price>> getPrices(Purchasable purchasable, {String defaultCurrencyCode = 'USD'}) async {

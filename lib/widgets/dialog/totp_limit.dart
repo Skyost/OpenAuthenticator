@@ -36,7 +36,7 @@ class TotpLimitDialog extends ConsumerWidget {
             child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
           ),
           TextButton(
-            onPressed: () => _returnIfSucceeded(context, ContributorPlanUtils.purchase(context, ref)),
+            onPressed: () => _returnIfSucceeded(context, ContributorPlanUtils.purchase(context)),
             child: Text(translations.totpLimit.autoDialog.actions.subscribe),
           ),
           if (cancelButton)

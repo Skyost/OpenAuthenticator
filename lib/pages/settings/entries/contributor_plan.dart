@@ -30,7 +30,7 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
               leading: const Icon(Icons.sentiment_dissatisfied),
               title: Text(translations.settings.application.contributorPlan.title),
               subtitle: Text(translations.settings.application.contributorPlan.subtitle.inactive),
-              onTap: () => ContributorPlanUtils.purchase(context, ref),
+              onTap: () => ContributorPlanUtils.purchase(context),
             );
           case ContributorPlanState.active:
             return ListTile(

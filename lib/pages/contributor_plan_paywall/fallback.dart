@@ -19,128 +19,131 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 /// Allows to pick for a billing plan (annual / monthly).
 /// Displayed only if `purchases_ui_flutter` is unavailable on the current OS.
-class ContributorPlanFallbackPaywallPage extends ConsumerWidget {
-  /// The contributor plan paywall page.
-  static const String name = '/contributor_plan_paywall';
+class ContributorPlanFallbackPaywall extends ConsumerWidget {
+  /// Triggered when the purchase has completed.
+  final VoidCallback onPurchaseCompleted;
 
-  /// Creates a new contributor plan fallback paywall page instance.
-  const ContributorPlanFallbackPaywallPage({
+  /// Triggered on dismiss.
+  final VoidCallback onDismiss;
+
+  /// Creates a new contributor plan fallback paywall instance.
+  const ContributorPlanFallbackPaywall({
     super.key,
+    required this.onPurchaseCompleted,
+    required this.onDismiss,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-        body: Center(
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              AppBar(
-                leading: CloseButton(),
-                backgroundColor: Colors.transparent,
-                scrolledUnderElevation: 0,
-                title: FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Text.rich(
-                    translations.contributorPlan.fallbackPaywall.title(
-                      title: (text) => WidgetSpan(
-                        child: TitleWidget(
-                          text: text,
-                          textStyle: Theme.of(context).textTheme.headlineLarge,
-                        ),
-                        alignment: PlaceholderAlignment.middle,
-                      ),
+  Widget build(BuildContext context, WidgetRef ref) => ListView(
+        shrinkWrap: true,
+        children: [
+          AppBar(
+            leading: CloseButton(
+              onPressed: onDismiss,
+            ),
+            backgroundColor: Colors.transparent,
+            scrolledUnderElevation: 0,
+            title: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text.rich(
+                translations.contributorPlan.fallbackPaywall.title(
+                  title: (text) => WidgetSpan(
+                    child: TitleWidget(
+                      text: text,
+                      textStyle: Theme.of(context).textTheme.headlineLarge,
                     ),
-                    style: Theme.of(context).textTheme.headlineLarge,
-                    textAlign: TextAlign.center,
+                    alignment: PlaceholderAlignment.middle,
                   ),
                 ),
-                centerTitle: true,
+                style: Theme.of(context).textTheme.headlineLarge,
+                textAlign: TextAlign.center,
               ),
-              const ListTilePadding(
-                top: 20,
-                bottom: 20,
-                child: SizedBox(
-                  height: 150,
-                  child: SizedScalableImageWidget(
-                    asset: 'assets/images/logo.si',
-                  ),
-                ),
-              ),
-              for (String feature in translations.contributorPlan.fallbackPaywall.features)
-                ListTilePadding(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: Icon(
-                          Icons.check,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(feature),
-                      ),
-                    ],
-                  ),
-                ),
-              ListTilePadding(
-                top: 20,
-                bottom: 20,
-                child: DividerText(
-                  text: Text(
-                    translations.contributorPlan.fallbackPaywall.packageType.choose,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              ListTilePadding(
-                child: _ContributorPlanBillingPlanPicker(
-                  onContinuePressed: (packageType) => _tryPurchase(context, ref, packageType),
-                ),
-              ),
-              ListTilePadding(
-                top: 20,
-                bottom: 10,
-                child: Wrap(
-                  alignment: WrapAlignment.spaceAround,
-                  children: [
-                    TextButton(
-                      onPressed: () async {
-                        if (await canLaunchUrlString(AppContributorPlan.restPrivacyPolicyLink)) {
-                          await launchUrlString(AppContributorPlan.restPrivacyPolicyLink);
-                        }
-                      },
-                      style: ButtonStyle(
-                        textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
-                      ),
-                      child: Text(translations.contributorPlan.fallbackPaywall.button.privacyPolicy),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        if (await canLaunchUrlString(AppContributorPlan.restTermsOfServiceLink)) {
-                          await launchUrlString(AppContributorPlan.restTermsOfServiceLink);
-                        }
-                      },
-                      style: ButtonStyle(
-                        textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
-                      ),
-                      child: Text(translations.contributorPlan.fallbackPaywall.button.termsOfService),
-                    ),
-                    TextButton(
-                      onPressed: () => _tryRestorePurchases(context, ref),
-                      style: ButtonStyle(
-                        textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
-                      ),
-                      child: Text(translations.contributorPlan.fallbackPaywall.button.restorePurchases),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
+            centerTitle: true,
           ),
-        ),
+          const ListTilePadding(
+            top: 20,
+            bottom: 20,
+            child: SizedBox(
+              height: 150,
+              child: SizedScalableImageWidget(
+                asset: 'assets/images/logo.si',
+              ),
+            ),
+          ),
+          for (String feature in translations.contributorPlan.fallbackPaywall.features)
+            ListTilePadding(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: Icon(
+                      Icons.check,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(feature),
+                  ),
+                ],
+              ),
+            ),
+          ListTilePadding(
+            top: 20,
+            bottom: 20,
+            child: DividerText(
+              text: Text(
+                translations.contributorPlan.fallbackPaywall.packageType.choose,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          ListTilePadding(
+            child: _ContributorPlanBillingPlanPicker(
+              onContinuePressed: (packageType) => _tryPurchase(context, ref, packageType),
+            ),
+          ),
+          ListTilePadding(
+            top: 20,
+            bottom: 10,
+            child: Wrap(
+              alignment: WrapAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    if (await canLaunchUrlString(AppContributorPlan.restPrivacyPolicyLink)) {
+                      await launchUrlString(AppContributorPlan.restPrivacyPolicyLink);
+                    }
+                  },
+                  style: ButtonStyle(
+                    textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
+                  ),
+                  child: Text(translations.contributorPlan.fallbackPaywall.button.privacyPolicy),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    if (await canLaunchUrlString(AppContributorPlan.restTermsOfServiceLink)) {
+                      await launchUrlString(AppContributorPlan.restTermsOfServiceLink);
+                    }
+                  },
+                  style: ButtonStyle(
+                    textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
+                  ),
+                  child: Text(translations.contributorPlan.fallbackPaywall.button.termsOfService),
+                ),
+                TextButton(
+                  onPressed: () => _tryRestorePurchases(context, ref),
+                  style: ButtonStyle(
+                    textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
+                  ),
+                  child: Text(translations.contributorPlan.fallbackPaywall.button.restorePurchases),
+                ),
+              ],
+            ),
+          ),
+        ],
       );
 
   /// Tries to do purchase the [packageType].
@@ -160,7 +163,7 @@ class ContributorPlanFallbackPaywallPage extends ConsumerWidget {
         retryIfError: true,
       );
       if (result is ResultSuccess) {
-        Navigator.pop(context, result);
+        onPurchaseCompleted();
       }
     }
   }
@@ -171,7 +174,7 @@ class ContributorPlanFallbackPaywallPage extends ConsumerWidget {
     if (!context.mounted) {
       return;
     }
-    Result result = await showWaitingOverlay(context, future: contributorPlan.restoreState());
+    Result result = await showWaitingOverlay(context, future: contributorPlan.restore());
     if (context.mounted) {
       context.showSnackBarForResult(
         result,
@@ -179,15 +182,9 @@ class ContributorPlanFallbackPaywallPage extends ConsumerWidget {
         retryIfError: true,
       );
       if (result is ResultSuccess) {
-        Navigator.pop(context, result);
+        onPurchaseCompleted();
       }
     }
-  }
-
-  /// Displays the fallback paywall.
-  static Future<Result> display(BuildContext context) async {
-    Object? result = await Navigator.pushNamed(context, ContributorPlanFallbackPaywallPage.name);
-    return result is Result ? result : const ResultCancelled();
   }
 }
 

@@ -1,9 +1,7 @@
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/utils/utils.dart';
 import 'package:purchases_flutter/purchases_flutter.dart' hide Price;
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 /// Allows to communicate with RevenueCat using its SDK.
 class RevenueCatMethodChannelClient extends RevenueCatClient {
@@ -29,22 +27,6 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
   }
 
   @override
-  Future<PaywallResult> presentPaywall(Purchasable purchasable) async {
-    Offerings offerings = await Purchases.getOfferings();
-    Offering? offering = offerings.getOffering(purchasable.offeringId);
-    if (offering == null) {
-      return PaywallResult.error;
-    }
-
-    try {
-      return await RevenueCatUI.presentPaywall(offering: offering);
-    } catch (ex, stacktrace) {
-      handleException(ex, stacktrace);
-    }
-    return PaywallResult.error;
-  }
-
-  @override
   Future<List<String>> purchaseManually(Purchasable purchasable, PackageType packageType) async {
     Offerings offerings = await Purchases.getOfferings();
     Offering? offering = offerings.getOffering(purchasable.offeringId);
@@ -60,6 +42,9 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
     }
     return [];
   }
+
+  @override
+  Future<Map<String, Offering>> getOfferings() async => (await Purchases.getOfferings()).all;
 
   @override
   Future<Map<PackageType, Price>> getPrices(Purchasable purchasable) async {

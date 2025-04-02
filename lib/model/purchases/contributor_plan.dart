@@ -6,7 +6,6 @@ import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:purchases_flutter/purchases_flutter.dart' hide Price;
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 /// The Contributor Plan provider.
 final contributorPlanStateProvider = AsyncNotifierProvider<ContributorPlan, ContributorPlanState>(ContributorPlan.new);
@@ -71,8 +70,8 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
     }
   }
 
-  /// Tries to restore the subscription state.
-  Future<Result> restoreState() async {
+  /// Tries to restore the subscription.
+  Future<Result> restore() async {
     try {
       RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
       if (revenueCatClient == null) {
@@ -92,25 +91,16 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
     }
   }
 
-  /// Presents the paywall.
-  Future<Result<PaywallResult>> presentPaywall() async {
+  /// Tries to refresh the subscription state.
+  Future<Result<ContributorPlanState>> refresh() async {
     try {
       RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
-      PaywallResult paywallResult = await revenueCatClient!.presentPaywall(Purchasable.contributorPlan);
-      switch (paywallResult) {
-        case PaywallResult.error:
-          throw _InvalidPaywallResult(result: paywallResult);
-        case PaywallResult.notPresented:
-        case PaywallResult.cancelled:
-          return const ResultCancelled();
-        case PaywallResult.purchased:
-        case PaywallResult.restored:
-          await revenueCatClient.invalidateUserInfo();
-          if (await revenueCatClient.hasEntitlement(AppContributorPlan.entitlementId)) {
-            state = const AsyncData(ContributorPlanState.active);
-          }
-          return ResultSuccess(value: paywallResult);
+      if (revenueCatClient == null) {
+        throw _NoRevenueCatClientException();
       }
+      ContributorPlanState contributorPlanState = await revenueCatClient.hasEntitlement(AppContributorPlan.entitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive;
+      state = AsyncData(contributorPlanState);
+      return ResultSuccess(value: contributorPlanState);
     } catch (ex, stacktrace) {
       return ResultError(
         exception: ex,
@@ -183,18 +173,4 @@ enum ContributorPlanState {
 class _NoRevenueCatClientException implements Exception {
   @override
   String toString() => 'No RevenueCat client available';
-}
-
-/// Thrown when an invalid paywall result has been returned.
-class _InvalidPaywallResult implements Exception {
-  /// The result.
-  final PaywallResult result;
-
-  /// Creates a new invalid paywall result instance.
-  const _InvalidPaywallResult({
-    required this.result,
-  });
-
-  @override
-  String toString() => 'Invalid paywall result : $result';
 }
