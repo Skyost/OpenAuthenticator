@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hashlib_codecs/hashlib_codecs.dart';
+import 'package:open_authenticator/utils/platform.dart';
 
 /// Contains some useful iterable methods.
 extension IterableUtils<T> on Iterable<T> {
@@ -24,10 +26,18 @@ bool isValidBase32(String string) {
 }
 
 /// Handles an exception.
-void handleException(Object? ex, StackTrace? stacktrace) {
+void handleException(Object? ex, StackTrace? stacktrace, {bool? sendToCrashlytics}) {
   if (kDebugMode) {
     print(ex);
     print(stacktrace);
+  }
+  sendToCrashlytics ??= !kDebugMode && (currentPlatform.isMobile || currentPlatform == Platform.macOS);
+  if (sendToCrashlytics) {
+    FirebaseCrashlytics.instance.recordError(
+      ex,
+      stacktrace,
+      printDetails: false,
+    );
   }
 }
 

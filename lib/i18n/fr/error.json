@@ -17,8 +17,8 @@
   },
   "appUnlock": "Impossible de déverrouiller l'application. Veuillez réessayer.",
   "generic": {
-    "noTryAgain": "Oops, quelque-chose s'est mal passé.",
-    "tryAgain": "Quelque-chose s'est mal passé. Veuillez réessayer plus tard.",
+    "noTryAgain": "Oops, quelque chose s'est mal passé.",
+    "tryAgain": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
     "withException": "Une erreur est survenue ($exception). Veuillez réessayer plus tard."
   },
   "authentication": {
