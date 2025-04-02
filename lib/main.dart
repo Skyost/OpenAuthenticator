@@ -336,8 +336,8 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     String? mode = link.queryParameters['mode'];
     switch (mode) {
       case 'signIn':
-        AsyncValue<String?> emailToConfirm = ref.watch(emailLinkConfirmationStateProvider);
-        if (emailToConfirm.valueOrNull == null || !mounted) {
+        String? emailToConfirm = await ref.read(emailLinkConfirmationStateProvider.future);
+        if (emailToConfirm == null || !mounted) {
           return;
         }
         Result<AuthenticationObject> result = await ref.read(emailLinkConfirmationStateProvider.notifier).confirm(context, link.toString());
