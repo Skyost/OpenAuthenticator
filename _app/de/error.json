@@ -1,0 +1,55 @@
+{
+  "noError": "Erfolgreich!",
+  "appUnlock": "Die App konnte nicht entsperrt werden. Bitte versuchen Sie es erneut.",
+  "totpDecrypt": "Dieses TOTP konnte nicht entschlüsselt werden. Bitte stellen Sie sicher, dass Sie das richtige Passwort eingegeben haben.",
+  "validation": {
+    "number": "Sie müssen eine gültige Zahl eingeben.",
+    "empty": "Dieses Feld ist erforderlich.",
+    "email": "Ungültige E-Mail.",
+    "secret": "Ungültiges Geheimnis eingegeben.",
+    "totpDigits": "Diese Zahl muss mindestens 6 betragen.",
+    "masterPassword": "Ungültiges Passwort eingegeben.",
+    "confirmation": "Die Bestätigung stimmt nicht überein."
+  },
+  "timeout": {
+    "generic": "Es ist eine Zeitüberschreitung aufgetreten. Bitte versuchen Sie es später erneut.",
+    "authentication": "Zeitüberschreitung bei der Anmeldung über den ausgewählten Anbieter. Bitte versuchen Sie es erneut.",
+    "unlink": "Zeitüberschreitung beim Aufheben der Verknüpfung Ihres Kontos mit diesem Authentifizierungsanbieter. Bitte versuchen Sie es erneut.",
+    "contributorPlan": "Zeitüberschreitung beim Warten auf den Kauf Ihres Mitwirkender-Plan-Abonnements. Bitte versuchen Sie es erneut."
+  },
+  "generic": {
+    "noTryAgain": "Ups, da ist etwas schiefgelaufen.",
+    "tryAgain": "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+    "withException": "Es ist ein Fehler aufgetreten (Fehlermeldung: $exception). Bitte versuchen Sie es später erneut."
+  },
+  "authentication": {
+    "accountExistsWithDifferentCredentialsDialog": {
+      "title": "Es existiert bereits ein Konto",
+      "message": "Ein Konto mit derselben E-Mail-Adresse existiert bereits in unserer Datenbank, aber der ausgewählte Authentifizierungsanbieter wurde noch nicht damit verknüpft."
+    },
+    "invalidCredential": "Ungültige Anmeldedaten.",
+    "operationNotAllowed": "Operation nicht erlaubt. Dies sollte nicht passieren, bitte melden Sie diesen Fehler.",
+    "userDisabled": "Ihr Konto wurde deaktiviert.",
+    "firebaseException": "Bei der Authentifizierung Ihres Kontos ist ein Fehler aufgetreten (Fehlermeldung: $exception). Bitte versuchen Sie es später erneut."
+  },
+  "scan": {
+    "noUri": "Dieser QR-Code konnte nicht gelesen werden. Bitte stellen Sie sicher, dass es sich um einen gültigen TOTP-QR-Code handelt.",
+    "accessDeniedDialog": {
+      "title": "Zugriff verweigert",
+      "message": "Der Zugriff auf Ihre Kamera ist fehlgeschlagen (Zugriff verweigert: $exception). Möchten Sie es erneut versuchen?"
+    },
+    "controllerUninitialized": "Nicht initialisierter Controller (Code: $exception).",
+    "unsupported": "Das Scannen wird von diesem Gerät nicht unterstützt (Code: $exception)."
+  },
+  "storageMigration(map)": {
+    "backupError": "Beim Erstellen der Sicherung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "currentStoragePasswordMismatch": "Ungültiges Master-Passwort eingegeben.",
+    "encryptionKeyChangeFailed": "Beim Verschlüsseln Ihrer Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+    "genericError": "Beim Migrieren Ihrer Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
+  },
+  "authenticationValidation": {
+    "incorrectPath": "Etwas ist schiefgelaufen (Pfad: '$path'). Bitte melden Sie diesen Fehler.",
+    "generic": "Anfrage konnte nicht validiert werden (Fehlermeldung: $exception). Bitte versuchen Sie es später erneut.",
+    "oauth2": "Anmeldung mit $name nicht möglich. Bitte versuchen Sie es später erneut."
+  }
+}

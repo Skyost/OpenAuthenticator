@@ -1,0 +1,37 @@
+{
+  "subscribe": {
+    "waitingDialogMessage": "Aguardando sua compra...",
+    "success": "Você assinou com sucesso o Plano Contributor. Muito obrigado!"
+  },
+  "fallbackPaywall": {
+    "title(rich)": "Plano ${title(Contributor)}",
+    "features": [
+      "Sincronize quantos TOTPs quiser.",
+      "Contribua para o Open Source.",
+      "Ajude-nos a melhorar o aplicativo."
+    ],
+    "packageType": {
+      "choose": "Escolha seu plano de pagamento:",
+      "empty": "Não há nenhuma opção disponível para assinar o Plano Contributor.",
+      "name(map)": {
+        "annual": "Anual",
+        "monthly": "Mensal"
+      },
+      "interval(map)": {
+        "annual": "Ano",
+        "monthly": "Mês"
+      },
+      "priceSubtitle(rich)": "$subtitle\n$price / $interval.",
+      "subtitle(map)": {
+        "annual": "Cobrança anual.",
+        "monthly": "Cobrança mensal."
+      }
+    },
+    "button": {
+      "privacyPolicy": "Política de privacidade",
+      "termsOfService": "Termos de serviço",
+      "restorePurchases": "Restaurar compras"
+    },
+    "restorePurchasesSuccess": "Suas compras foram restauradas com sucesso!"
+  }
+}
