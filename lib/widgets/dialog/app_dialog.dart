@@ -23,7 +23,7 @@ const EdgeInsets kClassicChoiceDialogPaddingMobile = EdgeInsets.zero;
 /// The classic list dialog padding on desktop.
 const EdgeInsets kClassicChoiceDialogPaddingDesktop = EdgeInsets.symmetric(
   vertical: 12,
-  horizontal: 24,
+  horizontal: 0,
 );
 
 /// A scrollable full-width app-styled and adaptive alert dialog.

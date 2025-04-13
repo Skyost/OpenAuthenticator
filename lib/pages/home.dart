@@ -270,10 +270,22 @@ class _HomePageBody extends ConsumerWidget {
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(20),
-                        child: Text(
-                          translations.home.empty,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Icon(
+                                Icons.lightbulb,
+                                size: 46,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            Text(
+                              translations.home.empty,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
                     ),
