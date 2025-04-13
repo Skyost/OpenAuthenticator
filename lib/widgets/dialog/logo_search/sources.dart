@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 mixin Source {
   /// All logo sources.
   static const List<Source> sources = [
-    ClearbitSource(),
+    LogoDevSource(),
     UpLeadSource(),
     WikimediaSource(),
   ];
@@ -74,16 +74,16 @@ class WikimediaSource with Source {
   String buildImageUrl(String imageFile) => 'https://commons.wikimedia.org/wiki/Special:FilePath/$imageFile';
 }
 
-/// Search using Clearbit.
-class ClearbitSource with Source, DirectApiSource {
-  /// Creates a new Clearbit source instance.
-  const ClearbitSource();
+/// Search using Logo.dev.
+class LogoDevSource with Source, DirectApiSource {
+  /// Creates a new Logo.dev source instance.
+  const LogoDevSource();
 
   @override
-  String get name => 'Clearbit';
+  String get name => 'Logo.dev';
 
   @override
-  String get apiPath => 'https://logo.clearbit.com';
+  String get apiPath => 'https://img.logo.dev';
 }
 
 /// Search using UpLead.
