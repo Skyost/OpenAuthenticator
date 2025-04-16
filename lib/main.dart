@@ -270,26 +270,24 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
   void initState() {
     super.initState();
     if (widget.listen) {
-      if (currentPlatform.isMobile) {
-        ref.listenManual(
-          appLinksListenerProvider,
-          (previous, next) async {
-            if (previous == next || next is! AsyncData<Uri?> || next.value == null) {
-              return;
-            }
-            Uri uri = next.value!;
-            if (uri.host == Uri.parse(App.firebaseLoginUrl).host) {
-              WidgetsBinding.instance.addPostFrameCallback((_) => handleLoginLink(uri));
-              return;
-            }
-            if (uri.scheme == 'otpauth') {
-              WidgetsBinding.instance.addPostFrameCallback((_) => handleTotpLink(uri));
-              return;
-            }
-          },
-          fireImmediately: true,
-        );
-      }
+      ref.listenManual(
+        appLinksListenerProvider,
+        (previous, next) async {
+          if (previous == next || next is! AsyncData<Uri?> || next.value == null) {
+            return;
+          }
+          Uri uri = next.value!;
+          if (uri.host == Uri.parse(App.firebaseLoginUrl).host) {
+            WidgetsBinding.instance.addPostFrameCallback((_) => handleLoginLink(uri));
+            return;
+          }
+          if (uri.scheme == 'otpauth') {
+            WidgetsBinding.instance.addPostFrameCallback((_) => handleTotpLink(uri));
+            return;
+          }
+        },
+        fireImmediately: true,
+      );
       ref.listenManual(
         totpLimitProvider,
         (previous, next) async {
