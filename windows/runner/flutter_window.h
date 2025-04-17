@@ -11,13 +11,19 @@
 #include <memory>
 
 #include "win32_window.h"
+
 #include "include/firebase/app/future_manager.h"
+#include "firebase/internal/future_impl.h"
 
 using FunctionRegistryCallback = void (*)(void*);
 
 // A window that does nothing but host a Flutter view.
 class FlutterWindow : public Win32Window {
  public:
+  static inline FlutterWindow* FlutterWindow::instance = nullptr;
+  std::unique_ptr<flutter::MethodChannel<>> method_channel_auth;
+  std::unique_ptr<flutter::MethodChannel<>> method_channel_app_check;
+
   virtual ~FlutterWindow();
   static FlutterWindow* GetInstance(const flutter::DartProject& project);
   FlutterWindow(FlutterWindow const&) = delete;
@@ -39,8 +45,6 @@ class FlutterWindow : public Win32Window {
 
   firebase::ReferenceCountedFutureImpl* future();
 
-  static inline FlutterWindow* FlutterWindow::instance = nullptr;
-
   // Creates a new FlutterWindow hosting a Flutter view running |project|.
   explicit FlutterWindow(const flutter::DartProject& project);
 
@@ -57,7 +61,6 @@ class FlutterWindow : public Win32Window {
   static bool GetCurrentUserIdToken(firebase::App* app, void* force_refresh, void* out);
   static bool GetCurrentUserUid(firebase::App* app, void*, void* out);
 
-  std::unique_ptr<flutter::MethodChannel<>> method_channel;
   std::vector<Entry> callbacks;
 };
 

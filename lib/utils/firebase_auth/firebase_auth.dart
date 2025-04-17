@@ -6,7 +6,7 @@ import 'package:open_authenticator/utils/firebase_auth/default.dart';
 import 'package:open_authenticator/utils/firebase_auth/rest.dart';
 import 'package:open_authenticator/utils/platform.dart';
 
-/// Allows to either use FlutterFire's Firebase implementation or fallback to the REST API if needed.
+/// Allows to either use FlutterFire's Firebase Auth implementation or fallback to the REST API if needed.
 abstract class FirebaseAuth {
   /// The current [FirebaseAuth] instance.
   static FirebaseAuth? _instance;

@@ -35,7 +35,7 @@ class FirebaseAuthRest extends FirebaseAuth {
 
   /// The method channel.
   /// This allow us to link our auth implementation to the Firebase C++ SDK.
-  final MethodChannel _methodChannel = const MethodChannel('app.openauthenticator');
+  final MethodChannel _methodChannel = const MethodChannel('app.openauthenticator.auth');
 
   @override
   Future<void> initialize() async {

@@ -1,16 +1,55 @@
 #include "flutter_window.h"
 #include <flutter/event_channel.h>
-#include <flutter/event_sink.h>
-#include <flutter/event_stream_handler_functions.h>
 #include <flutter/method_result_functions.h>
 #include <flutter/standard_method_codec.h>
+
 #include <windows.h>
 
 #include <optional>
 
 #include "flutter/generated_plugin_registrant.h"
+#include "firebase/app_check.h"
+
 #include "include/firebase/app/function_registry.h"
 #include "include/firebase/app/reference_counted_future_impl.h"
+
+class PlatformAppCheckProvider : public firebase::app_check::AppCheckProvider {
+  void GetToken(std::function<void(firebase::app_check::AppCheckToken, int, const std::string&)> completion_callback) override {
+    if (!FlutterWindow::instance || !FlutterWindow::instance->method_channel_app_check) {
+      completion_callback({}, -2, "Instance cannot be found.");
+      return;
+    }
+
+    std::unique_ptr<flutter::MethodResultFunctions<>> result_handler = std::make_unique<flutter::MethodResultFunctions<>>(
+      [completion_callback](const flutter::EncodableValue* value) {
+        auto token = std::get<flutter::EncodableMap>(*value);
+        completion_callback(
+          firebase::app_check::AppCheckToken{
+            std::get<std::string>(token["token"]),
+            std::get<std::int32_t>(token["ttl"])
+          },
+          0,
+          ""
+        );
+      },
+      [completion_callback](const std::string& error_code, const std::string& error_message, const void* error_details) {
+        completion_callback({}, -1, error_message);
+      },
+      [completion_callback]() {
+        completion_callback({}, -3, "Method not implemented.");
+      }
+    );
+
+    FlutterWindow::instance->method_channel_app_check->InvokeMethod("appCheck.requestToken", nullptr, std::move(result_handler));
+  }
+};
+
+class PlatformAppCheckProviderFactory : public firebase::app_check::AppCheckProviderFactory {
+  firebase::app_check::AppCheckProvider* CreateProvider(firebase::App* app) override {
+    // Create and return an AppCheckProvider object.
+    return new PlatformAppCheckProvider();
+  }
+};
 
 FlutterWindow* FlutterWindow::GetInstance(const flutter::DartProject& project) {
   if (!instance) {
@@ -45,8 +84,8 @@ bool FlutterWindow::OnCreate() {
   }
   RegisterPlugins(flutter_controller_->engine());
 
-  method_channel = std::make_unique<flutter::MethodChannel<>>(flutter_controller_->engine()->messenger(), "app.openauthenticator", &flutter::StandardMethodCodec::GetInstance());
-  method_channel->SetMethodCallHandler([this](const flutter::MethodCall<>& call, std::unique_ptr<flutter::MethodResult<>> result) {
+  method_channel_auth = std::make_unique<flutter::MethodChannel<>>(flutter_controller_->engine()->messenger(), "app.openauthenticator.auth", &flutter::StandardMethodCodec::GetInstance());
+  method_channel_auth->SetMethodCallHandler([this](const flutter::MethodCall<>& call, std::unique_ptr<flutter::MethodResult<>> result) {
     if (call.method_name() == "auth.install" || call.method_name() == "auth.userChanged") {
       const auto* arguments = std::get_if<flutter::EncodableMap>(call.arguments());
       auto userIdValue = arguments->find(flutter::EncodableValue("userUid"));
@@ -63,15 +102,25 @@ bool FlutterWindow::OnCreate() {
         function_registry->RegisterFunction(::firebase::internal::FnAuthRemoveAuthStateListener, RemoveListener);
         function_registry->RegisterFunction(::firebase::internal::FnAuthGetTokenAsync, GetCurrentUserIdToken);
         function_registry->RegisterFunction(::firebase::internal::FnAuthGetCurrentUserUid, GetCurrentUserUid);
-        result->Success(flutter::EncodableValue(true));
+        result->Success(true);
       } else {
         for (const Entry& entry : callbacks) {
           entry.first(entry.second);
         }
-        result->Success(flutter::EncodableValue(true));
+        result->Success(true);
       }
     }
     else {
+      result->NotImplemented();
+    }
+  });
+
+  method_channel_app_check = std::make_unique<flutter::MethodChannel<>>(flutter_controller_->engine()->messenger(), "app.openauthenticator.appCheck", &flutter::StandardMethodCodec::GetInstance());
+  method_channel_app_check->SetMethodCallHandler([this](const flutter::MethodCall<>& call, std::unique_ptr<flutter::MethodResult<>> result) {
+    if (call.method_name() == "appCheck.activate") {
+      firebase::app_check::AppCheck::SetAppCheckProviderFactory(new PlatformAppCheckProviderFactory());
+      result->Success(true);
+    } else {
       result->NotImplemented();
     }
   });
@@ -91,8 +140,13 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
-  if (method_channel) {
-    method_channel = nullptr;
+  if (method_channel_auth) {
+    method_channel_auth->SetMethodCallHandler(nullptr);
+    method_channel_auth = nullptr;
+  }
+  if (method_channel_app_check) {
+    method_channel_app_check->SetMethodCallHandler(nullptr);
+    method_channel_app_check = nullptr;
   }
   if (flutter_controller_) {
     flutter_controller_ = nullptr;
@@ -153,7 +207,7 @@ bool FlutterWindow::GetCurrentUserIdToken(firebase::App* app, void* force_refres
 
   bool* in_force_refresh = static_cast<bool*>(force_refresh);
 
-  if (!instance || !instance->method_channel) {
+  if (!instance || !instance->method_channel_auth) {
     return false;
   }
 
@@ -181,7 +235,7 @@ bool FlutterWindow::GetCurrentUserIdToken(firebase::App* app, void* force_refres
     }
   );
 
-  instance->method_channel->InvokeMethod("user.getIdToken", std::move(arguments), std::move(result_handler));
+  instance->method_channel_auth->InvokeMethod("user.getIdToken", std::move(arguments), std::move(result_handler));
   if (out_future) {
     *out_future = firebase::Future<std::string>(instance->future(), handle.get());
   }
