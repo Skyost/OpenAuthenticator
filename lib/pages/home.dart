@@ -277,15 +277,15 @@ class _HomePageBody extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: Icon(
-                                Icons.lightbulb,
-                                size: 46,
-                                color: Theme.of(context).colorScheme.primary,
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: SizedScalableImageWidget(
+                                height: 80,
+                                asset: 'assets/images/home.si',
                               ),
                             ),
                             Text(
                               translations.home.empty,
+                              style: Theme.of(context).textTheme.bodySmall,
                               textAlign: TextAlign.center,
                             ),
                           ],
