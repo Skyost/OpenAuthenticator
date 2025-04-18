@@ -25,6 +25,7 @@ import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/firebase_app_check/firebase_app_check.dart';
+import 'package:open_authenticator/utils/firebase_crashlytics.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/rate_my_app.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -54,14 +55,12 @@ Future<void> main() async {
   }
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate();
-  if (currentPlatform.isMobile || currentPlatform == Platform.macOS) {
-    if (!kDebugMode) {
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-      PlatformDispatcher.instance.onError = (error, stack) {
-        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-        return true;
-      };
-    }
+  if (FirebaseCrashlytics.instance.shouldEnable) {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
   }
   await SimpleSecureStorage.initialize(_OpenAuthenticatorSSSInitializationOptions());
   await LocaleSettings.useDeviceLocale();

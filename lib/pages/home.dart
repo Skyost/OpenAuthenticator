@@ -51,11 +51,14 @@ class HomePage extends ConsumerStatefulWidget {
 
 /// The home page state.
 class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
+  /// Whether to display the floating action button initially.
+  static bool initiallyShowFloatingActionButton = currentPlatform == Platform.android || kDebugMode;
+
   /// Allows to scroll through the list of items.
   late final ItemScrollController itemScrollController = ItemScrollController();
 
   /// Whether to display the floating action button.
-  bool showFloatingActionButton = currentPlatform == Platform.android || kDebugMode;
+  bool showFloatingActionButton = initiallyShowFloatingActionButton;
 
   /// The TOTP to emphasis, if any.
   Totp? emphasis;
@@ -77,7 +80,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
         }
       },
     );
-    if (currentPlatform == Platform.android || kDebugMode) {
+    if (initiallyShowFloatingActionButton) {
       body = NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           ScrollDirection direction = notification.direction;
@@ -116,7 +119,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
               ),
             ),
           ),
-          if (kDebugMode || currentPlatform != Platform.android)
+          if (!initiallyShowFloatingActionButton || kDebugMode)
             _RequireCryptoStore(
               child: IconButton(
                 onPressed: () => onAddButtonPressed(context),
@@ -138,7 +141,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
           ),
         ],
       ),
-      floatingActionButton: (currentPlatform == Platform.android || kDebugMode)
+      floatingActionButton: initiallyShowFloatingActionButton
           ? _RequireCryptoStore(
               child: AnimatedSlide(
                 duration: const Duration(milliseconds: 200),
@@ -164,7 +167,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
 
   /// Triggered when the "Add" button is pressed.
   void onAddButtonPressed(BuildContext context) async {
-    if (!currentPlatform.isMobile && !kDebugMode) {
+    if (!kDebugMode && !_AddTotpDialog.isSupported) {
       Navigator.pushNamed(context, TotpPage.name);
       return;
     }
@@ -649,6 +652,9 @@ class _TotpSearchDelegate extends SearchDelegate<Totp> {
 
 /// A dialog that allows to choose a method to add a TOTP.
 class _AddTotpDialog extends StatelessWidget {
+  /// Whether this dialog is supported on the current platform.
+  static final bool isSupported = currentPlatform.isMobile;
+
   @override
   Widget build(BuildContext context) => AppDialog(
         title: Text(translations.home.addDialog.title),

@@ -62,7 +62,7 @@ class EmailLinkConfirmationStateNotifier extends AsyncNotifier<String?> {
       SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
       String email = preferences.getString(_kFirebaseAuthenticationEmailKey)!;
       EmailLinkAuthMethod method;
-      if (currentPlatform == Platform.windows) {
+      if (EmailLinkAuthenticationProvider._shouldUseRestMethod) {
         Result<EmailSignInResponse> result = await EmailSignIn(email: email).validateUrl(emailLink);
         if (result is! ResultSuccess) {
           return result.to((result) => null);
@@ -108,6 +108,12 @@ final emailLinkAuthenticationStateProvider = NotifierProvider<FirebaseAuthentica
 
 /// The provider that allows to sign in using an email link.
 class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider with LinkProvider {
+  /// Whether the current platform is able to use [EmailLinkAuthMethodDefault.sendSignInLink] directly.
+  static final bool _canSendSignInLinkDirectly = currentPlatform != Platform.windows && currentPlatform != Platform.macOS;
+
+  /// Whether to use [EmailLinkAuthMethod.rest] instead of [EmailLinkAuthMethod.defaultMethod].
+  static final bool _shouldUseRestMethod = currentPlatform == Platform.windows;
+
   /// Creates a new email link authentication provider instance.
   const EmailLinkAuthenticationProvider()
       : super(
@@ -123,7 +129,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   bool get showLoadingDialog => false;
 
   @override
-  Future<Result<AuthenticationObject>> signIn(BuildContext context, { String? email }) async {
+  Future<Result<AuthenticationObject>> signIn(BuildContext context, {String? email}) async {
     try {
       return await trySignIn(context, email: email);
     } catch (ex, stacktrace) {
@@ -136,7 +142,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
 
   @override
   @protected
-  Future<Result<EmailLinkAuthenticationObject>> trySignIn(BuildContext context, { String? email }) async {
+  Future<Result<EmailLinkAuthenticationObject>> trySignIn(BuildContext context, {String? email}) async {
     email ??= await TextInputDialog.prompt(
       context,
       title: translations.authentication.emailDialog.title,
@@ -188,7 +194,12 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
     if (!context.mounted) {
       return const ResultCancelled();
     }
-    if (currentPlatform == Platform.windows || currentPlatform == Platform.macOS) {
+    if (_canSendSignInLinkDirectly) {
+      await showWaitingOverlay(
+        context,
+        future: EmailLinkAuthMethodDefault.sendSignInLink(email, actionCodeSettings),
+      );
+    } else {
       EmailSignIn emailLinkSignIn = EmailSignIn(email: email);
       Result<EmailSignInResponse> result = await showWaitingOverlay(
         context,
@@ -204,7 +215,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
           SignInResult result = await showWaitingOverlay(
             context,
             future: FirebaseAuth.instance.signInWith(
-              currentPlatform == Platform.windows
+              _shouldUseRestMethod
                   ? EmailLinkAuthMethod.rest(
                       email: value.email,
                       oobCode: value.oobCode,
@@ -223,11 +234,6 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
         default:
           return result.to((result) => null);
       }
-    } else {
-      await showWaitingOverlay(
-        context,
-        future: EmailLinkAuthMethodDefault.sendSignInLink(email, actionCodeSettings),
-      );
     }
     return ResultSuccess(
       value: EmailLinkAuthenticationObject(

@@ -124,17 +124,12 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
   }
 
   /// Whether we can exit following the [_showCloseDialog] method.
-  bool get _canExitWithConfirmDialog {
-    switch (currentPlatform) {
-      case Platform.android:
-      case Platform.macOS:
-      case Platform.linux:
-      case Platform.windows:
-        return true;
-      default:
-        return false;
-    }
-  }
+  bool get _canExitWithConfirmDialog => {
+        Platform.android,
+        Platform.macOS,
+        Platform.linux,
+        Platform.windows,
+      }.contains(currentPlatform);
 
   /// Closes the app programmatically.
   Future<void> _closeApp() async {

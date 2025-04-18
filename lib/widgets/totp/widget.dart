@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/totp/code.dart';
@@ -103,7 +102,7 @@ class TotpWidget extends StatelessWidget {
                   }
                 })
               : null,
-          onLongPress: currentPlatform.isMobile || kDebugMode
+          onLongPress: _MobileActionsDialog.isSupported || kDebugMode
               ? ((context) => _showMobileActionsMenu(
                     context,
                     totp,
@@ -196,10 +195,6 @@ class TotpWidget extends StatelessWidget {
     VoidCallback? onEditPressed,
     VoidCallback? onDeletePressed,
   }) async {
-    if (!currentPlatform.isMobile && !kDebugMode) {
-      Navigator.pushNamed(context, TotpPage.name);
-      return;
-    }
     _MobileActionsDialogResult? choice = await showDialog<_MobileActionsDialogResult>(
       context: context,
       builder: (context) => _MobileActionsDialog(
@@ -224,6 +219,9 @@ class TotpWidget extends StatelessWidget {
 
 /// Wraps all two mobile actions in a dialog.
 class _MobileActionsDialog extends StatelessWidget {
+  /// Whether this dialog is supported on the current platform.
+  static final bool isSupported = currentPlatform.isMobile;
+
   /// Whether the user can edit the TOTP.
   final bool canEdit;
 
