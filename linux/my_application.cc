@@ -6,11 +6,12 @@
 #endif
 
 #include <memory>
-#include <string>
 #include <map>
 
-#include <gio/gio.h>
-#include <polkit/polkit.h>
+#include <security/pam_appl.h>
+#include <pwd.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 #include "flutter/generated_plugin_registrant.h"
 
@@ -19,7 +20,102 @@ struct _MyApplication {
   char** dart_entrypoint_arguments;
 };
 
+// Simple structure to pass data to the PAM conversation function
+struct pam_response_t {
+  const char* username;
+  const char* reason;
+};
+
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
+
+// PAM Conversation function
+static int pam_conversation(int num_msg, const struct pam_message** msg, struct pam_response** resp, void* appdata_ptr) {
+  // struct pam_response_t* data = static_cast<struct pam_response_t*>(appdata_ptr);
+
+  // Allocate response memory
+  *resp = static_cast<struct pam_response*>(
+  calloc(num_msg, sizeof(struct pam_response)));
+
+  if (*resp == nullptr) {
+    return PAM_CONV_ERR;
+  }
+
+  // Simple prompt using GTK or a terminal prompt could be added here
+  // For now, we'll just return empty responses which will trigger the system's
+  // own authentication prompt
+  for (int i = 0; i < num_msg; i++) {
+    (*resp)[i].resp = nullptr;
+    (*resp)[i].resp_retcode = 0;
+  }
+
+  return PAM_SUCCESS;
+}
+
+static gboolean can_authenticate() {
+  pam_handle_t* pamh = nullptr;
+  struct pam_conv conv = {nullptr, nullptr};
+  
+  int ret = pam_start("login", nullptr, &conv, &pamh);
+  if (ret != PAM_SUCCESS) {
+    return FALSE;
+  }
+  
+  pam_end(pamh, ret);
+  return TRUE;
+}
+
+static void authenticate(const gchar* reason, FlMethodCall* method_call) {
+  // Get the current username
+  struct passwd *pw = getpwuid(getuid());
+  if (pw == nullptr) {
+    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authError", "Cannot get current user.", nullptr)), nullptr);
+    return;
+  }
+  
+  // Set up PAM conversation
+  struct pam_response_t data;
+  data.username = pw->pw_name;
+  data.reason = reason;
+  
+  struct pam_conv conv;
+  conv.conv = pam_conversation;
+  conv.appdata_ptr = &data;
+  
+  // Start PAM session
+  pam_handle_t* pamh = nullptr;
+  int ret = pam_start("login", data.username, &conv, &pamh);
+  if (ret != PAM_SUCCESS) {
+    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authError", "Could not start authentication session", nullptr)), nullptr);
+    return;
+  }
+  
+  // Try to authenticate
+  ret = pam_authenticate(pamh, 0);
+  
+  // Clean up
+  pam_end(pamh, ret);
+  
+  FlValue* success = fl_value_new_bool(ret == PAM_SUCCESS);
+  fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_success_response_new(success)), nullptr);
+}
+
+static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call, gpointer user_data) {
+  const gchar* method = fl_method_call_get_name(method_call);
+
+  if (strcmp(method, "localAuth.isDeviceSupported") == 0) {
+    g_autoptr(FlValue) result = fl_value_new_bool(can_authenticate());
+    g_autoptr(FlMethodResponse) response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+    fl_method_call_respond(method_call, response, nullptr);
+  } else if (strcmp(method, "localAuth.authenticate") == 0) {
+    FlValue* args = fl_method_call_get_args(method_call);
+    FlValue* reason = fl_value_lookup_string(args, "reason");
+    authenticate(fl_value_get_string(reason), method_call);
+  }
+  else {
+    g_autoptr(FlMethodResponse) response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+    fl_method_call_respond(method_call, response, nullptr);
+  }
+}
 
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
@@ -81,107 +177,6 @@ static void my_application_activate(GApplication* application) {
   fl_method_channel_set_method_call_handler(channel, method_call_cb, g_object_ref(view), g_object_unref);
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
-}
-
-static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call, gpointer user_data) {
-  const gchar* method = fl_method_call_get_name(method_call);
-
-  if (strcmp(method, "localAuth.isDeviceSupported") == 0) {
-    g_autoptr(FlValue) result = fl_value_new_bool(can_authenticate());
-    g_autoptr(FlMethodResponse) response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-    fl_method_call_respond(method_call, response, nullptr);
-  } else if (strcmp(method, "localAuth.authenticate") == 0) {
-    FlValue* args = fl_method_call_get_args(method_call);
-    FlValue* reason = fl_value_lookup_string(args, "reason");
-    authenticate(reason, method_call);
-  }
-  else {
-    g_autoptr(FlMethodResponse) response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
-    fl_method_call_respond(method_call, response, nullptr);
-  }
-}
-
-static gboolean can_authenticate() {
-  // Check if polkit is available on the system
-  GError* error = nullptr;
-  GDBusConnection* connection = g_bus_get_sync(G_BUS_TYPE_SYSTEM, nullptr, &error);
-
-  if (error != nullptr) {
-    g_error_free(error);
-    return FALSE;
-  }
-
-  // Check if polkit service is available
-  GDBusProxy* proxy = g_dbus_proxy_new_sync(connection, G_DBUS_PROXY_FLAGS_NONE, nullptr, "org.freedesktop.PolicyKit1", "/org/freedesktop/PolicyKit1/Authority", "org.freedesktop.PolicyKit1.Authority", nullptr, &error);
-
-  g_object_unref(connection);
-
-  if (error != nullptr) {
-    g_error_free(error);
-    return FALSE;
-  }
-
-  g_object_unref(proxy);
-  return TRUE;
-}
-
-static void authenticate(const std::string& reason, FlMethodCall* method_call) {
-  GError* error = nullptr;
-  PolkitAuthority* authority = polkit_authority_get_sync(nullptr, &error);
-
-  if (error != nullptr) {
-    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authInitError", error->message, nullptr)), nullptr);
-    g_error_free(error);
-    return;
-  }
-
-  // Create a polkit subject for the current process
-  pid_t pid = getpid();
-  PolkitSubject* subject = polkit_unix_process_new(pid);
-
-  // The action ID to use - you may need to create a custom policy for this
-  const char* action_id = "org.freedesktop.policykit.exec";
-
-  // Create a cancellable for the authentication
-  GCancellable* cancellable = g_cancellable_new();
-
-  // Store the result and authority in a pair to be used in the callback
-  auto* result_pair = new std::pair<FlMethodCall*, PolkitAuthority*>(method_call, authority);
-
-  // Check authorization with interactive flag set to true
-  polkit_authority_check_authorization(authority, subject, action_id,
-                                       nullptr,  // PolkitDetails
-                                       POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION,
-                                       cancellable,
-                                       auth_callback,
-                                       result_pair);
-
-  g_object_unref(subject);
-  g_object_unref(cancellable);
-}
-
-// The authentication callback for polkit
-static void auth_callback(GObject* source_object, GAsyncResult* res, gpointer user_data) {
-  GError* error = nullptr;
-  auto result_pair = static_cast<std::pair<FlMethodCall*, PolkitAuthority*>*>(user_data);
-  auto method_call = std::move(result_pair->first);
-  PolkitAuthority* authority = result_pair->second;
-
-  PolkitAuthorizationResult* auth_result = polkit_authority_check_authorization_finish(
-    authority, res, &error
-  );
-
-  if (error != nullptr) {
-    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authError", error->message, nullptr)), nullptr);
-    g_error_free(error);
-  } else {
-    bool is_authorized = polkit_authorization_result_get_is_authorized(auth_result);
-    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_success_response_new(is_authorized)), nullptr);
-    g_object_unref(auth_result);
-  }
-
-  g_object_unref(authority);
-  delete result_pair;
 }
 
 // Implements GApplication::local_command_line.
