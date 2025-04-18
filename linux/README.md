@@ -9,5 +9,5 @@ Currently, Linux is yet to be supported because Firebase is also yet to support 
 3. Ship Firebase-free version of Open Authenticator for Linux.
 4. Build the app for web first, then package it for release on Linux. This also means non-native.
 
-Currently, option 1. is what has been chosen. Any contributor is welcomed to give his/her opinion
+Currently, option 3. is what has been chosen. Any contributor is welcomed to give his/her opinion
 though.
