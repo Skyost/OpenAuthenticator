@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/utils/firebase_auth/default.dart';
 import 'package:open_authenticator/utils/firebase_auth/rest.dart';
+import 'package:open_authenticator/utils/firebase_auth/stub.dart';
 import 'package:open_authenticator/utils/platform.dart';
 
 /// Allows to either use FlutterFire's Firebase Auth implementation or fallback to the REST API if needed.
@@ -20,7 +21,11 @@ abstract class FirebaseAuth {
   /// Returns the [FirebaseAuth] instance corresponding to the current platform.
   static FirebaseAuth get instance {
     if (_instance == null) {
-      _instance = currentPlatform.isMobile || currentPlatform == Platform.macOS ? FirebaseAuthDefault() : FirebaseAuthRest();
+      _instance = switch (currentPlatform) {
+        Platform.android || Platform.iOS || Platform.macOS => FirebaseAuthDefault(),
+        Platform.windows => FirebaseAuthRest(),
+        _ => FirebaseAuthSub(),
+      };
       _instance!.initialize();
     }
     return _instance!;

@@ -15,5 +15,9 @@
     "lockOut": "Biometric authentication is disabled. Please lock and unlock your screen to enable it.",
     "goToSettingsDescription": "Biometric authentication is not set up on your device. Please either enable Touch ID or Face ID on your phone."
   },
+  "methodChannel": {
+    "title": "Authentication required",
+    "wrongPassword": "Wrong password. Try again."
+  },
   "fallbackMessage": "An error occurred while checking for local authentication on your device. Please enter your master password below to proceed and to disable local authentication as well."
 }

@@ -15,5 +15,9 @@
     "lockOut": "Die biometrische Authentifizierung ist deaktiviert. Bitte sperren und entsperren Sie Ihren Bildschirm, um sie zu aktivieren.",
     "goToSettingsDescription": "Die biometrische Authentifizierung ist auf Ihrem Gerät nicht eingerichtet. Bitte aktivieren Sie entweder Touch ID oder Face ID in den Einstellungen Ihres Geräts."
   },
+  "methodChannel": {
+    "title": "Authentifizierung erforderlich",
+    "wrongPassword": "Falsches Passwort. Versuchen Sie es erneut."
+  },
   "fallbackMessage": "Beim Überprüfen der lokalen Authentifizierung auf Ihrem Gerät ist ein Fehler aufgetreten. Bitte geben Sie unten Ihr Master-Passwort ein, um fortzufahren und die lokale Authentifizierung zu deaktivieren."
 }
