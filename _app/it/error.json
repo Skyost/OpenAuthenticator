@@ -1,0 +1,55 @@
+{
+  "noError": "Fatto!",
+  "validation": {
+    "number": "Devi inserire un numero valido",
+    "empty": "Questo campo è obbligatorio",
+    "email": "Email non valida",
+    "secret": "Secret inserita non valido",
+    "totpDigits": "Il numero inserito deve essere uguale o maggiore di 6",
+    "masterPassword": "Password inserita non valida",
+    "confirmation": "La conferma non corrisponde"
+  },
+  "timeout": {
+    "generic": "Si è verificato un timeout. Riprova più tardi.",
+    "authentication": "Timeout durante l'accesso utilizzando il provider selezionato. Riprova.",
+    "unlink": "Timeout durante il tentativo di scollegare il tuo account da questo provider di autenticazione. Riprova.",
+    "contributorPlan": "Timeout durante l'attesa dell'acquisto del tuo Piano Contributor. Riprova."
+  },
+  "appUnlock": "Impossibile sbloccare l'app. Riprova.",
+  "generic": {
+    "noTryAgain": "Ops, qualcosa è andato storto.",
+    "tryAgain": "Qualcosa è andato storto. Riprova più tardi.",
+    "withException": "Si è verificato un errore (eccezione: $exception). Riprova più tardi."
+  },
+  "authentication": {
+    "accountExistsWithDifferentCredentialsDialog": {
+      "title": "Account già esistente",
+      "message": "Esiste già un account con lo stesso indirizzo email nel nostro database, ma il provider di autenticazione selezionato non è stato ancora collegato.\nProva ad accedere utilizzando un provider di autenticazione già collegato."
+    },
+    "invalidCredential": "Credenziali fornite non valide.",
+    "operationNotAllowed": "Operazione non consentita. È un errore imprevisto, per favore segnalacelo.",
+    "userDisabled": "Il tuo account è stato disabilitato.",
+    "firebaseException": "Si è verificato un errore durante il tentativo di autenticare il tuo account (eccezione: $exception). Riprova più tardi."
+  },
+  "scan": {
+    "noUri": "Impossibile leggere questo codice QR. Assicurati che sia un codice QR TOTP valido.",
+    "accessDeniedDialog": {
+      "title": "Accesso negato",
+      "message": "Impossibile accedere alla tua fotocamera (accesso negato: $exception). Vuoi riprovare?"
+    },
+    "controllerUninitialized": "Controller non inizializzato (codice: $exception).",
+    "unsupported": "La scansione non è supportata su questo dispositivo (codice: $exception)."
+  },
+  "storageMigration(map)": {
+    "backupError": "Si è verificato un errore durante l'esecuzione del backup. Riprova.",
+    "currentStoragePasswordMismatch": "Password principale inserita non valida.",
+    "encryptionKeyChangeFailed": "Si è verificato un errore durante la cifratura dei tuoi dati. Riprova più tardi.",
+    "genericError": "Si è verificato un errore durante la migrazione dei tuoi dati. Riprova più tardi."
+  },
+  "authenticationValidation": {
+    "incorrectPath": "Qualcosa è andato storto (il percorso è '$path'). Segnala questo errore.",
+    "generic": "Impossibile convalidare la richiesta (eccezione: $exception). Riprova più tardi.",
+    "oauth2": "Impossibile accedere utilizzando $name. Riprova più tardi."
+  },
+  "totpDecrypt": "Impossibile decifrare questo TOTP. Assicurati di aver inserito la password corretta."
+}

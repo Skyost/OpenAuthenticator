@@ -1,0 +1,66 @@
+{
+  "emailDialog": {
+    "title": "La tua email",
+    "message": "Inserisci la tua email, ti invieremo un link per accedere."
+  },
+  "logIn": {
+    "waitingLoginMessage": "Effettua l'accesso nella finestra aperta. Non chiudere l'applicazione.",
+    "waitingConfirmationMessage": "Ti abbiamo inviato un link di conferma via email. Utilizzalo per continuare. Non chiudere l'applicazione.",
+    "successNeedConfirmation": "Fatto! Riceverai presto un'email di conferma. Utilizza il link da questo dispositivo per effettuare l'accesso.",
+    "success": "Accesso effettuato con successo!"
+  },
+  "link": {
+    "linkSuccess": "Provider collegato con successo.",
+    "unlinkSuccess": "Provider scollegato con successo.",
+    "unlinkConfirmationDialog": {
+      "title": "Scollega provider",
+      "message": "Sei sicuro di voler scollegare questo provider di autenticazione dal tuo account?"
+    }
+  },
+  "deleteConfirmationDialog": {
+    "title": "Elimina account",
+    "message": "Vuoi davvero eliminare il tuo account? Nota che, trattandosi di un'azione sensibile, ti chiediamo di autenticarti nuovamente prima di procedere."
+  },
+  "firebaseAuthenticationProvider": {
+    "email": {
+      "name": "Email",
+      "description": "Usa la tua email per accedere. Non è richiesta password, verrà inviato un link di conferma."
+    },
+    "google": {
+      "name": "Google",
+      "description": "Accedi con il tuo account Google."
+    },
+    "apple": {
+      "name": "Apple",
+      "description": "Accedi con il tuo account Apple."
+    },
+    "microsoft": {
+      "name": "Microsoft",
+      "description": "Accedi con il tuo account Microsoft."
+    },
+    "twitter": {
+      "name": "X",
+      "description": "Accedi con il tuo account X."
+    },
+    "github": {
+      "name": "Github",
+      "description": "Accedi con il tuo account Github."
+    }
+  },
+  "signInDialog": {
+    "title": "Accedi",
+    "email": {
+      "title": "Accedi con la tua email",
+      "hint": "Inserisci qui il tuo indirizzo email",
+      "description": {
+        "signIn": "Inserisci la tua email qui sopra. Non è richiesta password, ti invieremo subito un link di accesso!",
+        "waitingForConfirmation": "Riceverai presto un'email di conferma. Clicca sul link all'interno con questo dispositivo per continuare l'accesso.",
+        "alreadySignedIn": "Hai già effettuato l'accesso con il tuo indirizzo email.",
+        "cannotUse": "Impossibile accedere con il tuo indirizzo email. Prova un altro metodo."
+      },
+      "button": "Invia un link"
+    },
+    "separator": "Oppure:"
+  },
+  "providerPickerDialogTitle": "Scegli un metodo di accesso"
+}

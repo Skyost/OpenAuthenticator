@@ -1,0 +1,19 @@
+{
+  "autoDialog": {
+    "title": "TOTP-Limit erreicht",
+    "message": "Sie haben das Limit von $count TOTPs für die Synchronisierung erreicht. Um die Synchronisierung fortzusetzen, müssen Sie den Mitwirkender-Plan abonnieren. Alternativ können Sie Ihre TOTPs lokal speichern und die Synchronisierung beenden.",
+    "actions": {
+      "subscribe": "Abonnieren",
+      "stopSynchronization": "Synchronisation beenden"
+    }
+  },
+  "addDialog": {
+    "title": "TOTP-Limit erreicht",
+    "message": "Sie haben das Limit von $count TOTPs für die Synchronisierung erreicht. Um ein weiteres TOTP hinzuzufügen, müssen Sie entweder den Mitwirkender-Plan abonnieren oder die Synchronisierung beenden und die TOTPs lokal speichern.",
+    "actions": {
+      "subscribe": "Abonnieren",
+      "stopSynchronization": "Synchronisation beenden",
+      "cancel": "Abbrechen"
+    }
+  }
+}
