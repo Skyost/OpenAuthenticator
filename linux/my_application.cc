@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <map>
+#include <iostream>
 
 #include <security/pam_appl.h>
 #include <pwd.h>
@@ -30,7 +31,7 @@ G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
 // PAM Conversation function
 static int pam_conversation(int num_msg, const struct pam_message** msg, struct pam_response** resp, void* appdata_ptr) {
-  // struct pam_response_t* data = static_cast<struct pam_response_t*>(appdata_ptr);
+  struct pam_response_t* data = static_cast<struct pam_response_t*>(appdata_ptr);
 
   // Allocate response memory
   *resp = static_cast<struct pam_response*>(
@@ -44,8 +45,39 @@ static int pam_conversation(int num_msg, const struct pam_message** msg, struct 
   // For now, we'll just return empty responses which will trigger the system's
   // own authentication prompt
   for (int i = 0; i < num_msg; i++) {
-    (*resp)[i].resp = nullptr;
-    (*resp)[i].resp_retcode = 0;
+    if (msg[i]->msg_style == PAM_PROMPT_ECHO_OFF) {
+      std::string escaped_reason = data->reason;
+      for (size_t i = 0; i < escaped_reason.length(); i++) {
+        if (escaped_reason[i] == '"') {
+          escaped_reason.insert(i, "\\");
+          i++;
+        }
+      }
+      std::string password = "";
+      if (system("which zenity >/dev/null 2>&1") == 0) {
+        std::string cmd = "zenity --password --title=\"" + escaped_reason + "\" >/dev/null 2>&1";
+        password = system(cmd.c_str());
+      }
+      
+      (*resp)[i].resp = strdup(password.c_str());
+    } else if (msg[i]->msg_style == PAM_TEXT_INFO) {
+      if (system("which zenity >/dev/null 2>&1") == 0) {
+        std::string escaped_msg = msg[i]->msg;
+        for (size_t i = 0; i < escaped_msg.length(); i++) {
+          if (escaped_msg[i] == '"') {
+            escaped_msg.insert(i, "\\");
+            i++;
+          }
+        }
+        std::string cmd = "zenity --info --text=\"" + escaped_msg + "\" >/dev/null 2>&1";
+        system(cmd.c_str());
+      } else {
+        std::cout << msg[i]->msg << std::endl;
+      }
+    } else {
+        free(*resp);
+        return PAM_CONV_ERR;
+    }
   }
 
   return PAM_SUCCESS;
@@ -85,7 +117,7 @@ static void authenticate(const gchar* reason, FlMethodCall* method_call) {
   pam_handle_t* pamh = nullptr;
   int ret = pam_start("login", data.username, &conv, &pamh);
   if (ret != PAM_SUCCESS) {
-    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authError", "Could not start authentication session", nullptr)), nullptr);
+    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authError", "Could not start authentication session.", nullptr)), nullptr);
     return;
   }
   
@@ -95,6 +127,8 @@ static void authenticate(const gchar* reason, FlMethodCall* method_call) {
   // Clean up
   pam_end(pamh, ret);
   
+  std::cout << data.username << std::endl;
+  std::cout << ret << std::endl;
   FlValue* success = fl_value_new_bool(ret == PAM_SUCCESS);
   fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_success_response_new(success)), nullptr);
 }

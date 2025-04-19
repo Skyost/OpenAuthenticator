@@ -41,6 +41,7 @@ import 'package:window_manager/window_manager.dart';
 /// Hello world !
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SimpleSecureStorage.initialize(_OpenAuthenticatorSSSInitializationOptions());
   if (currentPlatform.isDesktop) {
     await windowManager.ensureInitialized();
     windowManager.waitUntilReadyToShow(
@@ -65,7 +66,6 @@ Future<void> main() async {
       };
     }
   }
-  await SimpleSecureStorage.initialize(_OpenAuthenticatorSSSInitializationOptions());
   await LocaleSettings.useDeviceLocale();
   runApp(
     ProviderScope(
