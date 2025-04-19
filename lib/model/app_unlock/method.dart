@@ -69,7 +69,7 @@ sealed class CannotUnlockException implements Exception {}
 class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
   @override
   Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
-    bool result = await LocalAuthentication.instance.authenticate(translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.');
+    bool result = await LocalAuthentication.instance.authenticate(context, translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.');
     return result ? const ResultSuccess() : const ResultCancelled();
   }
 

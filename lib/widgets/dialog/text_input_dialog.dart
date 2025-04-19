@@ -26,6 +26,9 @@ class TextInputDialog extends StatefulWidget {
   /// The initial value.
   final String initialValue;
 
+  /// Additional children to display.
+  final List<Widget>? children;
+
   /// Creates a new text input dialog instance.
   const TextInputDialog({
     super.key,
@@ -35,6 +38,7 @@ class TextInputDialog extends StatefulWidget {
     this.validator,
     this.keyboardType,
     String? initialValue,
+    this.children,
   }) : initialValue = initialValue ?? '';
 
   @override
@@ -49,6 +53,7 @@ class TextInputDialog extends StatefulWidget {
     FormFieldValidator<String>? validator,
     TextInputType? keyboardType,
     String? initialValue,
+    List<Widget>? children,
   }) =>
       showDialog<String>(
         context: context,
@@ -59,6 +64,7 @@ class TextInputDialog extends StatefulWidget {
           validator: validator,
           keyboardType: keyboardType,
           initialValue: initialValue,
+          children: children,
         ),
       );
 
@@ -100,6 +106,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
             widget.message,
             textAlign: TextAlign.left,
           ),
+          if (widget.children != null) ...widget.children!,
           if (widget.password)
             PasswordFormField(
               initialValue: value,

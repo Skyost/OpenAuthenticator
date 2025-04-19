@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart' as local_auth;
 // ignore: depend_on_referenced_packages
 import 'package:local_auth_android/local_auth_android.dart';
@@ -19,7 +20,8 @@ class LocalAuthenticationDefault extends LocalAuthentication {
   LocalAuthenticationDefault() : _localAuthentication = local_auth.LocalAuthentication();
 
   @override
-  Future<bool> authenticate(String reason) async {
+  Future<bool> authenticate(BuildContext context, String reason) async {
+    String cancelButton = MaterialLocalizations.of(context).cancelButtonLabel;
     if (currentPlatform.isDesktop) {
       await windowManager.ensureInitialized();
       await windowManager.focus();
@@ -32,14 +34,14 @@ class LocalAuthenticationDefault extends LocalAuthentication {
           lockOut: translations.localAuth.ios.lockOut,
           goToSettingsButton: translations.localAuth.common.goToSettings,
           goToSettingsDescription: translations.localAuth.ios.goToSettingsDescription,
-          cancelButton: translations.localAuth.common.cancel,
+          cancelButton: cancelButton,
         ),
         AndroidAuthMessages(
           biometricHint: translations.localAuth.android.biometricHint,
           biometricNotRecognized: translations.localAuth.android.biometricNotRecognized,
           biometricRequiredTitle: translations.localAuth.android.biometricRequiredTitle,
           biometricSuccess: translations.error.noError,
-          cancelButton: translations.localAuth.common.cancel,
+          cancelButton: cancelButton,
           deviceCredentialsRequiredTitle: translations.localAuth.android.deviceCredentialsRequiredTitle,
           deviceCredentialsSetupDescription: translations.localAuth.android.deviceCredentialsSetupDescription,
           goToSettingsButton: translations.localAuth.common.goToSettings,

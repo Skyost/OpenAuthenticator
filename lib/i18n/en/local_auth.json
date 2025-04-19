@@ -1,7 +1,6 @@
 {
   "common": {
-    "goToSettings": "Go to settings",
-    "cancel": "Cancel"
+    "goToSettings": "Go to settings"
   },
   "android": {
     "biometricHint": "Verify identity",
