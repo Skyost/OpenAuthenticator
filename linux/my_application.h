@@ -1,10 +1,10 @@
 #ifndef FLUTTER_MY_APPLICATION_H_
 #define FLUTTER_MY_APPLICATION_H_
 
+#include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
 
-G_DECLARE_FINAL_TYPE(MyApplication, my_application, MY, APPLICATION,
-                     GtkApplication)
+G_DECLARE_FINAL_TYPE(MyApplication, my_application, MY, APPLICATION, GtkApplication)
 
 /**
  * my_application_new:

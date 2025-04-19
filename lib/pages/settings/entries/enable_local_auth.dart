@@ -4,6 +4,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/method.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/pages/settings/entries/widgets.dart';
+import 'package:open_authenticator/utils/local_authentication/local_authentication.dart';
 
 /// Allows to configure [enableLocalAuthSettingsEntryProvider].
 class EnableLocalAuthSettingsEntryWidget extends CheckboxSettingsEntryWidget<AppUnlockMethodSettingsEntry, AppUnlockMethod> {
@@ -19,7 +20,7 @@ class EnableLocalAuthSettingsEntryWidget extends CheckboxSettingsEntryWidget<App
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => FutureBuilder(
-        future: LocalAuthenticationAppUnlockMethod.isSupported(),
+        future: LocalAuthentication.instance.isSupported(),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
             return createListTile(context, ref, enabled: false);

@@ -24,6 +24,7 @@ import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/account.dart';
+import 'package:open_authenticator/utils/firebase.dart';
 import 'package:open_authenticator/utils/firebase_app_check/firebase_app_check.dart';
 import 'package:open_authenticator/utils/firebase_crashlytics.dart';
 import 'package:open_authenticator/utils/platform.dart';
@@ -53,14 +54,16 @@ Future<void> main() async {
       await windowManager.focus();
     });
   }
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FirebaseAppCheck.instance.activate();
-  if (FirebaseCrashlytics.instance.shouldEnable) {
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
+  if (isFirebaseSupported) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await FirebaseAppCheck.instance.activate();
+    if (FirebaseCrashlytics.instance.shouldEnable) {
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+    }
   }
   await SimpleSecureStorage.initialize(_OpenAuthenticatorSSSInitializationOptions());
   await LocaleSettings.useDeviceLocale();

@@ -5,6 +5,14 @@
 #include <gdk/gdkx.h>
 #endif
 
+#include <memory>
+#include <map>
+
+#include <security/pam_appl.h>
+#include <pwd.h>
+#include <unistd.h>
+#include <sys/types.h>
+
 #include "flutter/generated_plugin_registrant.h"
 
 struct _MyApplication {
@@ -12,7 +20,102 @@ struct _MyApplication {
   char** dart_entrypoint_arguments;
 };
 
+// Simple structure to pass data to the PAM conversation function
+struct pam_response_t {
+  const char* username;
+  const char* reason;
+};
+
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
+
+// PAM Conversation function
+static int pam_conversation(int num_msg, const struct pam_message** msg, struct pam_response** resp, void* appdata_ptr) {
+  // struct pam_response_t* data = static_cast<struct pam_response_t*>(appdata_ptr);
+
+  // Allocate response memory
+  *resp = static_cast<struct pam_response*>(
+  calloc(num_msg, sizeof(struct pam_response)));
+
+  if (*resp == nullptr) {
+    return PAM_CONV_ERR;
+  }
+
+  // Simple prompt using GTK or a terminal prompt could be added here
+  // For now, we'll just return empty responses which will trigger the system's
+  // own authentication prompt
+  for (int i = 0; i < num_msg; i++) {
+    (*resp)[i].resp = nullptr;
+    (*resp)[i].resp_retcode = 0;
+  }
+
+  return PAM_SUCCESS;
+}
+
+static gboolean can_authenticate() {
+  pam_handle_t* pamh = nullptr;
+  struct pam_conv conv = {nullptr, nullptr};
+  
+  int ret = pam_start("login", nullptr, &conv, &pamh);
+  if (ret != PAM_SUCCESS) {
+    return FALSE;
+  }
+  
+  pam_end(pamh, ret);
+  return TRUE;
+}
+
+static void authenticate(const gchar* reason, FlMethodCall* method_call) {
+  // Get the current username
+  struct passwd *pw = getpwuid(getuid());
+  if (pw == nullptr) {
+    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authError", "Cannot get current user.", nullptr)), nullptr);
+    return;
+  }
+  
+  // Set up PAM conversation
+  struct pam_response_t data;
+  data.username = pw->pw_name;
+  data.reason = reason;
+  
+  struct pam_conv conv;
+  conv.conv = pam_conversation;
+  conv.appdata_ptr = &data;
+  
+  // Start PAM session
+  pam_handle_t* pamh = nullptr;
+  int ret = pam_start("login", data.username, &conv, &pamh);
+  if (ret != PAM_SUCCESS) {
+    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authError", "Could not start authentication session", nullptr)), nullptr);
+    return;
+  }
+  
+  // Try to authenticate
+  ret = pam_authenticate(pamh, 0);
+  
+  // Clean up
+  pam_end(pamh, ret);
+  
+  FlValue* success = fl_value_new_bool(ret == PAM_SUCCESS);
+  fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_success_response_new(success)), nullptr);
+}
+
+static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call, gpointer user_data) {
+  const gchar* method = fl_method_call_get_name(method_call);
+
+  if (strcmp(method, "localAuth.isDeviceSupported") == 0) {
+    g_autoptr(FlValue) result = fl_value_new_bool(can_authenticate());
+    g_autoptr(FlMethodResponse) response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
+    fl_method_call_respond(method_call, response, nullptr);
+  } else if (strcmp(method, "localAuth.authenticate") == 0) {
+    FlValue* args = fl_method_call_get_args(method_call);
+    FlValue* reason = fl_value_lookup_string(args, "reason");
+    authenticate(fl_value_get_string(reason), method_call);
+  }
+  else {
+    g_autoptr(FlMethodResponse) response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
+    fl_method_call_respond(method_call, response, nullptr);
+  }
+}
 
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
@@ -65,6 +168,13 @@ static void my_application_activate(GApplication* application) {
   gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(view));
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
+
+  FlEngine *engine = fl_view_get_engine(view);
+
+  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  g_autoptr(FlBinaryMessenger) messenger = fl_engine_get_binary_messenger(engine);
+  g_autoptr(FlMethodChannel) channel = fl_method_channel_new(messenger, "app.openauthenticator.localauth", FL_METHOD_CODEC(codec));
+  fl_method_channel_set_method_call_handler(channel, method_call_cb, g_object_ref(view), g_object_unref);
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 }

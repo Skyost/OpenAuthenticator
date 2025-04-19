@@ -12,7 +12,7 @@ class FirebaseAppCheckMethodChannel extends FirebaseAppCheck {
 
   /// The method channel.
   /// This allow us to link our auth implementation to the Firebase C++ SDK.
-  final MethodChannel _methodChannel = const MethodChannel('app.openauthenticator.appCheck');
+  final MethodChannel _methodChannel = const MethodChannel('app.openauthenticator.appcheck');
 
   @override
   Future<void> activate() async {
