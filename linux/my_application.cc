@@ -22,7 +22,7 @@ struct _MyApplication {
 };
 
 struct pam_response_t {
-    const gchar* password;
+    const char* password;
 };
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
@@ -89,58 +89,25 @@ static gchar* get_real_name() {
 }
 
 static gchar* get_avatar_path() {
-    GError* error = nullptr;
-    GDBusConnection* connection = g_bus_get_sync(G_BUS_TYPE_SYSTEM, nullptr, &error);
-    if (!connection) return strdup("");
-
-    gchar* user_path = nullptr;
-    GVariant* result = g_dbus_connection_call_sync(
-            connection,
-            "org.freedesktop.Accounts",
-            "/org/freedesktop/Accounts",
-            "org.freedesktop.Accounts",
-            "FindUserByName",
-            g_variant_new("(s)", getenv("USER")),
-            G_VARIANT_TYPE("(o)"),
-            G_DBUS_CALL_FLAGS_NONE,
-            -1,
-            nullptr,
-            &error
-    );
-
-    if (!result) return strdup("");
-
-    g_variant_get(result, "(&o)", &user_path);
-
-    GVariant* avatar_result = g_dbus_connection_call_sync(
-            connection,
-            "org.freedesktop.Accounts",
-            user_path,
-            "org.freedesktop.DBus.Properties",
-            "Get",
-            g_variant_new("(ss)", "org.freedesktop.Accounts.User", "IconFile"),
-            G_VARIANT_TYPE("(v)"),
-            G_DBUS_CALL_FLAGS_NONE,
-            -1,
-            nullptr,
-            &error
-    );
-
-    if (!avatar_result) return strdup("");
-
-    GVariant* avatar_value = nullptr;
-    g_variant_get(avatar_result, "(v)", &avatar_value);
-
-    const char* avatar_path = g_variant_get_string(avatar_value, nullptr);
-    return strdup(avatar_path);
+  std::string path = "/var/lib/AccountsService/icons/";
+  path += getenv("USER");
+  return strdup(path.c_str());
 }
 
 static int pam_conversation(int num_msg, const struct pam_message** msg, struct pam_response** resp, void* appdata_ptr) {
     struct pam_response_t* data = static_cast<struct pam_response_t*>(appdata_ptr);
-    auto reply = (struct pam_response*)malloc(sizeof(struct pam_response));
-    reply[0].resp = data->password;
-    reply[0].resp_retcode = 0;
-    *resp = reply;
+    // Allocate response memory
+    *resp = static_cast<struct pam_response*>(
+    calloc(num_msg, sizeof(struct pam_response)));
+  
+    if (*resp == nullptr) {
+      return PAM_CONV_ERR;
+    }
+
+    for (int i = 0; i < num_msg; i++) {
+      (*resp)[i].resp = strdup(data->password);
+    }
+
     return PAM_SUCCESS;
 }
 
@@ -162,7 +129,7 @@ static void authenticate(const gchar* password, FlMethodCall* method_call) {
 
     // Start PAM session
     pam_handle_t* pamh = nullptr;
-    int ret = pam_start("login", data.username, &conv, &pamh);
+    int ret = pam_start("login", pw->pw_name, &conv, &pamh);
     if (ret != PAM_SUCCESS) {
         fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authError", "Could not start authentication session.", nullptr)), nullptr);
         return;
