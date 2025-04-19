@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hashlib_codecs/hashlib_codecs.dart';
-import 'package:open_authenticator/utils/firebase_crashlytics.dart';
+import 'package:open_authenticator/utils/firebase.dart';
 
 /// Contains some useful iterable methods.
 extension IterableUtils<T> on Iterable<T> {
@@ -31,8 +31,7 @@ void handleException(Object? ex, StackTrace? stacktrace, {bool? sendToCrashlytic
     print(ex);
     print(stacktrace);
   }
-  sendToCrashlytics ??= FirebaseCrashlytics.instance.shouldEnable;
-  if (sendToCrashlytics) {
+  if (sendToCrashlytics ?? isCrashlyticsEnabled) {
     FirebaseCrashlytics.instance.recordError(
       ex,
       stacktrace,
