@@ -14,6 +14,7 @@ import 'package:open_authenticator/model/settings/entry.dart';
 import 'package:open_authenticator/model/storage/local.dart';
 import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/pages/settings/entries/widgets.dart';
+import 'package:open_authenticator/utils/firebase.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';
@@ -70,8 +71,10 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
                 context.showSnackBarForResult(logoutResult, retryIfError: true);
                 return;
               }
-              await FirebaseFirestore.instance.terminate();
-              await FirebaseFirestore.instance.clearPersistence();
+              if (isFirebaseSupported) {
+                await FirebaseFirestore.instance.terminate();
+                await FirebaseFirestore.instance.clearPersistence();
+              }
               await SimpleSecureStorage.clear();
               TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
               await totpImageCacheManager.clearCache();
