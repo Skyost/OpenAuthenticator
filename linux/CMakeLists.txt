@@ -74,6 +74,14 @@ apply_standard_settings(${BINARY_NAME})
 target_link_libraries(${BINARY_NAME} PRIVATE flutter)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::GTK)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+
+find_package(PAM REQUIRED)
+
+target_include_directories(${BINARY_NAME} PRIVATE ${PAM_INCLUDE_DIRS})
+target_link_libraries(${BINARY_NAME} PRIVATE ${PAM_LIBRARIES})
+
+
 # Run the Flutter tool portions of the build. This must not be removed.
 add_dependencies(${BINARY_NAME} flutter_assemble)
 

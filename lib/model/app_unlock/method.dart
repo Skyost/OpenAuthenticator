@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:local_auth/local_auth.dart';
-// ignore: depend_on_referenced_packages
-import 'package:local_auth_android/local_auth_android.dart';
-// ignore: depend_on_referenced_packages
-import 'package:local_auth_darwin/local_auth_darwin.dart';
-// ignore: depend_on_referenced_packages
-import 'package:local_auth_windows/local_auth_windows.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/password_verification/methods/method.dart';
 import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/local_authentication/local_authentication.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
-import 'package:window_manager/window_manager.dart';
 
 /// Allows to unlock the app.
 sealed class AppUnlockMethod<T> {
@@ -77,60 +69,17 @@ sealed class CannotUnlockException implements Exception {}
 class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
   @override
   Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
-    LocalAuthentication auth = LocalAuthentication();
-    if (currentPlatform.isDesktop) {
-      await windowManager.ensureInitialized();
-      await windowManager.focus();
-      await windowManager.setAlwaysOnTop(true);
-    }
-    if (!context.mounted) {
-      return const ResultCancelled();
-    }
-    bool result = await auth.authenticate(
-      localizedReason: translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.',
-      authMessages: [
-        IOSAuthMessages(
-          lockOut: translations.localAuth.ios.lockOut,
-          goToSettingsButton: translations.localAuth.common.goToSettings,
-          goToSettingsDescription: translations.localAuth.ios.goToSettingsDescription,
-          cancelButton: MaterialLocalizations.of(context).cancelButtonLabel,
-        ),
-        AndroidAuthMessages(
-          biometricHint: translations.localAuth.android.biometricHint,
-          biometricNotRecognized: translations.localAuth.android.biometricNotRecognized,
-          biometricRequiredTitle: translations.localAuth.android.biometricRequiredTitle,
-          biometricSuccess: translations.error.noError,
-          cancelButton: MaterialLocalizations.of(context).cancelButtonLabel,
-          deviceCredentialsRequiredTitle: translations.localAuth.android.deviceCredentialsRequiredTitle,
-          deviceCredentialsSetupDescription: translations.localAuth.android.deviceCredentialsSetupDescription,
-          goToSettingsButton: translations.localAuth.common.goToSettings,
-          goToSettingsDescription: translations.localAuth.android.goToSettingsDescription,
-          signInTitle: translations.localAuth.android.signInTitle,
-        ),
-        const WindowsAuthMessages(),
-      ],
-    );
-    if (currentPlatform.isDesktop) {
-      if (currentPlatform == Platform.macOS || currentPlatform == Platform.windows) {
-        // See https://github.com/flutter/flutter/issues/122322.
-        await windowManager.blur();
-        await windowManager.focus();
-      }
-      await windowManager.setAlwaysOnTop(false);
-    }
+    bool result = await LocalAuthentication.instance.authenticate(context, translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.');
     return result ? const ResultSuccess() : const ResultCancelled();
   }
 
   @override
   Future<CannotUnlockException?> canUnlock(Ref ref) async {
-    if (!(await isSupported())) {
+    if (!(await LocalAuthentication.instance.isSupported())) {
       return LocalAuthenticationDeviceNotSupported();
     }
     return null;
   }
-
-  /// Returns whether this unlock method is supported;
-  static Future<bool> isSupported() => LocalAuthentication().isDeviceSupported();
 }
 
 /// Indicates that local authentication is not supported by the device.

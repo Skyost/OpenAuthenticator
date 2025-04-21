@@ -24,8 +24,8 @@ import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/utils/account.dart';
+import 'package:open_authenticator/utils/firebase.dart';
 import 'package:open_authenticator/utils/firebase_app_check/firebase_app_check.dart';
-import 'package:open_authenticator/utils/firebase_crashlytics.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/rate_my_app.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -40,6 +40,7 @@ import 'package:window_manager/window_manager.dart';
 /// Hello world !
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SimpleSecureStorage.initialize(_OpenAuthenticatorSSSInitializationOptions());
   if (currentPlatform.isDesktop) {
     await windowManager.ensureInitialized();
     windowManager.waitUntilReadyToShow(
@@ -53,16 +54,17 @@ Future<void> main() async {
       await windowManager.focus();
     });
   }
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FirebaseAppCheck.instance.activate();
-  if (FirebaseCrashlytics.instance.shouldEnable) {
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
+  if (isFirebaseSupported) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await FirebaseAppCheck.instance.activate();
+    if (isCrashlyticsEnabled) {
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+    }
   }
-  await SimpleSecureStorage.initialize(_OpenAuthenticatorSSSInitializationOptions());
   await LocaleSettings.useDeviceLocale();
   runApp(
     ProviderScope(

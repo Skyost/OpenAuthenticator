@@ -24,11 +24,17 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
   @override
   FutureOr<CryptoStore?> build() async {
     Salt? salt = await Salt.readFromLocalStorage();
-    if (salt == null || !await SimpleSecureStorage.has(_kPasswordDerivedKeyKey)) {
+    if (salt == null) {
       return null;
     }
+
+    String? derivedKey = await SimpleSecureStorage.read(_kPasswordDerivedKeyKey);
+    if (derivedKey == null) {
+      return null;
+    }
+
     return CryptoStore._(
-      key: await AesGcmSecretKey.importRawKey(base64.decode((await SimpleSecureStorage.read(_kPasswordDerivedKeyKey))!)),
+      key: await AesGcmSecretKey.importRawKey(base64.decode(derivedKey)),
       salt: salt,
     );
   }

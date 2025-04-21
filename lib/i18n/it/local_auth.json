@@ -15,5 +15,9 @@
     "lockOut": "L'autenticazione biometrica è disabilitata. Blocca e sblocca lo schermo per abilitarla.",
     "goToSettingsDescription": "L'autenticazione biometrica non è configurata sul tuo dispositivo. Abilita Touch ID o Face ID sul tuo telefono."
   },
+  "methodChannel": {
+    "title": "Autenticazione necessaria",
+    "wrongPassword": "Password sbagliata. Riprovare."
+  },
   "fallbackMessage": "Si è verificato un errore durante il controllo dell'autenticazione locale sul tuo dispositivo. Inserisci la tua password principale qui sotto per procedere e disabilitare anche l'autenticazione locale."
 }

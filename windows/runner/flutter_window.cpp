@@ -115,7 +115,7 @@ bool FlutterWindow::OnCreate() {
     }
   });
 
-  method_channel_app_check = std::make_unique<flutter::MethodChannel<>>(flutter_controller_->engine()->messenger(), "app.openauthenticator.appCheck", &flutter::StandardMethodCodec::GetInstance());
+  method_channel_app_check = std::make_unique<flutter::MethodChannel<>>(flutter_controller_->engine()->messenger(), "app.openauthenticator.appcheck", &flutter::StandardMethodCodec::GetInstance());
   method_channel_app_check->SetMethodCallHandler([this](const flutter::MethodCall<>& call, std::unique_ptr<flutter::MethodResult<>> result) {
     if (call.method_name() == "appCheck.activate") {
       firebase::app_check::AppCheck::SetAppCheckProviderFactory(new PlatformAppCheckProviderFactory());
