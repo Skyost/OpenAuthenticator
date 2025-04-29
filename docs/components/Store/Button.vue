@@ -61,19 +61,19 @@ const tip = computed(() => {
       :class="{ disabled: store.url ? null : true }"
       variant="light"
     >
-      <div>
-        <img
-          :src="store.image"
-          :alt="store.name"
-          class="me-1"
-        >
-        {{ store.name }}
-      </div>
+      <img
+        :src="store.image"
+        :alt="store.name"
+        class="me-1"
+      >
+      <span>{{ store.name }}</span>
     </b-button>
   </div>
 </template>
 
 <style lang="scss" scoped>
+@import 'assets/bootstrap-mixins';
+
 .store-button-card {
   max-width: 300px;
   width: 100%;
@@ -93,6 +93,10 @@ const tip = computed(() => {
 
     &.disabled {
       color: rgba(black, 0.3);
+    }
+
+    @include media-breakpoint-down(sm) {
+      font-size: 1rem;
     }
   }
 }
