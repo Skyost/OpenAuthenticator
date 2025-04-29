@@ -15,8 +15,8 @@ class LocalAuthenticationMethodChannel extends LocalAuthentication {
   Future<bool> authenticate(BuildContext context, String reason) async {
     String? realName = await _methodChannel.invokeMethod<String>('localAuth.getRealName');
     String? avatarPath = await _methodChannel.invokeMethod<String>('localAuth.getAvatarPath');
-    File? avatarFile = avatarPath == null ? null : File(avatarPath!);
-    if (avatarFile != null && !avatarFile!.existsSync()) {
+    File? avatarFile = avatarPath == null ? null : File(avatarPath);
+    if (avatarFile != null && !avatarFile.existsSync()) {
       avatarFile = null;
     }
 

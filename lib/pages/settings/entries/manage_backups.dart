@@ -199,19 +199,21 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
   }
 
   /// Asks the user for the given [backup] share.
-  Future<void> shareBackup(Backup backup) async {
+  Future<ShareResult> shareBackup(Backup backup) async {
     RenderBox? box = shareActionKey.currentContext?.findRenderObject() as RenderBox?;
     File file = await backup.getBackupPath();
-    await Share.shareXFiles(
-      [
-        XFile(
-          file.path,
-          mimeType: 'application/json',
-        ),
-      ],
-      subject: translations.settings.backups.manageBackups.shareBackupDialog.subject,
-      text: translations.settings.backups.manageBackups.shareBackupDialog.text,
-      sharePositionOrigin: box == null ? Rect.zero : (box.localToGlobal(Offset.zero) & box.size),
+    return await SharePlus.instance.share(
+      ShareParams(
+        subject: translations.settings.backups.manageBackups.shareBackupDialog.subject,
+        text: translations.settings.backups.manageBackups.shareBackupDialog.text,
+        sharePositionOrigin: box == null ? Rect.zero : (box.localToGlobal(Offset.zero) & box.size),
+        files: [
+          XFile(
+            file.path,
+            mimeType: 'application/json',
+          ),
+        ],
+      ),
     );
   }
 
