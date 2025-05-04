@@ -55,7 +55,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
       children: [
         Center(
           child: MobileScanner(
-            placeholderBuilder: (context, child) => widget.placeholderBuilder(context),
+            placeholderBuilder: widget.placeholderBuilder,
             onDetect: (barcodes) {
               widget.onScan?.call(barcodes);
               if (barcodes.barcodes.firstOrNull != null) {
@@ -66,7 +66,7 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
             fit: BoxFit.contain,
             controller: controller,
             scanWindow: scanWindow,
-            errorBuilder: (context, error, child) => ScannerErrorWidget(error: error),
+            errorBuilder: (context, error) => ScannerErrorWidget(error: error),
           ),
         ),
         ValueListenableBuilder(
