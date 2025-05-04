@@ -53,7 +53,7 @@ void main() {
     }
   }
 
-  stdout.writeln('Generating...');
+  stdout.writeln('Generating ${file.path}...');
   file.writeAsStringSync('''import 'package:flutter/foundation.dart';
 import 'package:purchases_flutter/models/package_wrapper.dart';
 
@@ -175,4 +175,7 @@ class Argon2Parameters {
 }
 
 ''');
+  stdout.writeln('Done.');
+
+
 }

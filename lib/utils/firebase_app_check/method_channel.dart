@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/utils/firebase_app_check/firebase_app_check.dart';
@@ -17,16 +18,29 @@ class FirebaseAppCheckMethodChannel extends FirebaseAppCheck {
   @override
   Future<void> activate() async {
     _methodChannel.setMethodCallHandler(_handlePlatformCall);
-    await _methodChannel.invokeMethod('appCheck.activate');
+    String debugToken = '';
+    if (kDebugMode) {
+      debugToken = const String.fromEnvironment('APP_CHECK_DEBUG_TOKEN', defaultValue: '');
+    }
+    await _methodChannel.invokeMethod(
+      'appCheck.activate',
+      {
+        if (debugToken.isNotEmpty) 'debugToken': debugToken,
+      },
+    );
   }
 
   /// Handles platform calls.
   Future _handlePlatformCall(MethodCall call) async {
     switch (call.method) {
       case 'appCheck.requestToken':
+        String? publisher = call.arguments['publisher'];
         http.Response response = await http.get(
           _appCheckUrl,
-          headers: {'app-platform': currentPlatform.name.toLowerCase()},
+          headers: {
+            'app-platform': currentPlatform.name.toLowerCase(),
+            if (publisher != null) 'app-publisher': publisher,
+          },
         );
         Map<String, dynamic> data = jsonDecode(response.body);
         if (data['success']) {
