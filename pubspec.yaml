@@ -1,7 +1,7 @@
 name: open_authenticator
 description: A cross-platform OTP app, free and open-source.
 publish_to: none
-version: 1.3.1+20
+version: 1.4.0+21
 
 environment:
   sdk: ">=3.6.0 <4.0.0"
@@ -18,13 +18,13 @@ dependencies:
   flutter_riverpod: ^2.6.1
   simple_secure_storage: ^0.3.4
   jovial_svg: ^1.1.25
-  mobile_scanner: ^6.0.10
+  mobile_scanner: ^7.0.0
   path_provider: ^2.1.5
   shared_preferences: ^2.5.3
   uuid: ^4.5.1
   webcrypto: ^0.5.8
   equatable: ^2.0.7
-  drift: ^2.26.0
+  drift: ^2.26.1
   drift_flutter: ^0.2.4
   path: ^1.9.1
   local_auth: ^2.3.0
@@ -34,12 +34,12 @@ dependencies:
   intl: any
   url_launcher: ^6.3.1
   firebase_app_check: ^0.3.2
-  purchases_flutter: ^8.7.4
+  purchases_flutter: ^8.7.5
+  purchases_ui_flutter: ^8.7.5
   firebase_crashlytics: ^4.3.5
   window_manager: ^0.4.3
   slang: ^4.7.1
   slang_flutter: ^4.7.0
-  purchases_ui_flutter: ^8.7.4
   rate_my_app: ^2.3.1
   app_links: ^6.4.0
   hashlib: ^1.21.2
@@ -52,7 +52,7 @@ dependencies:
 dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.15
-  drift_dev: ^2.26.0
+  drift_dev: ^2.26.1
   msix: ^3.16.9
   slang_build_runner: ^4.7.0
   custom_lint: ^0.7.3

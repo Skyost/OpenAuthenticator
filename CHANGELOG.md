@@ -1,5 +1,15 @@
 # 📰 Open Authenticator Changelog
 
+## v1.4.0
+Released on May 4, 2025.
+
+* **FEAT** : Initial implementation of Firebase AppCheck for Windows. ([#c9143d4](https://github.com/Skyost/OpenAuthenticator/commit/c9143d4))
+* **FEAT** : Initial implementation of Open Authenticator for linux. ([#2c10b16](https://github.com/Skyost/OpenAuthenticator/commit/2c10b16))
+* **FEAT** : Now allowing `otpauth` links to be opened by the app on all platforms. ([#fdeb999](https://github.com/Skyost/OpenAuthenticator/commit/fdeb999))
+* **CHORE** : Improved the empty home screen. ([#670c8fb](https://github.com/Skyost/OpenAuthenticator/commit/670c8fb))
+* **CHORE** : Migrated from Clearbit to Logo.dev. ([#6b23064](https://github.com/Skyost/OpenAuthenticator/commit/6b23064))
+* **CHORE** : Various updates in the app look and feel. ([#19b2714](https://github.com/Skyost/OpenAuthenticator/commit/19b2714))
+
 ## v1.3.1
 Released on Apr 2, 2025.
 
