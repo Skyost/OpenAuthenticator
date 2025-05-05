@@ -176,6 +176,4 @@ class Argon2Parameters {
 
 ''');
   stdout.writeln('Done.');
-
-
 }
