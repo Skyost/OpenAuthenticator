@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/app_unlock/reason.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/password_verification/methods/method.dart';
 import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
@@ -69,7 +70,7 @@ sealed class CannotUnlockException implements Exception {}
 class LocalAuthenticationAppUnlockMethod extends AppUnlockMethod {
   @override
   Future<Result> _tryUnlock(BuildContext context, Ref ref, UnlockReason reason) async {
-    bool result = await LocalAuthentication.instance.authenticate(context, translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.');
+    bool result = await LocalAuthentication.instance.authenticate(context, reason);
     return result ? const ResultSuccess() : const ResultCancelled();
   }
 
@@ -173,19 +174,4 @@ class NoneAppUnlockMethod extends AppUnlockMethod {
 
   @override
   AppLockState get defaultAppLockState => AppLockState.unlocked;
-}
-
-/// Configures the unlock reason for [UnlockChallenge]s.
-enum UnlockReason {
-  /// The user tries the unlock challenge for opening the app.
-  openApp,
-
-  /// The user tries to do a sensible action.
-  sensibleAction,
-
-  /// The user tries the unlock challenge for enabling the current method.
-  enable,
-
-  /// The user tries the unlock challenge for disabling the current method.
-  disable;
 }

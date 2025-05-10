@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_authenticator/model/app_unlock/reason.dart';
 import 'package:open_authenticator/utils/local_authentication/default.dart';
 import 'package:open_authenticator/utils/local_authentication/method_channel.dart';
 import 'package:open_authenticator/utils/local_authentication/stub.dart';
@@ -34,5 +35,5 @@ abstract class LocalAuthentication {
   Future<bool> isSupported();
 
   /// Authenticates the user.
-  Future<bool> authenticate(BuildContext context, String reason);
+  Future<bool> authenticate(BuildContext context, UnlockReason reason);
 }

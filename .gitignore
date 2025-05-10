@@ -52,6 +52,8 @@ lib/app.dart
 **/*.g.dart
 /assets/images/*.si
 /assets/images/**/*.si
+snap/meta/polkit
+open-authenticator_*.snap
 
 # Firebase files
 firebase

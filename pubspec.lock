@@ -421,10 +421,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "8986dec4581b4bcd4b6df5d75a2ea0bede3db802f500635d05fa8be298f9467f"
+      sha256: a222f231db4f822fc49e3b753674bda630e981873c84bf8604bceeb77fce0b24
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.2"
+    version: "10.1.7"
   firebase_app_check:
     dependency: "direct main"
     description:
@@ -649,10 +649,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: fe7ab022b76f3034adc518fb6ea04a82387620e19977665ea18d30a1cf43442f
+      sha256: "2c11f3f94c687ee9bad77c171151672986360b2b001d109814ee7140b2cf261b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.0"
+    version: "1.4.0"
   http_multi_server:
     dependency: transitive
     description:
@@ -1009,18 +1009,18 @@ packages:
     dependency: "direct main"
     description:
       name: purchases_flutter
-      sha256: "46d7daea8feb5516963f7f5dd474866d576abba4b54466722dc6fd408bbd24ce"
+      sha256: "652fae594069834a84727edf0751dd9c908df2da0ced7331aa8f2504bc0c10a6"
       url: "https://pub.dev"
     source: hosted
-    version: "8.7.5"
+    version: "8.8.0"
   purchases_ui_flutter:
     dependency: "direct main"
     description:
       name: purchases_ui_flutter
-      sha256: "9d9da94541febf6c504295076eb5367b02a654b848f8fad2e21a50634ba305e7"
+      sha256: "90b02171d14e58f6c6aa9006f9db54346f2ec0d32b8a25e747f7fb498958a9ac"
       url: "https://pub.dev"
     source: hosted
-    version: "8.7.5"
+    version: "8.8.0"
   qr:
     dependency: transitive
     description:
@@ -1574,10 +1574,10 @@ packages:
     dependency: transitive
     description:
       name: web_socket
-      sha256: bfe6f435f6ec49cb6c01da1e275ae4228719e59a6b067048c51e72d9d63bcc4b
+      sha256: "34d64019aa8e36bf9842ac014bb5d2f5586ca73df5e4d9bf5c936975cae6982c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   web_socket_channel:
     dependency: transitive
     description:
@@ -1598,10 +1598,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: dc6ecaa00a7c708e5b4d10ee7bec8c270e9276dfcab1783f57e9962d7884305f
+      sha256: "329edf97fdd893e0f1e3b9e88d6a0e627128cc17cc316a8d67fda8f1451178ba"
       url: "https://pub.dev"
     source: hosted
-    version: "5.12.0"
+    version: "5.13.0"
   window_manager:
     dependency: "direct main"
     description:

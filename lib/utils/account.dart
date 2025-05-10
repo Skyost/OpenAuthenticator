@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/app_unlock/method.dart';
+import 'package:open_authenticator/model/app_unlock/reason.dart';
 import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
 import 'package:open_authenticator/model/authentication/providers/email_link.dart';
 import 'package:open_authenticator/model/authentication/providers/provider.dart';

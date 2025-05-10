@@ -7,6 +7,7 @@ import 'package:local_auth_darwin/local_auth_darwin.dart';
 // ignore: depend_on_referenced_packages
 import 'package:local_auth_windows/local_auth_windows.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/app_unlock/reason.dart';
 import 'package:open_authenticator/utils/local_authentication/local_authentication.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:window_manager/window_manager.dart';
@@ -20,7 +21,7 @@ class LocalAuthenticationDefault extends LocalAuthentication {
   LocalAuthenticationDefault() : _localAuthentication = local_auth.LocalAuthentication();
 
   @override
-  Future<bool> authenticate(BuildContext context, String reason) async {
+  Future<bool> authenticate(BuildContext context, UnlockReason reason) async {
     String cancelButton = MaterialLocalizations.of(context).cancelButtonLabel;
     if (currentPlatform.isDesktop) {
       await windowManager.ensureInitialized();
@@ -28,7 +29,7 @@ class LocalAuthenticationDefault extends LocalAuthentication {
       await windowManager.setAlwaysOnTop(true);
     }
     bool result = await _localAuthentication.authenticate(
-      localizedReason: reason,
+      localizedReason: translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.',
       authMessages: [
         IOSAuthMessages(
           lockOut: translations.localAuth.ios.lockOut,
