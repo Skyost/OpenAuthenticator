@@ -13,7 +13,7 @@ class LocalAuthenticationMethodChannel extends LocalAuthentication {
       await _methodChannel.invokeMethod<bool>(
         'localAuth.authenticate',
         {
-          reason: reason.name,
+          'reason': reason.name,
         },
       ) ==
       true;

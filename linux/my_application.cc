@@ -60,7 +60,7 @@ static void authenticate_async_callback(PolkitAuthority* authority, GAsyncResult
     g_object_unref(user_data); // Unref the method call after use
 }
 
-static void authenticate(FlMethodCall* method_call) {
+static void authenticate(const std::string reason, FlMethodCall* method_call) {
     GError* error = nullptr;
     PolkitAuthority* authority = polkit_authority_get_sync(nullptr, &error);
     if (error || authority == nullptr) {
@@ -72,7 +72,7 @@ static void authenticate(FlMethodCall* method_call) {
     polkit_authority_check_authorization(
         authority,
         subject,
-        "app.openauthenticator.authenticate",
+        ("app.openauthenticator." + reason).c_str(),
         nullptr,
         POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION,
         nullptr,
@@ -87,7 +87,9 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call, 
     if (strcmp(method, "localAuth.isDeviceSupported") == 0) {
         can_authenticate(method_call);
     } else if (strcmp(method, "localAuth.authenticate") == 0) {
-        authenticate(method_call);
+        FlValue* args = fl_method_call_get_args(method_call);
+        FlValue* reason = fl_value_lookup_string(args, "reason");
+        authenticate(fl_value_get_string(reason), method_call);
     } else {
         g_autoptr(FlMethodResponse) response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
         fl_method_call_respond(method_call, response, nullptr);

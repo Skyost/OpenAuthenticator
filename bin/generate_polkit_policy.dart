@@ -22,7 +22,8 @@ Future<void> main() async {
 
   stdout.writeln('Generating polkit policy file...');
   String policyFileContent = '''<?xml version="1.0" encoding="UTF-8"?>
-<policyconfig>''';
+<policyconfig>
+''';
   for (UnlockReason reason in UnlockReason.values) {
     policyFileContent += '''
   <action id="app.openauthenticator.${reason.name}">
