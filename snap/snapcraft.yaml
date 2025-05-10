@@ -1,14 +1,22 @@
 name: open-authenticator
+title: Open Authenticator
 version: 1.4.0
 summary: A cross-platform OTP app, free and open-source.
 description: Secure your online accounts with a free, open-source and lovely-crafted app.
+license: GNU GPL v3
+source-code:
+  - https://github.com/Skyost/OpenAuthenticator
+contact:
+  - https://openauthenticator.app/contact/
+issues:
+  - https://github.com/Skyost/OpenAuthenticator/issues/
 
 base: core24
-confinement: classic
+confinement: strict
 grade: stable
 
 slots:
-  dbus-open-authenticator:
+  open-authenticator-dbus:
     interface: dbus
     bus: session
     name: app.openauthenticator
@@ -16,10 +24,15 @@ slots:
 apps:
   open-authenticator:
     command: open_authenticator
+    extensions:
+      - gnome
     plugs:
       - network
+      - polkit
     slots:
-      - dbus-open-authenticator
+      - open-authenticator-dbus
+    environment:
+      XDG_DATA_DIRS: $SNAP/usr/share:$XDG_DATA_DIRS
 
 parts:
   open-authenticator:
@@ -27,16 +40,27 @@ parts:
     plugin: flutter
     flutter-target: lib/main.dart
     build-packages:
-      - libgtk-3-dev
-      - libglib2.0-dev
-      - libpango1.0-dev
-      - libcairo2-dev
-      - libgdk-pixbuf-2.0-dev
-      - libatk1.0-dev
-      - pkg-config
-      - libpam0g-dev
-      - libsecret-1-dev
+      - libpolkit-gobject-1-dev
+  polkit-locale:
+    plugin: nil
+    source: snap/meta/polkit/po
     override-build: |
-      snapcraftctl build
-    override-prime: |
-      snapcraftctl prime
+      mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/locale
+      for po in *.po; do
+        lang=${po%.po}
+        mkdir -p $SNAPCRAFT_PART_INSTALL/usr/share/locale/$lang/LC_MESSAGES
+        msgfmt $po -o $SNAPCRAFT_PART_INSTALL/usr/share/locale/$lang/LC_MESSAGES/app.openauthenticator.mo
+      done
+    build-packages:
+      - gettext
+  polkit-policy:
+    plugin: dump
+    source: snap/meta/polkit/polkit.app.openauthenticator.policy
+    source-type: file
+    organize:
+      polkit.app.openauthenticator.policy: meta/polkit/polkit.app.openauthenticator.policy
+
+plugs:
+  polkit:
+    action-prefix: app.openauthenticator
+
