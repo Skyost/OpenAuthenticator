@@ -52,6 +52,7 @@ msgstr "${translations[locale]!["authenticationRequired"]}"
 ''';
     for (UnlockReason reason in UnlockReason.values) {
       translationFileContent += '''
+
 msgid "${translations["en"]!["localAuthentication(map)"][reason.name]}"
 msgstr "${translations[locale]!["localAuthentication(map)"][reason.name]}"
 ''';
