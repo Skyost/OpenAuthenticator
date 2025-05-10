@@ -1,6 +1,0 @@
-msgid "Authentication required"
-msgstr "Authentication required"
-
-msgid "Authentication is required to access Open Authenticator"
-msgstr "Authentication is required to access Open Authenticator"
-

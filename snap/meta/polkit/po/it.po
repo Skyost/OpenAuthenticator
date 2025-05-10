@@ -1,6 +1,0 @@
-msgid "polkit.desc.app.openauthenticator.authenticate"
-msgstr "Autenticazione richiesta"
-
-msgid "polkit.msg.app.openauthenticator.authenticate"
-msgstr "È richiesta l'autenticazione per accedere a Open Authenticator"
-

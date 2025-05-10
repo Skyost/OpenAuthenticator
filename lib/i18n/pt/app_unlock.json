@@ -3,6 +3,7 @@
     "text": "$app está bloqueado.",
     "button": "Desbloquear"
   },
+  "authenticationRequired": "Autenticação necessária",
   "localAuthentication(map)": {
     "openApp": "Autentique-se para acessar o app.",
     "sensibleAction": "Autentique-se para continuar.",

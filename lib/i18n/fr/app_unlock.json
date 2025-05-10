@@ -3,6 +3,7 @@
     "text": "$app est verrouillé.",
     "button": "Déverrouiller"
   },
+  "authenticationRequired": "Authentification requise",
   "localAuthentication(map)": {
     "openApp": "Authentifiez-vous pour accéder à l'application.",
     "sensibleAction": "Authentifiez-vous pour continuer.",

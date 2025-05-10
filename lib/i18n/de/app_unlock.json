@@ -4,6 +4,7 @@
     "text": "$app ist gesperrt.",
     "button": "Entsperren"
   },
+  "authenticationRequired": "Authentifizierung erforderlich",
   "localAuthentication(map)": {
     "openApp": "Authentifizieren Sie sich, um auf die App zuzugreifen.",
     "sensibleAction": "Authentifizieren Sie sich, um fortzufahren.",
