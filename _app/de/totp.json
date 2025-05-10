@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "decrypt": "Entschlüsseln",
+    "mobileDialog": {
+      "title": "TOTP-Aktionen",
+      "edit": "TOTP bearbeiten",
+      "delete": "TOTP löschen"
+    },
+    "desktopButtons": {
+      "copy": "Code kopieren",
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    },
+    "copyConfirmation": "In die Zwischenablage kopiert.",
+    "editConfirmationDialog": {
+      "title": "Dieses TOTP bearbeiten",
+      "message": "Dieses TOTP wurde vermutlich mit einem anderen Schlüssel als Ihrem aktuellen verschlüsselt. Dies kann vorkommen, wenn Sie Ihr Masterpasswort auf einem anderen Gerät geändert haben. Wenn Sie dieses TOTP bearbeiten, wird es mit Ihrem aktuellen Schlüssel verschlüsselt. Möchten Sie fortfahren?"
+    },
+    "deleteConfirmationDialog": {
+      "title": "Dieses TOTP löschen",
+      "message": "Möchten Sie dieses TOTP wirklich löschen?"
+    }
+  },
+  "decryptDialog": {
+    "title": "TOTP entschlüsseln",
+    "message": "Dieses TOTP wurde mit einem anderen Masterpasswort verschlüsselt. Geben Sie es bitte unten ein, um es zu entschlüsseln."
+  },
+  "totpKeyDialog": {
+    "title": "Erfolgreich entschlüsselt",
+    "message": {
+      "one": "Möchten Sie Ihr Masterpasswort ändern oder dieses TOTP mit Ihrem aktuellen Verschlüsselungsschlüssel verschlüsseln?",
+      "other": "Dieses TOTP wurde erfolgreich entschlüsselt, und das Passwort hat weitere TOTPs erfolgreich entschlüsselt. Was möchten Sie tun?"
+    },
+    "choices": {
+      "changeAllDecryptedTotpsKey": {
+        "title": "TOTPs mit Ihrem aktuellen Schlüssel verschlüsseln",
+        "subtitle": "Ändern Sie den Verschlüsselungsschlüssel dieses und der anderen entschlüsselten TOTPs und verwenden Sie stattdessen Ihren aktuellen Schlüssel."
+      },
+      "changeTotpKey": {
+        "title": {
+          "one": "Dieses TOTP mit Ihrem aktuellen Schlüssel verschlüsseln",
+          "other": "Nur dieses TOTP mit Ihrem aktuellen Schlüssel verschlüsseln"
+        },
+        "subtitle": "Ändern Sie den Verschlüsselungsschlüssel dieses TOTPs und verwenden Sie stattdessen Ihren aktuellen Schlüssel. Die anderen entschlüsselten TOTPs sind weiterhin verwendbar, solange Sie die App geöffnet lassen."
+      },
+      "changeMasterPassword": {
+        "title": "Ihr aktuelles Masterpasswort ändern",
+        "subtitle": "Verwenden Sie das eingegebene Passwort als Ihr neues Masterpasswort und generieren Sie einen Verschlüsselungsschlüssel daraus. Alle TOTPs, die noch mit einem anderen Passwort verschlüsselt sind, müssen manuell entschlüsselt werden."
+      },
+      "doNothing": {
+        "title": "Nichts tun",
+        "subtitle": "Sie müssen dieses Passwort erneut eingeben, um dieses TOTP zu entschlüsseln."
+      }
+    }
+  },
+  "page": {
+    "title": {
+      "edit": "TOTP bearbeiten",
+      "add": "TOTP hinzufügen"
+    },
+    "label": {
+      "text": "Bezeichnung",
+      "hint": "ich@beispiel.de"
+    },
+    "secret": {
+      "text": "Geheimer Schlüssel",
+      "hint": "JBSWY3DPEHPK3PXP"
+    },
+    "issuer": {
+      "text": "Aussteller",
+      "hint": "beispiel.de"
+    },
+    "algorithm": "Algorithmus",
+    "digits": "Anzahl der Ziffern",
+    "validity": "Gültigkeit (in Sekunden)",
+    "advancedOptions": "Erweiterte Optionen",
+    "showQrCode": "QR-Code anzeigen",
+    "save": "Speichern",
+    "uriError": "Dieses TOTP kann nicht gelesen werden. Ist es gültig?"
+  }
+}
