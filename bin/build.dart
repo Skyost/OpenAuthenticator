@@ -68,9 +68,13 @@ void main() {
         stderr.writeln('Cannot find snap at "${snap.path}".');
         return;
       }
-      stdout.writeln('Running `snapcraft upload --release=stable $snapName`...');
-      Process.runSync('snapcraft', ['upload', '--release=stable', snapName], runInShell: true);
-      stdout.writeln('Done.');
+      stdout.writeln('Do you want to upload it ? (Y/N)');
+      String yN = stdin.readLineSync() ?? '';
+      if (yN.toLowerCase() == 'y') {
+        stdout.writeln('Running `snapcraft upload --release=stable $snapName`...');
+        Process.runSync('snapcraft', ['upload', '--release=stable', snapName], runInShell: true);
+        stdout.writeln('Done.');
+      }
       break;
     default:
       stderr.writeln('Invalid platform.');
