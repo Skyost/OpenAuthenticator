@@ -1,5 +1,12 @@
 # 📰 Open Authenticator Changelog
 
+## v1.4.1
+Released on May 22, 2025.
+
+* **FEAT** : Improved the `build` utility. ([#6365ac2](https://github.com/Skyost/OpenAuthenticator/commit/6365ac2))
+* **FEAT** : Migrated from PAM to Polkit. ([#a073fc5](https://github.com/Skyost/OpenAuthenticator/commit/a073fc5))
+* **CHORE** : Added a build utility. ([#15ea27f](https://github.com/Skyost/OpenAuthenticator/commit/15ea27f))
+
 ## v1.4.0
 Released on May 4, 2025.
 
