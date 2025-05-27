@@ -20,7 +20,7 @@ export const storesLink: Record<OS, StoreInfo> = {
   },
   linux: {
     name: 'Snapcraft',
-    url: null,
+    url: 'https://snapcraft.io/open-authenticator',
   },
 }
 

@@ -11,31 +11,31 @@
   },
   "dependencies": {
     "highlight.js": "^11.11.1",
-    "nuxt": "^3.17.1",
+    "nuxt": "^3.17.4",
     "qrcode.vue": "^3.5.1",
     "recaptcha-v3": "^1.10.0"
   },
   "devDependencies": {
-    "@bootstrap-vue-next/nuxt": "^0.28.6",
-    "@iconify-json/bi": "^1.2.2",
+    "@bootstrap-vue-next/nuxt": "^0.29.3",
+    "@iconify-json/bi": "^1.2.4",
     "@iconify-json/heroicons": "^1.2.2",
     "@intlify/unplugin-vue-i18n": "^6.0.8",
     "@nabla/vite-plugin-eslint": "^2.0.5",
-    "@nuxt/eslint": "^1.3.0",
-    "@nuxt/icon": "^1.10.3",
+    "@nuxt/eslint": "^1.4.1",
+    "@nuxt/icon": "^1.13.0",
     "@nuxtjs/robots": "^5.2.10",
-    "@nuxtjs/sitemap": "^7.2.10",
-    "bootstrap": "^5.3.5",
-    "bootstrap-vue-next": "^0.28.6",
+    "@nuxtjs/sitemap": "^7.3.0",
+    "bootstrap": "^5.3.6",
+    "bootstrap-vue-next": "^0.29.3",
     "dot-object": "^2.1.5",
-    "eslint": "^9.25.1",
+    "eslint": "^9.27.0",
     "nuxt-cname-generator": "^1.0.1",
     "nuxt-link-checker": "^4.3.0",
-    "sass": "^1.87.0",
+    "sass": "^1.89.0",
     "stylelint": "^16.19.1",
     "stylelint-config-recommended-vue": "^1.6.0",
-    "stylelint-config-standard-scss": "^14.0.0",
+    "stylelint-config-standard-scss": "^15.0.1",
     "vite-plugin-stylelint": "^6.0.0",
-    "vue-i18n": "^11.1.3"
+    "vue-i18n": "^11.1.4"
   }
 }
