@@ -1,0 +1,55 @@
+{
+  "noError": "Succès !",
+  "validation": {
+    "number": "Vous devez entrer un nombre valide",
+    "empty": "Ce champ est requis",
+    "email": "Adresse mail invalide",
+    "secret": "Secret invalide",
+    "totpDigits": "Le nombre entré doit être supérieur ou égal à 6",
+    "masterPassword": "Mot de passe invalide",
+    "confirmation": "La confirmation ne correspond pas"
+  },
+  "timeout": {
+    "generic": "Délai d'attente dépassé. Veuillez réessayer plus tard.",
+    "authentication": "Délai d'attente dépassé pendant la connexion au fournisseur sélectionné. Veuillez réessayer.",
+    "unlink": "Délai d'attente dépassé pendant la suppression de la liaison de votre compte au fournisseur d'authentification. Veuillez réessayer.",
+    "contributorPlan": "Délai d'attente de la souscription à l'Abonnement Contributeur dépassé. Veuillez réessayer."
+  },
+  "appUnlock": "Impossible de déverrouiller l'application. Veuillez réessayer.",
+  "generic": {
+    "noTryAgain": "Oops, quelque chose s'est mal passé.",
+    "tryAgain": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
+    "withException": "Une erreur est survenue ($exception). Veuillez réessayer plus tard."
+  },
+  "authentication": {
+    "accountExistsWithDifferentCredentialsDialog": {
+      "title": "Un compte existe déjà",
+      "message": "Un compte avec la même adresse mail existe dans notre base de données, mais le fournisseur d'authentification sélectionné n'y est pas relié.\nVeuillez vous connecter en utilisant un fournisseur d'authentification qui y est déjà relié."
+    },
+    "invalidCredential": "Identifiants incorrects.",
+    "operationNotAllowed": "Opération non autorisée. Cela ne doit pas arriver, veuillez reporter cette erreur.",
+    "userDisabled": "Votre compte a été désactivé.",
+    "firebaseException": "Une erreur est survenue pendant la connexion à votre compte (erreur : $exception). Veuillez réessayer plus tard."
+  },
+  "scan": {
+    "noUri": "Impossible de lire ce QR code. Assurez-vous qu'il s'agit d'un QR code de TOTP valide.",
+    "accessDeniedDialog": {
+      "title": "Accès refusé",
+      "message": "Impossible d'accéder à votre caméra (accès refusé : $exception). Voulez-vous réessayer ?"
+    },
+    "controllerUninitialized": "Controlleur non initialisé (code : $exception).",
+    "unsupported": "Le scan n'est pas supporté par cet appareil (code : $exception)."
+  },
+  "storageMigration(map)": {
+    "backupError": "Une erreur est survenue durant la sauvegarde. Veuillez réessayer.",
+    "currentStoragePasswordMismatch": "Mot de passe maître invalide.",
+    "encryptionKeyChangeFailed": "Une erreur est survenue pendant le chiffrement de vos données. Veuillez réessayer plus tard.",
+    "genericError": "Une erreur est survenue pendant la migration de vos données. Veuillez réessayer plus tard."
+  },
+  "authenticationValidation": {
+    "incorrectPath": "Une erreur est survenue (le chemin est '$path'). Veuillez reporter cette erreur.",
+    "generic": "Impossible de valider votre requête (erreur : $exception). Veuillez réessayer plus tard.",
+    "oauth2": "Impossible de se connecter avec $name. Veuillez réessayer plus tard."
+  },
+  "totpDecrypt": "Impossible de déchiffrer ce TOTP. Veuillez vous assurer d'avoir entré le bon mot de passe."
+}

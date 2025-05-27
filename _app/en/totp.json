@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "decrypt": "Decrypt",
+    "mobileDialog": {
+      "title": "TOTP actions",
+      "edit": "Edit TOTP",
+      "delete": "Delete TOTP"
+    },
+    "desktopButtons": {
+      "copy": "Copy code",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "copyConfirmation": "Copied to clipboard.",
+    "editConfirmationDialog": {
+      "title": "Edit this TOTP",
+      "message": "It seems that this TOTP has been encrypted using a different key that your current one. This can happen if you have changed your master password on another device. If you edit this TOTP, it will be encrypted using your current key. Do you want to continue ?"
+    },
+    "deleteConfirmationDialog": {
+      "title": "Delete this TOTP",
+      "message": "Do you really want to delete this TOTP ?"
+    }
+  },
+  "decryptDialog": {
+    "title": "Decrypt TOTP",
+    "message": "This TOTP has been encrypted using a different a master password. Please enter it below in order to decrypt it."
+  },
+  "totpKeyDialog": {
+    "title": "Decrypted with success",
+    "message": {
+      "one": "Do you want to change your master password or to encrypt this TOTP with your current encryption key ?",
+      "other": "This TOTP has been decrypted with success, and the password has successfully decrypted more TOTPs. What do you want to do ?"
+    },
+    "choices": {
+      "changeAllDecryptedTotpsKey": {
+        "title": "Encrypt TOTPs with your current key",
+        "subtitle": "Change this TOTP encryption key as well as those that have been decrypted, and use yours instead."
+      },
+      "changeTotpKey": {
+        "title": {
+          "one": "Encrypt this TOTP with your current key",
+          "other": "Encrypt only this TOTP with your current key"
+        },
+        "subtitle": "Change this TOTP encryption key, and use yours instead. The other decrypted TOTPs will be usable as long as you leave the app opened."
+      },
+      "changeMasterPassword": {
+        "title": "Change your current master password",
+        "subtitle": "Use the entered password as your new master password and generate an encryption key from it.\nAll TOTPs still encrypted with another password will need to be decrypted manually."
+      },
+      "doNothing": {
+        "title": "Do nothing",
+        "subtitle": "You will have to reenter this password to decrypt this TOTP."
+      }
+    }
+  },
+  "page": {
+    "title": {
+      "edit": "Edit TOTP",
+      "add": "Add a TOTP"
+    },
+    "label": {
+      "text": "Label",
+      "hint": "me@example.com"
+    },
+    "secret": {
+      "text": "Secret key",
+      "hint": "JBSWY3DPEHPK3PXP"
+    },
+    "issuer": {
+      "text": "Issuer",
+      "hint": "example.com"
+    },
+    "algorithm": "Algorithm",
+    "digits": "Digit count",
+    "validity": "Validity (in seconds)",
+    "advancedOptions": "Advanced options",
+    "showQrCode": "Show QR code",
+    "save": "Save",
+    "uriError": "Unable to read this TOTP. Are you sure it is valid ?"
+  }
+}
