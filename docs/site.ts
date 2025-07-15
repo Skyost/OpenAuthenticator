@@ -31,5 +31,5 @@ export const siteMeta = {
   github: 'https://github.com/Skyost/OpenAuthenticator',
 }
 
-export const contactPostUrl = 'https://script.google.com/macros/s/AKfycbzXs_vsLAX5jStwqH9mIVKr8mr7L0C3wsVC4net9BlvhbYFR97UkE9tRIsT2z07REKjQQ/exec'
+export const contactPostUrl = 'https://script.google.com/macros/s/AKfycbxjmOxUnOADCgyII87ac6vas5Y9671WpHAWLAYFjSn05dLmkXdUMl9q-o6gTwVHfgPsVg/exec'
 export const recaptchaKey = '6Lem_AEqAAAAAJvAC-NfFRdggB5oHSzL6fSF3BY4'
