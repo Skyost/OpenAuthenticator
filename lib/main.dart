@@ -206,13 +206,13 @@ class OpenAuthenticatorApp extends ConsumerWidget {
       ),
       routes: home == null
           ? {
-              IntroPage.name: (_) => _RouteWidget(
-                    child: const IntroPage(),
+              IntroPage.name: (_) => const _RouteWidget(
+                    child: IntroPage(),
                   ),
-              HomePage.name: (_) => _RouteWidget(
+              HomePage.name: (_) => const _RouteWidget(
                     listen: true,
                     rateMyApp: true,
-                    child: const HomePage(),
+                    child: HomePage(),
                   ),
               ScanPage.name: (_) => const _RouteWidget(
                     child: ScanPage(),

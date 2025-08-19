@@ -56,7 +56,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           onError: (exception, listener) => SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: exception)),
         ),
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.close),
+          child: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
       );

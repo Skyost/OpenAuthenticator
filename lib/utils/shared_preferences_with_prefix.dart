@@ -38,9 +38,9 @@ class SharedPreferencesWithPrefix {
           sharedPreferencesOptions: switch (currentPlatform) {
             Platform.windows => SharedPreferencesWindowsOptions(fileName: fileName),
             Platform.linux => SharedPreferencesLinuxOptions(fileName: fileName),
-            _ => SharedPreferencesOptions(),
+            _ => const SharedPreferencesOptions(),
           },
-          cacheOptions: SharedPreferencesWithCacheOptions(),
+          cacheOptions: const SharedPreferencesWithCacheOptions(),
         ),
         prefix: prefix,
       );

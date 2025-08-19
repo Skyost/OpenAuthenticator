@@ -96,7 +96,7 @@ class AppDialog extends StatelessWidget {
     children = [
       if (title != null)
         Transform.translate(
-          offset: Offset(0, -1),
+          offset: const Offset(0, -1),
           child: _AppDialogTitle(
             title: title!,
             ellipsisTitleOnOverflow: ellipsisTitleOnOverflow,
@@ -132,7 +132,7 @@ class AppDialog extends StatelessWidget {
         ? Theme(
             data: theme.copyWith(
               listTileTheme: theme.listTileTheme.copyWith(
-                contentPadding: EdgeInsets.symmetric(horizontal: 30),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 30),
               ),
             ),
             child: dialog,
@@ -179,7 +179,7 @@ class _AppDialogTitleState extends ConsumerState<_AppDialogTitle> with Brightnes
           IconButton(
             color: textColor?.withValues(alpha: 0.75),
             tooltip: MaterialLocalizations.of(context).closeButtonLabel,
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -189,7 +189,7 @@ class _AppDialogTitleState extends ConsumerState<_AppDialogTitle> with Brightnes
       padding: padding,
       decoration: boxDecoration,
       child: DefaultTextStyle(
-        style: (Theme.of(context).textTheme.headlineSmall ?? TextStyle()).copyWith(color: textColor),
+        style: (Theme.of(context).textTheme.headlineSmall ?? const TextStyle()).copyWith(color: textColor),
         maxLines: widget.ellipsisTitleOnOverflow != false ? null : 1,
         overflow: widget.ellipsisTitleOnOverflow != false ? TextOverflow.clip : TextOverflow.ellipsis,
         child: child,
@@ -198,7 +198,7 @@ class _AppDialogTitleState extends ConsumerState<_AppDialogTitle> with Brightnes
   }
 
   /// Returns the padding.
-  EdgeInsets get padding => currentPlatform.isMobile ? EdgeInsets.all(24) : EdgeInsets.symmetric(horizontal: 16, vertical: 12);
+  EdgeInsets get padding => currentPlatform.isMobile ? const EdgeInsets.all(24) : const EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 
   /// Returns the text color.
   Color? get textColor => currentPlatform.isMobile ? null : Colors.white;

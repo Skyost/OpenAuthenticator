@@ -139,7 +139,7 @@ class Backup implements Comparable<Backup> {
 
       CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
       if (currentCryptoStore == null) {
-        throw _EncryptionError(operationName: 'decryption');
+        throw const _EncryptionError(operationName: 'decryption');
       }
 
       List jsonTotps = jsonData[kTotpsKey];
@@ -168,7 +168,7 @@ class Backup implements Comparable<Backup> {
     try {
       CryptoStore? currentCryptoStore = await _ref.read(cryptoStoreProvider.future);
       if (currentCryptoStore == null) {
-        throw _EncryptionError(operationName: 'encryption');
+        throw const _EncryptionError(operationName: 'encryption');
       }
       CryptoStore newStore = await CryptoStore.fromPassword(password, await Salt.generate());
       TotpList totps = await _ref.read(totpRepositoryProvider.future);

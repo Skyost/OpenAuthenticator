@@ -21,9 +21,9 @@ class AppLockStateNotifier extends AsyncNotifier<AppLockState> {
   /// Tries to unlock the app.
   Future<Result> unlock(BuildContext context) async {
     if ((await future) == AppLockState.unlockChallengedStarted || !context.mounted) {
-      return ResultCancelled();
+      return const ResultCancelled();
     }
-    state = AsyncData(AppLockState.unlockChallengedStarted);
+    state = const AsyncData(AppLockState.unlockChallengedStarted);
     Result result = await ref.read(appUnlockMethodSettingsEntryProvider.notifier).unlockWithCurrentMethod(context, UnlockReason.openApp);
     state = AsyncData(result is ResultSuccess ? AppLockState.unlocked : AppLockState.locked);
     return result;

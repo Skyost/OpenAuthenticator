@@ -21,7 +21,7 @@ class ListTilePadding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: (Theme.of(context).listTileTheme.contentPadding?.resolve(Directionality.of(context)) ?? EdgeInsets.symmetric(horizontal: 16)).copyWith(
+        padding: (Theme.of(context).listTileTheme.contentPadding?.resolve(Directionality.of(context)) ?? const EdgeInsets.symmetric(horizontal: 16)).copyWith(
           top: top,
           bottom: bottom,
         ),

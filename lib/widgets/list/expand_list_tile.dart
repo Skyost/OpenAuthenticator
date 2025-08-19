@@ -43,7 +43,7 @@ class _ExpandListTileState extends ConsumerState<ExpandListTile> with SingleTick
   @override
   void initState() {
     super.initState();
-    expandController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    expandController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
     expandAnimation = CurvedAnimation(
       parent: expandController,
       curve: Curves.fastOutSlowIn,

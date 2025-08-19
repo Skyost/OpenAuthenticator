@@ -9,7 +9,7 @@ import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 
 /// The Github authentication state provider.
 final githubAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState>(
-  () => FirebaseAuthenticationStateNotifier(GithubAuthenticationProvider()),
+  () => FirebaseAuthenticationStateNotifier(const GithubAuthenticationProvider()),
 );
 
 /// The provider that allows to sign in using Github.

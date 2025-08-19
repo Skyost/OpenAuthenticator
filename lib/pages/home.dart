@@ -96,7 +96,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
     }
     return Scaffold(
       appBar: AppBar(
-        title: _AppBarTitle(),
+        title: const _AppBarTitle(),
         actions: [
           _RequireCryptoStore(
             child: Builder(
@@ -145,7 +145,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
           ? _RequireCryptoStore(
               child: AnimatedSlide(
                 duration: const Duration(milliseconds: 200),
-                offset: showFloatingActionButton ? Offset.zero : Offset(0, 2),
+                offset: showFloatingActionButton ? Offset.zero : const Offset(0, 2),
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 200),
                   opacity: showFloatingActionButton ? 1 : 0,
@@ -276,8 +276,8 @@ class _HomePageBody extends ConsumerWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 20),
                               child: SizedScalableImageWidget(
                                 height: 80,
                                 asset: 'assets/images/home.si',

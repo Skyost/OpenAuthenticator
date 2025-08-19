@@ -145,7 +145,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
 
   /// Allows to import a backup.
   Future<void> importBackup() async {
-    Result result = ResultCancelled();
+    Result result = const ResultCancelled();
     try {
       FilePickerResult? filePickerResult = await showWaitingOverlay(
         context,
@@ -219,7 +219,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
 
   /// Asks the user for the given [backup] export.
   Future<void> exportBackup(Backup backup) async {
-    Result result = ResultCancelled();
+    Result result = const ResultCancelled();
     try {
       String? outputFilePath = await showWaitingOverlay(
         context,
@@ -241,7 +241,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
       }
       File backupFile = await backup.getBackupPath();
       backupFile.copySync(outputFilePath);
-      result = ResultSuccess();
+      result = const ResultSuccess();
     } catch (ex, stacktrace) {
       result = ResultError(exception: ex, stacktrace: stacktrace);
     } finally {

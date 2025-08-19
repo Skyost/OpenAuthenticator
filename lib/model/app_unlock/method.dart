@@ -22,7 +22,7 @@ sealed class AppUnlockMethod<T> {
         throw cannotUnlockException;
       }
       if (!context.mounted) {
-        return ResultCancelled();
+        return const ResultCancelled();
       }
       return await _tryUnlock(context, ref, reason);
     } catch (ex, stacktrace) {

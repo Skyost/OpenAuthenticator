@@ -60,7 +60,7 @@ abstract class AbstractValidationServer<T> {
         await sendResponse(response, translations.validation.success);
         break;
       case ResultError(:final exception):
-        await sendResponse(response, translations.error.authenticationValidation.generic(exception: exception ?? ValidationException()));
+        await sendResponse(response, translations.error.authenticationValidation.generic(exception: exception ?? const ValidationException()));
         break;
       default:
         break;
@@ -133,7 +133,7 @@ abstract class CompleterAbstractValidationServer<T> extends AbstractValidationSe
         _completer?.complete(object);
         break;
       case ResultError<T>(:final exception):
-        _completer?.completeError(exception ?? ValidationException());
+        _completer?.completeError(exception ?? const ValidationException());
         break;
     }
     return true;
@@ -191,7 +191,7 @@ class ValidationServer<T> extends AbstractValidationServer<T> {
         _onValidationCancelled?.call(timedOut);
         break;
       case ResultError<T>(:final exception):
-        _onValidationFailed?.call(exception is ValidationException ? exception : ValidationException());
+        _onValidationFailed?.call(exception is ValidationException ? exception : const ValidationException());
         break;
     }
     return true;

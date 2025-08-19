@@ -9,7 +9,7 @@ import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 
 /// The Apple authentication state provider.
 final appleAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState>(
-  () => FirebaseAuthenticationStateNotifier(AppleAuthenticationProvider()),
+  () => FirebaseAuthenticationStateNotifier(const AppleAuthenticationProvider()),
 );
 
 /// The provider that allows to sign in using Apple.

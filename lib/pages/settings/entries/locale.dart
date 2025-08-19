@@ -12,23 +12,25 @@ class LocaleEntryWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => ListTile(
         leading: const Icon(Icons.translate),
-        title: DropdownButtonFormField<AppLocale>(
-          value: TranslationProvider.of(context).locale,
+        title: InputDecorator(
           decoration: const InputDecoration(
             labelText: 'Language',
           ),
-          items: [
-            for (AppLocale locale in AppLocale.values)
-              DropdownMenuItem<AppLocale>(
-                value: locale,
-                child: Text(locale.languageCode),
-              ),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              LocaleSettings.setLocale(value);
-            }
-          },
+          child: DropdownButton<AppLocale>(
+            value: TranslationProvider.of(context).locale,
+            items: [
+              for (AppLocale locale in AppLocale.values)
+                DropdownMenuItem<AppLocale>(
+                  value: locale,
+                  child: Text(locale.languageCode),
+                ),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                LocaleSettings.setLocale(value);
+              }
+            },
+          ),
         ),
       );
 }

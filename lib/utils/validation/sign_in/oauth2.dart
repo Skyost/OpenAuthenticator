@@ -72,7 +72,7 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
     OAuth2Response response = createResponseFromParams(params);
     if (response.accessToken == null && response.idToken == null) {
       return ResultError(
-        exception: ValidationException(code: ValidationException.kErrorNoToken),
+        exception: const ValidationException(code: ValidationException.kErrorNoToken),
       );
     }
     return ResultSuccess<OAuth2Response>(value: response);
@@ -107,7 +107,7 @@ mixin OAuth2SignInNonce on OAuth2SignInServer {
       return await super.signIn(context);
     }
     return ResultError(
-      exception: ValidationException(),
+      exception: const ValidationException(),
     );
   }
 

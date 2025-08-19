@@ -29,7 +29,7 @@ class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
       return await super.signIn(context);
     }
     return ResultError(
-      exception: ValidationException(),
+      exception: const ValidationException(),
     );
   }
 
@@ -61,7 +61,7 @@ class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
     }
     if (!validateState(parameters)) {
       return ResultError(
-        exception: ValidationException(code: ValidationException.kErrorInvalidState),
+        exception: const ValidationException(code: ValidationException.kErrorInvalidState),
       );
     }
     http.Response response = await http.post(
@@ -79,7 +79,7 @@ class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
     );
     if (response.statusCode != 200) {
       return ResultError(
-        exception: ValidationException(
+        exception: const ValidationException(
           code: ValidationException.kErrorInvalidResponse,
         ),
       );

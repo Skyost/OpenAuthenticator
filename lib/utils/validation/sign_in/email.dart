@@ -65,7 +65,7 @@ class EmailSignIn extends CompleterAbstractValidationServer<EmailSignInResponse>
     );
     if (response.statusCode != 200) {
       return ResultError(
-        exception: ValidationException(code: _kErrorInvalidResponse),
+        exception: const ValidationException(code: _kErrorInvalidResponse),
       );
     }
     return null;
@@ -81,7 +81,7 @@ class EmailSignIn extends CompleterAbstractValidationServer<EmailSignInResponse>
     String? oobCode = uri?.queryParameters[EmailSignInResponse._kOobCode];
     if (apiKey == null || oobCode == null) {
       return ResultError(
-        exception: ValidationException(code: _kErrorInvalidUrl),
+        exception: const ValidationException(code: _kErrorInvalidUrl),
       );
     }
     return ResultSuccess(

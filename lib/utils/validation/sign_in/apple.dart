@@ -59,7 +59,7 @@ class AppleSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment, OA
   Future<Result<OAuth2Response>> validate(HttpRequest request) async {
     if (!validateState(request.requestedUri.queryParametersAll)) {
       return ResultError(
-        exception: ValidationException(code: ValidationException.kErrorInvalidState),
+        exception: const ValidationException(code: ValidationException.kErrorInvalidState),
       );
     }
     return super.validate(request);

@@ -10,7 +10,7 @@ import 'package:open_authenticator/utils/validation/sign_in/twitter.dart';
 
 /// The Twitter authentication state provider.
 final twitterAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState>(
-  () => FirebaseAuthenticationStateNotifier(TwitterAuthenticationProvider()),
+  () => FirebaseAuthenticationStateNotifier(const TwitterAuthenticationProvider()),
 );
 
 /// The provider that allows to sign in using Twitter.

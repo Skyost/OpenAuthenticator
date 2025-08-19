@@ -11,7 +11,11 @@ analyzer:
 
 linter:
   rules:
-    # avoid_print: false
     prefer_single_quotes: true
     unnecessary_lambdas: true
     avoid_renaming_method_parameters: false
+    prefer_const_constructors: true
+
+formatter:
+  trailing_commas: preserve
+  page_width: 200

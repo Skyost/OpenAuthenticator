@@ -31,7 +31,7 @@ class SignInDialog extends ConsumerStatefulWidget {
   /// Opens the dialog.
   static Future<SignInDialogResult?> openDialog(BuildContext context) => showDialog<SignInDialogResult>(
         context: context,
-        builder: (context) => SignInDialog(),
+        builder: (context) => const SignInDialog(),
       );
 }
 
@@ -140,7 +140,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: EdgeInsets.only(bottom: 6),
+          padding: const EdgeInsets.only(bottom: 6),
           child: TextFormField(
             enabled: canAuthenticateByEmail,
             onChanged: (value) {
@@ -160,7 +160,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(bottom: 20),
           child: Align(
             alignment: Alignment.topRight,
             child: Text(
@@ -171,7 +171,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
           ),
         ),
         AppFilledButton(
-          icon: Icon(Icons.send),
+          icon: const Icon(Icons.send),
           onPressed: email.trim().isNotEmpty && TextInputDialog.validateEmail(email) == null ? (() => onEmailChosen(providers.getProvider<EmailLinkAuthenticationProvider>())) : null,
           label: child,
         ),
@@ -284,8 +284,8 @@ class _ProviderCircleButton extends ConsumerWidget {
       child: FilledButton.tonal(
         onPressed: state is FirebaseAuthenticationStateLoggedOut ? onTapIfLoggedOut : null,
         style: FilledButton.styleFrom(
-          shape: CircleBorder(),
-          padding: EdgeInsets.all(20),
+          shape: const CircleBorder(),
+          padding: const EdgeInsets.all(20),
           backgroundColor: Colors.white,
         ),
         child: FirebaseAuthenticationProviderImage(
@@ -331,7 +331,7 @@ class _ProviderButton extends ConsumerWidget {
       TwitterAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.twitter.name,
       _ => null,
     };
-    Widget child = title == null ? SizedBox.shrink() : Text(title);
+    Widget child = title == null ? const SizedBox.shrink() : Text(title);
     if (state is FirebaseAuthenticationStateLoggedIn) {
       child = _ButtonChildWithAuthenticatedBadge(
         child: child,
@@ -395,7 +395,7 @@ class _AuthenticatedBadge extends StatelessWidget {
   Widget build(BuildContext context) => Badge(
         offset: offset,
         alignment: alignment,
-        label: Icon(
+        label: const Icon(
           Icons.check,
           color: Colors.white,
         ),

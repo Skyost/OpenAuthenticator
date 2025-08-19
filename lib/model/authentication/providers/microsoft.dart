@@ -9,7 +9,7 @@ import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 
 /// The Microsoft authentication state provider.
 final microsoftAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState>(
-  () => FirebaseAuthenticationStateNotifier(MicrosoftAuthenticationProvider()),
+  () => FirebaseAuthenticationStateNotifier(const MicrosoftAuthenticationProvider()),
 );
 
 /// The provider that allows to sign in using Microsoft.

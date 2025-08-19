@@ -126,10 +126,10 @@ mixin RequiresAuthenticationProvider on ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     bool hasProvider = ref.watch(userAuthenticationProviders.select((providers) => providers.availableProviders.isNotEmpty));
     if (!hasProvider) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
     FirebaseAuthenticationState authenticationState = ref.watch(firebaseAuthenticationProvider);
-    return isAuthenticationStateValid(authenticationState) ? buildWidgetWithAuthenticationProviders(context, ref) : SizedBox.shrink();
+    return isAuthenticationStateValid(authenticationState) ? buildWidgetWithAuthenticationProviders(context, ref) : const SizedBox.shrink();
   }
 
   /// Whether this settings entry requires a specific state to be displayed.

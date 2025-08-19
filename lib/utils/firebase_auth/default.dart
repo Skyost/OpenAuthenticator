@@ -303,8 +303,6 @@ class ActionCodeSettings extends firebase_auth.ActionCodeSettings {
     super.androidPackageName,
     super.androidMinimumVersion,
     super.androidInstallApp = false,
-    @Deprecated('Firebase Dynamic Links is deprecated and will be shut down as early as August * 2025.')
-    super.dynamicLinkDomain,
     super.linkDomain,
     super.handleCodeInApp = false,
     super.iOSBundleId,

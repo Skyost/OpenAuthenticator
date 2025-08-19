@@ -12,7 +12,7 @@ class FirebaseAuthSub extends FirebaseAuth {
   Future<void> signOut() async {}
 
   @override
-  Future<SignInResult> unlinkFrom(String providerId) => Future.value(SignInResult());
+  Future<SignInResult> unlinkFrom(String providerId) => Future.value(const SignInResult());
 
   @override
   Stream<User?> get userChanges => Stream.value(currentUser);

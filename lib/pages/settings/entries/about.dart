@@ -20,9 +20,9 @@ class AboutSettingsEntryWidget extends StatelessWidget {
           title: Text(translations.settings.about.aboutApp.title(appName: App.appName)),
           subtitle: Text.rich(
             translations.settings.about.aboutApp.subtitle(
-              appName: TextSpan(
+              appName: const TextSpan(
                 text: App.appName,
-                style: const TextStyle(fontStyle: FontStyle.italic),
+                style: TextStyle(fontStyle: FontStyle.italic),
               ),
               appVersion: TextSpan(
                 text: snapshot.data!.version,

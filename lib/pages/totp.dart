@@ -249,7 +249,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
                   }
                 }
               : null,
-          icon: Icon(Icons.check),
+          icon: const Icon(Icons.check),
           label: Text(translations.totp.page.save),
         ),
       );
@@ -258,7 +258,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   List<Widget> createAdvancedOptionsWidgets() => [
         ListTilePadding(
           child: DropdownButtonFormField<Algorithm>(
-            value: algorithm ?? Totp.kDefaultAlgorithm,
+            initialValue: algorithm ?? Totp.kDefaultAlgorithm,
             decoration: FormLabelWithIcon(
               icon: Icons.tag,
               text: translations.totp.page.algorithm,

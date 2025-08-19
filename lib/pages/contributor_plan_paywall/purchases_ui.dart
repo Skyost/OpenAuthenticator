@@ -93,7 +93,7 @@ class ContributorPlanPaywall extends ConsumerWidget {
               },
             );
           }
-          return CenteredCircularProgressIndicator();
+          return const CenteredCircularProgressIndicator();
         },
       );
 }

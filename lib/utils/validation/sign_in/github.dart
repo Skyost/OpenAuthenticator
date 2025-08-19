@@ -59,7 +59,7 @@ class GithubSignIn with OAuth2SignIn {
     );
     if (response.statusCode != 200) {
       return ResultError(
-        exception: ValidationException(code: ValidationException.kErrorInvalidResponse),
+        exception: const ValidationException(code: ValidationException.kErrorInvalidResponse),
       );
     }
     Map<String, dynamic> parsedResponse = jsonDecode(response.body);
@@ -67,7 +67,7 @@ class GithubSignIn with OAuth2SignIn {
     String? userCode = parsedResponse['user_code'];
     if (verificationUrl == null || userCode == null || !(await canLaunchUrlString(verificationUrl))) {
       return ResultError(
-        exception: ValidationException(code: ValidationException.kErrorInvalidResponse),
+        exception: const ValidationException(code: ValidationException.kErrorInvalidResponse),
       );
     }
     Duration timeout = parsedResponse.containsKey('expires_in') ? Duration(seconds: parsedResponse['expires_in']) : const Duration(minutes: 15);

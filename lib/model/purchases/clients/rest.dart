@@ -97,7 +97,7 @@ class RevenueCatRestClient extends RevenueCatClient {
     String? token = request.uri.queryParametersAll['token']?.firstOrNull;
     return token == null
         ? ResultError<String>(
-            exception: ValidationException(code: 'no_token'),
+            exception: const ValidationException(code: 'no_token'),
           )
         : ResultSuccess<String>(
             value: token,

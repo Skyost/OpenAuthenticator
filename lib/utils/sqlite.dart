@@ -12,7 +12,7 @@ class SqliteUtils {
     }
     return driftDatabase(
       name: dbFileName,
-      native: DriftNativeOptions(
+      native: const DriftNativeOptions(
         databaseDirectory: getApplicationSupportDirectory,
       ),
     );

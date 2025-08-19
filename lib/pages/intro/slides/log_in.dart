@@ -64,13 +64,13 @@ class _LogInButton extends ConsumerWidget {
       case FirebaseAuthenticationStateLoggedOut():
         return AppFilledButton(
           onPressed: () => AccountUtils.trySignIn(context, ref),
-          icon: Icon(Icons.login),
+          icon: const Icon(Icons.login),
           label: Text(translations.intro.logIn.button.loggedOut),
         );
       case FirebaseAuthenticationStateLoggedIn():
         return AppFilledButton(
           onPressed: null,
-          icon: Icon(Icons.check),
+          icon: const Icon(Icons.check),
           label: Text(translations.intro.logIn.button.loggedIn),
         );
     }

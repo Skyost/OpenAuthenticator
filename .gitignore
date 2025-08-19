@@ -34,6 +34,7 @@ migrate_working_dir/
 .pub/
 /build/
 /devtools_options.yaml
+/pubspec.lock
 
 # Symbolication related
 app.*.symbols

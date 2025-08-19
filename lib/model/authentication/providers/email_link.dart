@@ -46,7 +46,7 @@ class EmailLinkConfirmationStateNotifier extends AsyncNotifier<String?> {
     try {
       SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
       await preferences.remove(_kFirebaseAuthenticationEmailKey);
-      state = AsyncData(null);
+      state = const AsyncData(null);
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(
@@ -86,7 +86,7 @@ class EmailLinkConfirmationStateNotifier extends AsyncNotifier<String?> {
         future: FirebaseAuth.instance.signInWith(method),
       );
       await preferences.remove(_kFirebaseAuthenticationEmailKey);
-      state = AsyncData(null);
+      state = const AsyncData(null);
       return ResultSuccess(
         value: AuthenticationObject(
           email: signInResult.email,
@@ -103,7 +103,7 @@ class EmailLinkConfirmationStateNotifier extends AsyncNotifier<String?> {
 
 /// The email link authentication state provider.
 final emailLinkAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState>(
-  () => FirebaseAuthenticationStateNotifier(EmailLinkAuthenticationProvider()),
+  () => FirebaseAuthenticationStateNotifier(const EmailLinkAuthenticationProvider()),
 );
 
 /// The provider that allows to sign in using an email link.
@@ -161,7 +161,7 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
   Future<Result<EmailLinkAuthenticationObject>> tryReAuthenticate(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      throw _ReAuthenticateException(message: 'User must be logged in before re-authenticating.');
+      throw const _ReAuthenticateException(message: 'User must be logged in before re-authenticating.');
     }
     if (!context.mounted) {
       return const ResultCancelled();

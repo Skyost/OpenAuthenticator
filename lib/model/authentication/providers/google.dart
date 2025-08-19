@@ -9,7 +9,7 @@ import 'package:open_authenticator/utils/validation/sign_in/oauth2.dart';
 
 /// The Google authentication state provider.
 final googleAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticationStateNotifier, FirebaseAuthenticationState>(
-  () => FirebaseAuthenticationStateNotifier(GoogleAuthenticationProvider()),
+  () => FirebaseAuthenticationStateNotifier(const GoogleAuthenticationProvider()),
 );
 
 /// The provider that allows to sign in using Google.

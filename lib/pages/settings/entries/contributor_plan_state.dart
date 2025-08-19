@@ -15,23 +15,25 @@ class ContributorPlanStateEntryWidget extends ConsumerWidget {
     return ListTile(
       leading: const Icon(Icons.bug_report),
       enabled: state.hasValue,
-      title: DropdownButtonFormField<ContributorPlanState>(
-        value: state.valueOrNull,
+      title: InputDecorator(
         decoration: const InputDecoration(
           labelText: 'Contributor Plan state',
         ),
-        items: [
-          for (ContributorPlanState state in ContributorPlanState.values)
-            DropdownMenuItem<ContributorPlanState>(
-              value: state,
-              child: Text(state.name),
-            ),
-        ],
-        onChanged: (value) {
-          if (value != null) {
-            ref.read(contributorPlanStateProvider.notifier).debugChangeState(value);
-          }
-        },
+        child: DropdownButton<ContributorPlanState>(
+          value: state.valueOrNull,
+          items: [
+            for (ContributorPlanState state in ContributorPlanState.values)
+              DropdownMenuItem<ContributorPlanState>(
+                value: state,
+                child: Text(state.name),
+              ),
+          ],
+          onChanged: (value) {
+            if (value != null) {
+              ref.read(contributorPlanStateProvider.notifier).debugChangeState(value);
+            }
+          },
+        ),
       ),
     );
   }
