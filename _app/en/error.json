@@ -1,0 +1,55 @@
+{
+  "noError": "Success !",
+  "validation": {
+    "number": "You should enter a valid number",
+    "empty": "This field is required",
+    "email": "Invalid email",
+    "secret": "Invalid secret entered",
+    "totpDigits": "This number should be super or equal than 6",
+    "masterPassword": "Invalid password entered",
+    "confirmation": "Confirmation doesn't match"
+  },
+  "timeout": {
+    "generic": "Timeout occurred. Please try again later.",
+    "authentication": "Timed out while logging in using the selected provider. Please try again.",
+    "unlink": "Timed out while trying to unlink your account from this authentication provider. Please try again.",
+    "contributorPlan": "Timed out while waiting for your Contributor Plan subscription purchase. Please try again."
+  },
+  "appUnlock": "Failed to unlock the app. Please try again.",
+  "generic": {
+    "noTryAgain": "Oops, something went wrong.",
+    "tryAgain": "Something went wrong. Please try again later.",
+    "withException": "An error occurred (exception : $exception). Please try again later."
+  },
+  "authentication": {
+    "accountExistsWithDifferentCredentialsDialog": {
+      "title": "An account already exists",
+      "message": "An account with the same email address exists in our database, but the selected authentication provider has not yet been linked to it.\nPlease try to log in using an already linked authentication provider."
+    },
+    "invalidCredential": "Invalid credentials provided.",
+    "operationNotAllowed": "Operation not allowed. This should not happen, please report this error.",
+    "userDisabled": "Your account has been disabled.",
+    "firebaseException": "An error occurred while trying to authenticate your account (exception : $exception). Please try again later."
+  },
+  "scan": {
+    "noUri": "Failed to read this QR code. Please ensure it is a valid TOTP QR code.",
+    "accessDeniedDialog": {
+      "title": "Access denied",
+      "message": "Failed to access your camera (access denied : $exception). Do you want to retry ?"
+    },
+    "controllerUninitialized": "Uninitialized controller (code : $exception).",
+    "unsupported": "Scanning is not supported on this device (code : $exception)."
+  },
+  "storageMigration(map)": {
+    "backupError": "An error occurred while doing the backup. Please try again.",
+    "currentStoragePasswordMismatch": "Invalid master password entered.",
+    "encryptionKeyChangeFailed": "An error occurred while encrypting your data. Please try again later.",
+    "genericError": "An error occurred while migrating your data. Please try again later."
+  },
+  "authenticationValidation": {
+    "incorrectPath": "Something went wrong (path is '$path'). Please report this error.",
+    "generic": "Unable to validate request (exception : $exception). Please try again later.",
+    "oauth2": "Unable to login using $name. Please try again later."
+  },
+  "totpDecrypt": "Failed to decrypt this TOTP. Please ensure you have entered the correct password."
+}

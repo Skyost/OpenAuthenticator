@@ -1,0 +1,81 @@
+{
+  "actions": {
+    "decrypt": "Déchiffrer",
+    "mobileDialog": {
+      "title": "Actions sur le TOTP",
+      "edit": "Éditer le TOTP",
+      "delete": "Supprimer le TOTP"
+    },
+    "desktopButtons": {
+      "copy": "Copier code",
+      "edit": "Éditer",
+      "delete": "Supprimer"
+    },
+    "copyConfirmation": "Copié dans le presse-papier.",
+    "editConfirmationDialog": {
+      "title": "Éditer ce TOTP",
+      "message": "Il semblerait que ce TOTP a été chiffré avec une autre clé que celle que vous utilisez actuellement. Cela peut arriver si vous avez changé votre mot de passe maître sur un autre appareil. Si vous éditez ce TOTP, il sera chiffré avec votre clé actuelle. Voulez-vous continuer ?"
+    },
+    "deleteConfirmationDialog": {
+      "title": "Supprimer ce TOTP",
+      "message": "Voulez-vous vraiment supprimer ce TOTP ?"
+    }
+  },
+  "decryptDialog": {
+    "title": "Déchiffrement du TOTP",
+    "message": "Ce TOTP a été chiffré en utilisant un mot de passe maître différent. Veuillez l'entrer ci-dessous pour le déchiffrer."
+  },
+  "totpKeyDialog": {
+    "title": "Déchiffrement réussi",
+    "message": {
+      "one": "Souhaitez-vous changer votre mot de passe maître ou chiffrer ce TOTP avec votre clé de chiffrement actuelle ?",
+      "other": "Ce TOTP a été déchiffré avec succès, et le mot de passe a permis de déchiffrer plus de TOTPs. Que souhaitez-vous faire ?"
+    },
+    "choices": {
+      "changeAllDecryptedTotpsKey": {
+        "title": "Chiffrer les TOTPs avec votre clé actuelle",
+        "subtitle": "Changer la clé de chiffrement utilisée pour ce TOTP ainsi que pour ceux qui ont pu être déchiffrés, et utiliser la votre à la place."
+      },
+      "changeTotpKey": {
+        "title": {
+          "one": "Chiffrer ce TOTP avec votre clé actuelle",
+          "other": "Chiffrer seulement ce TOTP avec votre clé actuelle"
+        },
+        "subtitle": "Changer la clé de chiffrement utilisée pour ce TOTP, et utiliser la votre à la place. Les autres TOTPs déchiffrés seront utilisables jusqu'à la fermeture de l'application."
+      },
+      "changeMasterPassword": {
+        "title": "Changer votre mot de passe maître",
+        "subtitle": "Utiliser le mot de passe que vous venez d'entrer comme nouveau mot de passe maître et générer une clé de chiffrement à partir de celui-ci.\nTous les TOTPs encore chiffrés avec un autre mot de passe devront être déchiffrés manuellement."
+      },
+      "doNothing": {
+        "title": "Ne rien faire",
+        "subtitle": "Vous devrez entrer de nouveau le même mot de passe pour déchiffrer ce TOTP."
+      }
+    }
+  },
+  "page": {
+    "title": {
+      "edit": "Éditer le TOTP",
+      "add": "Ajouter un TOTP"
+    },
+    "label": {
+      "text": "Étiquette",
+      "hint": "me@exemple.com"
+    },
+    "secret": {
+      "text": "Clé secrète",
+      "hint": "JBSWY3DPEHPK3PXP"
+    },
+    "issuer": {
+      "text": "Émetteur",
+      "hint": "exemple.com"
+    },
+    "algorithm": "Algorithme",
+    "digits": "Nombre de chiffres",
+    "validity": "Validité (en secondes)",
+    "advancedOptions": "Options avancées",
+    "showQrCode": "Afficher le QR code",
+    "save": "Enregistrer",
+    "uriError": "Impossible de lire ce TOTP. Êtes-vous sûr qu'il est valide ?"
+  }
+}

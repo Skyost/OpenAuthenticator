@@ -1,0 +1,27 @@
+{
+  "empty": "Pas de TOTP pour le moment.\nEssayez d'en ajouter un !",
+  "refreshButton": "Rafraîchir",
+  "addDialog": {
+    "title": "Ajouter un TOTP",
+    "qrCode": {
+      "title": "Ajouter avec un QR code",
+      "subtitle": "Scanner le QR code d'un TOTP et ajoutez le automatiquement à l'application !"
+    },
+    "manually": {
+      "title": "Ajouter manuellement",
+      "subtitle": "Entrer manuellement les détails du TOTP (ex. secret, étiquette, émetteur, ...)."
+    }
+  },
+  "noCryptoStore": {
+    "message": "Une erreur est survenue durant la lecture du crypto store. Cela veut dire qu'aucune opération de chiffrement / déchiffrement n'est possible. Veuillez redémarrer l'application ou entrer un nouveau mot de passe maître en utilisant le bouton ci-dessous.",
+    "resetButton": "Réinitialiser le mot de passe maître"
+  },
+  "logInFailed": {
+    "message": "Impossible de se connecter. Veuillez réessayer, vous reconnecter ou changer le type de stockage.",
+    "button": {
+      "retry": "Réessayer",
+      "relogIn": "Se reconnecter",
+      "changeStorageType": "Changer le type de stockage"
+    }
+  }
+}

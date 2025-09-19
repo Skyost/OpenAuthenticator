@@ -1,0 +1,9 @@
+{
+  "dialogTitle": "Escolha um logotipo",
+  "keywords": {
+    "text": "Palavras-chave",
+    "hint": "microsoft.com"
+  },
+  "credits": "Resultados da pesquisa fornecidos por $sources",
+  "noLogoFound": "Nenhum logotipo encontrado. Tente outras palavras-chave!"
+}
