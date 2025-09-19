@@ -47,24 +47,24 @@ class BlurWidget extends ConsumerStatefulWidget {
 class _BlurWidgetState extends ConsumerState<BlurWidget> with BrightnessListener {
   @override
   Widget build(BuildContext context) => ClipRRect(
-        borderRadius: widget.borderRadius ?? BorderRadius.zero,
-        child: Stack(
-          children: [
-            if (widget.below != null) widget.below!,
-            Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: widget.blur, sigmaY: widget.blur),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: (currentBrightness == Brightness.light ? Colors.white : Colors.black).withValues(alpha: widget.colorOpacity),
-                  ),
-                  alignment: widget.alignment,
-                  child: widget.overlay,
-                ),
+    borderRadius: widget.borderRadius ?? BorderRadius.zero,
+    child: Stack(
+      children: [
+        if (widget.below != null) widget.below!,
+        Positioned.fill(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: widget.blur, sigmaY: widget.blur),
+            child: Container(
+              decoration: BoxDecoration(
+                color: (currentBrightness == Brightness.light ? Colors.white : Colors.black).withValues(alpha: widget.colorOpacity),
               ),
+              alignment: widget.alignment,
+              child: widget.overlay,
             ),
-            if (widget.above != null) widget.above!,
-          ],
+          ),
         ),
-      );
+        if (widget.above != null) widget.above!,
+      ],
+    ),
+  );
 }

@@ -205,10 +205,10 @@ class _AppDialogTitleState extends ConsumerState<_AppDialogTitle> with Brightnes
 
   /// Creates the box decoration.
   BoxDecoration? get boxDecoration => BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(widget.borderRadius),
-          topRight: Radius.circular(widget.borderRadius),
-        ),
-        color: currentPlatform.isMobile || currentBrightness == Brightness.dark ? null : Theme.of(context).colorScheme.primary,
-      );
+    borderRadius: BorderRadius.only(
+      topLeft: Radius.circular(widget.borderRadius),
+      topRight: Radius.circular(widget.borderRadius),
+    ),
+    color: currentPlatform.isMobile || currentBrightness == Brightness.dark ? null : Theme.of(context).colorScheme.primary,
+  );
 }

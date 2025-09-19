@@ -35,116 +35,116 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ListView(
-        shrinkWrap: true,
-        children: [
-          AppBar(
-            leading: CloseButton(
-              onPressed: onDismiss,
-            ),
-            backgroundColor: Colors.transparent,
-            scrolledUnderElevation: 0,
-            title: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Text.rich(
-                translations.contributorPlan.fallbackPaywall.title(
-                  title: (text) => WidgetSpan(
-                    child: TitleWidget(
-                      text: text,
-                      textStyle: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                    alignment: PlaceholderAlignment.middle,
-                  ),
+    shrinkWrap: true,
+    children: [
+      AppBar(
+        leading: CloseButton(
+          onPressed: onDismiss,
+        ),
+        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        title: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text.rich(
+            translations.contributorPlan.fallbackPaywall.title(
+              title: (text) => WidgetSpan(
+                child: TitleWidget(
+                  text: text,
+                  textStyle: Theme.of(context).textTheme.headlineLarge,
                 ),
-                style: Theme.of(context).textTheme.headlineLarge,
-                textAlign: TextAlign.center,
+                alignment: PlaceholderAlignment.middle,
               ),
             ),
-            centerTitle: true,
+            style: Theme.of(context).textTheme.headlineLarge,
+            textAlign: TextAlign.center,
           ),
-          const ListTilePadding(
-            top: 20,
-            bottom: 20,
-            child: SizedBox(
-              height: 150,
-              child: SizedScalableImageWidget(
-                asset: 'assets/images/logo.si',
-              ),
-            ),
+        ),
+        centerTitle: true,
+      ),
+      const ListTilePadding(
+        top: 20,
+        bottom: 20,
+        child: SizedBox(
+          height: 150,
+          child: SizedScalableImageWidget(
+            asset: 'assets/images/logo.si',
           ),
-          for (String feature in translations.contributorPlan.fallbackPaywall.features)
-            ListTilePadding(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: Icon(
-                      Icons.check,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(feature),
-                  ),
-                ],
-              ),
-            ),
-          ListTilePadding(
-            top: 20,
-            bottom: 20,
-            child: DividerText(
-              text: Text(
-                translations.contributorPlan.fallbackPaywall.packageType.choose,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          ListTilePadding(
-            child: _ContributorPlanBillingPlanPicker(
-              onContinuePressed: (packageType) => _tryPurchase(context, ref, packageType),
-            ),
-          ),
-          ListTilePadding(
-            top: 20,
-            bottom: 10,
-            child: Wrap(
-              alignment: WrapAlignment.spaceAround,
-              children: [
-                TextButton(
-                  onPressed: () async {
-                    if (await canLaunchUrlString(AppContributorPlan.restPrivacyPolicyLink)) {
-                      await launchUrlString(AppContributorPlan.restPrivacyPolicyLink);
-                    }
-                  },
-                  style: ButtonStyle(
-                    textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
-                  ),
-                  child: Text(translations.contributorPlan.fallbackPaywall.button.privacyPolicy),
+        ),
+      ),
+      for (String feature in translations.contributorPlan.fallbackPaywall.features)
+        ListTilePadding(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 6),
+                child: Icon(
+                  Icons.check,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-                TextButton(
-                  onPressed: () async {
-                    if (await canLaunchUrlString(AppContributorPlan.restTermsOfServiceLink)) {
-                      await launchUrlString(AppContributorPlan.restTermsOfServiceLink);
-                    }
-                  },
-                  style: ButtonStyle(
-                    textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
-                  ),
-                  child: Text(translations.contributorPlan.fallbackPaywall.button.termsOfService),
-                ),
-                TextButton(
-                  onPressed: () => _tryRestorePurchases(context, ref),
-                  style: ButtonStyle(
-                    textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
-                  ),
-                  child: Text(translations.contributorPlan.fallbackPaywall.button.restorePurchases),
-                ),
-              ],
-            ),
+              ),
+              Expanded(
+                child: Text(feature),
+              ),
+            ],
           ),
-        ],
-      );
+        ),
+      ListTilePadding(
+        top: 20,
+        bottom: 20,
+        child: DividerText(
+          text: Text(
+            translations.contributorPlan.fallbackPaywall.packageType.choose,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      ListTilePadding(
+        child: _ContributorPlanBillingPlanPicker(
+          onContinuePressed: (packageType) => _tryPurchase(context, ref, packageType),
+        ),
+      ),
+      ListTilePadding(
+        top: 20,
+        bottom: 10,
+        child: Wrap(
+          alignment: WrapAlignment.spaceAround,
+          children: [
+            TextButton(
+              onPressed: () async {
+                if (await canLaunchUrlString(AppContributorPlan.restPrivacyPolicyLink)) {
+                  await launchUrlString(AppContributorPlan.restPrivacyPolicyLink);
+                }
+              },
+              style: ButtonStyle(
+                textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
+              ),
+              child: Text(translations.contributorPlan.fallbackPaywall.button.privacyPolicy),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (await canLaunchUrlString(AppContributorPlan.restTermsOfServiceLink)) {
+                  await launchUrlString(AppContributorPlan.restTermsOfServiceLink);
+                }
+              },
+              style: ButtonStyle(
+                textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
+              ),
+              child: Text(translations.contributorPlan.fallbackPaywall.button.termsOfService),
+            ),
+            TextButton(
+              onPressed: () => _tryRestorePurchases(context, ref),
+              style: ButtonStyle(
+                textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
+              ),
+              child: Text(translations.contributorPlan.fallbackPaywall.button.restorePurchases),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 
   /// Tries to do purchase the [packageType].
   Future<void> _tryPurchase(BuildContext context, WidgetRef ref, PackageType packageType) async {
@@ -209,72 +209,72 @@ class _ContributorPlanBillingPlanPickerState extends ConsumerState<_ContributorP
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: FutureBuilder(
-              future: ref.read(contributorPlanStateProvider.notifier).getPrices(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError || snapshot.data is ResultError) {
-                  Object? error;
-                  if (snapshot.hasError) {
-                    error = snapshot.error!;
-                  } else if (snapshot.data is ResultError) {
-                    error = snapshot.error;
-                  }
-                  return Text(
-                    error == null ? translations.error.generic.tryAgain : translations.error.generic.withException(exception: error),
-                    textAlign: TextAlign.center,
-                  );
-                }
-                if (snapshot.hasData) {
-                  Result<Prices> result = snapshot.requireData;
-                  if (result is! ResultSuccess) {
-                    Object? exception = result is! ResultError || (result as ResultError).exception == null ? null : (result as ResultError).exception;
-                    return Text(
-                      exception == null ? translations.error.generic.tryAgain : translations.error.generic.withException(exception: exception),
-                      textAlign: TextAlign.center,
-                    );
-                  }
-                  Prices prices = (result as ResultSuccess).value;
-                  if (prices.packagesPrice.isEmpty) {
-                    return Text(
-                      translations.contributorPlan.fallbackPaywall.packageType.empty,
-                      textAlign: TextAlign.center,
-                    );
-                  }
-                  return IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        for (MapEntry<PackageType, Price> entry in prices.packagesPrice.entries)
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                              child: _createCard(
-                                context,
-                                packageType: entry.key,
-                                price: entry.value,
-                                off: prices.promotions[entry.key],
-                              ),
-                            ),
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: FutureBuilder(
+          future: ref.read(contributorPlanStateProvider.notifier).getPrices(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError || snapshot.data is ResultError) {
+              Object? error;
+              if (snapshot.hasError) {
+                error = snapshot.error!;
+              } else if (snapshot.data is ResultError) {
+                error = snapshot.error;
+              }
+              return Text(
+                error == null ? translations.error.generic.tryAgain : translations.error.generic.withException(exception: error),
+                textAlign: TextAlign.center,
+              );
+            }
+            if (snapshot.hasData) {
+              Result<Prices> result = snapshot.requireData;
+              if (result is! ResultSuccess) {
+                Object? exception = result is! ResultError || (result as ResultError).exception == null ? null : (result as ResultError).exception;
+                return Text(
+                  exception == null ? translations.error.generic.tryAgain : translations.error.generic.withException(exception: exception),
+                  textAlign: TextAlign.center,
+                );
+              }
+              Prices prices = (result as ResultSuccess).value;
+              if (prices.packagesPrice.isEmpty) {
+                return Text(
+                  translations.contributorPlan.fallbackPaywall.packageType.empty,
+                  textAlign: TextAlign.center,
+                );
+              }
+              return IntrinsicHeight(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    for (MapEntry<PackageType, Price> entry in prices.packagesPrice.entries)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: _createCard(
+                            context,
+                            packageType: entry.key,
+                            price: entry.value,
+                            off: prices.promotions[entry.key],
                           ),
-                      ],
-                    ),
-                  );
-                }
-                return const CenteredCircularProgressIndicator();
-              },
-            ),
-          ),
-          AppFilledButton(
-            label: Text(MaterialLocalizations.of(context).continueButtonLabel),
-            onPressed: packageType == null ? null : (() => widget.onContinuePressed(packageType!)),
-          ),
-        ],
-      );
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            }
+            return const CenteredCircularProgressIndicator();
+          },
+        ),
+      ),
+      AppFilledButton(
+        label: Text(MaterialLocalizations.of(context).continueButtonLabel),
+        onPressed: packageType == null ? null : (() => widget.onContinuePressed(packageType!)),
+      ),
+    ],
+  );
 
   /// Creates the list tile for the given [packageType].
   Widget _createCard(

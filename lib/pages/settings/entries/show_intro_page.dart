@@ -11,11 +11,11 @@ class ShowIntroPageSettingsEntryWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ListTile(
-      leading: const Icon(Icons.first_page),
-      title: const Text('Show intro page'),
-      subtitle: const Text('Displays the intro page.'),
-      onTap: () async {
-        await Navigator.pushNamedAndRemoveUntil(context, IntroPage.name, (_) => false);
-      },
-    );
+    leading: const Icon(Icons.first_page),
+    title: const Text('Show intro page'),
+    subtitle: const Text('Displays the intro page.'),
+    onTap: () async {
+      await Navigator.pushNamedAndRemoveUntil(context, IntroPage.name, (_) => false);
+    },
+  );
 }

@@ -9,12 +9,12 @@ class FormLabelWithIcon extends InputDecoration {
     super.hintText,
     super.suffixIcon,
   }) : super(
-          floatingLabelBehavior: hintText == null ? FloatingLabelBehavior.auto : FloatingLabelBehavior.always,
-          label: _LabelWidget(
-            text: text,
-            icon: icon,
-          ),
-        );
+         floatingLabelBehavior: hintText == null ? FloatingLabelBehavior.auto : FloatingLabelBehavior.always,
+         label: _LabelWidget(
+           text: text,
+           icon: icon,
+         ),
+       );
 }
 
 /// The widget to use in decorations.
@@ -33,25 +33,25 @@ class _LabelWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 6),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 2, right: 6),
-              child: Icon(
-                icon,
-                color: Theme.of(context).colorScheme.primary,
-                size: 12,
-              ),
-            ),
-            Expanded(
-              child: Text(
-                text,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-          ],
+    padding: const EdgeInsets.only(bottom: 6),
+    child: Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2, right: 6),
+          child: Icon(
+            icon,
+            color: Theme.of(context).colorScheme.primary,
+            size: 12,
+          ),
         ),
-      );
+        Expanded(
+          child: Text(
+            text,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
+      ],
+    ),
+  );
 }

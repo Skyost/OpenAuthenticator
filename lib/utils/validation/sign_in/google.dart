@@ -11,28 +11,28 @@ class GoogleSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment, O
     this.email,
     super.timeout,
   }) : super(
-          name: 'Google',
-        );
+         name: 'Google',
+       );
 
   @override
   Uri buildUrl() => Uri.https(
-        'accounts.google.com',
-        '/o/oauth2/v2/auth',
-        loginUrlParameters,
-      );
+    'accounts.google.com',
+    '/o/oauth2/v2/auth',
+    loginUrlParameters,
+  );
 
   @override
   List<String> get scopes => [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email',
-      ];
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email',
+  ];
 
   @override
   Map<String, String> get loginUrlParameters => {
-        ...super.loginUrlParameters,
-        'response_type': 'token id_token',
-        'include_granted_scopes': 'true',
-        'prompt': 'select_account',
-        if (email != null) 'login_hint': email!,
-      };
+    ...super.loginUrlParameters,
+    'response_type': 'token id_token',
+    'include_granted_scopes': 'true',
+    'prompt': 'select_account',
+    if (email != null) 'login_hint': email!,
+  };
 }

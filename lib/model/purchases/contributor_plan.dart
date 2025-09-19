@@ -132,14 +132,14 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
 extension PackageTypeDuration on PackageType {
   /// Returns the duration of the package.
   int? get inAYear => switch (this) {
-        PackageType.weekly => 52,
-        PackageType.monthly => 12,
-        PackageType.twoMonth => 6,
-        PackageType.threeMonth => 4,
-        PackageType.sixMonth => 2,
-        PackageType.annual => 1,
-        _ => null,
-      };
+    PackageType.weekly => 52,
+    PackageType.monthly => 12,
+    PackageType.twoMonth => 6,
+    PackageType.threeMonth => 4,
+    PackageType.sixMonth => 2,
+    PackageType.annual => 1,
+    _ => null,
+  };
 }
 
 /// The Contributor Plan prices.
@@ -166,7 +166,7 @@ enum ContributorPlanState {
   inactive,
 
   /// Whether the user has subscribed to the Contributor Plan.
-  active;
+  active,
 }
 
 /// Thrown when no RevenueCat client is available.

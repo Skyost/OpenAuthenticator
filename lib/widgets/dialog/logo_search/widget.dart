@@ -59,49 +59,49 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextFormField(
-            initialValue: searchKeywords,
-            decoration: FormLabelWithIcon(
-              icon: Icons.search,
-              text: translations.logoSearch.keywords.text,
-              hintText: translations.logoSearch.keywords.hint,
-            ),
-            onChanged: (value) {
-              searchKeywords = value;
-              debounce.milliseconds(500, search);
-            },
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      TextFormField(
+        initialValue: searchKeywords,
+        decoration: FormLabelWithIcon(
+          icon: Icons.search,
+          text: translations.logoSearch.keywords.text,
+          hintText: translations.logoSearch.keywords.hint,
+        ),
+        onChanged: (value) {
+          searchKeywords = value;
+          debounce.milliseconds(500, search);
+        },
+      ),
+      SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Text(
+            translations.logoSearch.credits(sources: Source.sources.map((source) => source.name).join(' / ')),
+            style: Theme.of(context).textTheme.labelSmall,
+            textAlign: TextAlign.right,
           ),
-          SizedBox(
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Text(
-                translations.logoSearch.credits(sources: Source.sources.map((source) => source.name).join(' / ')),
-                style: Theme.of(context).textTheme.labelSmall,
-                textAlign: TextAlign.right,
-              ),
-            ),
-          ),
-          if (searches[filteredSearchKeywords]?.isNotEmpty == true)
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: widget.imageWidth / 10,
-              children: [
-                for (String logo in searches[filteredSearchKeywords]!) //
-                  buildImageWidget(logo),
-              ],
-            )
-          else if (searches.isNotEmpty)
-            const CenteredCircularProgressIndicator()
-          else
-            Text(
-              translations.logoSearch.noLogoFound,
-              textAlign: TextAlign.center,
-            ),
-        ],
-      );
+        ),
+      ),
+      if (searches[filteredSearchKeywords]?.isNotEmpty == true)
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: widget.imageWidth / 10,
+          children: [
+            for (String logo in searches[filteredSearchKeywords]!) //
+              buildImageWidget(logo),
+          ],
+        )
+      else if (searches.isNotEmpty)
+        const CenteredCircularProgressIndicator()
+      else
+        Text(
+          translations.logoSearch.noLogoFound,
+          textAlign: TextAlign.center,
+        ),
+    ],
+  );
 
   /// Returns the search keywords, non null and lowercased.
   String get filteredSearchKeywords => searchKeywords == null || searchKeywords!.trim().isEmpty ? kDefaultSearch : searchKeywords!.toLowerCase();

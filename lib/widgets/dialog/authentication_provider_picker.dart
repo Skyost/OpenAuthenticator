@@ -66,13 +66,12 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
   static Future<T?> openDialog<T extends AuthenticationProviderPickerDialogResult>(
     BuildContext context, {
     required DialogMode<T> dialogMode,
-  }) =>
-      showDialog<T>(
-        context: context,
-        builder: (context) => AuthenticationProviderPickerDialog(
-          dialogMode: dialogMode,
-        ),
-      );
+  }) => showDialog<T>(
+    context: context,
+    builder: (context) => AuthenticationProviderPickerDialog(
+      dialogMode: dialogMode,
+    ),
+  );
 }
 
 /// Represents an action.
@@ -99,8 +98,8 @@ class AuthenticationProviderReAuthenticateResult extends AuthenticationProviderP
   AuthenticationProviderReAuthenticateResult({
     required super.provider,
   }) : super(
-          action: (context, provider) => provider.reAuthenticate(context),
-        );
+         action: (context, provider) => provider.reAuthenticate(context),
+       );
 }
 
 /// Returned when the user wants to toggle link to the picked provider.
@@ -113,8 +112,8 @@ class AuthenticationProviderToggleLinkResult extends AuthenticationProviderPicke
     required super.provider,
     this.link = true,
   }) : super(
-          action: link ? ((context, provider) => provider.link(context)) : ((context, provider) => provider.unlink(context)),
-        );
+         action: link ? ((context, provider) => provider.link(context)) : ((context, provider) => provider.unlink(context)),
+       );
 }
 
 /// A [FirebaseAuthenticationProvider] tile.
@@ -152,7 +151,8 @@ class _ProviderTileState extends ConsumerState<_ProviderTile> with BrightnessLis
       width: widget.size,
       height: widget.size,
     );
-    bool invertIconOnBrightnessChance = widget.provider is EmailLinkAuthenticationProvider ||
+    bool invertIconOnBrightnessChance =
+        widget.provider is EmailLinkAuthenticationProvider ||
         widget.provider is AppleAuthenticationProvider ||
         widget.provider is GithubAuthenticationProvider ||
         widget.provider is TwitterAuthenticationProvider;
@@ -214,9 +214,9 @@ enum DialogMode<T extends AuthenticationProviderPickerDialogResult> {
     required bool Function(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) shouldDisplay,
     IconData? Function(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider)? getTrailingIcon,
     required AuthenticationProviderPickerDialogResult? Function(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) createAction,
-  })  : _shouldDisplay = shouldDisplay,
-        _getTrailingIcon = getTrailingIcon,
-        _createAction = createAction;
+  }) : _shouldDisplay = shouldDisplay,
+       _getTrailingIcon = getTrailingIcon,
+       _createAction = createAction;
 
   /// Whether the [provider] should be displayed in [link] mode.
   static bool _shouldDisplayInToggleLinkMode(List<FirebaseAuthenticationProvider> currentProviders, FirebaseAuthenticationProvider provider) {

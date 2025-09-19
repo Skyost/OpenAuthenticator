@@ -9,9 +9,9 @@ class TranslateSettingsEntryWidget extends UriSettingsEntry {
   TranslateSettingsEntryWidget({
     super.key,
   }) : super(
-          icon: Icons.translate,
-          title: translations.settings.about.translate.title,
-          subtitle: translations.settings.about.translate.subtitle(appName: App.appName),
-          uri: Uri.parse(App.appTranslationUrl),
-        );
+         icon: Icons.translate,
+         title: translations.settings.about.translate.title,
+         subtitle: translations.settings.about.translate.subtitle(appName: App.appName),
+         uri: Uri.parse(App.appTranslationUrl),
+       );
 }

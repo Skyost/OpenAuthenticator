@@ -14,10 +14,10 @@ final appUnlockMethodSettingsEntryProvider = AsyncNotifierProvider.autoDispose<A
 class AppUnlockMethodSettingsEntry extends SettingsEntry<AppUnlockMethod> {
   /// Creates a new app unlock settings entry instance.
   AppUnlockMethodSettingsEntry()
-      : super(
-          key: 'appUnlockMethod',
-          defaultValue: NoneAppUnlockMethod(),
-        );
+    : super(
+        key: 'appUnlockMethod',
+        defaultValue: NoneAppUnlockMethod(),
+      );
 
   @override
   Future<AppUnlockMethod> loadFromPreferences(SharedPreferencesWithPrefix preferences) async {

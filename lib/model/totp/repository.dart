@@ -20,7 +20,7 @@ import 'package:open_authenticator/utils/utils.dart';
 final totpRepositoryProvider = AsyncNotifierProvider.autoDispose<TotpRepository, TotpList>(TotpRepository.new);
 
 /// Allows to query, register, update and delete TOTPs.
-class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
+class TotpRepository extends AsyncNotifier<TotpList> {
   @override
   FutureOr<TotpList> build() async {
     Storage storage = await ref.watch(storageProvider.future);
@@ -264,9 +264,9 @@ class TotpRepository extends AutoDisposeAsyncNotifier<TotpList> {
 extension _DecryptList on List<Totp> {
   /// Decrypts the current list.
   Future<List<Totp>> decrypt(CryptoStore? cryptoStore) async => [
-        for (Totp totp in this) //
-          await totp.decrypt(cryptoStore),
-      ];
+    for (Totp totp in this) //
+      await totp.decrypt(cryptoStore),
+  ];
 }
 
 /// A TOTP list, with a last updated time.
@@ -300,10 +300,10 @@ class TotpList extends Iterable<Totp> {
     required Storage storage,
     DateTime? updated,
   }) : this._(
-          list: list,
-          updated: updated,
-          operationThreshold: storage.operationThreshold,
-        );
+         list: list,
+         updated: updated,
+         operationThreshold: storage.operationThreshold,
+       );
 
   /// Returns the object at the given [index] in the list.
   Totp operator [](int index) => _list[index];
@@ -328,9 +328,9 @@ class TotpList extends Iterable<Totp> {
 
   /// Returns the decrypted TOTPs list.
   List<DecryptedTotp> get decryptedTotps => [
-        for (Totp totp in _list)
-          if (totp.isDecrypted) totp as DecryptedTotp,
-      ];
+    for (Totp totp in _list)
+      if (totp.isDecrypted) totp as DecryptedTotp,
+  ];
 }
 
 /// The TOTP limit provider.
@@ -376,8 +376,8 @@ class TotpLimit {
 
   /// Returns whether the limit will be exceeded if one more TOTP is added.
   bool willExceedIfAddMore({int count = 1}) => _willExceedIfAddMore(
-        count: count,
-      );
+    count: count,
+  );
 
   /// Returns whether the user should be able to change the current storage type.
   bool canChangeStorageType(StorageType currentStorageType) {

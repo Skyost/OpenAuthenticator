@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/widgets/form/dropdown_list_tile.dart';
 
 /// Allows to change the app locale for debugging purposes.
 class LocaleEntryWidget extends ConsumerWidget {
@@ -10,27 +11,17 @@ class LocaleEntryWidget extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => ListTile(
-        leading: const Icon(Icons.translate),
-        title: InputDecorator(
-          decoration: const InputDecoration(
-            labelText: 'Language',
-          ),
-          child: DropdownButton<AppLocale>(
-            value: TranslationProvider.of(context).locale,
-            items: [
-              for (AppLocale locale in AppLocale.values)
-                DropdownMenuItem<AppLocale>(
-                  value: locale,
-                  child: Text(locale.languageCode),
-                ),
-            ],
-            onChanged: (value) {
-              if (value != null) {
-                LocaleSettings.setLocale(value);
-              }
-            },
-          ),
+  Widget build(BuildContext context, WidgetRef ref) => DropdownListTile(
+    leading: const Icon(Icons.translate),
+    title: Text('Language'),
+    value: TranslationProvider.of(context).locale,
+    choices: [
+      for (AppLocale locale in AppLocale.values)
+        DropdownListTileChoice(
+          title: locale.languageCode,
+          value: locale,
         ),
-      );
+    ],
+    onChoiceSelected: (choice) => LocaleSettings.setLocale(choice.value),
+  );
 }

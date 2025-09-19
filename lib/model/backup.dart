@@ -179,13 +179,15 @@ class Backup implements Comparable<Backup> {
       }
       HmacSecretKey hmacSecretKey = await HmacSecretKey.importRawKey(await newStore.key.exportRawKey(), Hash.sha256);
       File file = await getBackupPath(createDirectory: true);
-      file.writeAsString(jsonEncode({
-        kPasswordSignatureKey: base64.encode(await hmacSecretKey.signBytes(utf8.encode(password))),
-        kSaltKey: base64.encode(newStore.salt.value),
-        kTotpsKey: [
-          for (Totp totp in toBackup) totp.toJson(),
-        ],
-      }));
+      file.writeAsString(
+        jsonEncode({
+          kPasswordSignatureKey: base64.encode(await hmacSecretKey.signBytes(utf8.encode(password))),
+          kSaltKey: base64.encode(newStore.salt.value),
+          kTotpsKey: [
+            for (Totp totp in toBackup) totp.toJson(),
+          ],
+        }),
+      );
       return const ResultSuccess();
     } catch (ex, stacktrace) {
       return ResultError(

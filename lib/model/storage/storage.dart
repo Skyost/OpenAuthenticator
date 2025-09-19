@@ -16,7 +16,7 @@ import 'package:open_authenticator/utils/result.dart';
 final storageProvider = AsyncNotifierProvider.autoDispose<StorageNotifier, Storage>(StorageNotifier.new);
 
 /// The storage notifier.
-class StorageNotifier extends AutoDisposeAsyncNotifier<Storage> {
+class StorageNotifier extends AsyncNotifier<Storage> {
   @override
   FutureOr<Storage> build() async {
     StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
@@ -138,9 +138,9 @@ class GenericMigrationError extends StorageMigrationException {
 
   /// Creates a new generic migration error instance.
   GenericMigrationError()
-      : super(
-          code: _code,
-        );
+    : super(
+        code: _code,
+      );
 
   @override
   String toString() => 'Generic exception occurred';
@@ -153,9 +153,9 @@ class ShouldAskForDifferentDeletedTotpPolicyException extends StorageMigrationEx
 
   /// Creates a new storage migration policy exception instance.
   ShouldAskForDifferentDeletedTotpPolicyException()
-      : super(
-          code: _code,
-        );
+    : super(
+        code: _code,
+      );
 
   @override
   String toString() => 'Another deleted TOTP policy should be used';
@@ -168,9 +168,9 @@ class BackupException extends StorageMigrationException {
 
   /// Creates a new backup exception instance.
   BackupException()
-      : super(
-          code: _code,
-        );
+    : super(
+        code: _code,
+      );
 
   @override
   String toString() => 'Exception while doing the backup';
@@ -183,9 +183,9 @@ class CurrentStoragePasswordMismatchException extends StorageMigrationException 
 
   /// Creates a new current storage password mismatch exception instance.
   CurrentStoragePasswordMismatchException()
-      : super(
-          code: _code,
-        );
+    : super(
+        code: _code,
+      );
 
   @override
   String toString() => 'Current storage password is incorrect';
@@ -198,9 +198,9 @@ class EncryptionKeyChangeFailedError extends StorageMigrationException {
 
   /// Creates a new encryption key change error instance.
   EncryptionKeyChangeFailedError()
-      : super(
-          code: _code,
-        );
+    : super(
+        code: _code,
+      );
 
   @override
   String toString() => 'Failed to change encryption key';
@@ -215,7 +215,7 @@ enum StorageMigrationDeletedTotpPolicy {
   delete,
 
   /// Whether we should return and ask for deletion.
-  ask;
+  ask,
 }
 
 /// A common interface to store TOTPs either locally or remotely.
@@ -251,10 +251,10 @@ mixin Storage {
   Future<Totp?> getTotp(String uuid);
 
   /// Lists all TOTPs.
-  Future<List<Totp>> listTotps({int? limit});
+  Future<List<Totp>> listTotps();
 
   /// Lists all TOTPs UUID.
-  Future<List<String>> listUuids({int? limit});
+  Future<List<String>> listUuids();
 
   /// Replace all current TOTPs by [newTotps].
   Future<void> replaceTotps(List<Totp> newTotps) async {

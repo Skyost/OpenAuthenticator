@@ -29,16 +29,16 @@ class FirebaseAuthenticationProviderImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedScalableImageWidget(
-        asset: switch (provider) {
-          EmailLinkAuthenticationProvider() => 'assets/images/authentication/email.si',
-          GoogleAuthenticationProvider() => 'assets/images/authentication/google.si',
-          AppleAuthenticationProvider() => 'assets/images/authentication/apple.si',
-          GithubAuthenticationProvider() => 'assets/images/authentication/github.si',
-          MicrosoftAuthenticationProvider() => 'assets/images/authentication/microsoft.si',
-          TwitterAuthenticationProvider() => 'assets/images/authentication/x.si',
-          _ => 'assets/images/logo.si',
-        },
-        width: width,
-        height: width,
-      );
+    asset: switch (provider) {
+      EmailLinkAuthenticationProvider() => 'assets/images/authentication/email.si',
+      GoogleAuthenticationProvider() => 'assets/images/authentication/google.si',
+      AppleAuthenticationProvider() => 'assets/images/authentication/apple.si',
+      GithubAuthenticationProvider() => 'assets/images/authentication/github.si',
+      MicrosoftAuthenticationProvider() => 'assets/images/authentication/microsoft.si',
+      TwitterAuthenticationProvider() => 'assets/images/authentication/x.si',
+      _ => 'assets/images/logo.si',
+    },
+    width: width,
+    height: width,
+  );
 }

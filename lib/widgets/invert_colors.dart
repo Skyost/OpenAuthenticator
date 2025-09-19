@@ -13,14 +13,14 @@ class InvertColors extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ColorFiltered(
-        colorFilter: const ColorFilter.matrix(
-          [
-            -1.0, 0.0, 0.0, 0.0, 255.0, //
-            0.0, -1.0, 0.0, 0.0, 255.0, //
-            0.0, 0.0, -1.0, 0.0, 255.0, //
-            0.0, 0.0, 0.0, 1.0, 0.0, //
-          ],
-        ),
-        child: child,
-      );
+    colorFilter: const ColorFilter.matrix(
+      [
+        -1.0, 0.0, 0.0, 0.0, 255.0, //
+        0.0, -1.0, 0.0, 0.0, 255.0, //
+        0.0, 0.0, -1.0, 0.0, 255.0, //
+        0.0, 0.0, 0.0, 1.0, 0.0, //
+      ],
+    ),
+    child: child,
+  );
 }

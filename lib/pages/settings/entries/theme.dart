@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
+import 'package:open_authenticator/widgets/form/dropdown_list_tile.dart';
 
 /// Allows to configure [themeSettingsEntryProvider].
 class ThemeSettingsEntryWidget extends ConsumerWidget {
@@ -13,30 +14,19 @@ class ThemeSettingsEntryWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<ThemeMode> theme = ref.watch(themeSettingsEntryProvider);
-    return ListTile(
-      leading: Icon(theme.valueOrNull.icon),
+    return DropdownListTile(
       enabled: theme.hasValue,
-      title: InputDecorator(
-        decoration: InputDecoration(
-          labelText: translations.settings.application.theme.title,
-        ),
-        child: DropdownButton<ThemeMode>(
-          value: theme.valueOrNull,
-          items: [
-            for (ThemeMode theme in ThemeMode.values)
-              if (translations.settings.application.theme.values.containsKey(theme.name))
-                DropdownMenuItem<ThemeMode>(
-                  value: theme,
-                  child: Text(translations.settings.application.theme.values[theme.name]!),
-                ),
-          ],
-          onChanged: (value) async {
-            if (value != null) {
-              await ref.read(themeSettingsEntryProvider.notifier).changeValue(value);
-            }
-          },
-        ),
-      ),
+      title: Text(translations.settings.application.theme.title),
+      value: theme.value,
+      choices: [
+        for (ThemeMode mode in ThemeMode.values)
+          DropdownListTileChoice(
+            title: translations.settings.application.theme.values[mode.name]!,
+            icon: mode.icon,
+            value: mode,
+          ),
+      ],
+      onChoiceSelected: (choice) => ref.read(themeSettingsEntryProvider.notifier).changeValue(choice.value),
     );
   }
 }

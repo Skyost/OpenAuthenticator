@@ -59,42 +59,44 @@ class _UnlockChallengeWidgetState extends ConsumerState<UnlockChallengeWidget> {
           body: BlurWidget(
             above: switch (cannotUnlockException) {
               LocalAuthenticationDeviceNotSupported() => _UnlockChallengeWidgetContent(
-                  text: translations.appUnlock.cannotUnlock.localAuthentication.deviceNotSupported,
-                  buttonIcon: Icons.close,
-                  buttonLabel: translations.appUnlock.cannotUnlock.localAuthentication.button,
-                  onButtonPressed: () async {
-                    List<PasswordVerificationMethod> passwordVerificationMethod = await ref.read(passwordVerificationProvider.future);
-                    if (passwordVerificationMethod.isNotEmpty) {
-                      String? password = context.mounted ? (await MasterPasswordInputDialog.prompt(context)) : null;
-                      if (password == null) {
-                        return;
-                      }
+                text: translations.appUnlock.cannotUnlock.localAuthentication.deviceNotSupported,
+                buttonIcon: Icons.close,
+                buttonLabel: translations.appUnlock.cannotUnlock.localAuthentication.button,
+                onButtonPressed: () async {
+                  List<PasswordVerificationMethod> passwordVerificationMethod = await ref.read(passwordVerificationProvider.future);
+                  if (passwordVerificationMethod.isNotEmpty) {
+                    String? password = context.mounted ? (await MasterPasswordInputDialog.prompt(context)) : null;
+                    if (password == null) {
+                      return;
                     }
-                    await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValue(NoneAppUnlockMethod());
-                    await tryUnlockIfNeeded();
-                  },
-                ),
+                  }
+                  await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValue(NoneAppUnlockMethod());
+                  await tryUnlockIfNeeded();
+                },
+              ),
               MasterPasswordNoPasswordVerificationMethodAvailable() || MasterPasswordNoSalt() => _UnlockChallengeWidgetContent(
-                  text: translations.appUnlock.cannotUnlock.masterPassword.noPasswordVerificationMethodAvailable,
-                  buttonIcon: Icons.key,
-                  buttonLabel: translations.appUnlock.cannotUnlock.masterPassword.button,
-                  onButtonPressed: () async {
-                    Result<String> changeResult = await MasterPasswordUtils.changeMasterPassword(context, ref, askForUnlock: false);
-                    if (changeResult is ResultSuccess<String>) {
-                      await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValue(
-                            NoneAppUnlockMethod(),
-                            disableResult: changeResult,
-                          );
-                      await tryUnlockIfNeeded();
-                    }
-                  },
-                ),
+                text: translations.appUnlock.cannotUnlock.masterPassword.noPasswordVerificationMethodAvailable,
+                buttonIcon: Icons.key,
+                buttonLabel: translations.appUnlock.cannotUnlock.masterPassword.button,
+                onButtonPressed: () async {
+                  Result<String> changeResult = await MasterPasswordUtils.changeMasterPassword(context, ref, askForUnlock: false);
+                  if (changeResult is ResultSuccess<String>) {
+                    await ref
+                        .read(appUnlockMethodSettingsEntryProvider.notifier)
+                        .changeValue(
+                          NoneAppUnlockMethod(),
+                          disableResult: changeResult,
+                        );
+                    await tryUnlockIfNeeded();
+                  }
+                },
+              ),
               _ => _UnlockChallengeWidgetContent(
-                  text: translations.appUnlock.widget.text(app: App.appName),
-                  buttonIcon: Icons.key,
-                  buttonLabel: translations.appUnlock.widget.button,
-                  onButtonPressed: value == AppLockState.unlockChallengedStarted ? null : tryUnlockIfNeeded,
-                ),
+                text: translations.appUnlock.widget.text(app: App.appName),
+                buttonIcon: Icons.key,
+                buttonLabel: translations.appUnlock.widget.button,
+                onButtonPressed: value == AppLockState.unlockChallengedStarted ? null : tryUnlockIfNeeded,
+              ),
             },
             below: widget.child,
           ),
@@ -146,37 +148,37 @@ class _UnlockChallengeWidgetContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            ListTilePadding(
-              bottom: 20,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: TitleWidget(
-                  textAlign: TextAlign.center,
-                  textStyle: Theme.of(context).textTheme.headlineLarge,
-                ),
-              ),
+    child: ListView(
+      shrinkWrap: true,
+      children: [
+        ListTilePadding(
+          bottom: 20,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: TitleWidget(
+              textAlign: TextAlign.center,
+              textStyle: Theme.of(context).textTheme.headlineLarge,
             ),
-            ListTilePadding(
-              bottom: 20,
-              child: Text(
-                text,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Center(
-              child: SizedBox(
-                width: math.min(MediaQuery.sizeOf(context).width - 20, 300),
-                child: AppFilledButton(
-                  onPressed: onButtonPressed,
-                  label: Text(buttonLabel),
-                  icon: buttonIcon == null ? null : Icon(buttonIcon),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+        ListTilePadding(
+          bottom: 20,
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Center(
+          child: SizedBox(
+            width: math.min(MediaQuery.sizeOf(context).width - 20, 300),
+            child: AppFilledButton(
+              onPressed: onButtonPressed,
+              label: Text(buttonLabel),
+              icon: buttonIcon == null ? null : Icon(buttonIcon),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

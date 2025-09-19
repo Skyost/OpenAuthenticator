@@ -12,8 +12,8 @@ enum StorageType {
   online;
 
   /// Returns the provider associated with the storage type.
-  AutoDisposeProvider<Storage> get provider => switch (this) {
-        StorageType.local => localStorageProvider,
-        StorageType.online => onlineStorageProvider,
-      };
+  Provider<Storage> get provider => switch (this) {
+    StorageType.local => localStorageProvider,
+    StorageType.online => onlineStorageProvider,
+  };
 }

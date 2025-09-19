@@ -20,31 +20,30 @@ class LogoPickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(translations.logoSearch.dialogTitle),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          LogoSearchWidget(
-            initialSearchKeywords: initialSearchKeywords,
-            onLogoClicked: onLogoClicked,
-          ),
-        ],
-      );
+    title: Text(translations.logoSearch.dialogTitle),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      LogoSearchWidget(
+        initialSearchKeywords: initialSearchKeywords,
+        onLogoClicked: onLogoClicked,
+      ),
+    ],
+  );
 
   /// Opens the dialog.
   static Future<String?> openDialog(
     BuildContext context, {
     String? initialSearchKeywords,
-  }) =>
-      showDialog<String>(
-        context: context,
-        builder: (context) => LogoPickerDialog(
-          initialSearchKeywords: initialSearchKeywords,
-          onLogoClicked: (logo) => Navigator.pop(context, logo),
-        ),
-      );
+  }) => showDialog<String>(
+    context: context,
+    builder: (context) => LogoPickerDialog(
+      initialSearchKeywords: initialSearchKeywords,
+      onLogoClicked: (logo) => Navigator.pop(context, logo),
+    ),
+  );
 }

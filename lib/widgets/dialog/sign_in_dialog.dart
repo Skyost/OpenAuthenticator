@@ -30,58 +30,58 @@ class SignInDialog extends ConsumerStatefulWidget {
 
   /// Opens the dialog.
   static Future<SignInDialogResult?> openDialog(BuildContext context) => showDialog<SignInDialogResult>(
-        context: context,
-        builder: (context) => const SignInDialog(),
-      );
+    context: context,
+    builder: (context) => const SignInDialog(),
+  );
 }
 
 /// The sign-in dialog state.
 class _SignInDialogState extends ConsumerState<SignInDialog> {
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(translations.authentication.signInDialog.title),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          ListTilePadding(
-            bottom: 20,
-            child: _EmailForm(
-              onEmailValidated: (provider, email) {
-                Navigator.pop(
-                  context,
-                  SignInDialogResult(
-                    provider: provider,
-                    signIn: (context, provider) => (provider as EmailLinkAuthenticationProvider).signIn(context, email: email),
-                  ),
-                );
-              },
-            ),
-          ),
-          ListTilePadding(
-            bottom: 20,
-            child: DividerText(
-              text: Text(translations.authentication.signInDialog.separator),
-            ),
-          ),
-          ListTilePadding(
-            child: _OtherProvidersWrap(
-              onProviderSelected: (provider) {
-                Navigator.pop(
-                  context,
-                  SignInDialogResult(
-                    provider: provider,
-                    signIn: (context, provider) => provider.signIn(context),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      );
+    title: Text(translations.authentication.signInDialog.title),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      ListTilePadding(
+        bottom: 20,
+        child: _EmailForm(
+          onEmailValidated: (provider, email) {
+            Navigator.pop(
+              context,
+              SignInDialogResult(
+                provider: provider,
+                signIn: (context, provider) => (provider as EmailLinkAuthenticationProvider).signIn(context, email: email),
+              ),
+            );
+          },
+        ),
+      ),
+      ListTilePadding(
+        bottom: 20,
+        child: DividerText(
+          text: Text(translations.authentication.signInDialog.separator),
+        ),
+      ),
+      ListTilePadding(
+        child: _OtherProvidersWrap(
+          onProviderSelected: (provider) {
+            Navigator.pop(
+              context,
+              SignInDialogResult(
+                provider: provider,
+                signIn: (context, provider) => provider.signIn(context),
+              ),
+            );
+          },
+        ),
+      ),
+    ],
+  );
 }
 
 /// Represents a sign-in action.
@@ -123,7 +123,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
 
   @override
   Widget build(BuildContext context) {
-    String? emailToConfirm = ref.watch(emailLinkConfirmationStateProvider).valueOrNull;
+    String? emailToConfirm = ref.watch(emailLinkConfirmationStateProvider).value;
     Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState> providers = ref.watch(userAuthenticationProviders);
     FirebaseAuthenticationState? emailAuthenticationState = providers.getAuthenticationState<EmailLinkAuthenticationProvider>();
     bool canAuthenticateByEmail =
@@ -149,7 +149,8 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
             decoration: FormLabelWithIcon(
               icon: Icons.email,
               text: translations.authentication.signInDialog.email.title,
-              hintText: emailToConfirm ??
+              hintText:
+                  emailToConfirm ??
                   (emailAuthenticationState is FirebaseAuthenticationStateLoggedIn ? emailAuthenticationState.user.email : null) ??
                   translations.authentication.signInDialog.email.hint,
             ),
@@ -365,12 +366,12 @@ class _ButtonChildWithAuthenticatedBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) => _AuthenticatedBadge(
-          alignment: Alignment.topCenter,
-          offset: Offset(constraints.maxWidth / 2 + 7, -7),
-          child: child,
-        ),
-      );
+    builder: (context, constraints) => _AuthenticatedBadge(
+      alignment: Alignment.topCenter,
+      offset: Offset(constraints.maxWidth / 2 + 7, -7),
+      child: child,
+    ),
+  );
 }
 
 /// Displays a badge indicating the user already has the current provider.
@@ -393,14 +394,14 @@ class _AuthenticatedBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Badge(
-        offset: offset,
-        alignment: alignment,
-        label: const Icon(
-          Icons.check,
-          color: Colors.white,
-        ),
-        backgroundColor: Colors.green.shade700,
-        textColor: Colors.white,
-        child: child,
-      );
+    offset: offset,
+    alignment: alignment,
+    label: const Icon(
+      Icons.check,
+      color: Colors.white,
+    ),
+    backgroundColor: Colors.green.shade700,
+    textColor: Colors.white,
+    child: child,
+  );
 }

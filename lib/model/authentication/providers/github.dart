@@ -16,31 +16,31 @@ final githubAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticatio
 class GithubAuthenticationProvider extends FallbackAuthenticationProvider<GithubSignIn> {
   /// Creates a new Github authentication provider instance.
   const GithubAuthenticationProvider()
-      : super(
-          availablePlatforms: const [
-            Platform.android,
-            Platform.iOS,
-            Platform.windows,
-          ],
-        );
+    : super(
+        availablePlatforms: const [
+          Platform.android,
+          Platform.iOS,
+          Platform.windows,
+        ],
+      );
 
   @override
   String get providerId => GithubAuthMethod.providerId;
 
   @override
   GithubAuthMethod createDefaultAuthMethod({List<String> scopes = const []}) => GithubAuthMethod.defaultMethod(
-        scopes: scopes,
-      );
+    scopes: scopes,
+  );
 
   @override
   GithubAuthMethod createRestAuthMethod(OAuth2Response response) => GithubAuthMethod.rest(
-        accessToken: response.accessToken,
-      );
+    accessToken: response.accessToken,
+  );
 
   @override
   GithubSignIn createFallbackAuthProvider() => GithubSignIn(
-        clientId: AppCredentials.githubSignInClientId,
-      );
+    clientId: AppCredentials.githubSignInClientId,
+  );
 
   @override
   bool get showLoadingDialog => false;

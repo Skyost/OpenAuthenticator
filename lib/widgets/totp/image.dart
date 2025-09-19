@@ -43,13 +43,13 @@ class TotpImageWidget extends ConsumerWidget {
     required Totp totp,
     double size = 100,
   }) : this(
-          key: key,
-          uuid: totp.uuid,
-          imageUrl: totp.isDecrypted ? (totp as DecryptedTotp).imageUrl : null,
-          label: totp.isDecrypted ? (totp as DecryptedTotp).label : null,
-          issuer: totp.isDecrypted ? (totp as DecryptedTotp).issuer : null,
-          size: size,
-        );
+         key: key,
+         uuid: totp.uuid,
+         imageUrl: totp.isDecrypted ? (totp as DecryptedTotp).imageUrl : null,
+         label: totp.isDecrypted ? (totp as DecryptedTotp).label : null,
+         issuer: totp.isDecrypted ? (totp as DecryptedTotp).issuer : null,
+         size: size,
+       );
 
   /// Returns a seeded random color that corresponds to the [issuer] and the [label].
   Color get _filterColor {
@@ -98,12 +98,12 @@ class TotpImageWidget extends ConsumerWidget {
 
   /// Makes a circle widget.
   Widget _makeCircle(Widget child) => ClipRRect(
-        borderRadius: BorderRadius.circular(size),
-        child: SizedBox.square(
-          dimension: size,
-          child: child,
-        ),
-      );
+    borderRadius: BorderRadius.circular(size),
+    child: SizedBox.square(
+      dimension: size,
+      child: child,
+    ),
+  );
 
   /// Creates a default image, with the app logo inside.
   Widget _createDefaultImage() => imageUrl == null
@@ -147,24 +147,24 @@ class TotpCountdownImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox.square(
-        dimension: size,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: TotpImageWidget.fromTotp(
-                totp: totp,
-              ),
-            ),
-            Positioned.fill(
-              child: _TotpCountdownImageWidgetCircularProgress(
-                totp: totp,
-                size: size,
-                progressColor: progressColor,
-              ),
-            ),
-          ],
+    dimension: size,
+    child: Stack(
+      children: [
+        Positioned.fill(
+          child: TotpImageWidget.fromTotp(
+            totp: totp,
+          ),
         ),
-      );
+        Positioned.fill(
+          child: _TotpCountdownImageWidgetCircularProgress(
+            totp: totp,
+            size: size,
+            progressColor: progressColor,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Displays the TOTP image with a countdown.
@@ -209,10 +209,10 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
 
   @override
   Widget build(BuildContext context) => CircularProgressIndicator(
-        value: animationController.value / validity.inSeconds,
-        color: color,
-        backgroundColor: backgroundColor,
-      );
+    value: animationController.value / validity.inSeconds,
+    color: color,
+    backgroundColor: backgroundColor,
+  );
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -253,15 +253,16 @@ class _TotpCountdownImageWidgetCircularProgressState extends TimeBasedTotpWidget
 
   /// Schedule the animation.
   void scheduleAnimation() {
-    animationController = AnimationController(
-      vsync: this,
-      duration: validity,
-      upperBound: validity.inSeconds.toDouble(),
-    )
-      ..addListener(() {
-        setState(() {});
-      })
-      ..forward(from: progress);
+    animationController =
+        AnimationController(
+            vsync: this,
+            duration: validity,
+            upperBound: validity.inSeconds.toDouble(),
+          )
+          ..addListener(() {
+            setState(() {});
+          })
+          ..forward(from: progress);
   }
 
   /// Cancels the animation.

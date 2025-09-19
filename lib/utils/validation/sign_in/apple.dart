@@ -22,31 +22,31 @@ class AppleSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment, OA
     this.email,
     super.timeout,
   }) : super(
-          name: 'Apple',
-        );
+         name: 'Apple',
+       );
 
   @override
   Uri buildUrl() => Uri.https(
-        'appleid.apple.com',
-        '/auth/authorize',
-        loginUrlParameters,
-      );
+    'appleid.apple.com',
+    '/auth/authorize',
+    loginUrlParameters,
+  );
 
   @override
   List<String> get scopes => [
-        'email',
-        'name',
-      ];
+    'email',
+    'name',
+  ];
 
   @override
   Map<String, String> get loginUrlParameters => {
-        ...super.loginUrlParameters,
-        if (_hashedNonce != null) 'nonce': _hashedNonce!,
-        'redirect_uri': App.appleSignInReturnUrl,
-        'response_type': 'code id_token',
-        'response_mode': 'form_post',
-        'prompt': 'select_account',
-      };
+    ...super.loginUrlParameters,
+    if (_hashedNonce != null) 'nonce': _hashedNonce!,
+    'redirect_uri': App.appleSignInReturnUrl,
+    'response_type': 'code id_token',
+    'response_mode': 'form_post',
+    'prompt': 'select_account',
+  };
 
   @override
   Future<void> generateNonce() async {

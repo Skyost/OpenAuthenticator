@@ -51,7 +51,9 @@ class StorageMigrationUtils {
     }
     Result result = await showWaitingOverlay(
       context,
-      future: ref.read(storageProvider.notifier).changeStorageType(
+      future: ref
+          .read(storageProvider.notifier)
+          .changeStorageType(
             currentStorageMasterPassword,
             newType,
             backupPassword: backupPassword,
@@ -151,11 +153,11 @@ class _ConfirmationDialog extends StatefulWidget {
 
   /// Asks for the confirmation.
   static Future<_ConfirmationResult?> ask(BuildContext context, bool enable) => showDialog<_ConfirmationResult>(
-        context: context,
-        builder: (context) => _ConfirmationDialog(
-          enable: enable,
-        ),
-      );
+    context: context,
+    builder: (context) => _ConfirmationDialog(
+      enable: enable,
+    ),
+  );
 }
 
 /// The confirmation dialog state.
@@ -171,50 +173,50 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
 
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(translations.storageMigration.confirmDialog.title),
-        actions: [
-          TextButton(
-            onPressed: () {
-              if (createBackup && !backupPasswordFormKey.currentState!.validate()) {
-                return;
-              }
-              Navigator.pop(context, _ConfirmationResult(confirm: true, backupPassword: createBackup ? backupPassword : null));
-            },
-            child: Text(MaterialLocalizations.of(context).continueButtonLabel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, const _ConfirmationResult()),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          Text(widget.enable ? translations.storageMigration.confirmDialog.message.enable : translations.storageMigration.confirmDialog.message.disable),
-          ListTile(
-            title: Text(translations.miscellaneous.backupCheckbox.checkbox),
-            contentPadding: EdgeInsets.zero,
-            trailing: Checkbox(
-              value: createBackup,
-              onChanged: (value) {
-                setState(() => createBackup = value ?? !createBackup);
-              },
+    title: Text(translations.storageMigration.confirmDialog.title),
+    actions: [
+      TextButton(
+        onPressed: () {
+          if (createBackup && !backupPasswordFormKey.currentState!.validate()) {
+            return;
+          }
+          Navigator.pop(context, _ConfirmationResult(confirm: true, backupPassword: createBackup ? backupPassword : null));
+        },
+        child: Text(MaterialLocalizations.of(context).continueButtonLabel),
+      ),
+      TextButton(
+        onPressed: () => Navigator.pop(context, const _ConfirmationResult()),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      Text(widget.enable ? translations.storageMigration.confirmDialog.message.enable : translations.storageMigration.confirmDialog.message.disable),
+      ListTile(
+        title: Text(translations.miscellaneous.backupCheckbox.checkbox),
+        contentPadding: EdgeInsets.zero,
+        trailing: Checkbox(
+          value: createBackup,
+          onChanged: (value) {
+            setState(() => createBackup = value ?? !createBackup);
+          },
+        ),
+      ),
+      if (createBackup)
+        Form(
+          key: backupPasswordFormKey,
+          child: PasswordFormField(
+            initialValue: backupPassword,
+            onChanged: (value) => backupPassword = value,
+            validator: isBackupPasswordValid,
+            decoration: FormLabelWithIcon(
+              icon: Icons.save,
+              text: translations.miscellaneous.backupCheckbox.input.text,
+              hintText: translations.miscellaneous.backupCheckbox.input.hint,
             ),
           ),
-          if (createBackup)
-            Form(
-              key: backupPasswordFormKey,
-              child: PasswordFormField(
-                initialValue: backupPassword,
-                onChanged: (value) => backupPassword = value,
-                validator: isBackupPasswordValid,
-                decoration: FormLabelWithIcon(
-                  icon: Icons.save,
-                  text: translations.miscellaneous.backupCheckbox.input.text,
-                  hintText: translations.miscellaneous.backupCheckbox.input.hint,
-                ),
-              ),
-            ),
-        ],
-      );
+        ),
+    ],
+  );
 
   /// Checks whether the backup password is valid.
   String? isBackupPasswordValid(String? value) {
@@ -244,33 +246,33 @@ class _ConfirmationResult {
 class _StorageMigrationDeletedTotpPolicyPickerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.title),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          Text(translations.storageMigration.deletedTotpPolicyPickerDialog.message),
-          ListTile(
-            leading: const Icon(Icons.delete),
-            title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.title),
-            subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.subtitle),
-            onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.delete),
-          ),
-          ListTile(
-            leading: const Icon(Icons.restore),
-            title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.title),
-            subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.subtitle),
-            onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.keep),
-          ),
-        ],
-      );
+    title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.title),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      Text(translations.storageMigration.deletedTotpPolicyPickerDialog.message),
+      ListTile(
+        leading: const Icon(Icons.delete),
+        title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.title),
+        subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.subtitle),
+        onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.delete),
+      ),
+      ListTile(
+        leading: const Icon(Icons.restore),
+        title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.title),
+        subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.subtitle),
+        onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.keep),
+      ),
+    ],
+  );
 
   /// Opens the dialog.
   static Future<StorageMigrationDeletedTotpPolicy?> openDialog(BuildContext context) => showDialog<StorageMigrationDeletedTotpPolicy>(
-        context: context,
-        builder: (context) => _StorageMigrationDeletedTotpPolicyPickerDialog(),
-      );
+    context: context,
+    builder: (context) => _StorageMigrationDeletedTotpPolicyPickerDialog(),
+  );
 }

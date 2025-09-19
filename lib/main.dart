@@ -44,15 +44,17 @@ Future<void> main() async {
   if (currentPlatform.isDesktop) {
     await windowManager.ensureInitialized();
     windowManager.waitUntilReadyToShow(
-        const WindowOptions(
-          title: App.appName,
-          size: Size(800, 600),
-          minimumSize: Size(400, 400),
-          center: true,
-        ), () async {
-      await windowManager.show();
-      await windowManager.focus();
-    });
+      const WindowOptions(
+        title: App.appName,
+        size: Size(800, 600),
+        minimumSize: Size(400, 400),
+        center: true,
+      ),
+      () async {
+        await windowManager.show();
+        await windowManager.focus();
+      },
+    );
   }
   if (isFirebaseSupported) {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -79,10 +81,10 @@ Future<void> main() async {
 class _OpenAuthenticatorSSSInitializationOptions extends InitializationOptions {
   /// Creates a new Open Authenticator SimpleSecureStorage initialization options.
   _OpenAuthenticatorSSSInitializationOptions()
-      : super(
-          appName: App.appName + (kDebugMode ? ' Debug' : ''),
-          namespace: App.appPackageName + (kDebugMode ? '.debug' : ''),
-        );
+    : super(
+        appName: App.appName + (kDebugMode ? ' Debug' : ''),
+        namespace: App.appPackageName + (kDebugMode ? '.debug' : ''),
+      );
 }
 
 /// The main widget class.
@@ -105,25 +107,25 @@ class OpenAuthenticatorApp extends ConsumerWidget {
     Locale locale = TranslationProvider.of(context).flutterLocale;
     return switch (showIntro) {
       AsyncData(:bool value) => _createMaterialApp(
-          showIntroState: 'data',
-          theme: theme,
-          locale: locale,
-          initialRoute: value ? IntroPage.name : HomePage.name,
-        ),
+        showIntroState: 'data',
+        theme: theme,
+        locale: locale,
+        initialRoute: value ? IntroPage.name : HomePage.name,
+      ),
       AsyncError(:final error) => _createMaterialApp(
-          showIntroState: 'error',
-          theme: theme,
-          locale: locale,
-          home: Center(
-            child: Text('Error : $error.'),
-          ),
+        showIntroState: 'error',
+        theme: theme,
+        locale: locale,
+        home: Center(
+          child: Text('Error : $error.'),
         ),
+      ),
       _ => _createMaterialApp(
-          showIntroState: 'loading',
-          theme: theme,
-          locale: locale,
-          home: const CenteredCircularProgressIndicator(),
-        ),
+        showIntroState: 'loading',
+        theme: theme,
+        locale: locale,
+        home: const CenteredCircularProgressIndicator(),
+      ),
     };
   }
 
@@ -207,19 +209,19 @@ class OpenAuthenticatorApp extends ConsumerWidget {
       routes: home == null
           ? {
               IntroPage.name: (_) => const _RouteWidget(
-                    child: IntroPage(),
-                  ),
+                child: IntroPage(),
+              ),
               HomePage.name: (_) => const _RouteWidget(
-                    listen: true,
-                    rateMyApp: true,
-                    child: HomePage(),
-                  ),
+                listen: true,
+                rateMyApp: true,
+                child: HomePage(),
+              ),
               ScanPage.name: (_) => const _RouteWidget(
-                    child: ScanPage(),
-                  ),
+                child: ScanPage(),
+              ),
               SettingsPage.name: (_) => const _RouteWidget(
-                    child: SettingsPage(),
-                  ),
+                child: SettingsPage(),
+              ),
               TotpPage.name: (context) {
                 Map<String, dynamic>? arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
                 return _RouteWidget(
@@ -230,8 +232,8 @@ class OpenAuthenticatorApp extends ConsumerWidget {
                 );
               },
               ContributorPlanPaywallPage.name: (_) => const _RouteWidget(
-                    child: ContributorPlanPaywallPage(),
-                  ),
+                child: ContributorPlanPaywallPage(),
+              ),
             }
           : {},
       initialRoute: home == null ? initialRoute : null,
@@ -317,8 +319,8 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
 
   @override
   Widget build(BuildContext context) => UnlockChallengeWidget(
-        child: widget.child,
-      );
+    child: widget.child,
+  );
 
   /// Handles a login link.
   Future<void> handleLoginLink(Uri loginLink) async {

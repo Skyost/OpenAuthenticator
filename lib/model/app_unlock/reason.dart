@@ -10,5 +10,5 @@ enum UnlockReason {
   enable,
 
   /// The user tries the unlock challenge for disabling the current method.
-  disable;
+  disable,
 }

@@ -17,34 +17,34 @@ final twitterAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticati
 class TwitterAuthenticationProvider extends FallbackAuthenticationProvider<TwitterSignIn> {
   /// Creates a new Twitter authentication provider instance.
   const TwitterAuthenticationProvider()
-      : super(
-          availablePlatforms: const [
-            Platform.android,
-            Platform.iOS,
-            // Platform.windows, // See: https://github.com/firebase/flutterfire/discussions/9398.
-          ],
-        );
+    : super(
+        availablePlatforms: const [
+          Platform.android,
+          Platform.iOS,
+          // Platform.windows, // See: https://github.com/firebase/flutterfire/discussions/9398.
+        ],
+      );
 
   @override
   String get providerId => TwitterAuthMethod.providerId;
 
   @override
   TwitterAuthMethod createDefaultAuthMethod({List<String> scopes = const []}) => TwitterAuthMethod.defaultMethod(
-        customParameters: {
-          'lang': translations.$meta.locale.languageCode,
-        },
-      );
+    customParameters: {
+      'lang': translations.$meta.locale.languageCode,
+    },
+  );
 
   @override
   TwitterAuthMethod createRestAuthMethod(OAuth2Response response) => TwitterAuthMethod.rest(
-        accessToken: response.accessToken,
-      );
+    accessToken: response.accessToken,
+  );
 
   @override
   TwitterSignIn createFallbackAuthProvider() => TwitterSignIn(
-        clientId: AppCredentials.twitterSignInClientId,
-        timeout: fallbackTimeout,
-      );
+    clientId: AppCredentials.twitterSignInClientId,
+    timeout: fallbackTimeout,
+  );
 
   @override
   bool get isTrusted => false;

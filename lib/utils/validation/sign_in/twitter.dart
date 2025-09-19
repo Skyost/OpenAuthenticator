@@ -19,8 +19,8 @@ class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
     required super.clientId,
     super.timeout,
   }) : super(
-          name: 'Twitter',
-        );
+         name: 'Twitter',
+       );
 
   @override
   Future<Result<OAuth2Response>> signIn(BuildContext context) async {
@@ -35,23 +35,23 @@ class TwitterSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment {
 
   @override
   Uri buildUrl() => Uri.https(
-        'twitter.com',
-        '/i/oauth2/authorize',
-        loginUrlParameters,
-      );
+    'twitter.com',
+    '/i/oauth2/authorize',
+    loginUrlParameters,
+  );
 
   @override
   List<String> get scopes => [
-        'offline.access',
-      ];
+    'offline.access',
+  ];
 
   @override
   Map<String, String> get loginUrlParameters => {
-        ...super.loginUrlParameters,
-        'response_type': 'code',
-        'code_challenge': pkcePair!.codeChallenge,
-        'code_challenge_method': 'S256',
-      };
+    ...super.loginUrlParameters,
+    'response_type': 'code',
+    'code_challenge': pkcePair!.codeChallenge,
+    'code_challenge_method': 'S256',
+  };
 
   @override
   FutureOr<Result<OAuth2Response>> validate(HttpRequest request) async {

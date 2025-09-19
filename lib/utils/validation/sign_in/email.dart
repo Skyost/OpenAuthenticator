@@ -27,8 +27,8 @@ class EmailSignIn extends CompleterAbstractValidationServer<EmailSignInResponse>
   EmailSignIn({
     required this.email,
   }) : super(
-          path: 'email-login',
-        );
+         path: 'email-login',
+       );
 
   /// Sends a sign-in link to the [email].
   Future<Result<EmailSignInResponse>> sendLinkToEmailAndWaitForConfirmation() async {

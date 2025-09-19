@@ -9,14 +9,14 @@ final cacheTotpPicturesSettingsEntryProvider = AsyncNotifierProvider.autoDispose
 class CacheTotpPicturesSettingsEntry extends SettingsEntry<bool> {
   /// Creates a new cache TOTP pictures settings entry instance.
   CacheTotpPicturesSettingsEntry()
-      : super(
-          key: 'cacheTotpPictures',
-          defaultValue: true,
-        );
+    : super(
+        key: 'cacheTotpPictures',
+        defaultValue: true,
+      );
 
   @override
   Future<void> changeValue(bool value) async {
-    if (value != state.valueOrNull) {
+    if (value != state.value) {
       state = const AsyncLoading();
       TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
       if (value) {

@@ -32,18 +32,17 @@ class SharedPreferencesWithPrefix {
   static Future<SharedPreferencesWithPrefix> _createSharedPreferencesWithPrefix(
     String prefix, {
     String fileName = kDebugMode ? 'shared_preferences_debug' : 'shared_preferences',
-  }) async =>
-      SharedPreferencesWithPrefix._(
-        sharedPreferences: await SharedPreferencesWithCache.create(
-          sharedPreferencesOptions: switch (currentPlatform) {
-            Platform.windows => SharedPreferencesWindowsOptions(fileName: fileName),
-            Platform.linux => SharedPreferencesLinuxOptions(fileName: fileName),
-            _ => const SharedPreferencesOptions(),
-          },
-          cacheOptions: const SharedPreferencesWithCacheOptions(),
-        ),
-        prefix: prefix,
-      );
+  }) async => SharedPreferencesWithPrefix._(
+    sharedPreferences: await SharedPreferencesWithCache.create(
+      sharedPreferencesOptions: switch (currentPlatform) {
+        Platform.windows => SharedPreferencesWindowsOptions(fileName: fileName),
+        Platform.linux => SharedPreferencesLinuxOptions(fileName: fileName),
+        _ => const SharedPreferencesOptions(),
+      },
+      cacheOptions: const SharedPreferencesWithCacheOptions(),
+    ),
+    prefix: prefix,
+  );
 
   /// Returns true if cache contains the given [key].
   ///
@@ -52,9 +51,9 @@ class SharedPreferencesWithPrefix {
 
   /// Returns all keys in the cache.
   Set<String> get keys => {
-        for (String key in _sharedPreferences.keys)
-          if (key.startsWith(prefix)) key.substring(prefix.length),
-      };
+    for (String key in _sharedPreferences.keys)
+      if (key.startsWith(prefix)) key.substring(prefix.length),
+  };
 
   /// Reads a value of any type from the cache.
   ///

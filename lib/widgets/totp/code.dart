@@ -25,9 +25,9 @@ class _TotpCodeWidgetState extends TimeBasedTotpWidgetState<TotpCodeWidget> {
 
   @override
   Widget build(BuildContext context) => Text(
-        code,
-        style: widget.textStyle,
-      );
+    code,
+    style: widget.textStyle,
+  );
 
   @override
   void updateState() {

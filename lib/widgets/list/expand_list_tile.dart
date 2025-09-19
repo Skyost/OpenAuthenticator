@@ -52,46 +52,46 @@ class _ExpandListTileState extends ConsumerState<ExpandListTile> with SingleTick
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            iconColor: Theme.of(context).colorScheme.primary,
-            title: widget.title,
-            onTap: () {
-              bool willExpand = !expand;
-              setState(() => expand = willExpand);
-              if (willExpand) {
-                expandController.forward();
-              } else {
-                expandController.reverse();
-              }
-            },
-            trailing: AnimatedRotation(
-              turns: expand ? 0.25 : 0,
-              duration: const Duration(milliseconds: 100),
-              child: Icon(
-                Icons.chevron_right,
-                color: widget.iconColor ?? (currentBrightness == Brightness.light ? null : Colors.white),
-              ),
-            ),
-            enabled: widget.enabled,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      ListTile(
+        iconColor: Theme.of(context).colorScheme.primary,
+        title: widget.title,
+        onTap: () {
+          bool willExpand = !expand;
+          setState(() => expand = willExpand);
+          if (willExpand) {
+            expandController.forward();
+          } else {
+            expandController.reverse();
+          }
+        },
+        trailing: AnimatedRotation(
+          turns: expand ? 0.25 : 0,
+          duration: const Duration(milliseconds: 100),
+          child: Icon(
+            Icons.chevron_right,
+            color: widget.iconColor ?? (currentBrightness == Brightness.light ? null : Colors.white),
           ),
-          SizeTransition(
-            axisAlignment: 1.0,
-            sizeFactor: expandAnimation,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: widget.children,
-            ),
-          ),
-          // for (Widget child in widget.children)
-          //   SizeTransition(
-          //     axisAlignment: 1.0,
-          //     sizeFactor: expandAnimation,
-          //     child: child,
-          //   ),
-        ],
-      );
+        ),
+        enabled: widget.enabled,
+      ),
+      SizeTransition(
+        axisAlignment: 1.0,
+        sizeFactor: expandAnimation,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: widget.children,
+        ),
+      ),
+      // for (Widget child in widget.children)
+      //   SizeTransition(
+      //     axisAlignment: 1.0,
+      //     sizeFactor: expandAnimation,
+      //     child: child,
+      //   ),
+    ],
+  );
 
   @override
   void dispose() {

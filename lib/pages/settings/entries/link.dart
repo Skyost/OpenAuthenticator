@@ -41,7 +41,7 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget with RequiresAuthent
                             ),
                         ],
                         style: const TextStyle(fontStyle: FontStyle.italic),
-                      )
+                      ),
                   ],
                 ),
               ),

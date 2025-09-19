@@ -15,20 +15,20 @@ class DecryptedTotp extends Totp {
     super.digits,
     super.validity,
   }) : super(
-          encryptedData: decryptedData,
-        );
+         encryptedData: decryptedData,
+       );
 
   /// Creates a new decrypted TOTP instance.
   DecryptedTotp.fromTotp({
     required Totp totp,
     required DecryptedData decryptedData,
   }) : this(
-          uuid: totp.uuid,
-          decryptedData: decryptedData,
-          algorithm: totp.algorithm,
-          digits: totp.digits,
-          validity: totp.validity,
-        );
+         uuid: totp.uuid,
+         decryptedData: decryptedData,
+         algorithm: totp.algorithm,
+         digits: totp.digits,
+         validity: totp.validity,
+       );
 
   /// Returns the decrypted data.
   DecryptedData get decryptedData => super.encryptedData as DecryptedData;
@@ -47,11 +47,11 @@ class DecryptedTotp extends Totp {
 
   /// Returns the [totp_lib.Totp] instance.
   hashlib.TOTP get generator => hashlib.TOTP(
-        fromBase32(secret),
-        algo: (algorithm ?? Totp.kDefaultAlgorithm).mapsTo,
-        digits: digits ?? Totp.kDefaultDigits,
-        period: validity ?? Totp.kDefaultValidity,
-      );
+    fromBase32(secret),
+    algo: (algorithm ?? Totp.kDefaultAlgorithm).mapsTo,
+    digits: digits ?? Totp.kDefaultDigits,
+    period: validity ?? Totp.kDefaultValidity,
+  );
 
   /// Generates a code using the [generator].
   String generateCode() => generator.valueString();
@@ -130,13 +130,13 @@ class DecryptedTotp extends Totp {
 
   /// Returns the URI associated to this TOTP instance.
   Uri get uri => toUri(
-        secret: secret,
-        label: label ?? uuid,
-        issuer: issuer,
-        algorithm: algorithm,
-        digits: digits,
-        validity: validity,
-      );
+    secret: secret,
+    label: label ?? uuid,
+    issuer: issuer,
+    algorithm: algorithm,
+    digits: digits,
+    validity: validity,
+  );
 
   /// Converts the given TOTP parameters to an URI.
   static Uri toUri({
@@ -211,16 +211,16 @@ class DecryptedData extends EncryptedData {
     String? decryptedIssuer,
     String? decryptedImageUrl,
   }) : this(
-          encryptedSecret: encryptedData.encryptedSecret,
-          encryptedLabel: encryptedData.encryptedLabel,
-          encryptedIssuer: encryptedData.encryptedIssuer,
-          encryptedImageUrl: encryptedData.encryptedImageUrl,
-          encryptionSalt: encryptedData.encryptionSalt,
-          decryptedSecret: decryptedSecret,
-          decryptedLabel: decryptedLabel,
-          decryptedIssuer: decryptedIssuer,
-          decryptedImageUrl: decryptedImageUrl,
-        );
+         encryptedSecret: encryptedData.encryptedSecret,
+         encryptedLabel: encryptedData.encryptedLabel,
+         encryptedIssuer: encryptedData.encryptedIssuer,
+         encryptedImageUrl: encryptedData.encryptedImageUrl,
+         encryptionSalt: encryptedData.encryptionSalt,
+         decryptedSecret: decryptedSecret,
+         decryptedLabel: decryptedLabel,
+         decryptedIssuer: decryptedIssuer,
+         decryptedImageUrl: decryptedImageUrl,
+       );
 
   /// Decrypts the passed [encryptedData].
   static Future<DecryptedData?> decrypt({
@@ -290,10 +290,10 @@ class DecryptedData extends EncryptedData {
 
   @override
   List<Object?> get props => [
-        ...super.props,
-        decryptedSecret,
-        decryptedLabel,
-        decryptedIssuer,
-        decryptedImageUrl,
-      ];
+    ...super.props,
+    decryptedSecret,
+    decryptedLabel,
+    decryptedIssuer,
+    decryptedImageUrl,
+  ];
 }

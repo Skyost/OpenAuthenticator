@@ -167,11 +167,11 @@ class ValidationServer<T> extends AbstractValidationServer<T> {
     Function(ValidationException)? onValidationFailed,
     Function(bool)? onValidationCancelled,
     super.timeout,
-  })  : _urlBuilder = urlBuilder,
-        _validate = validate,
-        _onValidationCompleted = onValidationCompleted,
-        _onValidationFailed = onValidationFailed,
-        _onValidationCancelled = onValidationCancelled;
+  }) : _urlBuilder = urlBuilder,
+       _validate = validate,
+       _onValidationCompleted = onValidationCompleted,
+       _onValidationFailed = onValidationFailed,
+       _onValidationCancelled = onValidationCancelled;
 
   @override
   @protected

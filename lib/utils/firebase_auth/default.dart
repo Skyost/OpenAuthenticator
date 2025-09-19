@@ -90,8 +90,8 @@ class FirebaseAuthUser extends User {
 
   @override
   List<String> get providers => [
-        for (firebase_auth.UserInfo userInfo in _firebaseUser.providerData) userInfo.providerId,
-      ];
+    for (firebase_auth.UserInfo userInfo in _firebaseUser.providerData) userInfo.providerId,
+  ];
 
   @override
   Future<String?> getIdToken({bool forceRefresh = false}) async => await _firebaseUser.getIdToken(forceRefresh);
@@ -135,12 +135,12 @@ mixin _ProviderAuthMethod on FirebaseAuthMethod, CanLinkTo {
 
   /// Creates a [SignInResult] from a given [credential].
   Future<SignInResult> credentialToResult(firebase_auth.UserCredential credential) async => SignInResult(
-        email: credential.user?.email,
-        localId: credential.user?.uid,
-        providerId: credential.credential?.providerId,
-        idToken: await credential.user?.getIdToken(),
-        refreshToken: credential.user?.refreshToken,
-      );
+    email: credential.user?.email,
+    localId: credential.user?.uid,
+    providerId: credential.credential?.providerId,
+    idToken: await credential.user?.getIdToken(),
+    refreshToken: credential.user?.refreshToken,
+  );
 
   /// Creates the corresponding [firebase_auth.AuthProvider].
   firebase_auth.AuthProvider _createAuthProvider();
@@ -204,9 +204,9 @@ class EmailLinkAuthMethodDefault extends EmailLinkAuthMethod {
 
   /// Sends a sign-in link to the email.
   static Future<void> sendSignInLink(String email, ActionCodeSettings settings) => firebase_auth.FirebaseAuth.instance.sendSignInLinkToEmail(
-        email: email,
-        actionCodeSettings: settings,
-      );
+    email: email,
+    actionCodeSettings: settings,
+  );
 }
 
 /// Authenticates using Github with a Firebase provider.

@@ -41,9 +41,9 @@ class _CountdownWidgetState extends State<CountdownWidget> {
 
   @override
   Widget build(BuildContext context) => Text(
-        timeLeftText,
-        style: widget.textStyle,
-      );
+    timeLeftText,
+    style: widget.textStyle,
+  );
 
   /// Decreases the time left.
   void decreaseTime(Timer timer) {

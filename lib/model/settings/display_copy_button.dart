@@ -8,8 +8,8 @@ final displayCopyButtonSettingsEntryProvider = AsyncNotifierProvider.autoDispose
 class DisplayCopyButtonSettingsEntry extends SettingsEntry<bool> {
   /// Creates a new display copy icon settings entry instance.
   DisplayCopyButtonSettingsEntry()
-      : super(
-          key: 'displayCopyButton',
-          defaultValue: true,
-        );
+    : super(
+        key: 'displayCopyButton',
+        defaultValue: true,
+      );
 }

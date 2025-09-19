@@ -16,13 +16,13 @@ final googleAuthenticationStateProvider = NotifierProvider<FirebaseAuthenticatio
 class GoogleAuthenticationProvider extends FallbackAuthenticationProvider<GoogleSignIn> {
   /// Creates a new Google authentication provider instance.
   const GoogleAuthenticationProvider()
-      : super(
-          availablePlatforms: const [
-            Platform.android,
-            Platform.iOS,
-            Platform.windows,
-          ],
-        );
+    : super(
+        availablePlatforms: const [
+          Platform.android,
+          Platform.iOS,
+          Platform.windows,
+        ],
+      );
 
   @override
   String get providerId => GoogleAuthMethod.providerId;
@@ -40,13 +40,13 @@ class GoogleAuthenticationProvider extends FallbackAuthenticationProvider<Google
 
   @override
   GoogleAuthMethod createRestAuthMethod(OAuth2Response response) => GoogleAuthMethod.rest(
-        idToken: response.idToken,
-        accessToken: response.accessToken,
-      );
+    idToken: response.idToken,
+    accessToken: response.accessToken,
+  );
 
   @override
   GoogleSignIn createFallbackAuthProvider() => GoogleSignIn(
-        clientId: AppCredentials.googleSignInClientId,
-        timeout: fallbackTimeout,
-      );
+    clientId: AppCredentials.googleSignInClientId,
+    timeout: fallbackTimeout,
+  );
 }

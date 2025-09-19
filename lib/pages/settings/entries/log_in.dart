@@ -34,11 +34,11 @@ class _LogInListTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ListTile(
-        leading: const Icon(Icons.login),
-        title: Text(translations.settings.synchronization.accountLogin.logIn.title),
-        subtitle: Text(translations.settings.synchronization.accountLogin.logIn.subtitle),
-        onTap: () => AccountUtils.trySignIn(context, ref),
-      );
+    leading: const Icon(Icons.login),
+    title: Text(translations.settings.synchronization.accountLogin.logIn.title),
+    subtitle: Text(translations.settings.synchronization.accountLogin.logIn.subtitle),
+    onTap: () => AccountUtils.trySignIn(context, ref),
+  );
 }
 
 /// The logout list tile.
@@ -53,16 +53,16 @@ class _LogOutListTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ListTile(
-        leading: const Icon(Icons.logout),
-        title: Text(translations.settings.synchronization.accountLogin.logOut.title),
-        subtitle: Text.rich(
-          translations.settings.synchronization.accountLogin.logOut.subtitle(
-            email: TextSpan(
-              text: user,
-              style: const TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
+    leading: const Icon(Icons.logout),
+    title: Text(translations.settings.synchronization.accountLogin.logOut.title),
+    subtitle: Text.rich(
+      translations.settings.synchronization.accountLogin.logOut.subtitle(
+        email: TextSpan(
+          text: user,
+          style: const TextStyle(fontStyle: FontStyle.italic),
         ),
-        onTap: () => StorageMigrationUtils.changeStorageType(context, ref, StorageType.local, logout: true),
-      );
+      ),
+    ),
+    onTap: () => StorageMigrationUtils.changeStorageType(context, ref, StorageType.local, logout: true),
+  );
 }

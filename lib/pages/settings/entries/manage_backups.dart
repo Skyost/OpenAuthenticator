@@ -28,7 +28,7 @@ class ManageBackupSettingsEntryWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<List<Backup>> backups = ref.watch(backupStoreProvider);
-    int backupCount = backups.valueOrNull?.length ?? 0;
+    int backupCount = backups.value?.length ?? 0;
     return ListTile(
       leading: const Icon(Icons.access_time),
       title: Text(translations.settings.backups.manageBackups.title),
@@ -117,31 +117,31 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
 
   /// Creates the buttons to interact with a given [backup].
   List<Widget> createBackupActions(Backup backup) => [
-        ListTile(
-          dense: true,
-          onTap: () => restoreBackup(backup),
-          title: Text(translations.settings.backups.manageBackups.button.restore),
-          leading: const Icon(Icons.upload),
-        ),
-        ListTile(
-          dense: true,
-          onTap: () => shareBackup(backup),
-          title: Text(translations.settings.backups.manageBackups.button.share),
-          leading: const Icon(Icons.share),
-        ),
-        ListTile(
-          dense: true,
-          onTap: () => exportBackup(backup),
-          title: Text(translations.settings.backups.manageBackups.button.export),
-          leading: const Icon(Icons.import_export),
-        ),
-        ListTile(
-          dense: true,
-          onTap: () => deleteBackup(backup),
-          title: Text(translations.settings.backups.manageBackups.button.delete),
-          leading: const Icon(Icons.delete),
-        ),
-      ];
+    ListTile(
+      dense: true,
+      onTap: () => restoreBackup(backup),
+      title: Text(translations.settings.backups.manageBackups.button.restore),
+      leading: const Icon(Icons.upload),
+    ),
+    ListTile(
+      dense: true,
+      onTap: () => shareBackup(backup),
+      title: Text(translations.settings.backups.manageBackups.button.share),
+      leading: const Icon(Icons.share),
+    ),
+    ListTile(
+      dense: true,
+      onTap: () => exportBackup(backup),
+      title: Text(translations.settings.backups.manageBackups.button.export),
+      leading: const Icon(Icons.import_export),
+    ),
+    ListTile(
+      dense: true,
+      onTap: () => deleteBackup(backup),
+      title: Text(translations.settings.backups.manageBackups.button.delete),
+      leading: const Icon(Icons.delete),
+    ),
+  ];
 
   /// Allows to import a backup.
   Future<void> importBackup() async {

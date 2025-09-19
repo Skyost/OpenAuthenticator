@@ -45,15 +45,15 @@ extension AuthenticationProvidersUtils on Map<FirebaseAuthenticationProvider, Fi
 
   /// Contains all authentication providers where the user is logged in.
   List<FirebaseAuthenticationProvider> get loggedInProviders => [
-        for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
-          if (entry.value is FirebaseAuthenticationStateLoggedIn) entry.key,
-      ];
+    for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
+      if (entry.value is FirebaseAuthenticationStateLoggedIn) entry.key,
+  ];
 
   /// Contains all available authentication providers.
   List<FirebaseAuthenticationProvider> get availableProviders => [
-        for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
-          if (entry.key.isAvailable) entry.key,
-      ];
+    for (MapEntry<FirebaseAuthenticationProvider, FirebaseAuthenticationState> entry in entries)
+      if (entry.key.isAvailable) entry.key,
+  ];
 }
 
 /// A Firebase authentication state notifier.
@@ -194,9 +194,9 @@ abstract class FallbackAuthenticationProvider<T extends OAuth2SignIn> extends Fi
   @override
   @protected
   Future<Result<AuthenticationObject>> trySignIn(BuildContext context) => tryTo(
-        context,
-        action: FirebaseAuth.instance.signInWith,
-      );
+    context,
+    action: FirebaseAuth.instance.signInWith,
+  );
 
   @override
   @protected

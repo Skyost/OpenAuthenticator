@@ -36,30 +36,30 @@ class _ScanPageState extends ConsumerState<ScanPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: QrCodeScanner(
-          onScan: (code) async {
-            String? data = code.barcodes.firstOrNull?.rawValue;
-            if (data == null || !context.mounted) {
-              return;
-            }
-            Uri? uri = Uri.tryParse(data);
-            if (uri == null) {
-              Navigator.pop(context);
-              SnackBarIcon.showErrorSnackBar(context, text: translations.error.scan.noUri);
-              return;
-            }
-            await showWaitingOverlay(
-              context,
-              future: TotpPage.openFromUri(context, ref, uri),
-            );
-          },
-          onError: (exception, listener) => SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: exception)),
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
-        ),
-      );
+    body: QrCodeScanner(
+      onScan: (code) async {
+        String? data = code.barcodes.firstOrNull?.rawValue;
+        if (data == null || !context.mounted) {
+          return;
+        }
+        Uri? uri = Uri.tryParse(data);
+        if (uri == null) {
+          Navigator.pop(context);
+          SnackBarIcon.showErrorSnackBar(context, text: translations.error.scan.noUri);
+          return;
+        }
+        await showWaitingOverlay(
+          context,
+          future: TotpPage.openFromUri(context, ref, uri),
+        );
+      },
+      onError: (exception, listener) => SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: exception)),
+    ),
+    floatingActionButton: FloatingActionButton(
+      child: const Icon(Icons.close),
+      onPressed: () => Navigator.pop(context),
+    ),
+  );
 
   @override
   void dispose() {

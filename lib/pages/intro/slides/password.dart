@@ -14,33 +14,33 @@ class PasswordIntroPageSlide extends IntroPageSlide {
 
   /// Creates a new password intro page content instance.
   PasswordIntroPageSlide()
-      : super(
-          name: 'password',
-        );
+    : super(
+        name: 'password',
+      );
 
   @override
   bool get canSkip => false;
 
   @override
   Widget createWidget(BuildContext context, int remainingSteps) => IntroPageSlideWidget(
-        titleWidget: Text(translations.intro.password.title),
-        slide: this,
-        children: [
-          IntroPageSlideParagraphWidget(text: translations.intro.password.firstParagraph),
-          Padding(
-            padding: const EdgeInsets.only(bottom: IntroPageSlideParagraphWidget.kDefaultPadding),
-            child: _MasterPasswordForm(
-              onChanged: (password) => _password = password,
-            ),
-          ),
-          SaveDerivedKeySettingsEntryWidget.intro(),
-          IntroPageSlideParagraphWidget(text: translations.intro.password.secondParagraph),
-          IntroPageSlideParagraphWidget(
-            text: translations.intro.password.thirdParagraph,
-            textStyle: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      );
+    titleWidget: Text(translations.intro.password.title),
+    slide: this,
+    children: [
+      IntroPageSlideParagraphWidget(text: translations.intro.password.firstParagraph),
+      Padding(
+        padding: const EdgeInsets.only(bottom: IntroPageSlideParagraphWidget.kDefaultPadding),
+        child: _MasterPasswordForm(
+          onChanged: (password) => _password = password,
+        ),
+      ),
+      SaveDerivedKeySettingsEntryWidget.intro(),
+      IntroPageSlideParagraphWidget(text: translations.intro.password.secondParagraph),
+      IntroPageSlideParagraphWidget(
+        text: translations.intro.password.thirdParagraph,
+        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ],
+  );
 
   @override
   Future<bool> shouldSkip(WidgetRef ref) async => (await ref.read(cryptoStoreProvider.future)) != null;
@@ -79,13 +79,13 @@ class _MasterPasswordFormState extends State<_MasterPasswordForm> {
 
   @override
   Widget build(BuildContext context) => MasterPasswordForm(
-        formKey: formKey,
-        onFormChanged: formKey.currentState?.validate,
-        onChanged: (password) {
-          widget.onChanged?.call(password);
-          findState(context)?.canGoToNextSlide = password != null;
-        },
-      );
+    formKey: formKey,
+    onFormChanged: formKey.currentState?.validate,
+    onChanged: (password) {
+      widget.onChanged?.call(password);
+      findState(context)?.canGoToNextSlide = password != null;
+    },
+  );
 
   /// Finds the intro page state.
   IntroPageState? findState(BuildContext context) => context.findAncestorStateOfType<IntroPageState>();

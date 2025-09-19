@@ -13,54 +13,54 @@ class AboutSettingsEntryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FutureBuilder<PackageInfo>(
-        future: PackageInfo.fromPlatform(),
-        initialData: _DefaultPackageInfo(),
-        builder: (context, snapshot) => ListTile(
-          leading: const Icon(Icons.favorite),
-          title: Text(translations.settings.about.aboutApp.title(appName: App.appName)),
-          subtitle: Text.rich(
-            translations.settings.about.aboutApp.subtitle(
-              appName: const TextSpan(
-                text: App.appName,
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-              appVersion: TextSpan(
-                text: snapshot.data!.version,
-                style: const TextStyle(fontStyle: FontStyle.italic),
-              ),
-              appAuthor: const TextSpan(
-                text: App.appAuthor,
-                style: TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
+    future: PackageInfo.fromPlatform(),
+    initialData: _DefaultPackageInfo(),
+    builder: (context, snapshot) => ListTile(
+      leading: const Icon(Icons.favorite),
+      title: Text(translations.settings.about.aboutApp.title(appName: App.appName)),
+      subtitle: Text.rich(
+        translations.settings.about.aboutApp.subtitle(
+          appName: const TextSpan(
+            text: App.appName,
+            style: TextStyle(fontStyle: FontStyle.italic),
           ),
-          enabled: snapshot.data is! _DefaultPackageInfo,
-          onTap: () => showAboutDialog(
-            context: context,
-            applicationName: snapshot.data!.appName,
-            applicationVersion: 'v${snapshot.data!.version}',
-            applicationIcon: const SizedScalableImageWidget(
-              asset: 'assets/images/logo.si',
-              height: 90,
-              width: 90,
-            ),
-            applicationLegalese: translations.settings.about.aboutApp.dialogLegalese(
-              appName: snapshot.data!.appName,
-              appAuthor: App.appAuthor,
-            ),
+          appVersion: TextSpan(
+            text: snapshot.data!.version,
+            style: const TextStyle(fontStyle: FontStyle.italic),
+          ),
+          appAuthor: const TextSpan(
+            text: App.appAuthor,
+            style: TextStyle(fontStyle: FontStyle.italic),
           ),
         ),
-      );
+      ),
+      enabled: snapshot.data is! _DefaultPackageInfo,
+      onTap: () => showAboutDialog(
+        context: context,
+        applicationName: snapshot.data!.appName,
+        applicationVersion: 'v${snapshot.data!.version}',
+        applicationIcon: const SizedScalableImageWidget(
+          asset: 'assets/images/logo.si',
+          height: 90,
+          width: 90,
+        ),
+        applicationLegalese: translations.settings.about.aboutApp.dialogLegalese(
+          appName: snapshot.data!.appName,
+          appAuthor: App.appAuthor,
+        ),
+      ),
+    ),
+  );
 }
 
 /// The default package info.
 class _DefaultPackageInfo extends PackageInfo {
   /// Creates a new default package info instance.
   _DefaultPackageInfo()
-      : super(
-          appName: App.appName,
-          packageName: App.appPackageName,
-          version: '1.0.0',
-          buildNumber: '1',
-        );
+    : super(
+        appName: App.appName,
+        packageName: App.appPackageName,
+        version: '1.0.0',
+        buildNumber: '1',
+      );
 }

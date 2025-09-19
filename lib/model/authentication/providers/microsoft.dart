@@ -16,13 +16,13 @@ final microsoftAuthenticationStateProvider = NotifierProvider<FirebaseAuthentica
 class MicrosoftAuthenticationProvider extends FallbackAuthenticationProvider<MicrosoftSignIn> {
   /// Creates a new Microsoft authentication provider instance.
   const MicrosoftAuthenticationProvider()
-      : super(
-          availablePlatforms: const [
-            Platform.android,
-            Platform.iOS,
-            // Platform.windows, See: https://firebase.google.com/docs/auth/cpp/microsoft-oauth#expandable-2.
-          ],
-        );
+    : super(
+        availablePlatforms: const [
+          Platform.android,
+          Platform.iOS,
+          // Platform.windows, See: https://firebase.google.com/docs/auth/cpp/microsoft-oauth#expandable-2.
+        ],
+      );
 
   @override
   String get providerId => MicrosoftAuthMethod.providerId;
@@ -40,14 +40,14 @@ class MicrosoftAuthenticationProvider extends FallbackAuthenticationProvider<Mic
 
   @override
   MicrosoftAuthMethod createRestAuthMethod(OAuth2Response response) => MicrosoftAuthMethod.rest(
-        accessToken: response.accessToken,
-        idToken: response.idToken,
-        nonce: response.nonce,
-      );
+    accessToken: response.accessToken,
+    idToken: response.idToken,
+    nonce: response.nonce,
+  );
 
   @override
   MicrosoftSignIn createFallbackAuthProvider() => MicrosoftSignIn(
-        clientId: AppCredentials.azureSignInClientId,
-        timeout: fallbackTimeout,
-      );
+    clientId: AppCredentials.azureSignInClientId,
+    timeout: fallbackTimeout,
+  );
 }

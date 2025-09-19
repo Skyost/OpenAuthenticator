@@ -111,9 +111,24 @@ class OnlineStorage with Storage {
     return _FirestoreTotp.fromFirestore(result);
   }
 
+  // @override
+  // Stream<List<Totp>> watchTotps() {
+  //   Stream<QuerySnapshot> stream = _totpsCollection.orderBy(Totp.kIssuerKey).snapshots();
+  //   return stream.map((snapshot) {
+  //     List<Totp> totps = [];
+  //     for (QueryDocumentSnapshot document in snapshot.docs) {
+  //       Totp? totp = _FirestoreTotp.fromFirestore(document);
+  //       if (totp != null) {
+  //         totps.add(totp);
+  //       }
+  //     }
+  //     return totps;
+  //   });
+  // }
+
   @override
-  Future<List<Totp>> listTotps({int? limit, GetOptions? getOptions}) async {
-    List<QueryDocumentSnapshot> docs = await _listTotpDocs(limit: limit, getOptions: getOptions);
+  Future<List<Totp>> listTotps() async {
+    List<QueryDocumentSnapshot> docs = await _listTotpDocs();
     List<Totp> totps = [];
     for (QueryDocumentSnapshot doc in docs) {
       Totp? totp = _FirestoreTotp.fromFirestore(doc);
@@ -125,8 +140,8 @@ class OnlineStorage with Storage {
   }
 
   @override
-  Future<List<String>> listUuids({int? limit}) async {
-    List<QueryDocumentSnapshot> docs = await _listTotpDocs(limit: limit);
+  Future<List<String>> listUuids() async {
+    List<QueryDocumentSnapshot> docs = await _listTotpDocs();
     List<String> uuids = [];
     for (QueryDocumentSnapshot snapshot in docs) {
       Object? data = snapshot.data();
@@ -138,12 +153,8 @@ class OnlineStorage with Storage {
   }
 
   /// List the TOTPs documents.
-  Future<List<QueryDocumentSnapshot>> _listTotpDocs({int? limit, GetOptions? getOptions}) async {
-    Query query = _totpsCollection.orderBy(Totp.kIssuerKey);
-    if (limit != null) {
-      query = query.limit(limit);
-    }
-    QuerySnapshot result = await query.get(getOptions);
+  Future<List<QueryDocumentSnapshot>> _listTotpDocs() async {
+    QuerySnapshot result = await _totpsCollection.orderBy(Totp.kIssuerKey).get();
     return result.docs;
   }
 
@@ -208,9 +219,9 @@ class NotLoggedInException implements Exception {
 extension _FirestoreTotp on Totp {
   /// Converts this TOTP to a Firestore map.
   Map<String, dynamic> toFirestore() => {
-        ...toJson(),
-        OnlineStorage._kUpdatedKey: FieldValue.serverTimestamp(),
-      };
+    ...toJson(),
+    OnlineStorage._kUpdatedKey: FieldValue.serverTimestamp(),
+  };
 
   /// Creates a new TOTP from the specified JSON data.
   static Totp? fromFirestore(DocumentSnapshot snapshot) {

@@ -9,10 +9,10 @@ final themeSettingsEntryProvider = AsyncNotifierProvider.autoDispose<ThemeSettin
 class ThemeSettingsEntry extends EnumSettingsEntry<ThemeMode> {
   /// Creates a new theme settings entry instance.
   ThemeSettingsEntry()
-      : super(
-          key: 'theme',
-          defaultValue: ThemeMode.system,
-        );
+    : super(
+        key: 'theme',
+        defaultValue: ThemeMode.system,
+      );
 
   @override
   @protected

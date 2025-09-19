@@ -38,21 +38,21 @@ class AppFilledButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Align(
-        child: SizedBox(
-          width: math.min(MediaQuery.sizeOf(context).width - 20, maxWidth),
-          child: tonal
-              ? FilledButton.tonalIcon(
-                  onPressed: onPressed,
-                  style: style,
-                  label: label,
-                  icon: icon,
-                )
-              : FilledButton.icon(
-                  onPressed: onPressed,
-                  style: style,
-                  label: label,
-                  icon: icon,
-                ),
-        ),
-      );
+    child: SizedBox(
+      width: math.min(MediaQuery.sizeOf(context).width - 20, maxWidth),
+      child: tonal
+          ? FilledButton.tonalIcon(
+              onPressed: onPressed,
+              style: style,
+              label: label,
+              icon: icon,
+            )
+          : FilledButton.icon(
+              onPressed: onPressed,
+              style: style,
+              label: label,
+              icon: icon,
+            ),
+    ),
+  );
 }

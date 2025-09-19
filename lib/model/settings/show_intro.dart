@@ -8,8 +8,8 @@ final showIntroSettingsEntryProvider = AsyncNotifierProvider.autoDispose<ShowInt
 class ShowIntroSettingsEntry extends SettingsEntry<bool> {
   /// Creates a new show intro settings entry instance.
   ShowIntroSettingsEntry()
-      : super(
-          key: 'showIntro',
-          defaultValue: true,
-        );
+    : super(
+        key: 'showIntro',
+        defaultValue: true,
+      );
 }

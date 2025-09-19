@@ -54,19 +54,18 @@ class TextInputDialog extends StatefulWidget {
     TextInputType? keyboardType,
     String? initialValue,
     List<Widget>? children,
-  }) =>
-      showDialog<String>(
-        context: context,
-        builder: (context) => TextInputDialog(
-          title: title,
-          message: message,
-          password: password,
-          validator: validator,
-          keyboardType: keyboardType,
-          initialValue: initialValue,
-          children: children,
-        ),
-      );
+  }) => showDialog<String>(
+    context: context,
+    builder: (context) => TextInputDialog(
+      title: title,
+      message: message,
+      password: password,
+      validator: validator,
+      keyboardType: keyboardType,
+      initialValue: initialValue,
+      children: children,
+    ),
+  );
 
   /// Validates the given mail.
   static String? validateEmail(String? email) {
@@ -90,47 +89,47 @@ class _TextInputDialogState extends State<TextInputDialog> {
 
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(widget.title),
-        actions: [
-          TextButton(
-            onPressed: valid ? (() => Navigator.pop(context, value)) : null,
-            child: Text(MaterialLocalizations.of(context).okButtonLabel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          Text(
-            widget.message,
-            textAlign: TextAlign.left,
-          ),
-          if (widget.children != null) ...widget.children!,
-          if (widget.password)
-            PasswordFormField(
-              initialValue: value,
-              onChanged: onChanged,
-              autofocus: true,
-              onFieldSubmitted: (value) => Navigator.pop(context, value),
-              textInputAction: TextInputAction.go,
-              validator: widget.validator,
-              keyboardType: widget.keyboardType,
-              autovalidateMode: AutovalidateMode.always,
-            )
-          else
-            TextFormField(
-              initialValue: value,
-              onChanged: onChanged,
-              autofocus: true,
-              onFieldSubmitted: (value) => Navigator.pop(context, value),
-              textInputAction: TextInputAction.go,
-              validator: widget.validator,
-              keyboardType: widget.keyboardType,
-              autovalidateMode: AutovalidateMode.always,
-            ),
-        ],
-      );
+    title: Text(widget.title),
+    actions: [
+      TextButton(
+        onPressed: valid ? (() => Navigator.pop(context, value)) : null,
+        child: Text(MaterialLocalizations.of(context).okButtonLabel),
+      ),
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      Text(
+        widget.message,
+        textAlign: TextAlign.left,
+      ),
+      if (widget.children != null) ...widget.children!,
+      if (widget.password)
+        PasswordFormField(
+          initialValue: value,
+          onChanged: onChanged,
+          autofocus: true,
+          onFieldSubmitted: (value) => Navigator.pop(context, value),
+          textInputAction: TextInputAction.go,
+          validator: widget.validator,
+          keyboardType: widget.keyboardType,
+          autovalidateMode: AutovalidateMode.always,
+        )
+      else
+        TextFormField(
+          initialValue: value,
+          onChanged: onChanged,
+          autofocus: true,
+          onFieldSubmitted: (value) => Navigator.pop(context, value),
+          textInputAction: TextInputAction.go,
+          validator: widget.validator,
+          keyboardType: widget.keyboardType,
+          autovalidateMode: AutovalidateMode.always,
+        ),
+    ],
+  );
 
   /// Triggered when changed.
   void onChanged(String newValue) {
@@ -155,8 +154,8 @@ class MasterPasswordInputDialog extends ConsumerStatefulWidget {
     super.key,
     String? title,
     String? message,
-  })  : title = title ?? translations.miscellaneous.masterPasswordDialog.title,
-        message = message ?? translations.miscellaneous.masterPasswordDialog.message;
+  }) : title = title ?? translations.miscellaneous.masterPasswordDialog.title,
+       message = message ?? translations.miscellaneous.masterPasswordDialog.message;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MasterPasswordInputDialogState();
@@ -167,14 +166,13 @@ class MasterPasswordInputDialog extends ConsumerStatefulWidget {
     BuildContext context, {
     String? title,
     String? message,
-  }) =>
-      showDialog<String>(
-        context: context,
-        builder: (context) => MasterPasswordInputDialog(
-          title: title,
-          message: message,
-        ),
-      );
+  }) => showDialog<String>(
+    context: context,
+    builder: (context) => MasterPasswordInputDialog(
+      title: title,
+      message: message,
+    ),
+  );
 
   /// Returns the string that validates the master password according to the given [validationResult].
   static String? validateMasterPassword(Result<bool> validationResult) {
@@ -209,36 +207,36 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
 
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(widget.title),
-        actions: [
-          TextButton(
-            onPressed: onOkPressed,
-            child: Text(MaterialLocalizations.of(context).okButtonLabel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          Text(
-            widget.message,
-            textAlign: TextAlign.left,
-          ),
-          Form(
-            key: formFieldKey,
-            child: PasswordFormField(
-              initialValue: password,
-              onChanged: (value) => password = value,
-              autofocus: true,
-              onFieldSubmitted: (value) => onOkPressed(password: value),
-              textInputAction: TextInputAction.go,
-              validator: (_) => MasterPasswordInputDialog.validateMasterPassword(oldPasswordValidationResult),
-              autovalidateMode: AutovalidateMode.disabled,
-            ),
-          ),
-        ],
-      );
+    title: Text(widget.title),
+    actions: [
+      TextButton(
+        onPressed: onOkPressed,
+        child: Text(MaterialLocalizations.of(context).okButtonLabel),
+      ),
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      Text(
+        widget.message,
+        textAlign: TextAlign.left,
+      ),
+      Form(
+        key: formFieldKey,
+        child: PasswordFormField(
+          initialValue: password,
+          onChanged: (value) => password = value,
+          autofocus: true,
+          onFieldSubmitted: (value) => onOkPressed(password: value),
+          textInputAction: TextInputAction.go,
+          validator: (_) => MasterPasswordInputDialog.validateMasterPassword(oldPasswordValidationResult),
+          autovalidateMode: AutovalidateMode.disabled,
+        ),
+      ),
+    ],
+  );
 
   /// Triggered when the ok button has been pressed.
   Future<void> onOkPressed({String? password}) async {

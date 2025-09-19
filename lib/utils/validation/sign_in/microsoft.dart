@@ -11,29 +11,29 @@ class MicrosoftSignIn extends OAuth2SignInServer with OAuth2SignInVerifyFragment
     this.email,
     super.timeout,
   }) : super(
-          name: 'Microsoft',
-        );
+         name: 'Microsoft',
+       );
 
   @override
   Uri buildUrl() => Uri.https(
-        'login.microsoftonline.com',
-        '/common/oauth2/v2.0/authorize',
-        loginUrlParameters,
-      );
+    'login.microsoftonline.com',
+    '/common/oauth2/v2.0/authorize',
+    loginUrlParameters,
+  );
 
   @override
   Map<String, String> get loginUrlParameters => {
-        ...super.loginUrlParameters,
-        'response_type': 'id_token token',
-        'response_mode': 'fragment',
-        'prompt': 'select_account',
-        if (email != null) 'login_hint': email!,
-      };
+    ...super.loginUrlParameters,
+    'response_type': 'id_token token',
+    'response_mode': 'fragment',
+    'prompt': 'select_account',
+    if (email != null) 'login_hint': email!,
+  };
 
   @override
   List<String> get scopes => [
-        'openid',
-        'email',
-        'offline_access',
-      ];
+    'openid',
+    'email',
+    'offline_access',
+  ];
 }

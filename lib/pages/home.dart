@@ -195,18 +195,18 @@ class _AppBarTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (context, constraints) {
-          if (textMaxWidth != null && constraints.maxWidth <= textMaxWidth!) {
-            double size = Theme.of(context).textTheme.titleLarge?.fontSize ?? 32;
-            return SizedScalableImageWidget(
-              height: size,
-              width: size,
-              asset: 'assets/images/logo.si',
-            );
-          }
-          return const TitleWidget();
-        },
-      );
+    builder: (context, constraints) {
+      if (textMaxWidth != null && constraints.maxWidth <= textMaxWidth!) {
+        double size = Theme.of(context).textTheme.titleLarge?.fontSize ?? 32;
+        return SizedScalableImageWidget(
+          height: size,
+          width: size,
+          asset: 'assets/images/logo.si',
+        );
+      }
+      return const TitleWidget();
+    },
+  );
 }
 
 /// Allows to require a crypto store.
@@ -230,12 +230,12 @@ class _RequireCryptoStore extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (showChildIfLocked) {
-      bool isUnlocked = ref.watch(appLockStateProvider).valueOrNull == AppLockState.unlocked;
+      bool isUnlocked = ref.watch(appLockStateProvider).value == AppLockState.unlocked;
       if (!isUnlocked) {
         return child;
       }
     }
-    CryptoStore? cryptoStore = ref.watch(cryptoStoreProvider).valueOrNull;
+    CryptoStore? cryptoStore = ref.watch(cryptoStoreProvider).value;
     return cryptoStore == null ? childIfAbsent : child;
   }
 }
@@ -264,8 +264,8 @@ class _HomePageBody extends ConsumerWidget {
     AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
     switch (totps) {
       case AsyncData(:final value):
-        bool isUnlocked = ref.watch(appLockStateProvider.select((state) => state.valueOrNull == AppLockState.unlocked));
-        bool displayCopyButton = ref.watch(displayCopyButtonSettingsEntryProvider).valueOrNull ?? true;
+        bool isUnlocked = ref.watch(appLockStateProvider.select((state) => state.value == AppLockState.unlocked));
+        bool displayCopyButton = ref.watch(displayCopyButtonSettingsEntryProvider).value ?? true;
         Widget child = value.isEmpty
             ? CustomScrollView(
                 slivers: [
@@ -362,30 +362,29 @@ class _HomePageBody extends ConsumerWidget {
     String? buttonLabel,
     IconData? buttonIcon,
     VoidCallback? onButtonPressed,
-  }) =>
-      Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(20),
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: buttonLabel == null ? 0 : 20),
-              child: Text(
-                message ?? translations.error.generic.noTryAgain,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            if (buttonLabel != null)
-              Center(
-                child: AppFilledButton(
-                  onPressed: onButtonPressed,
-                  label: Text(buttonLabel),
-                  icon: buttonIcon == null ? null : Icon(buttonIcon),
-                ),
-              ),
-          ],
+  }) => Center(
+    child: ListView(
+      shrinkWrap: true,
+      padding: const EdgeInsets.all(20),
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: buttonLabel == null ? 0 : 20),
+          child: Text(
+            message ?? translations.error.generic.noTryAgain,
+            textAlign: TextAlign.center,
+          ),
         ),
-      );
+        if (buttonLabel != null)
+          Center(
+            child: AppFilledButton(
+              onPressed: onButtonPressed,
+              label: Text(buttonLabel),
+              icon: buttonIcon == null ? null : Icon(buttonIcon),
+            ),
+          ),
+      ],
+    ),
+  );
 
   /// Allows to edit the TOTP.
   Future<void> editTotp(BuildContext context, WidgetRef ref, Totp totp) async {
@@ -562,22 +561,23 @@ class _SearchButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
     return switch (totps) {
-      AsyncData<TotpList>(:final value) => value.isEmpty
-          ? const SizedBox.shrink()
-          : IconButton(
-              onPressed: () async {
-                Totp? result = await showSearch(
-                  context: context,
-                  delegate: _TotpSearchDelegate(
-                    totpList: value,
-                  ),
-                );
-                if (result != null) {
-                  onTotpFound(result);
-                }
-              },
-              icon: const Icon(Icons.search),
-            ),
+      AsyncData<TotpList>(:final value) =>
+        value.isEmpty
+            ? const SizedBox.shrink()
+            : IconButton(
+                onPressed: () async {
+                  Totp? result = await showSearch(
+                    context: context,
+                    delegate: _TotpSearchDelegate(
+                      totpList: value,
+                    ),
+                  );
+                  if (result != null) {
+                    onTotpFound(result);
+                  }
+                },
+                icon: const Icon(Icons.search),
+              ),
       _ => const SizedBox.shrink(),
     };
   }
@@ -606,11 +606,11 @@ class _TotpSearchDelegate extends SearchDelegate<Totp> {
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
-        IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () => query = '',
-        ),
-      ];
+    IconButton(
+      icon: const Icon(Icons.clear),
+      onPressed: () => query = '',
+    ),
+  ];
 
   @override
   Widget? buildLeading(BuildContext context) => const BackButton();
@@ -657,28 +657,28 @@ class _AddTotpDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(translations.home.addDialog.title),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          ListTile(
-            leading: const Icon(Icons.qr_code),
-            onTap: () => Navigator.pop(context, _AddTotpDialogResult.qrCode),
-            title: Text(translations.home.addDialog.qrCode.title),
-            subtitle: Text(translations.home.addDialog.qrCode.subtitle),
-          ),
-          ListTile(
-            leading: const Icon(Icons.short_text),
-            onTap: () => Navigator.pop(context, _AddTotpDialogResult.manually),
-            title: Text(translations.home.addDialog.manually.title),
-            subtitle: Text(translations.home.addDialog.manually.subtitle),
-          ),
-        ],
-      );
+    title: Text(translations.home.addDialog.title),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      ListTile(
+        leading: const Icon(Icons.qr_code),
+        onTap: () => Navigator.pop(context, _AddTotpDialogResult.qrCode),
+        title: Text(translations.home.addDialog.qrCode.title),
+        subtitle: Text(translations.home.addDialog.qrCode.subtitle),
+      ),
+      ListTile(
+        leading: const Icon(Icons.short_text),
+        onTap: () => Navigator.pop(context, _AddTotpDialogResult.manually),
+        title: Text(translations.home.addDialog.manually.title),
+        subtitle: Text(translations.home.addDialog.manually.subtitle),
+      ),
+    ],
+  );
 }
 
 /// The [_AddTotpDialog] result.
@@ -687,7 +687,7 @@ enum _AddTotpDialogResult {
   qrCode,
 
   /// When the user wants to manually add the TOTP.
-  manually;
+  manually,
 }
 
 /// Allows the user to choose an action to execute when a TOTP decryption has been done with success.
@@ -702,47 +702,47 @@ class _TotpKeyDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(translations.totp.totpKeyDialog.title),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          ListTilePadding(
-            bottom: 10,
-            child: Text(
-              translations.totp.totpKeyDialog.message(n: decryptedTotps.length),
-            ),
-          ),
-          if (decryptedTotps.length > 1)
-            ListTile(
-              leading: const Icon(Icons.done_all),
-              onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeAllTotpsKey),
-              title: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.title),
-              subtitle: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.subtitle),
-            ),
-          ListTile(
-            leading: const Icon(Icons.key),
-            onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeTotpKey),
-            title: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.title(n: decryptedTotps.length)),
-            subtitle: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.subtitle),
-          ),
-          ListTile(
-            leading: const Icon(Icons.password),
-            onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeMasterPassword),
-            title: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.title),
-            subtitle: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.subtitle),
-          ),
-          ListTile(
-            leading: const Icon(Icons.close),
-            onTap: () => Navigator.pop(context),
-            title: Text(translations.totp.totpKeyDialog.choices.doNothing.title),
-            subtitle: Text(translations.totp.totpKeyDialog.choices.doNothing.subtitle),
-          ),
-        ],
-      );
+    title: Text(translations.totp.totpKeyDialog.title),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      ListTilePadding(
+        bottom: 10,
+        child: Text(
+          translations.totp.totpKeyDialog.message(n: decryptedTotps.length),
+        ),
+      ),
+      if (decryptedTotps.length > 1)
+        ListTile(
+          leading: const Icon(Icons.done_all),
+          onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeAllTotpsKey),
+          title: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.title),
+          subtitle: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.subtitle),
+        ),
+      ListTile(
+        leading: const Icon(Icons.key),
+        onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeTotpKey),
+        title: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.title(n: decryptedTotps.length)),
+        subtitle: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.subtitle),
+      ),
+      ListTile(
+        leading: const Icon(Icons.password),
+        onTap: () => Navigator.pop(context, _TotpKeyDialogResult.changeMasterPassword),
+        title: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.title),
+        subtitle: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.subtitle),
+      ),
+      ListTile(
+        leading: const Icon(Icons.close),
+        onTap: () => Navigator.pop(context),
+        title: Text(translations.totp.totpKeyDialog.choices.doNothing.title),
+        subtitle: Text(translations.totp.totpKeyDialog.choices.doNothing.subtitle),
+      ),
+    ],
+  );
 }
 
 /// The [_TotpKeyDialog] result.
@@ -754,5 +754,5 @@ enum _TotpKeyDialogResult {
   changeAllTotpsKey,
 
   /// Allows to change the current master password.
-  changeMasterPassword;
+  changeMasterPassword,
 }

@@ -202,7 +202,7 @@ class GithubSignIn with OAuth2SignIn {
 
   @override
   List<String> get scopes => [
-        'read:user',
-        'user:email',
-      ];
+    'read:user',
+    'user:email',
+  ];
 }

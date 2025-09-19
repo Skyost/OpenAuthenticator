@@ -31,8 +31,8 @@ class IntroPageSlide {
 
   /// Creates the widget for showing this slide.
   Widget createWidget(BuildContext context, int remainingSteps) => IntroPageSlideWidget(
-        slide: this,
-      );
+    slide: this,
+  );
 }
 
 /// Contains all intro page slide types.
@@ -72,10 +72,11 @@ class IntroPageSlideWidget extends ConsumerStatefulWidget {
     Widget? titleWidget,
     required this.slide,
     this.children = const [],
-  }) : titleWidget = titleWidget ??
-            IntroPageSlideTitleWidget(
-              slide: slide,
-            );
+  }) : titleWidget =
+           titleWidget ??
+           IntroPageSlideTitleWidget(
+             slide: slide,
+           );
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => IntroPageSlideWidgetState();
@@ -84,16 +85,17 @@ class IntroPageSlideWidget extends ConsumerStatefulWidget {
 /// An intro page slide widget state.
 class IntroPageSlideWidgetState extends ConsumerState<IntroPageSlideWidget> with TickerProviderStateMixin, BrightnessListener {
   /// The image animation controller.
-  late final AnimationController _imageAnimationController = AnimationController(
-    duration: const Duration(seconds: 1),
-    vsync: this,
-  )
-    ..addListener(() {
-      if (_imageAnimationController.value >= 0.75 && _textAnimationController.value == 0) {
-        _textAnimationController.forward();
-      }
-    })
-    ..forward();
+  late final AnimationController _imageAnimationController =
+      AnimationController(
+          duration: const Duration(seconds: 1),
+          vsync: this,
+        )
+        ..addListener(() {
+          if (_imageAnimationController.value >= 0.75 && _textAnimationController.value == 0) {
+            _textAnimationController.forward();
+          }
+        })
+        ..forward();
 
   /// The image animation.
   late final Animation<double> _imageAnimation = CurvedAnimation(
@@ -115,51 +117,49 @@ class IntroPageSlideWidgetState extends ConsumerState<IntroPageSlideWidget> with
 
   @override
   Widget build(BuildContext context) => DefaultTextStyle.merge(
-        style: TextStyle(color: currentBrightness == Brightness.dark ? Colors.white60 : Colors.grey.shade700),
-        textAlign: TextAlign.center,
-        child: Center(
-          child: ListView(
-            padding: EdgeInsets.only(
-              top: MediaQuery.sizeOf(context).width <= 768 ? 40 : 20,
-              right: 20,
-              left: 20,
-              bottom: 20,
-            ),
-            shrinkWrap: true,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40),
-                child: DefaultTextStyle.merge(
-                  child: FadeTransition(
-                    opacity: _textAnimation,
-                    child: widget.titleWidget,
-                  ),
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40),
-                child: FadeScaleTransition(
-                  animation: _imageAnimation,
-                  child: SizedBox(
-                    height: 200,
-                    child: SizedScalableImageWidget(
-                      asset: widget.slide.imagePath,
-                    ),
-                  ),
-                ),
-              ),
-              for (int i = 0; i < widget.children.length; i++)
-                FadeTransition(
-                  opacity: _textAnimation,
-                  child: i == widget.children.length - 1 && widget.children[i] is IntroPageSlideParagraphWidget
-                      ? (widget.children[i] as IntroPageSlideParagraphWidget).withoutPadding
-                      : widget.children[i],
-                ),
-            ],
-          ),
+    style: TextStyle(color: currentBrightness == Brightness.dark ? Colors.white60 : Colors.grey.shade700),
+    textAlign: TextAlign.center,
+    child: Center(
+      child: ListView(
+        padding: EdgeInsets.only(
+          top: MediaQuery.sizeOf(context).width <= 768 ? 40 : 20,
+          right: 20,
+          left: 20,
+          bottom: 20,
         ),
-      );
+        shrinkWrap: true,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 40),
+            child: DefaultTextStyle.merge(
+              child: FadeTransition(
+                opacity: _textAnimation,
+                child: widget.titleWidget,
+              ),
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 40),
+            child: FadeScaleTransition(
+              animation: _imageAnimation,
+              child: SizedBox(
+                height: 200,
+                child: SizedScalableImageWidget(
+                  asset: widget.slide.imagePath,
+                ),
+              ),
+            ),
+          ),
+          for (int i = 0; i < widget.children.length; i++)
+            FadeTransition(
+              opacity: _textAnimation,
+              child: i == widget.children.length - 1 && widget.children[i] is IntroPageSlideParagraphWidget ? (widget.children[i] as IntroPageSlideParagraphWidget).withoutPadding : widget.children[i],
+            ),
+        ],
+      ),
+    ),
+  );
 
   @override
   void dispose() {
@@ -202,13 +202,13 @@ class IntroPageSlideParagraphWidget extends StatelessWidget {
     TextStyle? textStyle,
     double padding = kDefaultPadding,
   }) : this.rich(
-          key: key,
-          textSpan: TextSpan(
-            text: text,
-            style: textStyle,
-          ),
-          padding: padding,
-        );
+         key: key,
+         textSpan: TextSpan(
+           text: text,
+           style: textStyle,
+         ),
+         padding: padding,
+       );
 
   /// Creates a paragraph text, with a separator.
   const IntroPageSlideParagraphWidget.rich({
@@ -219,13 +219,13 @@ class IntroPageSlideParagraphWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: EdgeInsets.only(bottom: padding),
-        child: Text.rich(textSpan),
-      );
+    padding: EdgeInsets.only(bottom: padding),
+    child: Text.rich(textSpan),
+  );
 
   /// Returns the same paragraph without padding.
   IntroPageSlideParagraphWidget get withoutPadding => IntroPageSlideParagraphWidget.rich(
-        textSpan: textSpan,
-        padding: 0,
-      );
+    textSpan: textSpan,
+    padding: 0,
+  );
 }

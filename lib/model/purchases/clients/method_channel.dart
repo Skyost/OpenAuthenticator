@@ -11,7 +11,10 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
   });
 
   @override
-  Future<void> initialize() => Purchases.configure(purchasesConfiguration);
+  Future<void> initialize() async {
+    await Purchases.configure(purchasesConfiguration);
+    await Purchases.setEmail(purchasesConfiguration.email!);
+  }
 
   @override
   Future<bool> hasEntitlement(String entitlementId) async {
@@ -36,8 +39,12 @@ class RevenueCatMethodChannelClient extends RevenueCatClient {
 
     Package? package = offering.availablePackages.firstWhereOrNull((package) => package.packageType == packageType);
     if (package != null) {
-      await Purchases.setEmail(purchasesConfiguration.email!);
-      PurchaseResult result = await Purchases.purchasePackage(package);
+      PurchaseResult result = await Purchases.purchase(
+        PurchaseParams.package(
+          package,
+          customerEmail: purchasesConfiguration.email,
+        ),
+      );
       return List.of(result.customerInfo.entitlements.active.keys).cast<String>();
     }
     return [];

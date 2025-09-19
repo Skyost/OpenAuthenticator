@@ -60,7 +60,7 @@ enum AppLockState {
   unlocked,
 
   /// If an unlock challenge has started.
-  unlockChallengedStarted;
+  unlockChallengedStarted,
 }
 
 /// Will be used if the app cannot be unlocked.

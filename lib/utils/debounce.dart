@@ -37,8 +37,7 @@ class Debounce {
     Function target, [
     List<dynamic> positionalArguments = const [],
     Map<Symbol, dynamic> namedArguments = const {},
-  ]) =>
-      duration(Duration(milliseconds: timeoutMs), target, positionalArguments, namedArguments);
+  ]) => duration(Duration(milliseconds: timeoutMs), target, positionalArguments, namedArguments);
 
   /// Run a function which is already debounced (queued to be run later),
   /// but run it now. This also cancels and clears out the timeout for
@@ -64,8 +63,7 @@ class Debounce {
     Function target, [
     List<dynamic> positionalArguments = const [],
     Map<Symbol, dynamic> namedArguments = const {},
-  ]) =>
-      duration(Duration(seconds: timeoutSeconds), target, positionalArguments, namedArguments);
+  ]) => duration(Duration(seconds: timeoutSeconds), target, positionalArguments, namedArguments);
 }
 
 /// _DebounceTimer allows us to keep track of the target function
@@ -90,11 +88,11 @@ class _DebounceTimer {
     this.positionalArguments = const [],
     this.namedArguments = const {},
   ]) : timer = Timer(
-          timeout,
-          () {
-            Function.apply(target, positionalArguments, namedArguments);
-          },
-        );
+         timeout,
+         () {
+           Function.apply(target, positionalArguments, namedArguments);
+         },
+       );
 
   /// Cancels this timer.
   void cancel() => timer.cancel();

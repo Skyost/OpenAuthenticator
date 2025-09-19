@@ -16,34 +16,34 @@ final appleAuthenticationStateProvider = NotifierProvider<FirebaseAuthentication
 class AppleAuthenticationProvider extends FallbackAuthenticationProvider<AppleSignIn> {
   /// Creates a new Apple authentication provider instance.
   const AppleAuthenticationProvider()
-      : super(
-          availablePlatforms: const [
-            Platform.android,
-            Platform.iOS,
-            Platform.macOS,
-            Platform.windows,
-          ],
-        );
+    : super(
+        availablePlatforms: const [
+          Platform.android,
+          Platform.iOS,
+          Platform.macOS,
+          Platform.windows,
+        ],
+      );
 
   @override
   String get providerId => AppleAuthMethod.providerId;
 
   @override
   AppleAuthMethod createDefaultAuthMethod({List<String> scopes = const []}) => AppleAuthMethod.defaultMethod(
-        scopes: scopes,
-        customParameters: {
-          'locale': translations.$meta.locale.languageCode,
-        },
-      );
+    scopes: scopes,
+    customParameters: {
+      'locale': translations.$meta.locale.languageCode,
+    },
+  );
 
   @override
   AppleAuthMethod createRestAuthMethod(OAuth2Response response) => AppleAuthMethod.rest(
-        idToken: response.idToken,
-        nonce: response.nonce,
-      );
+    idToken: response.idToken,
+    nonce: response.nonce,
+  );
 
   @override
   AppleSignIn createFallbackAuthProvider() => AppleSignIn(
-        clientId: 'app.openauthenticator.service',
-      );
+    clientId: 'app.openauthenticator.service',
+  );
 }

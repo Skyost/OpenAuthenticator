@@ -96,58 +96,59 @@ class SmartImageWidget extends StatelessWidget {
     }
     return switch (imageType) {
       ImageType.svg => SizedBox(
-          width: width,
-          height: height,
-          child: ScalableImageWidget.fromSISource(
-            si: ScalableImageSource.fromSvgFile(file, () => file.readAsString()),
-            key: imageKey,
-            fit: fit,
-            onError: errorBuilder,
-            onLoading: _vectorLoading,
-            switcher: _vectorSwitcher,
-          ),
+        width: width,
+        height: height,
+        child: ScalableImageWidget.fromSISource(
+          si: ScalableImageSource.fromSvgFile(file, () => file.readAsString()),
+          key: imageKey,
+          fit: fit,
+          onError: errorBuilder,
+          onLoading: _vectorLoading,
+          switcher: _vectorSwitcher,
         ),
+      ),
       ImageType.si => SizedBox(
-          width: width,
-          height: height,
-          child: ScalableImageWidget.fromSISource(
-            si: SIFileSource(file: file),
-            key: imageKey,
-            fit: fit,
-            onError: errorBuilder,
-            onLoading: _vectorLoading,
-            switcher: _vectorSwitcher,
-          ),
+        width: width,
+        height: height,
+        child: ScalableImageWidget.fromSISource(
+          si: SIFileSource(file: file),
+          key: imageKey,
+          fit: fit,
+          onError: errorBuilder,
+          onLoading: _vectorLoading,
+          switcher: _vectorSwitcher,
         ),
-      ImageType.other => shouldFadeIn
-          ? FadeInImage(
-              key: imageKey,
-              placeholder: ResizeImage.resizeIfNeeded(
-                _cacheWidth,
-                _cacheHeight,
-                MemoryImage(kTransparentImage),
+      ),
+      ImageType.other =>
+        shouldFadeIn
+            ? FadeInImage(
+                key: imageKey,
+                placeholder: ResizeImage.resizeIfNeeded(
+                  _cacheWidth,
+                  _cacheHeight,
+                  MemoryImage(kTransparentImage),
+                ),
+                image: ResizeImage.resizeIfNeeded(
+                  _cacheWidth,
+                  _cacheHeight,
+                  FileImage(file),
+                ),
+                width: width,
+                height: height,
+                fadeInDuration: fadeInDuration!,
+                fit: fit,
+                imageErrorBuilder: errorBuilder == null ? null : ((context, error, stacktrace) => errorBuilder!(context)),
+              )
+            : Image.file(
+                file,
+                key: imageKey,
+                width: width,
+                height: height,
+                cacheWidth: _cacheWidth,
+                cacheHeight: _cacheHeight,
+                fit: fit,
+                errorBuilder: errorBuilder == null ? null : ((context, error, stacktrace) => errorBuilder!(context)),
               ),
-              image: ResizeImage.resizeIfNeeded(
-                _cacheWidth,
-                _cacheHeight,
-                FileImage(file),
-              ),
-              width: width,
-              height: height,
-              fadeInDuration: fadeInDuration!,
-              fit: fit,
-              imageErrorBuilder: errorBuilder == null ? null : ((context, error, stacktrace) => errorBuilder!(context)),
-            )
-          : Image.file(
-              file,
-              key: imageKey,
-              width: width,
-              height: height,
-              cacheWidth: _cacheWidth,
-              cacheHeight: _cacheHeight,
-              fit: fit,
-              errorBuilder: errorBuilder == null ? null : ((context, error, stacktrace) => errorBuilder!(context)),
-            ),
     };
   }
 
@@ -163,15 +164,16 @@ class SmartImageWidget extends StatelessWidget {
   /// The vector image switcher.
   Widget Function(BuildContext context, Widget child)? get _vectorSwitcher => shouldFadeIn
       ? ((context, child) => AnimatedSwitcher(
-            switchInCurve: Curves.easeIn,
-            switchOutCurve: Curves.easeOut,
-            duration: fadeInDuration!,
-            child: child,
-          ))
+          switchInCurve: Curves.easeIn,
+          switchOutCurve: Curves.easeOut,
+          duration: fadeInDuration!,
+          child: child,
+        ))
       : null;
 
   /// The vector image loading widget.
-  Widget Function(BuildContext) get _vectorLoading => (context) => SizedBox(
+  Widget Function(BuildContext) get _vectorLoading =>
+      (context) => SizedBox(
         width: width ?? 1,
         height: height ?? 1,
       );

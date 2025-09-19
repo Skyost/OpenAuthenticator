@@ -41,55 +41,55 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-        appBar: AppBar(
-          title: Text(translations.settings.title),
+    appBar: AppBar(
+      title: Text(translations.settings.title),
+    ),
+    body: Theme(
+      data: Theme.of(context).copyWith(
+        buttonTheme: const ButtonThemeData(
+          alignedDropdown: false,
         ),
-        body: Theme(
-          data: Theme.of(context).copyWith(
-            buttonTheme: const ButtonThemeData(
-              alignedDropdown: false,
-            ),
-          ),
-          child: ListView(
-            children: [
-              _SettingsPageSectionTitle(title: translations.settings.application.title),
-              const ContributorPlanEntryWidget(),
-              const ThemeSettingsEntryWidget(),
-              CacheTotpPicturesSettingsEntryWidget(),
-              if (currentPlatform.isMobile || kDebugMode) //
-                DisplayCopyButtonSettingsEntryWidget(),
-              _SettingsPageSectionTitle(title: translations.settings.security.title),
-              EnableLocalAuthSettingsEntryWidget(),
-              SaveDerivedKeySettingsEntryWidget(),
-              const ChangeMasterPasswordSettingsEntryWidget(),
-              if (ref.watch(userAuthenticationProviders).availableProviders.isNotEmpty) ...[
-                const _SynchronizationSectionTitle(),
-                const ConfirmEmailSettingsEntryWidget(),
-                const AccountLinkSettingsEntryWidget(),
-                SynchronizeSettingsEntryWidget(),
-                const AccountLogInSettingsEntryWidget(),
-              ],
-              _SettingsPageSectionTitle(title: translations.settings.backups.title),
-              const BackupNowSettingsEntryWidget(),
-              const ManageBackupSettingsEntryWidget(),
-              _SettingsPageSectionTitle(title: translations.settings.about.title),
-              TranslateSettingsEntryWidget(),
-              GithubSettingsEntryWidget(),
-              const AboutSettingsEntryWidget(),
-              _SettingsPageSectionTitle(title: translations.settings.dangerZone.title),
-              const DeleteAccountSettingsEntryWidget(),
-              const ClearDataSettingsEntryWidget(),
-              if (kDebugMode) ...[
-                const _SettingsPageSectionTitle(title: 'Debug'),
-                const ShowIntroPageSettingsEntryWidget(),
-                const ContributorPlanStateEntryWidget(),
-                const LocaleEntryWidget(),
-                const RefreshUserSettingsEntryWidget(),
-              ]
-            ],
-          ),
-        ),
-      );
+      ),
+      child: ListView(
+        children: [
+          _SettingsPageSectionTitle(title: translations.settings.application.title),
+          const ContributorPlanEntryWidget(),
+          const ThemeSettingsEntryWidget(),
+          CacheTotpPicturesSettingsEntryWidget(),
+          if (currentPlatform.isMobile || kDebugMode) //
+            DisplayCopyButtonSettingsEntryWidget(),
+          _SettingsPageSectionTitle(title: translations.settings.security.title),
+          EnableLocalAuthSettingsEntryWidget(),
+          SaveDerivedKeySettingsEntryWidget(),
+          const ChangeMasterPasswordSettingsEntryWidget(),
+          if (ref.watch(userAuthenticationProviders).availableProviders.isNotEmpty) ...[
+            const _SynchronizationSectionTitle(),
+            const ConfirmEmailSettingsEntryWidget(),
+            const AccountLinkSettingsEntryWidget(),
+            SynchronizeSettingsEntryWidget(),
+            const AccountLogInSettingsEntryWidget(),
+          ],
+          _SettingsPageSectionTitle(title: translations.settings.backups.title),
+          const BackupNowSettingsEntryWidget(),
+          const ManageBackupSettingsEntryWidget(),
+          _SettingsPageSectionTitle(title: translations.settings.about.title),
+          TranslateSettingsEntryWidget(),
+          GithubSettingsEntryWidget(),
+          const AboutSettingsEntryWidget(),
+          _SettingsPageSectionTitle(title: translations.settings.dangerZone.title),
+          const DeleteAccountSettingsEntryWidget(),
+          const ClearDataSettingsEntryWidget(),
+          if (kDebugMode) ...[
+            const _SettingsPageSectionTitle(title: 'Debug'),
+            const ShowIntroPageSettingsEntryWidget(),
+            const ContributorPlanStateEntryWidget(),
+            const LocaleEntryWidget(),
+            const RefreshUserSettingsEntryWidget(),
+          ],
+        ],
+      ),
+    ),
+  );
 }
 
 /// A settings section title.
@@ -104,11 +104,11 @@ class _SettingsPageSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
-        ),
-      );
+    title: Text(
+      title,
+      style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
+    ),
+  );
 }
 
 /// The "Synchronization" page section title.

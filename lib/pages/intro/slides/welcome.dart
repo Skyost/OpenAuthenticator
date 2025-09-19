@@ -8,27 +8,27 @@ import 'package:open_authenticator/widgets/title.dart';
 class WelcomeIntroPageSlide extends IntroPageSlide {
   /// Creates a new welcome intro page content instance.
   const WelcomeIntroPageSlide()
-      : super(
-          name: 'welcome',
-        );
+    : super(
+        name: 'welcome',
+      );
 
   @override
   Widget createWidget(BuildContext context, int remainingSteps) => IntroPageSlideWidget(
-        titleWidget: const TitleWidget(),
-        slide: this,
-        children: [
-          IntroPageSlideParagraphWidget(text: translations.intro.welcome.firstParagraph(app: App.appName)),
-          if (remainingSteps > 0)
-            IntroPageSlideParagraphWidget(
-              text: translations.intro.welcome.secondParagraph,
-            ),
-          IntroPageSlideParagraphWidget(
-            text: translations.intro.welcome.thirdParagraph,
-            textStyle: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ],
-      );
+    titleWidget: const TitleWidget(),
+    slide: this,
+    children: [
+      IntroPageSlideParagraphWidget(text: translations.intro.welcome.firstParagraph(app: App.appName)),
+      if (remainingSteps > 0)
+        IntroPageSlideParagraphWidget(
+          text: translations.intro.welcome.secondParagraph,
+        ),
+      IntroPageSlideParagraphWidget(
+        text: translations.intro.welcome.thirdParagraph,
+        textStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    ],
+  );
 }

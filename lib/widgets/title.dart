@@ -46,9 +46,10 @@ class TitleWidget extends StatelessWidget {
 
   /// Creates a text with a gradient.
   WidgetSpan _createGradientText(String text) => WidgetSpan(
-        child: ShaderMask(
-          blendMode: BlendMode.srcIn,
-          shaderCallback: (bounds) => LinearGradient(
+    child: ShaderMask(
+      blendMode: BlendMode.srcIn,
+      shaderCallback: (bounds) =>
+          LinearGradient(
             colors: [
               Colors.green.shade300,
               Colors.green.shade400,
@@ -68,14 +69,14 @@ class TitleWidget extends StatelessWidget {
           ).createShader(
             Rect.fromLTWH(0, 0, bounds.width, bounds.height),
           ),
-          child: Text(
-            text,
-            style: (textStyle ?? const TextStyle()).copyWith(
-              height: 2,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+      child: Text(
+        text,
+        style: (textStyle ?? const TextStyle()).copyWith(
+          height: 2,
+          fontWeight: FontWeight.bold,
         ),
-        alignment: PlaceholderAlignment.middle,
-      );
+      ),
+    ),
+    alignment: PlaceholderAlignment.middle,
+  );
 }

@@ -15,7 +15,7 @@ class AppLockStateNotifier extends AsyncNotifier<AppLockState> {
   @override
   FutureOr<AppLockState> build() async {
     AppUnlockMethod unlockMethod = await ref.watch(appUnlockMethodSettingsEntryProvider.future);
-    return state.valueOrNull ?? unlockMethod.defaultAppLockState;
+    return state.value ?? unlockMethod.defaultAppLockState;
   }
 
   /// Tries to unlock the app.

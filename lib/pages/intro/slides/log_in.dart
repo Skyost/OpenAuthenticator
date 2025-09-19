@@ -15,32 +15,32 @@ import 'package:open_authenticator/widgets/app_filled_button.dart';
 class LogInIntroPageSlide extends IntroPageSlide {
   /// Creates a new login intro page content instance.
   LogInIntroPageSlide()
-      : super(
-          name: 'logIn',
-        );
+    : super(
+        name: 'logIn',
+      );
 
   @override
   Widget createWidget(BuildContext context, int remainingSteps) => IntroPageSlideWidget(
-        titleWidget: Text(translations.intro.logIn.title),
-        slide: this,
-        children: [
-          IntroPageSlideParagraphWidget(text: translations.intro.logIn.firstParagraph),
-          IntroPageSlideParagraphWidget(
-            text: translations.intro.logIn.secondParagraph,
-            textStyle: const TextStyle(fontStyle: FontStyle.italic),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: IntroPageSlideParagraphWidget.kDefaultPadding),
-            child: _LogInButton(),
-          ),
-          SynchronizeSettingsEntryWidget.intro(),
-          IntroPageSlideParagraphWidget(text: translations.intro.logIn.thirdParagraph(limit: App.freeTotpsLimit.toString())),
-          IntroPageSlideParagraphWidget(
-            text: translations.intro.logIn.fourthParagraph(app: App.appName),
-            padding: 0,
-          ),
-        ],
-      );
+    titleWidget: Text(translations.intro.logIn.title),
+    slide: this,
+    children: [
+      IntroPageSlideParagraphWidget(text: translations.intro.logIn.firstParagraph),
+      IntroPageSlideParagraphWidget(
+        text: translations.intro.logIn.secondParagraph,
+        textStyle: const TextStyle(fontStyle: FontStyle.italic),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(bottom: IntroPageSlideParagraphWidget.kDefaultPadding),
+        child: _LogInButton(),
+      ),
+      SynchronizeSettingsEntryWidget.intro(),
+      IntroPageSlideParagraphWidget(text: translations.intro.logIn.thirdParagraph(limit: App.freeTotpsLimit.toString())),
+      IntroPageSlideParagraphWidget(
+        text: translations.intro.logIn.fourthParagraph(app: App.appName),
+        padding: 0,
+      ),
+    ],
+  );
 
   @override
   Future<bool> shouldSkip(WidgetRef ref) async {

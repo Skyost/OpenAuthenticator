@@ -155,7 +155,6 @@ bool FlutterWindow::OnCreate() {
         std::string debugToken = std::get<std::string>(debugTokenValue->second);
         firebase::app_check::DebugAppCheckProviderFactory::GetInstance()
           ->SetDebugToken(debugToken);
-        std::cout << "Debug token: " << debugToken << std::endl;
         firebase::app_check::AppCheck::SetAppCheckProviderFactory(firebase::app_check::DebugAppCheckProviderFactory::GetInstance());
       } else {
         firebase::app_check::AppCheck::SetAppCheckProviderFactory(PlatformAppCheckProviderFactory::GetInstance());

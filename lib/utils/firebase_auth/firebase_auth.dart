@@ -128,21 +128,19 @@ abstract class AppleAuthMethod with FirebaseAuthMethod, CanLinkTo {
   factory AppleAuthMethod.defaultMethod({
     List<String> scopes = const [],
     Map<String, String> customParameters = const {},
-  }) =>
-      AppleAuthMethodDefault(
-        scopes: scopes,
-        customParameters: customParameters,
-      );
+  }) => AppleAuthMethodDefault(
+    scopes: scopes,
+    customParameters: customParameters,
+  );
 
   /// Creates a new REST Apple auth method instance.
   factory AppleAuthMethod.rest({
     String? idToken,
     String? nonce,
-  }) =>
-      AppleAuthMethodRest(
-        idToken: idToken,
-        nonce: nonce,
-      );
+  }) => AppleAuthMethodRest(
+    idToken: idToken,
+    nonce: nonce,
+  );
 
   /// Creates a new Apple auth method instance.
   const AppleAuthMethod();
@@ -157,21 +155,19 @@ abstract class EmailLinkAuthMethod with FirebaseAuthMethod {
   factory EmailLinkAuthMethod.defaultMethod({
     required String email,
     required String emailLink,
-  }) =>
-      EmailLinkAuthMethodDefault(
-        email: email,
-        emailLink: emailLink,
-      );
+  }) => EmailLinkAuthMethodDefault(
+    email: email,
+    emailLink: emailLink,
+  );
 
   /// Creates a new REST email link auth method instance.
   factory EmailLinkAuthMethod.rest({
     required String email,
     required String oobCode,
-  }) =>
-      EmailLinkAuthMethodRest(
-        email: email,
-        oobCode: oobCode,
-      );
+  }) => EmailLinkAuthMethodRest(
+    email: email,
+    oobCode: oobCode,
+  );
 
   /// Creates a new email link auth method instance.
   const EmailLinkAuthMethod();
@@ -186,19 +182,17 @@ abstract class GithubAuthMethod with FirebaseAuthMethod, CanLinkTo {
   factory GithubAuthMethod.defaultMethod({
     List<String> scopes = const [],
     Map<String, String> customParameters = const {},
-  }) =>
-      GithubAuthMethodDefault(
-        scopes: scopes,
-        customParameters: customParameters,
-      );
+  }) => GithubAuthMethodDefault(
+    scopes: scopes,
+    customParameters: customParameters,
+  );
 
   /// Creates a new REST Github auth method instance.
   factory GithubAuthMethod.rest({
     String? accessToken,
-  }) =>
-      GithubAuthMethodRest(
-        accessToken: accessToken,
-      );
+  }) => GithubAuthMethodRest(
+    accessToken: accessToken,
+  );
 
   /// Creates a new Github auth method instance.
   const GithubAuthMethod();
@@ -213,21 +207,19 @@ abstract class GoogleAuthMethod with FirebaseAuthMethod, CanLinkTo {
   factory GoogleAuthMethod.defaultMethod({
     List<String> scopes = const [],
     Map<String, String> customParameters = const {},
-  }) =>
-      GoogleAuthMethodDefault(
-        scopes: scopes,
-        customParameters: customParameters,
-      );
+  }) => GoogleAuthMethodDefault(
+    scopes: scopes,
+    customParameters: customParameters,
+  );
 
   /// Creates a new REST Google auth method instance.
   factory GoogleAuthMethod.rest({
     String? accessToken,
     String? idToken,
-  }) =>
-      GoogleAuthMethodRest(
-        accessToken: accessToken,
-        idToken: idToken,
-      );
+  }) => GoogleAuthMethodRest(
+    accessToken: accessToken,
+    idToken: idToken,
+  );
 
   /// Creates a new Google auth method instance.
   const GoogleAuthMethod();
@@ -242,23 +234,21 @@ abstract class MicrosoftAuthMethod with FirebaseAuthMethod, CanLinkTo {
   factory MicrosoftAuthMethod.defaultMethod({
     List<String> scopes = const [],
     Map<String, String> customParameters = const {},
-  }) =>
-      MicrosoftAuthMethodDefault(
-        scopes: scopes,
-        customParameters: customParameters,
-      );
+  }) => MicrosoftAuthMethodDefault(
+    scopes: scopes,
+    customParameters: customParameters,
+  );
 
   /// Creates a new REST Microsoft auth method instance.
   factory MicrosoftAuthMethod.rest({
     String? accessToken,
     String? idToken,
     String? nonce,
-  }) =>
-      MicrosoftAuthMethodRest(
-        accessToken: accessToken,
-        idToken: idToken,
-        nonce: nonce,
-      );
+  }) => MicrosoftAuthMethodRest(
+    accessToken: accessToken,
+    idToken: idToken,
+    nonce: nonce,
+  );
 
   /// Creates a new Microsoft auth method instance.
   const MicrosoftAuthMethod();
@@ -272,18 +262,16 @@ abstract class TwitterAuthMethod with FirebaseAuthMethod, CanLinkTo {
   /// Creates a new default Twitter auth method instance.
   factory TwitterAuthMethod.defaultMethod({
     Map<String, String> customParameters = const {},
-  }) =>
-      TwitterAuthMethodDefault(
-        customParameters: customParameters,
-      );
+  }) => TwitterAuthMethodDefault(
+    customParameters: customParameters,
+  );
 
   /// Creates a new REST Microsoft auth method instance.
   factory TwitterAuthMethod.rest({
     String? accessToken,
-  }) =>
-      TwitterAuthMethodRest(
-        accessToken: accessToken,
-      );
+  }) => TwitterAuthMethodRest(
+    accessToken: accessToken,
+  );
 
   /// Creates a new Twitter auth method instance.
   const TwitterAuthMethod();

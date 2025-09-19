@@ -88,11 +88,13 @@ class FirebaseAuthRest extends FirebaseAuth {
         HttpHeaders.contentTypeHeader: 'application/json',
         FirebaseAuthRest.kLocaleHeader: locale,
       },
-      body: jsonEncode({
-        'idToken': _currentUser!._idToken,
-        'deleteProvider': [providerId],
-      },
-    ));
+      body: jsonEncode(
+        {
+          'idToken': _currentUser!._idToken,
+          'deleteProvider': [providerId],
+        },
+      ),
+    );
     if (response.statusCode != 200) {
       throw Exception(_invalidResponseErrorMessage(response));
     }
@@ -202,10 +204,10 @@ class RestUser extends User with ChangeNotifier {
     required String idToken,
     required this.refreshToken,
     required this.expirationDate,
-  })  : _uid = uid,
-        _email = email,
-        _providers = providers,
-        _idToken = idToken;
+  }) : _uid = uid,
+       _email = email,
+       _providers = providers,
+       _idToken = idToken;
 
   /// Creates a new REST user instance from a sign-in result.
   static Future<RestUser?> _fromSignInResult(SignInResult signInResult) async {
@@ -225,14 +227,14 @@ class RestUser extends User with ChangeNotifier {
 
   /// Creates a new REST user instance from a JSON map.
   RestUser.fromJson(Map<String, dynamic> json)
-      : this._(
-          uid: json[RestUser._kUid],
-          email: json[RestUser._kEmail],
-          providers: (json[RestUser._kProviders] as List).cast<String>(),
-          idToken: json[RestUser._kIdToken],
-          refreshToken: json[RestUser._kRefreshToken],
-          expirationDate: DateTime.fromMillisecondsSinceEpoch(json[RestUser._kExpirationDate]),
-        );
+    : this._(
+        uid: json[RestUser._kUid],
+        email: json[RestUser._kEmail],
+        providers: (json[RestUser._kProviders] as List).cast<String>(),
+        idToken: json[RestUser._kIdToken],
+        refreshToken: json[RestUser._kRefreshToken],
+        expirationDate: DateTime.fromMillisecondsSinceEpoch(json[RestUser._kExpirationDate]),
+      );
 
   @override
   String get uid => _uid;
@@ -245,13 +247,13 @@ class RestUser extends User with ChangeNotifier {
 
   /// Converts this user to a JSON map.
   Map<String, dynamic> toJson() => {
-        _kUid: _uid,
-        _kEmail: _email,
-        _kProviders: _providers,
-        _kIdToken: _idToken,
-        _kRefreshToken: refreshToken,
-        _kExpirationDate: expirationDate.millisecondsSinceEpoch,
-      };
+    _kUid: _uid,
+    _kEmail: _email,
+    _kProviders: _providers,
+    _kIdToken: _idToken,
+    _kRefreshToken: refreshToken,
+    _kExpirationDate: expirationDate.millisecondsSinceEpoch,
+  };
 
   @override
   Future<String> getIdToken({bool forceRefresh = false}) async {

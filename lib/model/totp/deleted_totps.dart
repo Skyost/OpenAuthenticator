@@ -44,7 +44,11 @@ class DeletedTotpsDatabase extends _$DeletedTotpsDatabase {
 
   /// Returns whether the given [totp] is deleted.
   Future<bool> isDeleted(String uuid) async {
-    DeletedTotp? deletedTotp = await (select(deletedTotps)..where((deletedTotp) => deletedTotp.uuid.isValue(uuid))..limit(1)).getSingleOrNull();
+    DeletedTotp? deletedTotp =
+        await (select(deletedTotps)
+              ..where((deletedTotp) => deletedTotp.uuid.isValue(uuid))
+              ..limit(1))
+            .getSingleOrNull();
     return deletedTotp != null;
   }
 }

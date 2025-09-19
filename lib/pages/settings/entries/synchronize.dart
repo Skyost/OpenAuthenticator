@@ -21,21 +21,21 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
     super.contentPadding,
     super.icon = Icons.sync,
   }) : super(
-          provider: storageTypeSettingsEntryProvider,
-          title: translations.settings.synchronization.synchronizeTotps.title,
-          subtitle: translations.settings.synchronization.synchronizeTotps.subtitle.description,
-        );
+         provider: storageTypeSettingsEntryProvider,
+         title: translations.settings.synchronization.synchronizeTotps.title,
+         subtitle: translations.settings.synchronization.synchronizeTotps.subtitle.description,
+       );
 
   /// Creates a new synchronize settings entry widget instance for the intro page.
   SynchronizeSettingsEntryWidget.intro({
     Key? key,
   }) : this(
-          key: key,
-          icon: null,
-          contentPadding: const EdgeInsets.only(
-            bottom: IntroPageSlideParagraphWidget.kDefaultPadding,
-          ),
-        );
+         key: key,
+         icon: null,
+         contentPadding: const EdgeInsets.only(
+           bottom: IntroPageSlideParagraphWidget.kDefaultPadding,
+         ),
+       );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -15,21 +15,21 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
     super.contentPadding,
     super.icon = Icons.key,
   }) : super(
-          provider: appUnlockMethodSettingsEntryProvider,
-          title: translations.settings.security.saveDerivedKey.title,
-          subtitle: translations.settings.security.saveDerivedKey.subtitle,
-        );
+         provider: appUnlockMethodSettingsEntryProvider,
+         title: translations.settings.security.saveDerivedKey.title,
+         subtitle: translations.settings.security.saveDerivedKey.subtitle,
+       );
 
   /// Creates a new save derived key settings entry widget instance for the intro page.
   SaveDerivedKeySettingsEntryWidget.intro({
     Key? key,
   }) : this(
-          key: key,
-          icon: null,
-          contentPadding: const EdgeInsets.only(
-            bottom: IntroPageSlideParagraphWidget.kDefaultPadding,
-          ),
-        );
+         key: key,
+         icon: null,
+         contentPadding: const EdgeInsets.only(
+           bottom: IntroPageSlideParagraphWidget.kDefaultPadding,
+         ),
+       );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -60,57 +60,57 @@ class TotpWidget extends StatelessWidget {
     VoidCallback? onDeletePressed,
     VoidCallback? onCopyPressed,
   }) : this(
-          key: key,
-          totp: totp,
-          imageSize: imageSize,
-          contentPadding: contentPadding,
-          space: space,
-          displayCode: displayCode,
-          onTap: onTap,
-          footerWidgetBuilder: currentPlatform.isDesktop
-              ? ((context) => _DesktopActionsWidget(
-                    totp: totp,
-                    onDecryptPressed: onDecryptPressed,
-                    onEditPressed: onEditPressed,
-                    onDeletePressed: onDeletePressed,
-                    onCopyPressed: onCopyPressed,
-                  ))
-              : null,
-          trailingWidgetBuilder: currentPlatform.isMobile
-              ? ((context) {
-                  Color color = Theme.of(context).colorScheme.primary;
-                  if (totp.isDecrypted) {
-                    return onCopyPressed == null
-                        ? const SizedBox.shrink()
-                        : IconButton(
-                            icon: Icon(
-                              Icons.copy,
-                              color: color,
-                            ),
-                            onPressed: onCopyPressed,
-                          );
-                  } else {
-                    return onDecryptPressed == null
-                        ? const SizedBox.shrink()
-                        : IconButton(
-                            icon: Icon(
-                              Icons.lock,
-                              color: color,
-                            ),
-                            onPressed: onDecryptPressed,
-                          );
-                  }
-                })
-              : null,
-          onLongPress: _MobileActionsDialog.isSupported || kDebugMode
-              ? ((context) => _showMobileActionsMenu(
-                    context,
-                    totp,
-                    onEditPressed: onEditPressed,
-                    onDeletePressed: onDeletePressed,
-                  ))
-              : null,
-        );
+         key: key,
+         totp: totp,
+         imageSize: imageSize,
+         contentPadding: contentPadding,
+         space: space,
+         displayCode: displayCode,
+         onTap: onTap,
+         footerWidgetBuilder: currentPlatform.isDesktop
+             ? ((context) => _DesktopActionsWidget(
+                 totp: totp,
+                 onDecryptPressed: onDecryptPressed,
+                 onEditPressed: onEditPressed,
+                 onDeletePressed: onDeletePressed,
+                 onCopyPressed: onCopyPressed,
+               ))
+             : null,
+         trailingWidgetBuilder: currentPlatform.isMobile
+             ? ((context) {
+                 Color color = Theme.of(context).colorScheme.primary;
+                 if (totp.isDecrypted) {
+                   return onCopyPressed == null
+                       ? const SizedBox.shrink()
+                       : IconButton(
+                           icon: Icon(
+                             Icons.copy,
+                             color: color,
+                           ),
+                           onPressed: onCopyPressed,
+                         );
+                 } else {
+                   return onDecryptPressed == null
+                       ? const SizedBox.shrink()
+                       : IconButton(
+                           icon: Icon(
+                             Icons.lock,
+                             color: color,
+                           ),
+                           onPressed: onDecryptPressed,
+                         );
+                 }
+               })
+             : null,
+         onLongPress: _MobileActionsDialog.isSupported || kDebugMode
+             ? ((context) => _showMobileActionsMenu(
+                 context,
+                 totp,
+                 onEditPressed: onEditPressed,
+                 onDeletePressed: onDeletePressed,
+               ))
+             : null,
+       );
 
   /// Creates a new TOTP widget instance.
   const TotpWidget({
@@ -240,27 +240,27 @@ class _MobileActionsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(translations.totp.actions.mobileDialog.title),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          if (canEdit)
-            ListTile(
-              leading: const Icon(Icons.edit),
-              onTap: editButtonEnabled ? (() => Navigator.pop(context, _MobileActionsDialogResult.edit)) : null,
-              title: Text(translations.totp.actions.mobileDialog.edit),
-            ),
-          ListTile(
-            leading: const Icon(Icons.delete),
-            onTap: deleteButtonEnabled ? (() => Navigator.pop(context, _MobileActionsDialogResult.delete)) : null,
-            title: Text(translations.totp.actions.mobileDialog.delete),
-          ),
-        ],
-      );
+    title: Text(translations.totp.actions.mobileDialog.title),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      if (canEdit)
+        ListTile(
+          leading: const Icon(Icons.edit),
+          onTap: editButtonEnabled ? (() => Navigator.pop(context, _MobileActionsDialogResult.edit)) : null,
+          title: Text(translations.totp.actions.mobileDialog.edit),
+        ),
+      ListTile(
+        leading: const Icon(Icons.delete),
+        onTap: deleteButtonEnabled ? (() => Navigator.pop(context, _MobileActionsDialogResult.delete)) : null,
+        title: Text(translations.totp.actions.mobileDialog.delete),
+      ),
+    ],
+  );
 }
 
 /// The [_MobileActionsDialog] result.
@@ -269,7 +269,7 @@ enum _MobileActionsDialogResult {
   edit,
 
   /// When the user wants to delete the TOTP.
-  delete;
+  delete,
 }
 
 /// Wraps all three desktop actions in a widget.
@@ -300,54 +300,54 @@ class _DesktopActionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          if (totp.isDecrypted) ...[
-            Flexible(
-              child: TextButton.icon(
-                onPressed: onCopyPressed,
-                icon: const Icon(Icons.copy),
-                label: Text(
-                  translations.totp.actions.desktopButtons.copy,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-            Flexible(
-              child: TextButton.icon(
-                onPressed: onEditPressed,
-                icon: const Icon(Icons.edit),
-                label: Text(
-                  translations.totp.actions.desktopButtons.edit,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-          ] else
-            Flexible(
-              child: TextButton.icon(
-                onPressed: onDecryptPressed,
-                icon: const Icon(Icons.lock),
-                label: Text(
-                  translations.totp.actions.decrypt,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-          Flexible(
-            child: TextButton.icon(
-              onPressed: onDeletePressed,
-              icon: const Icon(Icons.delete),
-              label: Text(
-                translations.totp.actions.desktopButtons.delete,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      if (totp.isDecrypted) ...[
+        Flexible(
+          child: TextButton.icon(
+            onPressed: onCopyPressed,
+            icon: const Icon(Icons.copy),
+            label: Text(
+              translations.totp.actions.desktopButtons.copy,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-        ],
-      );
+        ),
+        Flexible(
+          child: TextButton.icon(
+            onPressed: onEditPressed,
+            icon: const Icon(Icons.edit),
+            label: Text(
+              translations.totp.actions.desktopButtons.edit,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ] else
+        Flexible(
+          child: TextButton.icon(
+            onPressed: onDecryptPressed,
+            icon: const Icon(Icons.lock),
+            label: Text(
+              translations.totp.actions.decrypt,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      Flexible(
+        child: TextButton.icon(
+          onPressed: onDeletePressed,
+          icon: const Icon(Icons.delete),
+          label: Text(
+            translations.totp.actions.desktopButtons.delete,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    ],
+  );
 }

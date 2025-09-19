@@ -21,13 +21,13 @@ class DividerText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        children: [
-          Expanded(child: leftDivider),
-          Padding(
-            padding: const EdgeInsets.only(right: 10, bottom: 4, left: 10),
-            child: text,
-          ),
-          Expanded(child: rightDivider),
-        ],
-      );
+    children: [
+      Expanded(child: leftDivider),
+      Padding(
+        padding: const EdgeInsets.only(right: 10, bottom: 4, left: 10),
+        child: text,
+      ),
+      Expanded(child: rightDivider),
+    ],
+  );
 }

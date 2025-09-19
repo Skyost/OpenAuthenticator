@@ -37,71 +37,71 @@ class SnackBarIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: borderRadius,
+    decoration: BoxDecoration(
+      color: background,
+      borderRadius: borderRadius,
+    ),
+    padding: padding,
+    child: Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(
+          top: -padding.top - (iconSize + 10) / 2,
+          left: -padding.left - (iconSize + 10) / 2,
+          child: Icon(
+            Icons.circle,
+            color: background.shade900,
+            size: iconSize + 10,
+          ),
         ),
-        padding: padding,
-        child: Stack(
-          clipBehavior: Clip.none,
+        Positioned(
+          top: -padding.top - iconSize / 2,
+          left: -padding.left - iconSize / 2,
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: iconSize,
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Positioned(
-              top: -padding.top - (iconSize + 10) / 2,
-              left: -padding.left - (iconSize + 10) / 2,
-              child: Icon(
-                Icons.circle,
-                color: background.shade900,
-                size: iconSize + 10,
+            Expanded(
+              child: Text(
+                text,
+                style: textStyle,
               ),
             ),
-            Positioned(
-              top: -padding.top - iconSize / 2,
-              left: -padding.left - iconSize / 2,
-              child: Icon(
-                icon,
+            IconButton(
+              onPressed: ScaffoldMessenger.of(context).hideCurrentSnackBar,
+              icon: const Icon(
+                Icons.close,
                 color: Colors.white,
-                size: iconSize,
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    text,
-                    style: textStyle,
-                  ),
-                ),
-                IconButton(
-                  onPressed: ScaffoldMessenger.of(context).hideCurrentSnackBar,
-                  icon: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
             ),
           ],
         ),
-      );
+      ],
+    ),
+  );
 
   /// Creates the SnackBar and shows it.
   static void showSuccessSnackBar(BuildContext context, {required String text}) => _showSnackBar(
-        context,
-        background: Colors.green,
-        textStyle: const TextStyle(color: Colors.white),
-        text: text,
-        icon: Icons.check,
-      );
+    context,
+    background: Colors.green,
+    textStyle: const TextStyle(color: Colors.white),
+    text: text,
+    icon: Icons.check,
+  );
 
   /// Creates the SnackBar and shows it.
   static void showErrorSnackBar(BuildContext context, {required String text}) => _showSnackBar(
-        context,
-        background: Colors.red,
-        textStyle: const TextStyle(color: Colors.white),
-        text: text,
-        icon: Icons.priority_high,
-      );
+    context,
+    background: Colors.red,
+    textStyle: const TextStyle(color: Colors.white),
+    text: text,
+    icon: Icons.priority_high,
+  );
 
   /// Creates the SnackBar and shows it.
   static void _showSnackBar(
@@ -110,17 +110,16 @@ class SnackBarIcon extends StatelessWidget {
     required String text,
     required TextStyle textStyle,
     required IconData icon,
-  }) =>
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: SnackBarIcon(
-            background: background,
-            text: text,
-            textStyle: textStyle,
-            icon: icon,
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-      );
+  }) => ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: SnackBarIcon(
+        background: background,
+        text: text,
+        textStyle: textStyle,
+        icon: icon,
+      ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ),
+  );
 }

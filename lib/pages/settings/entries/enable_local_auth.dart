@@ -12,22 +12,22 @@ class EnableLocalAuthSettingsEntryWidget extends CheckboxSettingsEntryWidget<App
   EnableLocalAuthSettingsEntryWidget({
     super.key,
   }) : super(
-          provider: appUnlockMethodSettingsEntryProvider,
-          title: translations.settings.security.enableLocalAuth.title,
-          subtitle: translations.settings.security.enableLocalAuth.subtitle,
-          icon: Icons.lock,
-        );
+         provider: appUnlockMethodSettingsEntryProvider,
+         title: translations.settings.security.enableLocalAuth.title,
+         subtitle: translations.settings.security.enableLocalAuth.subtitle,
+         icon: Icons.lock,
+       );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => FutureBuilder(
-        future: LocalAuthentication.instance.isSupported(),
-        builder: (context, snapshot) {
-          if (snapshot.data == null) {
-            return createListTile(context, ref, enabled: false);
-          }
-          return snapshot.data == true ? super.build(context, ref) : const SizedBox.shrink();
-        },
-      );
+    future: LocalAuthentication.instance.isSupported(),
+    builder: (context, snapshot) {
+      if (snapshot.data == null) {
+        return createListTile(context, ref, enabled: false);
+      }
+      return snapshot.data == true ? super.build(context, ref) : const SizedBox.shrink();
+    },
+  );
 
   @override
   Future<void> changeValue(BuildContext context, WidgetRef ref, bool newValue) async {

@@ -19,7 +19,7 @@ import 'package:path_provider/path_provider.dart';
 final totpImageCacheManagerProvider = AsyncNotifierProvider.autoDispose<TotpImageCacheManager, Map<String, CacheObject>>(TotpImageCacheManager.new);
 
 /// Manages the cache of TOTPs images.
-class TotpImageCacheManager extends AutoDisposeAsyncNotifier<Map<String, CacheObject>> {
+class TotpImageCacheManager extends AsyncNotifier<Map<String, CacheObject>> {
   @override
   FutureOr<Map<String, CacheObject>> build() async {
     File index = await _getIndexFile();
@@ -206,21 +206,20 @@ class CacheObject {
 
   /// Converts this object to a JSON map.
   Map<String, String> toJson() => {
-        'url': url,
-        'imageType': imageType.name,
-      };
+    'url': url,
+    'imageType': imageType.name,
+  };
 
   /// Creates a new cache object instance with the given parameters change.
   CacheObject copyWith({
     String? url,
     ImageType? imageType,
     bool? legacy,
-  }) =>
-      CacheObject(
-        url: url ?? this.url,
-        imageType: imageType ?? this.imageType,
-        legacy: legacy ?? this.legacy,
-      );
+  }) => CacheObject(
+    url: url ?? this.url,
+    imageType: imageType ?? this.imageType,
+    legacy: legacy ?? this.legacy,
+  );
 }
 
 /// An extension that allows to obtain the cached image associated with a TOTP.

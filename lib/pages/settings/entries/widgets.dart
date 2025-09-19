@@ -28,7 +28,7 @@ class BoolSettingsEntryWidget<T extends SettingsEntry<bool>> extends CheckboxSet
 /// A settings entry that can be configured using a checkbox.
 abstract class CheckboxSettingsEntryWidget<T extends SettingsEntry<U>, U> extends ConsumerWidget {
   /// The boolean provider.
-  final AutoDisposeAsyncNotifierProvider<T, U> provider;
+  final AsyncNotifierProvider<T, U> provider;
 
   /// The entry widget title.
   final String title;
@@ -64,23 +64,23 @@ abstract class CheckboxSettingsEntryWidget<T extends SettingsEntry<U>, U> extend
 
   /// Creates the list tile widget.
   Widget createListTile(BuildContext context, WidgetRef ref, {U? value, bool enabled = true}) => ListTile(
-        leading: icon == null ? null : Icon(icon),
-        title: Text(title),
-        subtitle: buildSubtitle(context, ref, value),
-        enabled: enabled,
-        contentPadding: contentPadding,
-        onTap: () => changeValue(context, ref, !isEnabled(value)),
-        trailing: Checkbox(
-          value: isEnabled(value),
-          onChanged: enabled
-              ? (value) {
-                  if (value != null) {
-                    changeValue(context, ref, value);
-                  }
-                }
-              : null,
-        ),
-      );
+    leading: icon == null ? null : Icon(icon),
+    title: Text(title),
+    subtitle: buildSubtitle(context, ref, value),
+    enabled: enabled,
+    contentPadding: contentPadding,
+    onTap: () => changeValue(context, ref, !isEnabled(value)),
+    trailing: Checkbox(
+      value: isEnabled(value),
+      onChanged: enabled
+          ? (value) {
+              if (value != null) {
+                changeValue(context, ref, value);
+              }
+            }
+          : null,
+    ),
+  );
 
   /// Whether the checkbox is enabled.
   bool isEnabled(U? value);
@@ -117,28 +117,28 @@ class UriSettingsEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
-        future: canLaunchUrl(uri),
-        builder: (context, snapshot) => createListTile(context, snapshot.data),
-      );
+    future: canLaunchUrl(uri),
+    builder: (context, snapshot) => createListTile(context, snapshot.data),
+  );
 
   /// Creates the list tile widget.
   Widget createListTile(BuildContext context, bool? canLaunchUri) => ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        subtitle: subtitle == null ? null : Text(subtitle!),
-        onTap: canLaunchUri == null
-            ? null
-            : (() async {
-                if (canLaunchUri) {
-                  await launchUrl(uri);
-                  return;
-                }
-                await Clipboard.setData(ClipboardData(text: uri.toString()));
-                if (context.mounted) {
-                  SnackBarIcon.showSuccessSnackBar(context, text: translations.miscellaneous.urlCopiedToClipboard);
-                }
-              }),
-      );
+    leading: Icon(icon),
+    title: Text(title),
+    subtitle: subtitle == null ? null : Text(subtitle!),
+    onTap: canLaunchUri == null
+        ? null
+        : (() async {
+            if (canLaunchUri) {
+              await launchUrl(uri);
+              return;
+            }
+            await Clipboard.setData(ClipboardData(text: uri.toString()));
+            if (context.mounted) {
+              SnackBarIcon.showSuccessSnackBar(context, text: translations.miscellaneous.urlCopiedToClipboard);
+            }
+          }),
+  );
 }
 
 /// A list tile that is written in red.
@@ -184,21 +184,21 @@ class _DangerZoneListTileState extends ConsumerState<DangerZoneListTile> with Br
       leading: widget.icon == null
           ? null
           : Icon(
-        widget.icon,
-        color: textColor,
-      ),
+              widget.icon,
+              color: textColor,
+            ),
       title: widget.title == null
           ? null
           : Text(
-        widget.title!,
-        style: TextStyle(color: textColor),
-      ),
+              widget.title!,
+              style: TextStyle(color: textColor),
+            ),
       subtitle: widget.subtitle == null
           ? null
           : Text(
-        widget.subtitle!,
-        style: TextStyle(color: textColor),
-      ),
+              widget.subtitle!,
+              style: TextStyle(color: textColor),
+            ),
       enabled: widget.enabled,
       onTap: widget.enabled ? widget.onTap : null,
     );

@@ -25,10 +25,10 @@ class RevenueCatRestClient extends RevenueCatClient {
   /// Creates a new RevenueCat REST client instance.
   RevenueCatRestClient({
     required super.purchasesConfiguration,
-  })  : _client = http.Client(),
-        super(
-          purchaseTimeout: const Duration(minutes: 10),
-        );
+  }) : _client = http.Client(),
+       super(
+         purchaseTimeout: const Duration(minutes: 10),
+       );
 
   @override
   Future<bool> hasEntitlement(String entitlementId) async {
@@ -121,7 +121,7 @@ class RevenueCatRestClient extends RevenueCatClient {
         'product_id': packageType.defaultIdentifier,
         'attributes': {
           '\$email': purchasesConfiguration.email!,
-        }
+        },
       }),
     );
     if (response.statusCode != 200 && response.statusCode != 201) {
@@ -225,24 +225,24 @@ class RevenueCatRestClient extends RevenueCatClient {
 
   /// Contains all common request headers.
   Map<String, String> get _revenueCatHeaders => {
-        'X-Platform': 'stripe',
-        HttpHeaders.authorizationHeader: 'Bearer ${purchasesConfiguration.apiKey}',
-      };
+    'X-Platform': 'stripe',
+    HttpHeaders.authorizationHeader: 'Bearer ${purchasesConfiguration.apiKey}',
+  };
 }
 
 /// Returns the identifier automatically assigned to the current package type.
 extension _DefaultIdentifier on PackageType {
   /// Returns the package type default identifier.
   String? get defaultIdentifier => switch (this) {
-        PackageType.lifetime => '\$rc_lifetime',
-        PackageType.annual => '\$rc_annual',
-        PackageType.sixMonth => '\$rc_six_month',
-        PackageType.threeMonth => '\$rc_three_month',
-        PackageType.twoMonth => '\$rc_two_month',
-        PackageType.monthly => '\$rc_monthly',
-        PackageType.weekly => '\$rc_weekly',
-        PackageType.unknown || PackageType.custom || _ => null,
-      };
+    PackageType.lifetime => '\$rc_lifetime',
+    PackageType.annual => '\$rc_annual',
+    PackageType.sixMonth => '\$rc_six_month',
+    PackageType.threeMonth => '\$rc_three_month',
+    PackageType.twoMonth => '\$rc_two_month',
+    PackageType.monthly => '\$rc_monthly',
+    PackageType.weekly => '\$rc_weekly',
+    PackageType.unknown || PackageType.custom || _ => null,
+  };
 }
 
 /// Thrown when the response code is invalid.

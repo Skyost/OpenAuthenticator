@@ -9,9 +9,9 @@ class DisplayCopyButtonSettingsEntryWidget extends BoolSettingsEntryWidget<Displ
   DisplayCopyButtonSettingsEntryWidget({
     super.key,
   }) : super(
-          provider: displayCopyButtonSettingsEntryProvider,
-          title: translations.settings.application.displayCopyIconButton.title,
-          subtitle: translations.settings.application.displayCopyIconButton.subtitle,
-          icon: Icons.copy,
-        );
+         provider: displayCopyButtonSettingsEntryProvider,
+         title: translations.settings.application.displayCopyIconButton.title,
+         subtitle: translations.settings.application.displayCopyIconButton.subtitle,
+         icon: Icons.copy,
+       );
 }

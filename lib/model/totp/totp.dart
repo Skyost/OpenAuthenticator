@@ -68,12 +68,12 @@ class Totp extends Equatable implements Comparable<Totp> {
 
   @override
   List<Object?> get props => [
-        uuid,
-        encryptedData,
-        algorithm,
-        digits,
-        validity,
-      ];
+    uuid,
+    encryptedData,
+    algorithm,
+    digits,
+    validity,
+  ];
 
   /// Tries to decrypt the current TOTP [secret].
   /// Returns the current instance if failed.
@@ -193,10 +193,10 @@ class EncryptedData extends Equatable {
 
   @override
   List<Object?> get props => [
-        encryptedSecret,
-        encryptedLabel,
-        encryptedIssuer,
-        encryptedImageUrl,
-        encryptionSalt,
-      ];
+    encryptedSecret,
+    encryptedLabel,
+    encryptedIssuer,
+    encryptedImageUrl,
+    encryptionSalt,
+  ];
 }

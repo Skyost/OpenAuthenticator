@@ -10,10 +10,10 @@ final storageTypeSettingsEntryProvider = AsyncNotifierProvider.autoDispose<Stora
 class StorageTypeSettingsEntry extends EnumSettingsEntry<StorageType> {
   /// Creates a new storage type settings entry instance.
   StorageTypeSettingsEntry()
-      : super(
-          key: 'storageType',
-          defaultValue: StorageType.local,
-        );
+    : super(
+        key: 'storageType',
+        defaultValue: StorageType.local,
+      );
 
   @override
   @protected

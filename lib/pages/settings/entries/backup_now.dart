@@ -15,26 +15,26 @@ class BackupNowSettingsEntryWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ListTile(
-        leading: const Icon(Icons.save),
-        title: Text(translations.settings.backups.backupNow.title),
-        subtitle: Text(translations.settings.backups.backupNow.subtitle),
-        onTap: () async {
-          String? password = await TextInputDialog.prompt(
-            context,
-            title: translations.settings.backups.backupNow.passwordDialog.title,
-            message: translations.settings.backups.backupNow.passwordDialog.message,
-            password: true,
-          );
-          if (password == null || !context.mounted) {
-            return;
-          }
-          Result<Backup> result = await showWaitingOverlay(
-            context,
-            future: ref.read(backupStoreProvider.notifier).doBackup(password),
-          );
-          if (context.mounted) {
-            context.showSnackBarForResult(result);
-          }
-        },
+    leading: const Icon(Icons.save),
+    title: Text(translations.settings.backups.backupNow.title),
+    subtitle: Text(translations.settings.backups.backupNow.subtitle),
+    onTap: () async {
+      String? password = await TextInputDialog.prompt(
+        context,
+        title: translations.settings.backups.backupNow.passwordDialog.title,
+        message: translations.settings.backups.backupNow.passwordDialog.message,
+        password: true,
       );
+      if (password == null || !context.mounted) {
+        return;
+      }
+      Result<Backup> result = await showWaitingOverlay(
+        context,
+        future: ref.read(backupStoreProvider.notifier).doBackup(password),
+      );
+      if (context.mounted) {
+        context.showSnackBarForResult(result);
+      }
+    },
+  );
 }

@@ -28,27 +28,27 @@ class TotpLimitDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => AppDialog(
-        title: Text(title),
-        displayCloseButton: false,
-        actions: [
-          TextButton(
-            onPressed: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.local)),
-            child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
-          ),
-          TextButton(
-            onPressed: () => _returnIfSucceeded(context, ContributorPlanUtils.purchase(context)),
-            child: Text(translations.totpLimit.autoDialog.actions.subscribe),
-          ),
-          if (cancelButton)
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(translations.totpLimit.addDialog.actions.cancel),
-            ),
-        ],
-        children: [
-          Text(message),
-        ],
-      );
+    title: Text(title),
+    displayCloseButton: false,
+    actions: [
+      TextButton(
+        onPressed: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.local)),
+        child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
+      ),
+      TextButton(
+        onPressed: () => _returnIfSucceeded(context, ContributorPlanUtils.purchase(context)),
+        child: Text(translations.totpLimit.autoDialog.actions.subscribe),
+      ),
+      if (cancelButton)
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(translations.totpLimit.addDialog.actions.cancel),
+        ),
+    ],
+    children: [
+      Text(message),
+    ],
+  );
 
   /// Waits for the [action] result before closing the dialog in case of success.
   Future<void> _returnIfSucceeded(BuildContext context, Future<bool> action) async {
@@ -81,7 +81,8 @@ class TotpLimitDialog extends ConsumerWidget {
         context: context,
         builder: (context) => TotpLimitDialog(
           title: title ?? translations.totpLimit.autoDialog.title,
-          message: message ??
+          message:
+              message ??
               translations.totpLimit.autoDialog.message(
                 count: App.freeTotpsLimit.toString(),
               ),

@@ -56,9 +56,9 @@ class PasswordFormField extends StatefulWidget {
 
   /// The default reveal button builder.
   static Widget _defaultRevealButtonBuilder(BuildContext context, VoidCallback reveal, bool state) => IconButton(
-        onPressed: reveal,
-        icon: Icon(state ? Icons.visibility : Icons.visibility_off),
-      );
+    onPressed: reveal,
+    icon: Icon(state ? Icons.visibility : Icons.visibility_off),
+  );
 }
 
 /// The password form field.
@@ -68,24 +68,24 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
 
   @override
   Widget build(BuildContext context) => TextFormField(
-        obscureText: !isRevealed,
-        enableSuggestions: false,
-        autocorrect: false,
-        autofocus: widget.autofocus,
-        onFieldSubmitted: widget.onFieldSubmitted,
-        textInputAction: widget.textInputAction,
-        readOnly: !widget.enabled,
-        decoration: widget.decoration.copyWith(
-          suffixIcon: widget.revealButtonBuilder(context, toggleObscuration, isRevealed),
-          enabledBorder: widget.enabled ? null : Theme.of(context).inputDecorationTheme.disabledBorder,
-          focusedBorder: widget.enabled ? null : Theme.of(context).inputDecorationTheme.disabledBorder,
-        ),
-        onChanged: widget.onChanged,
-        initialValue: widget.initialValue,
-        validator: widget.validator,
-        keyboardType: widget.keyboardType,
-        autovalidateMode: widget.autovalidateMode,
-      );
+    obscureText: !isRevealed,
+    enableSuggestions: false,
+    autocorrect: false,
+    autofocus: widget.autofocus,
+    onFieldSubmitted: widget.onFieldSubmitted,
+    textInputAction: widget.textInputAction,
+    readOnly: !widget.enabled,
+    decoration: widget.decoration.copyWith(
+      suffixIcon: widget.revealButtonBuilder(context, toggleObscuration, isRevealed),
+      enabledBorder: widget.enabled ? null : Theme.of(context).inputDecorationTheme.disabledBorder,
+      focusedBorder: widget.enabled ? null : Theme.of(context).inputDecorationTheme.disabledBorder,
+    ),
+    onChanged: widget.onChanged,
+    initialValue: widget.initialValue,
+    validator: widget.validator,
+    keyboardType: widget.keyboardType,
+    autovalidateMode: widget.autovalidateMode,
+  );
 
   /// Toggles the obscuration state.
   void toggleObscuration() {

@@ -116,14 +116,14 @@ class EmailLinkAuthenticationProvider extends FirebaseAuthenticationProvider wit
 
   /// Creates a new email link authentication provider instance.
   const EmailLinkAuthenticationProvider()
-      : super(
-          availablePlatforms: const [
-            Platform.android,
-            Platform.iOS,
-            Platform.macOS,
-            Platform.windows,
-          ],
-        );
+    : super(
+        availablePlatforms: const [
+          Platform.android,
+          Platform.iOS,
+          Platform.macOS,
+          Platform.windows,
+        ],
+      );
 
   @override
   bool get showLoadingDialog => false;

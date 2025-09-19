@@ -32,73 +32,73 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => DangerZoneListTile(
-        icon: Icons.delete_forever,
-        title: translations.settings.dangerZone.clearData.title,
-        subtitle: translations.settings.dangerZone.clearData.subtitle,
-        onTap: () async {
-          bool confirm = await ConfirmationDialog.ask(
-            context,
-            title: translations.settings.dangerZone.clearData.confirmationDialog.title,
-            message: translations.settings.dangerZone.clearData.confirmationDialog.message,
-          );
-          if (!confirm || !context.mounted) {
-            return;
-          }
+    icon: Icons.delete_forever,
+    title: translations.settings.dangerZone.clearData.title,
+    subtitle: translations.settings.dangerZone.clearData.subtitle,
+    onTap: () async {
+      bool confirm = await ConfirmationDialog.ask(
+        context,
+        title: translations.settings.dangerZone.clearData.confirmationDialog.title,
+        message: translations.settings.dangerZone.clearData.confirmationDialog.message,
+      );
+      if (!confirm || !context.mounted) {
+        return;
+      }
 
-          AppUnlockMethodSettingsEntry appUnlockerMethodsSettingsEntry = ref.read(appUnlockMethodSettingsEntryProvider.notifier);
-          Result unlockResult = await appUnlockerMethodsSettingsEntry.unlockWithCurrentMethod(context, UnlockReason.sensibleAction);
-          if (unlockResult is! ResultSuccess || !context.mounted) {
-            return;
-          }
+      AppUnlockMethodSettingsEntry appUnlockerMethodsSettingsEntry = ref.read(appUnlockMethodSettingsEntryProvider.notifier);
+      Result unlockResult = await appUnlockerMethodsSettingsEntry.unlockWithCurrentMethod(context, UnlockReason.sensibleAction);
+      if (unlockResult is! ResultSuccess || !context.mounted) {
+        return;
+      }
 
-          bool deleteBackups = await ConfirmationDialog.ask(
-            context,
-            title: translations.settings.dangerZone.clearData.backupDeleteConfirmationDialog.title,
-            message: translations.settings.dangerZone.clearData.backupDeleteConfirmationDialog.message,
-          );
-          if (!deleteBackups || !context.mounted) {
-            return;
-          }
+      bool deleteBackups = await ConfirmationDialog.ask(
+        context,
+        title: translations.settings.dangerZone.clearData.backupDeleteConfirmationDialog.title,
+        message: translations.settings.dangerZone.clearData.backupDeleteConfirmationDialog.message,
+      );
+      if (!deleteBackups || !context.mounted) {
+        return;
+      }
 
-          await showWaitingOverlay(
-            context,
-            future: () async {
-              Result logoutResult = await ref.read(firebaseAuthenticationProvider.notifier).logout();
-              if (!context.mounted) {
-                return;
-              }
-              if (logoutResult is! ResultSuccess) {
-                context.showSnackBarForResult(logoutResult, retryIfError: true);
-                return;
-              }
-              if (isFirebaseSupported) {
-                await FirebaseFirestore.instance.terminate();
-                await FirebaseFirestore.instance.clearPersistence();
-              }
-              await SimpleSecureStorage.clear();
-              TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
-              await totpImageCacheManager.clearCache();
-              SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
-              await preferences.clear();
-              LocalStorage localStorage = await ref.read(localStorageProvider);
-              await localStorage.clearTotps();
-              if (deleteBackups) {
-                List<Backup> backups = await ref.read(backupStoreProvider.future);
-                for (Backup backup in backups) {
-                  await backup.delete();
-                }
-              }
-            }(),
-          );
+      await showWaitingOverlay(
+        context,
+        future: () async {
+          Result logoutResult = await ref.read(firebaseAuthenticationProvider.notifier).logout();
           if (!context.mounted) {
             return;
           }
-          await _showCloseDialog(context);
-          if (_canExitWithConfirmDialog) {
-            await _closeApp();
+          if (logoutResult is! ResultSuccess) {
+            context.showSnackBarForResult(logoutResult, retryIfError: true);
+            return;
           }
-        },
+          if (isFirebaseSupported) {
+            await FirebaseFirestore.instance.terminate();
+            await FirebaseFirestore.instance.clearPersistence();
+          }
+          await SimpleSecureStorage.clear();
+          TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
+          await totpImageCacheManager.clearCache();
+          SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
+          await preferences.clear();
+          LocalStorage localStorage = await ref.read(localStorageProvider);
+          await localStorage.clearTotps();
+          if (deleteBackups) {
+            List<Backup> backups = await ref.read(backupStoreProvider.future);
+            for (Backup backup in backups) {
+              await backup.delete();
+            }
+          }
+        }(),
       );
+      if (!context.mounted) {
+        return;
+      }
+      await _showCloseDialog(context);
+      if (_canExitWithConfirmDialog) {
+        await _closeApp();
+      }
+    },
+  );
 
   /// Shows the dialog that indicates the user he has to restart the app.
   Future<void> _showCloseDialog(BuildContext context) async {
@@ -128,11 +128,11 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
 
   /// Whether we can exit following the [_showCloseDialog] method.
   bool get _canExitWithConfirmDialog => {
-        Platform.android,
-        Platform.macOS,
-        Platform.linux,
-        Platform.windows,
-      }.contains(currentPlatform);
+    Platform.android,
+    Platform.macOS,
+    Platform.linux,
+    Platform.windows,
+  }.contains(currentPlatform);
 
   /// Closes the app programmatically.
   Future<void> _closeApp() async {

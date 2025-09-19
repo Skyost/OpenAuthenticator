@@ -21,7 +21,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
   @override
   Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
     AsyncValue<String?> emailToConfirm = ref.watch(emailLinkConfirmationStateProvider);
-    if (emailToConfirm.valueOrNull == null) {
+    if (emailToConfirm.value == null) {
       return const SizedBox.shrink();
     }
     return ListTile(
@@ -93,34 +93,34 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
 class _ConfirmActionPickerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.title),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          ListTile(
-            leading: const Icon(Icons.check),
-            title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.title),
-            subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.subtitle),
-            onTap: () => Navigator.pop(context, _ConfirmAction.tryConfirm),
-          ),
-          ListTile(
-            leading: const Icon(Icons.clear),
-            title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.title),
-            subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.subtitle),
-            onTap: () => Navigator.pop(context, _ConfirmAction.cancelConfirmation),
-          ),
-        ],
-      );
+    title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.title),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      ListTile(
+        leading: const Icon(Icons.check),
+        title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.title),
+        subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.subtitle),
+        onTap: () => Navigator.pop(context, _ConfirmAction.tryConfirm),
+      ),
+      ListTile(
+        leading: const Icon(Icons.clear),
+        title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.title),
+        subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.subtitle),
+        onTap: () => Navigator.pop(context, _ConfirmAction.cancelConfirmation),
+      ),
+    ],
+  );
 
   /// Opens the dialog.
   static Future<_ConfirmAction?> openDialog(BuildContext context) => showDialog<_ConfirmAction>(
-        context: context,
-        builder: (context) => _ConfirmActionPickerDialog(),
-      );
+    context: context,
+    builder: (context) => _ConfirmActionPickerDialog(),
+  );
 }
 
 /// A [_ConfirmActionPickerDialog] result.
@@ -129,5 +129,5 @@ enum _ConfirmAction {
   tryConfirm,
 
   /// Cancels the confirmation.
-  cancelConfirmation;
+  cancelConfirmation,
 }

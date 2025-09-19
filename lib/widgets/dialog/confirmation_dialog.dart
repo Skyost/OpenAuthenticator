@@ -18,21 +18,21 @@ class ConfirmationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(title),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(MaterialLocalizations.of(context).okButtonLabel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          Text(message),
-        ],
-      );
+    title: Text(title),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context, true),
+        child: Text(MaterialLocalizations.of(context).okButtonLabel),
+      ),
+      TextButton(
+        onPressed: () => Navigator.pop(context, false),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      Text(message),
+    ],
+  );
 
   /// Asks for the confirmation.
   static Future<bool> ask(

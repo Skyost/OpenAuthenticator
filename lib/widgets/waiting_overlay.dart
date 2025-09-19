@@ -75,60 +75,60 @@ class _WaitingDialogState extends State<_WaitingDialog> {
 
   @override
   Widget build(BuildContext context) => PopScope(
-        canPop: false,
-        child: AppDialog(
-          scrollable: false,
-          actions: widget.onCancel == null
-              ? null
-              : [
-                  TextButton(
-                    child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-                    onPressed: () {
-                      if (widget.onCancel!()) {
-                        Navigator.pop(context);
-                      }
-                    },
-                  ),
-                ],
-          children: [
-            if (timedOut)
-              Text(widget.timeoutMessage ?? translations.error.timeout.generic)
-            else
-              Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(right: 24),
-                    child: CircularProgressIndicator(),
-                  ),
-                  Expanded(
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: widget.message ?? translations.miscellaneous.waitingDialog.defaultMessage),
-                          if (widget.timeout != null) ...[
-                            const TextSpan(text: '\n'),
-                            translations.miscellaneous.waitingDialog.countdown(
-                              countdown: WidgetSpan(
-                                child: CountdownWidget(
-                                  duration: widget.timeout!,
-                                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                                  onFinished: () {
-                                    if (mounted) {
-                                      setState(() => timedOut = true);
-                                    }
-                                  },
-                                ),
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+    canPop: false,
+    child: AppDialog(
+      scrollable: false,
+      actions: widget.onCancel == null
+          ? null
+          : [
+              TextButton(
+                child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+                onPressed: () {
+                  if (widget.onCancel!()) {
+                    Navigator.pop(context);
+                  }
+                },
               ),
-          ],
-        ),
-      );
+            ],
+      children: [
+        if (timedOut)
+          Text(widget.timeoutMessage ?? translations.error.timeout.generic)
+        else
+          Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(right: 24),
+                child: CircularProgressIndicator(),
+              ),
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: widget.message ?? translations.miscellaneous.waitingDialog.defaultMessage),
+                      if (widget.timeout != null) ...[
+                        const TextSpan(text: '\n'),
+                        translations.miscellaneous.waitingDialog.countdown(
+                          countdown: WidgetSpan(
+                            child: CountdownWidget(
+                              duration: widget.timeout!,
+                              textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                              onFinished: () {
+                                if (mounted) {
+                                  setState(() => timedOut = true);
+                                }
+                              },
+                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+      ],
+    ),
+  );
 }

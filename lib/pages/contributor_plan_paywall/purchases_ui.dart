@@ -27,73 +27,73 @@ class ContributorPlanPaywall extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => FutureBuilder(
-        future: ref.watch(revenueCatClientProvider)?.getOfferings(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError || snapshot.data is ResultError) {
-            Object? error;
-            if (snapshot.hasError) {
-              error = snapshot.error!;
-            } else if (snapshot.data is ResultError) {
-              error = snapshot.error;
-            }
-            return Text(
-              error == null ? translations.error.generic.tryAgain : translations.error.generic.withException(exception: error),
-              textAlign: TextAlign.center,
+    future: ref.watch(revenueCatClientProvider)?.getOfferings(),
+    builder: (context, snapshot) {
+      if (snapshot.hasError || snapshot.data is ResultError) {
+        Object? error;
+        if (snapshot.hasError) {
+          error = snapshot.error!;
+        } else if (snapshot.data is ResultError) {
+          error = snapshot.error;
+        }
+        return Text(
+          error == null ? translations.error.generic.tryAgain : translations.error.generic.withException(exception: error),
+          textAlign: TextAlign.center,
+        );
+      }
+      if (snapshot.hasData) {
+        Future<void> handleSuccess() async {
+          Result<ContributorPlanState> result = await ref.read(contributorPlanStateProvider.notifier).refresh();
+          if (!context.mounted) {
+            return;
+          }
+          if (result is! ResultSuccess<ContributorPlanState>) {
+            context.showSnackBarForResult(
+              result,
+              retryIfError: true,
+            );
+            return;
+          }
+          if (result.value == ContributorPlanState.active) {
+            SnackBarIcon.showSuccessSnackBar(
+              context,
+              text: translations.contributorPlan.subscribe.success,
+            );
+            onPurchaseCompleted();
+          } else {
+            SnackBarIcon.showErrorSnackBar(
+              context,
+              text: translations.error.generic.tryAgain,
             );
           }
-          if (snapshot.hasData) {
-            Future<void> handleSuccess() async {
-              Result<ContributorPlanState> result = await ref.read(contributorPlanStateProvider.notifier).refresh();
-              if (!context.mounted) {
-                return;
-              }
-              if (result is! ResultSuccess<ContributorPlanState>) {
-                context.showSnackBarForResult(
-                  result,
-                  retryIfError: true,
-                );
-                return;
-              }
-              if (result.value == ContributorPlanState.active) {
-                SnackBarIcon.showSuccessSnackBar(
-                  context,
-                  text: translations.contributorPlan.subscribe.success,
-                );
-                onPurchaseCompleted();
-              } else {
-                SnackBarIcon.showErrorSnackBar(
-                  context,
-                  text: translations.error.generic.tryAgain,
-                );
-              }
-            }
+        }
 
-            return PaywallView(
-              offering: snapshot.data?[Purchasable.contributorPlan.offeringId],
-              onDismiss: onDismiss,
-              onPurchaseCompleted: (customerInfo, transaction) async => await handleSuccess(),
-              onRestoreCompleted: (customerInfo) async => await handleSuccess(),
-              onPurchaseError: (error) {
-                handleException(error, StackTrace.current);
-                if (context.mounted) {
-                  SnackBarIcon.showErrorSnackBar(
-                    context,
-                    text: translations.error.generic.withException(exception: error),
-                  );
-                }
-              },
-              onRestoreError: (error) {
-                handleException(error, StackTrace.current);
-                if (context.mounted) {
-                  SnackBarIcon.showErrorSnackBar(
-                    context,
-                    text: translations.error.generic.withException(exception: error),
-                  );
-                }
-              },
-            );
-          }
-          return const CenteredCircularProgressIndicator();
-        },
-      );
+        return PaywallView(
+          offering: snapshot.data?[Purchasable.contributorPlan.offeringId],
+          onDismiss: onDismiss,
+          onPurchaseCompleted: (customerInfo, transaction) async => await handleSuccess(),
+          onRestoreCompleted: (customerInfo) async => await handleSuccess(),
+          onPurchaseError: (error) {
+            handleException(error, StackTrace.current);
+            if (context.mounted) {
+              SnackBarIcon.showErrorSnackBar(
+                context,
+                text: translations.error.generic.withException(exception: error),
+              );
+            }
+          },
+          onRestoreError: (error) {
+            handleException(error, StackTrace.current);
+            if (context.mounted) {
+              SnackBarIcon.showErrorSnackBar(
+                context,
+                text: translations.error.generic.withException(exception: error),
+              );
+            }
+          },
+        );
+      }
+      return const CenteredCircularProgressIndicator();
+    },
+  );
 }

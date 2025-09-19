@@ -9,18 +9,19 @@ import 'package:simple_secure_storage/simple_secure_storage.dart';
 import 'package:webcrypto/webcrypto.dart';
 
 /// The provider instance.
-final passwordSignatureVerificationMethodProvider =
-    AsyncNotifierProvider.autoDispose<PasswordSignatureVerificationMethodNotifier, PasswordSignatureVerificationMethod>(PasswordSignatureVerificationMethodNotifier.new);
+final passwordSignatureVerificationMethodProvider = AsyncNotifierProvider.autoDispose<PasswordSignatureVerificationMethodNotifier, PasswordSignatureVerificationMethod>(
+  PasswordSignatureVerificationMethodNotifier.new,
+);
 
 /// Allows to verify the master password using the saved password signature.
-class PasswordSignatureVerificationMethodNotifier extends AutoDisposeAsyncNotifier<PasswordSignatureVerificationMethod> {
+class PasswordSignatureVerificationMethodNotifier extends AsyncNotifier<PasswordSignatureVerificationMethod> {
   /// The password signature.
   static const String _kPasswordSignatureKey = 'passwordSignature';
 
   @override
   FutureOr<PasswordSignatureVerificationMethod> build() async => PasswordSignatureVerificationMethod(
-        passwordSignature: await SimpleSecureStorage.read(_kPasswordSignatureKey),
-      );
+    passwordSignature: await SimpleSecureStorage.read(_kPasswordSignatureKey),
+  );
 
   /// Enables the password signature verification method.
   Future<bool> enable(String? password) async {

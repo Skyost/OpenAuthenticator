@@ -31,10 +31,10 @@ mixin DirectApiSource on Source {
 
   @override
   Future<List<String>> search(http.Client client, String userKeywords) => Future.value([
-        '$apiPath/$userKeywords',
-        '$apiPath/${userKeywords.replaceAll(' ', '')}',
-        '$apiPath/${userKeywords.replaceAll(' ', '')}.com',
-      ]);
+    '$apiPath/$userKeywords',
+    '$apiPath/${userKeywords.replaceAll(' ', '')}',
+    '$apiPath/${userKeywords.replaceAll(' ', '')}.com',
+  ]);
 }
 
 /// Search using Wikimedia.
@@ -124,7 +124,7 @@ class Brandfetch with Source {
 extension Search on List<Source> {
   /// Searches using these sources, avoiding errors.
   Future<List<String>> search(http.Client client, String userKeywords) async => [
-        for (Source source in this) //
-          ...await source.search(client, userKeywords),
-      ];
+    for (Source source in this) //
+      ...await source.search(client, userKeywords),
+  ];
 }

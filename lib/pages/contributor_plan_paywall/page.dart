@@ -16,18 +16,18 @@ class ContributorPlanPaywallPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-        body: Center(
-          child: shouldFallback
-              ? ContributorPlanFallbackPaywall(
-                  onPurchaseCompleted: () => Navigator.pop(context, true),
-                  onDismiss: () => Navigator.pop(context, false),
-                )
-              : ContributorPlanPaywall(
-                  onPurchaseCompleted: () => Navigator.pop(context, true),
-                  onDismiss: () => Navigator.pop(context, false),
-                ),
-        ),
-      );
+    body: Center(
+      child: shouldFallback
+          ? ContributorPlanFallbackPaywall(
+              onPurchaseCompleted: () => Navigator.pop(context, true),
+              onDismiss: () => Navigator.pop(context, false),
+            )
+          : ContributorPlanPaywall(
+              onPurchaseCompleted: () => Navigator.pop(context, true),
+              onDismiss: () => Navigator.pop(context, false),
+            ),
+    ),
+  );
 
   /// Whether we should use [ContributorPlanFallbackPaywall] instead of [ContributorPlanPaywall].
   bool get shouldFallback => currentPlatform != Platform.android && currentPlatform != Platform.iOS;

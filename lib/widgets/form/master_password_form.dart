@@ -33,8 +33,8 @@ class MasterPasswordForm extends StatefulWidget {
     String? inputText,
     String? hintText,
     this.defaultPassword,
-  })  : inputText = inputText ?? translations.masterPassword.form.password.input,
-        hintText = hintText ?? translations.masterPassword.form.password.hint;
+  }) : inputText = inputText ?? translations.masterPassword.form.password.input,
+       hintText = hintText ?? translations.masterPassword.form.password.hint;
 
   @override
   State<StatefulWidget> createState() => _MasterPasswordFormState();
@@ -50,50 +50,50 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
 
   @override
   Widget build(BuildContext context) => Form(
-        key: widget.formKey,
-        onChanged: widget.onFormChanged,
-        child: Column(
-          children: [
-            PasswordFormField(
-              initialValue: widget.defaultPassword,
-              decoration: FormLabelWithIcon(
-                icon: Icons.password,
-                text: widget.inputText,
-                hintText: widget.hintText,
-              ),
-              onChanged: (value) {
-                setState(() => passwordInput = value);
-                notifyChangesIfNeeded(password: value);
-              },
-              validator: validatePassword,
-            ),
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width,
-              child: Text(
-                translations.masterPassword.form.securityScore(score: '$securityScore/40'),
-                style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: securityScoreColor,
-                    ),
-                textAlign: TextAlign.right,
-              ),
-            ),
-            PasswordFormField(
-              initialValue: widget.defaultPassword,
-              decoration: FormLabelWithIcon(
-                icon: Icons.check,
-                text: translations.masterPassword.form.confirmation.input,
-                hintText: translations.masterPassword.form.confirmation.hint,
-              ),
-              onChanged: (value) {
-                confirmationInput = value;
-                notifyChangesIfNeeded(confirmation: value);
-              },
-              validator: validateConfirmation,
-            ),
-          ],
+    key: widget.formKey,
+    onChanged: widget.onFormChanged,
+    child: Column(
+      children: [
+        PasswordFormField(
+          initialValue: widget.defaultPassword,
+          decoration: FormLabelWithIcon(
+            icon: Icons.password,
+            text: widget.inputText,
+            hintText: widget.hintText,
+          ),
+          onChanged: (value) {
+            setState(() => passwordInput = value);
+            notifyChangesIfNeeded(password: value);
+          },
+          validator: validatePassword,
         ),
-      );
+        SizedBox(
+          width: MediaQuery.sizeOf(context).width,
+          child: Text(
+            translations.masterPassword.form.securityScore(score: '$securityScore/40'),
+            style: Theme.of(context).textTheme.labelSmall!.copyWith(
+              fontWeight: FontWeight.bold,
+              color: securityScoreColor,
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ),
+        PasswordFormField(
+          initialValue: widget.defaultPassword,
+          decoration: FormLabelWithIcon(
+            icon: Icons.check,
+            text: translations.masterPassword.form.confirmation.input,
+            hintText: translations.masterPassword.form.confirmation.hint,
+          ),
+          onChanged: (value) {
+            confirmationInput = value;
+            notifyChangesIfNeeded(confirmation: value);
+          },
+          validator: validateConfirmation,
+        ),
+      ],
+    ),
+  );
 
   /// Calls [widget.onChanged] if the password has changed.
   void notifyChangesIfNeeded({String? password, String? confirmation}) {

@@ -50,10 +50,10 @@ class ResultError<T> extends Result<T> {
 
   /// Creates a new result error instance from another [result].
   ResultError.fromAnother(ResultError result)
-      : this(
-          exception: result.exception,
-          stacktrace: result.stacktrace,
-        );
+    : this(
+        exception: result.exception,
+        stacktrace: result.stacktrace,
+      );
 
   @override
   ResultError<U> to<U>(_) => ResultError<U>.fromAnother(this);
@@ -71,9 +71,9 @@ class ResultCancelled<T> extends Result<T> {
 
   /// Creates a new result cancelled instance from another [result].
   ResultCancelled.fromAnother(ResultCancelled result)
-      : this(
-          timedOut: result.timedOut,
-        );
+    : this(
+        timedOut: result.timedOut,
+      );
 
   @override
   ResultCancelled<U> to<U>(_) => ResultCancelled<U>.fromAnother(this);

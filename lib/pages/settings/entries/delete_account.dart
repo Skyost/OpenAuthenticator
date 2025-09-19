@@ -28,7 +28,6 @@ class DeleteAccountSettingsEntryWidget extends ConsumerWidget with RequiresAuthe
     );
   }
 
-
   @override
   bool isAuthenticationStateValid(FirebaseAuthenticationState authenticationState) => authenticationState is FirebaseAuthenticationStateLoggedIn;
 }

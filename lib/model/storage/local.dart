@@ -120,43 +120,46 @@ class LocalStorage extends _$LocalStorage with Storage {
 
   @override
   Future<Totp?> getTotp(String uuid) async {
-    _DriftTotp? totp = await (select(totps)
-          ..where((totp) => totp.uuid.isValue(uuid))
-          ..limit(1))
-        .getSingleOrNull();
+    _DriftTotp? totp =
+        await (select(totps)
+              ..where((totp) => totp.uuid.isValue(uuid))
+              ..limit(1))
+            .getSingleOrNull();
     return totp?.asTotp;
   }
 
+  // @override
+  // Stream<List<Totp>> watchTotps() => select(totps).watch().map((list) => [
+  //       for (_DriftTotp driftTotp in list) driftTotp.asTotp,
+  //     ]);
+
   @override
-  Future<List<Totp>> listTotps({int? limit}) async {
-    List<_DriftTotp> list = await _listDriftTotps(limit: limit);
+  Future<List<Totp>> listTotps() async {
+    List<_DriftTotp> list = await _listDriftTotps();
     return [
       for (_DriftTotp driftTotp in list) driftTotp.asTotp,
     ];
   }
 
   @override
-  Future<List<String>> listUuids({int? limit}) async {
-    List<_DriftTotp> list = await _listDriftTotps(limit: limit);
+  Future<List<String>> listUuids() async {
+    List<_DriftTotp> list = await _listDriftTotps();
     return [
       for (_DriftTotp driftTotp in list) driftTotp.uuid,
     ];
   }
 
   /// List the Drift TOTPs.
-  Future<List<_DriftTotp>> _listDriftTotps({int? limit}) async {
+  Future<List<_DriftTotp>> _listDriftTotps() async {
     SimpleSelectStatement<$TotpsTable, _DriftTotp> query = select(totps)..orderBy([(table) => OrderingTerm(expression: table.issuer)]);
-    if (limit != null) {
-      query = query..limit(limit);
-    }
     return await query.get();
   }
 
   @override
   Future<void> replaceTotps(List<Totp> newTotps) => batch((batch) {
-        batch.deleteAll(totps);
-        batch.insertAll(totps, newTotps.map((totp) => totp.asDriftTotp));
-      });
+    batch.deleteAll(totps);
+    batch.insertAll(totps, newTotps.map((totp) => totp.asDriftTotp));
+  });
 
   @override
   Future<void> onStorageTypeChanged({bool close = true}) async {
@@ -193,32 +196,32 @@ class _DurationConverter extends TypeConverter<Duration, int> {
 extension _OpenAuthenticator on _DriftTotp {
   /// Converts this instance to a [Totp].
   Totp get asTotp => Totp(
-        uuid: uuid,
-        encryptedData: EncryptedData(
-          encryptedSecret: secret,
-          encryptedLabel: label,
-          encryptedIssuer: issuer,
-          encryptedImageUrl: imageUrl,
-          encryptionSalt: Salt.fromRawValue(value: encryptionSalt),
-        ),
-        algorithm: algorithm,
-        digits: digits,
-        validity: validity,
-      );
+    uuid: uuid,
+    encryptedData: EncryptedData(
+      encryptedSecret: secret,
+      encryptedLabel: label,
+      encryptedIssuer: issuer,
+      encryptedImageUrl: imageUrl,
+      encryptionSalt: Salt.fromRawValue(value: encryptionSalt),
+    ),
+    algorithm: algorithm,
+    digits: digits,
+    validity: validity,
+  );
 }
 
 /// Contains some useful methods to use [Totp] with Drift.
 extension _Drift on Totp {
   /// Converts this instance to a Drift generated [Secret].
   _DriftTotp get asDriftTotp => _DriftTotp(
-        uuid: uuid,
-        algorithm: algorithm,
-        digits: digits,
-        validity: validity,
-        secret: encryptedData.encryptedSecret,
-        label: encryptedData.encryptedLabel,
-        issuer: encryptedData.encryptedIssuer,
-        imageUrl: encryptedData.encryptedImageUrl,
-        encryptionSalt: encryptedData.encryptionSalt.value,
-      );
+    uuid: uuid,
+    algorithm: algorithm,
+    digits: digits,
+    validity: validity,
+    secret: encryptedData.encryptedSecret,
+    label: encryptedData.encryptedLabel,
+    issuer: encryptedData.encryptedIssuer,
+    imageUrl: encryptedData.encryptedImageUrl,
+    encryptionSalt: encryptedData.encryptionSalt.value,
+  );
 }

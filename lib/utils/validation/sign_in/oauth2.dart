@@ -23,9 +23,9 @@ mixin OAuth2SignIn {
 
   /// The default login URL parameters to use.
   Map<String, String> get loginUrlParameters => {
-        'client_id': clientId,
-        'scope': scopes.join(' '),
-      };
+    'client_id': clientId,
+    'scope': scopes.join(' '),
+  };
 }
 
 /// Allows to log in the user to various providers using a [ValidationServer].
@@ -45,8 +45,8 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
     required this.name,
     super.timeout,
   }) : super(
-          path: name.toLowerCase(),
-        );
+         path: name.toLowerCase(),
+       );
 
   @override
   Future<Result<OAuth2Response>> signIn(BuildContext context) async {
@@ -83,10 +83,10 @@ abstract class OAuth2SignInServer extends CompleterAbstractValidationServer<OAut
 
   @override
   Map<String, String> get loginUrlParameters => {
-        ...super.loginUrlParameters,
-        'redirect_uri': url,
-        'state': _state!,
-      };
+    ...super.loginUrlParameters,
+    'redirect_uri': url,
+    'state': _state!,
+  };
 
   /// Validates the received state.
   bool validateState(Map<String, List<String>> receivedParams) => receivedParams['state']?.firstOrNull == _state;
@@ -113,15 +113,15 @@ mixin OAuth2SignInNonce on OAuth2SignInServer {
 
   @override
   OAuth2Response createResponseFromParams(Map<String, String> params) => OAuth2Response.fromResponse(
-        params,
-        nonce: nonce,
-      );
+    params,
+    nonce: nonce,
+  );
 
   @override
   Map<String, String> get loginUrlParameters => {
-        ...super.loginUrlParameters,
-        if (nonce != null) 'nonce': nonce!,
-      };
+    ...super.loginUrlParameters,
+    if (nonce != null) 'nonce': nonce!,
+  };
 }
 
 /// This allows to handle cases where the tokens are returned in the URL hash.
@@ -143,7 +143,8 @@ mixin OAuth2SignInVerifyFragment on OAuth2SignInServer {
   }
 
   /// The HTML / JS code that allows to verify the fragment.
-  String get _verifyFragmentHtml => '''<!DOCTYPE html>
+  String get _verifyFragmentHtml =>
+      '''<!DOCTYPE html>
 <html lang="${translations.$meta.locale.languageCode}">
 <head>
   <title>${translations.validation.oauth2.title(name: name)}</title>
@@ -199,9 +200,9 @@ class OAuth2Response {
 
   /// Creates a new OAuth2 response instance from the given [receivedParams].
   OAuth2Response.fromResponse(Map<String, String> receivedParams, {String? nonce})
-      : this(
-          accessToken: receivedParams['access_token'],
-          idToken: receivedParams['id_token'],
-          nonce: nonce,
-        );
+    : this(
+        accessToken: receivedParams['access_token'],
+        idToken: receivedParams['id_token'],
+        nonce: nonce,
+      );
 }

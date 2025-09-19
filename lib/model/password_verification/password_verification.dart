@@ -10,7 +10,7 @@ import 'package:open_authenticator/utils/result.dart';
 final passwordVerificationProvider = AsyncNotifierProvider.autoDispose<PasswordVerification, List<PasswordVerificationMethod>>(PasswordVerification.new);
 
 /// Allows to check whether a given password is the user's master password.
-class PasswordVerification extends AutoDisposeAsyncNotifier<List<PasswordVerificationMethod>> {
+class PasswordVerification extends AsyncNotifier<List<PasswordVerificationMethod>> {
   @override
   FutureOr<List<PasswordVerificationMethod>> build() async {
     CryptoStoreVerificationMethod cryptoStoreVerificationMethod = await ref.watch(cryptoStoreVerificationMethodProvider.future);

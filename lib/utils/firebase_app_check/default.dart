@@ -6,7 +6,7 @@ import 'package:open_authenticator/utils/firebase_app_check/firebase_app_check.d
 class FirebaseAppCheckDefault extends FirebaseAppCheck {
   @override
   Future<void> activate() async => await firebase_app_check.FirebaseAppCheck.instance.activate(
-        androidProvider: kDebugMode ? firebase_app_check.AndroidProvider.debug : firebase_app_check.AndroidProvider.playIntegrity,
-        appleProvider: kDebugMode ? firebase_app_check.AppleProvider.debug : firebase_app_check.AppleProvider.appAttestWithDeviceCheckFallback,
-      );
+    androidProvider: kDebugMode ? firebase_app_check.AndroidProvider.debug : firebase_app_check.AndroidProvider.playIntegrity,
+    appleProvider: kDebugMode ? firebase_app_check.AppleProvider.debug : firebase_app_check.AppleProvider.appAttestWithDeviceCheckFallback,
+  );
 }

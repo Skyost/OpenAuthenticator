@@ -84,57 +84,57 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
 
   @override
   Widget build(BuildContext context) => AppDialog(
-        title: Text(translations.masterPassword.changeDialog.title),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              if (!newPasswordFormKey.currentState!.validate() || (createBackup && !backupPasswordFormKey.currentState!.validate())) {
-                return;
-              }
-              if (context.mounted) {
-                Navigator.pop(context, _ChangeMasterPasswordDialogResult(newPassword: newPassword, backupPassword: createBackup ? backupPassword : null));
-              }
-            },
-            child: Text(MaterialLocalizations.of(context).continueButtonLabel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-        ],
-        children: [
-          MasterPasswordForm(
-            formKey: newPasswordFormKey,
-            defaultPassword: widget.defaultPassword,
-            inputText: translations.masterPassword.changeDialog.newLabel,
-            onChanged: (value) => newPassword = value ?? '',
-          ),
-          ListTile(
-            title: Text(translations.miscellaneous.backupCheckbox.checkbox),
-            contentPadding: EdgeInsets.zero,
-            trailing: Checkbox(
-              value: createBackup,
-              onChanged: (value) {
-                setState(() => createBackup = value ?? !createBackup);
-              },
+    title: Text(translations.masterPassword.changeDialog.title),
+    actions: [
+      TextButton(
+        onPressed: () async {
+          if (!newPasswordFormKey.currentState!.validate() || (createBackup && !backupPasswordFormKey.currentState!.validate())) {
+            return;
+          }
+          if (context.mounted) {
+            Navigator.pop(context, _ChangeMasterPasswordDialogResult(newPassword: newPassword, backupPassword: createBackup ? backupPassword : null));
+          }
+        },
+        child: Text(MaterialLocalizations.of(context).continueButtonLabel),
+      ),
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+    ],
+    children: [
+      MasterPasswordForm(
+        formKey: newPasswordFormKey,
+        defaultPassword: widget.defaultPassword,
+        inputText: translations.masterPassword.changeDialog.newLabel,
+        onChanged: (value) => newPassword = value ?? '',
+      ),
+      ListTile(
+        title: Text(translations.miscellaneous.backupCheckbox.checkbox),
+        contentPadding: EdgeInsets.zero,
+        trailing: Checkbox(
+          value: createBackup,
+          onChanged: (value) {
+            setState(() => createBackup = value ?? !createBackup);
+          },
+        ),
+      ),
+      if (createBackup)
+        Form(
+          key: backupPasswordFormKey,
+          child: PasswordFormField(
+            initialValue: backupPassword,
+            onChanged: (value) => backupPassword = value,
+            validator: isBackupPasswordValid,
+            decoration: FormLabelWithIcon(
+              icon: Icons.save,
+              text: translations.miscellaneous.backupCheckbox.input.text,
+              hintText: translations.miscellaneous.backupCheckbox.input.hint,
             ),
           ),
-          if (createBackup)
-            Form(
-              key: backupPasswordFormKey,
-              child: PasswordFormField(
-                initialValue: backupPassword,
-                onChanged: (value) => backupPassword = value,
-                validator: isBackupPasswordValid,
-                decoration: FormLabelWithIcon(
-                  icon: Icons.save,
-                  text: translations.miscellaneous.backupCheckbox.input.text,
-                  hintText: translations.miscellaneous.backupCheckbox.input.hint,
-                ),
-              ),
-            ),
-        ],
-      );
+        ),
+    ],
+  );
 
   /// Checks whether the backup password is valid.
   String? isBackupPasswordValid(String? value) {

@@ -73,57 +73,59 @@ class IntroPageState extends ConsumerState<IntroPage> with BrightnessListener {
   /// Allows to adapt system UI overlay to the current brightness.
   void _adaptSystemUiOverlayToBrightness() {
     Brightness brightness = currentBrightness;
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: brightness == Brightness.dark ? Brightness.light : Brightness.dark,
-      systemNavigationBarIconBrightness: brightness == Brightness.dark ? Brightness.light : Brightness.dark,
-    ));
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+        systemNavigationBarIconBrightness: brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        bottomNavigationBar: Padding(
-          padding: EdgeInsets.only(
-            top: 10,
-            right: 20,
-            bottom: 10 + MediaQuery.paddingOf(context).bottom,
-            left: 20,
+    bottomNavigationBar: Padding(
+      padding: EdgeInsets.only(
+        top: 10,
+        right: 20,
+        bottom: 10 + MediaQuery.paddingOf(context).bottom,
+        left: 20,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          StepProgressIndicator(
+            steps: _slides.length,
+            currentStep: _slideIndex + 1,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              StepProgressIndicator(
-                steps: _slides.length,
-                currentStep: _slideIndex + 1,
-              ),
-              FilledButton.tonalIcon(
-                onPressed: canGoToNextSlide
-                    ? () {
-                        if (hasFinished) {
-                          _finish();
-                        } else {
-                          _goToNextSlide();
-                        }
-                      }
-                    : null,
-                icon: Icon(hasFinished ? Icons.check : Icons.navigate_next),
-                label: Text(hasFinished ? translations.intro.button.finish : translations.intro.button.next),
-              ),
-            ],
+          FilledButton.tonalIcon(
+            onPressed: canGoToNextSlide
+                ? () {
+                    if (hasFinished) {
+                      _finish();
+                    } else {
+                      _goToNextSlide();
+                    }
+                  }
+                : null,
+            icon: Icon(hasFinished ? Icons.check : Icons.navigate_next),
+            label: Text(hasFinished ? translations.intro.button.finish : translations.intro.button.next),
           ),
-        ),
-        body: _slides.isEmpty
-            ? const CenteredCircularProgressIndicator()
-            : PageTransitionSwitcher(
-                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
-                  animation: primaryAnimation,
-                  secondaryAnimation: secondaryAnimation,
-                  transitionType: SharedAxisTransitionType.horizontal,
-                  child: child,
-                ),
-                child: _slides[_slideIndex].createWidget(context, _slides.length - (_slideIndex + 1)),
-              ),
-      );
+        ],
+      ),
+    ),
+    body: _slides.isEmpty
+        ? const CenteredCircularProgressIndicator()
+        : PageTransitionSwitcher(
+            transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
+              animation: primaryAnimation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.horizontal,
+              child: child,
+            ),
+            child: _slides[_slideIndex].createWidget(context, _slides.length - (_slideIndex + 1)),
+          ),
+  );
 
   /// Returns whether the intro is finished.
   bool get hasFinished => _slideIndex == _slides.length - 1;

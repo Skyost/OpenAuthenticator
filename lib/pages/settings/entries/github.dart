@@ -9,9 +9,9 @@ class GithubSettingsEntryWidget extends UriSettingsEntry {
   GithubSettingsEntryWidget({
     super.key,
   }) : super(
-          icon: Icons.bug_report,
-          title: translations.settings.about.github.title,
-          subtitle: translations.settings.about.github.subtitle,
-          uri: Uri.parse(App.githubRepositoryUrl).replace(fragment: 'report-bugs-or-suggest-new-features'),
-        );
+         icon: Icons.bug_report,
+         title: translations.settings.about.github.title,
+         subtitle: translations.settings.about.github.subtitle,
+         uri: Uri.parse(App.githubRepositoryUrl).replace(fragment: 'report-bugs-or-suggest-new-features'),
+       );
 }
