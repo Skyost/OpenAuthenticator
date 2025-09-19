@@ -46,29 +46,7 @@ class TitleWidget extends StatelessWidget {
 
   /// Creates a text with a gradient.
   WidgetSpan _createGradientText(String text) => WidgetSpan(
-    child: ShaderMask(
-      blendMode: BlendMode.srcIn,
-      shaderCallback: (bounds) =>
-          LinearGradient(
-            colors: [
-              Colors.green.shade300,
-              Colors.green.shade400,
-              Colors.green.shade500,
-              Colors.green.shade500,
-              Colors.green.shade600,
-              Colors.green.shade800,
-            ],
-            stops: const [
-              0,
-              0.021,
-              0.293,
-              0.554,
-              0.796,
-              1,
-            ],
-          ).createShader(
-            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-          ),
+    child: AppTitleGradient(
       child: Text(
         text,
         style: (textStyle ?? const TextStyle()).copyWith(
@@ -78,5 +56,44 @@ class TitleWidget extends StatelessWidget {
       ),
     ),
     alignment: PlaceholderAlignment.middle,
+  );
+}
+
+/// Displays a widget with the app gradient.
+class AppTitleGradient extends StatelessWidget {
+  /// The child.
+  final Widget child;
+
+  /// Creates a new app title gradient instance.
+  const AppTitleGradient({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) => ShaderMask(
+    blendMode: BlendMode.srcIn,
+    shaderCallback: (bounds) =>
+        LinearGradient(
+          colors: [
+            Colors.green.shade300,
+            Colors.green.shade400,
+            Colors.green.shade500,
+            Colors.green.shade500,
+            Colors.green.shade600,
+            Colors.green.shade800,
+          ],
+          stops: const [
+            0,
+            0.021,
+            0.293,
+            0.554,
+            0.796,
+            1,
+          ],
+        ).createShader(
+          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+        ),
+    child: child,
   );
 }

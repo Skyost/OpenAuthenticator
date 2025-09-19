@@ -10,6 +10,7 @@ import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/display_copy_button.dart';
 import 'package:open_authenticator/model/storage/online.dart';
+import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
@@ -17,10 +18,12 @@ import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
+import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/master_password.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/app_filled_button.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
@@ -98,7 +101,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
       appBar: AppBar(
         title: const _AppBarTitle(),
         actions: [
-          _RequireCryptoStore(
+          _RequireProviderValue.cryptoStoreAndTotpList(
             child: Builder(
               builder: (context) => _SearchButton(
                 onTotpFound: (totp) async {
@@ -120,20 +123,20 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
             ),
           ),
           if (!initiallyShowFloatingActionButton || kDebugMode)
-            _RequireCryptoStore(
+            _RequireProviderValue.cryptoStoreAndTotpList(
               child: IconButton(
                 onPressed: () => onAddButtonPressed(context),
                 icon: const Icon(Icons.add),
               ),
             ),
           if (currentPlatform.isDesktop)
-            _RequireCryptoStore(
+            _RequireProviderValue.cryptoStoreAndTotpList(
               child: IconButton(
                 onPressed: () => ref.read(totpRepositoryProvider.notifier).refresh(),
                 icon: const Icon(Icons.sync),
               ),
             ),
-          _RequireCryptoStore(
+          _RequireProviderValue.cryptoStoreAndTotpList(
             child: IconButton(
               onPressed: () => Navigator.pushNamed(context, SettingsPage.name),
               icon: const Icon(Icons.settings),
@@ -142,7 +145,7 @@ class _HomePageState extends ConsumerState<HomePage> with BrightnessListener {
         ],
       ),
       floatingActionButton: initiallyShowFloatingActionButton
-          ? _RequireCryptoStore(
+          ? _RequireProviderValue.cryptoStoreAndTotpList(
               child: AnimatedSlide(
                 duration: const Duration(milliseconds: 200),
                 offset: showFloatingActionButton ? Offset.zero : const Offset(0, 2),
@@ -209,8 +212,8 @@ class _AppBarTitle extends StatelessWidget {
   );
 }
 
-/// Allows to require a crypto store.
-class _RequireCryptoStore extends ConsumerWidget {
+/// Allows to require a crypto store, the totp list or both.
+class _RequireProviderValue<T, U extends AsyncNotifier<T>> extends ConsumerWidget {
   /// The child to show if the crypto store is non null.
   final Widget child;
 
@@ -220,12 +223,44 @@ class _RequireCryptoStore extends ConsumerWidget {
   /// Whether to display the child if the app is locked.
   final bool showChildIfLocked;
 
-  /// Creates a new require crypto store widget instance.
-  const _RequireCryptoStore({
+  /// The provider instance.
+  final AsyncNotifierProvider<U, T> provider;
+
+  /// Creates a new require provider widget instance.
+  const _RequireProviderValue({
     required this.child,
     this.childIfAbsent = const SizedBox.shrink(),
     this.showChildIfLocked = true,
+    required this.provider,
   });
+
+  /// Creates a new require crypto store widget instance.
+  static _RequireProviderValue<CryptoStore?, StoredCryptoStore> cryptoStore({
+    required Widget child,
+    Widget childIfAbsent = const SizedBox.shrink(),
+    bool showChildIfLocked = true,
+  }) => _RequireProviderValue(
+    provider: cryptoStoreProvider,
+    childIfAbsent: childIfAbsent,
+    showChildIfLocked: showChildIfLocked,
+    child: child,
+  );
+
+  /// Creates a new require crypto store widget instance.
+  static _RequireProviderValue<CryptoStore?, StoredCryptoStore> cryptoStoreAndTotpList({
+    required Widget child,
+    Widget childIfAbsent = const SizedBox.shrink(),
+    bool showChildIfLocked = true,
+  }) => _RequireProviderValue(
+    provider: cryptoStoreProvider,
+    childIfAbsent: childIfAbsent,
+    showChildIfLocked: showChildIfLocked,
+    child: _RequireProviderValue(
+      provider: totpRepositoryProvider,
+      childIfAbsent: childIfAbsent,
+      child: child,
+    ),
+  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -235,13 +270,16 @@ class _RequireCryptoStore extends ConsumerWidget {
         return child;
       }
     }
-    CryptoStore? cryptoStore = ref.watch(cryptoStoreProvider).value;
-    return cryptoStore == null ? childIfAbsent : child;
+    AsyncValue<T> value = ref.watch(provider);
+    return value.value == null ? childIfAbsent : child;
   }
 }
 
 /// The home page body, where all TOTPs are displayed.
 class _HomePageBody extends ConsumerWidget {
+  /// The icon size.
+  static const double iconSize = 80;
+
   /// The item scroll controller.
   final ItemScrollController? itemScrollController;
 
@@ -279,7 +317,7 @@ class _HomePageBody extends ConsumerWidget {
                             const Padding(
                               padding: EdgeInsets.only(bottom: 20),
                               child: SizedScalableImageWidget(
-                                height: 80,
+                                height: iconSize,
                                 asset: 'assets/images/home.si',
                               ),
                             ),
@@ -322,14 +360,19 @@ class _HomePageBody extends ConsumerWidget {
                 },
                 separatorBuilder: (context, position) => const Divider(),
               );
-        return _RequireCryptoStore(
+        return _RequireProviderValue.cryptoStore(
           childIfAbsent: createErrorWidget(
             context,
             ref,
+            icon: Icons.key_off,
             message: translations.home.noCryptoStore.message,
-            buttonLabel: translations.home.noCryptoStore.resetButton,
-            buttonIcon: Icons.key,
-            onButtonPressed: () => MasterPasswordUtils.changeMasterPassword(context, ref, askForUnlock: false),
+            buttons: [
+              AppFilledButton(
+                onPressed: () => MasterPasswordUtils.changeMasterPassword(context, ref, askForUnlock: false),
+                label: const Text('translations.home.noCryptoStore.resetButton'),
+                icon: const Icon(Icons.password),
+              ),
+            ],
           ),
           child: currentPlatform.isMobile
               ? RefreshIndicator(
@@ -340,14 +383,57 @@ class _HomePageBody extends ConsumerWidget {
         );
       case AsyncError(:final error):
         return error is NotLoggedInException
-            ? const CenteredCircularProgressIndicator()
+            ? FutureBuilder(
+                future: Future.delayed(const Duration(seconds: 5), () => true),
+                builder: (context, snapshot) => snapshot.data == true
+                    ? createErrorWidget(
+                        context,
+                        ref,
+                        icon: Icons.wifi_off,
+                        message: translations.home.logInFailed.message,
+                        buttons: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: AppFilledButton(
+                              onPressed: () => ref.refresh(onlineStorageProvider),
+                              label: Text(translations.home.logInFailed.button.retry),
+                              icon: const Icon(Icons.refresh),
+                            ),
+                          ),
+                          AppFilledButton(
+                            onPressed: () => AccountUtils.trySignIn(context, ref),
+                            label: Text(translations.home.logInFailed.button.relogIn),
+                            icon: const Icon(Icons.login),
+                            tonal: true,
+                          ),
+
+                          AppFilledButton(
+                            onPressed: () => StorageMigrationUtils.changeStorageType(
+                              context,
+                              ref,
+                              StorageType.local,
+                              ignoreCurrentStorage: true,
+                            ),
+                            label: Text(translations.home.logInFailed.button.changeStorageType),
+                            icon: const Icon(Icons.wifi),
+                            tonal: true,
+                          ),
+                        ],
+                      )
+                    : const CenteredCircularProgressIndicator(),
+              )
             : createErrorWidget(
                 context,
                 ref,
+                icon: Icons.bug_report,
                 message: translations.error.generic.withException(exception: error),
-                buttonLabel: translations.home.refreshButton,
-                buttonIcon: Icons.sync,
-                onButtonPressed: ref.read(totpRepositoryProvider.notifier).refresh,
+                buttons: [
+                  AppFilledButton(
+                    label: Text(translations.home.refreshButton),
+                    icon: const Icon(Icons.sync),
+                    onPressed: ref.read(totpRepositoryProvider.notifier).refresh,
+                  ),
+                ],
               );
       default:
         return const CenteredCircularProgressIndicator();
@@ -358,28 +444,35 @@ class _HomePageBody extends ConsumerWidget {
   Widget createErrorWidget(
     BuildContext context,
     WidgetRef ref, {
+    required IconData icon,
     String? message,
-    String? buttonLabel,
-    IconData? buttonIcon,
-    VoidCallback? onButtonPressed,
+    List<Widget> buttons = const [],
   }) => Center(
     child: ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.all(20),
       children: [
         Padding(
-          padding: EdgeInsets.only(bottom: buttonLabel == null ? 0 : 20),
+          padding: const EdgeInsets.only(bottom: 20),
+          child: AppTitleGradient(
+            child: Icon(
+              icon,
+              size: _HomePageBody.iconSize,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: buttons.isEmpty ? 0 : 20),
           child: Text(
             message ?? translations.error.generic.noTryAgain,
             textAlign: TextAlign.center,
           ),
         ),
-        if (buttonLabel != null)
+        for (int i = 0; i < buttons.length; i++)
           Center(
-            child: AppFilledButton(
-              onPressed: onButtonPressed,
-              label: Text(buttonLabel),
-              icon: buttonIcon == null ? null : Icon(buttonIcon),
+            child: Padding(
+              padding: EdgeInsets.only(bottom: i == buttons.length - 1 ? 0 : 10),
+              child: buttons[i],
             ),
           ),
       ],

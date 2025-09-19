@@ -27,6 +27,7 @@ class StorageMigrationUtils {
     bool logout = false,
     String currentStorageMasterPassword = '',
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
+    bool ignoreCurrentStorage = false,
   }) async {
     if (showConfirmation) {
       _ConfirmationResult? result = await _ConfirmationDialog.ask(context, newType == StorageType.online);
@@ -58,6 +59,7 @@ class StorageMigrationUtils {
             newType,
             backupPassword: backupPassword,
             storageMigrationDeletedTotpPolicy: storageMigrationDeletedTotpPolicy,
+            ignoreCurrentStorage: ignoreCurrentStorage,
           ),
     );
     if (!context.mounted) {

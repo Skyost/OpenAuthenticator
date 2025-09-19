@@ -16,6 +16,7 @@ import 'package:open_authenticator/model/authentication/providers/provider.dart'
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
+import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/contributor_plan_paywall/page.dart';
 import 'package:open_authenticator/pages/home.dart';
@@ -70,6 +71,13 @@ Future<void> main() async {
   await LocaleSettings.useDeviceLocale();
   runApp(
     ProviderScope(
+      retry: (retryCount, error) {
+        if (error is NotLoggedInException) {
+          return null;
+        }
+
+        return ProviderContainer.defaultRetry(retryCount, error);
+      },
       child: TranslationProvider(
         child: const OpenAuthenticatorApp(),
       ),

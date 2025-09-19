@@ -11,6 +11,7 @@ import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/deleted_totps.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/utils.dart';
 
 /// The provider instance.
 final storageProvider = AsyncNotifierProvider.autoDispose<StorageNotifier, Storage>(StorageNotifier.new);
@@ -31,6 +32,7 @@ class StorageNotifier extends AsyncNotifier<Storage> {
     StorageType newType, {
     String? backupPassword,
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
+    bool ignoreCurrentStorage = false,
   }) async {
     try {
       Result<bool> passwordCheckResult = await (await ref.read(passwordVerificationProvider.future)).isPasswordValid(masterPassword);
@@ -69,7 +71,16 @@ class StorageNotifier extends AsyncNotifier<Storage> {
         }
       }
 
-      List<Totp> currentStorageTotps = await currentStorage.listTotps();
+      List<Totp> currentStorageTotps = [];
+      try {
+        currentStorageTotps = await currentStorage.listTotps();
+      } catch (ex, stacktrace) {
+        if (ignoreCurrentStorage) {
+          handleException(ex, stacktrace);
+        } else {
+          rethrow;
+        }
+      }
       List<Totp> newStorageTotps = await newStorage.listTotps();
       List<Totp> toAdd = [];
       if (newStorageTotps.isEmpty) {
