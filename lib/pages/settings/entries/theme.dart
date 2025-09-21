@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
-import 'package:open_authenticator/widgets/form/dropdown_list_tile.dart';
 
 /// Allows to configure [themeSettingsEntryProvider].
 class ThemeSettingsEntryWidget extends ConsumerWidget {
@@ -14,21 +13,52 @@ class ThemeSettingsEntryWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<ThemeMode> theme = ref.watch(themeSettingsEntryProvider);
-    return DropdownListTile(
+    return ListTile(
       enabled: theme.hasValue,
       title: Text(translations.settings.application.theme.title),
-      value: theme.value,
-      choices: [
-        for (ThemeMode mode in ThemeMode.values)
-          DropdownListTileChoice(
-            title: translations.settings.application.theme.values[mode.name]!,
-            icon: mode.icon,
-            value: mode,
+      subtitle: Text(translations.settings.application.theme.subtitle),
+      leading: Icon(theme.value?.icon),
+      trailing: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Icon(Icons.chevron_right),
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => _ThemeRouteWidget(),
           ),
-      ],
-      onChoiceSelected: (choice) => ref.read(themeSettingsEntryProvider.notifier).changeValue(choice.value),
+        );
+      },
     );
   }
+}
+
+/// Allows to configure the theme.
+class _ThemeRouteWidget extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    AsyncValue<ThemeMode> theme = ref.watch(themeSettingsEntryProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(translations.settings.application.theme.title),
+      ),
+      body: ListView(
+        shrinkWrap: true,
+        children: [
+          for (ThemeMode mode in ThemeMode.values)
+            ListTile(
+              leading: Icon(mode.icon),
+              title: Text(translations.settings.application.theme.name[mode.name]!),
+              subtitle: Text(translations.settings.application.theme.description[mode.name]!),
+              trailing: theme.value == mode ? const Icon(Icons.check) : null,
+              onTap: () => ref.read(themeSettingsEntryProvider.notifier).changeValue(mode),
+            ),
+        ],
+      ),
+    );
+  }
+
 }
 
 /// Allows to associate an icon with a theme mode.

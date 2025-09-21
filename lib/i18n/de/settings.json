@@ -28,10 +28,16 @@
     },
     "theme": {
       "title": "Thema",
-      "values(map)": {
+      "subtitle": "Ändern Sie den Anwendungsthemen und Helligkeit.",
+      "name(map)": {
         "system": "System",
         "light": "Hell",
         "dark": "Dunkel"
+      },
+      "description(map)": {
+        "system": "Verwenden Sie das Systemthema.",
+        "light": "Verwenden Sie das Hellenthema.",
+        "dark": "Verwenden Sie das Dunkelthema."
       }
     }
   },

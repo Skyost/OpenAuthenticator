@@ -28,10 +28,16 @@
     },
     "theme": {
       "title": "Theme",
-      "values(map)": {
+      "subtitle": "Change the application theme and brightness.",
+      "name(map)": {
         "system": "System",
         "light": "Light",
         "dark": "Dark"
+      },
+      "description(map)": {
+        "system": "Follow the system theme.",
+        "light": "Use the light theme.",
+        "dark": "Use the dark theme."
       }
     }
   },

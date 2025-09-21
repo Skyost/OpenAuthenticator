@@ -28,10 +28,16 @@
     },
     "theme": {
       "title": "Thème",
-      "values(map)": {
+      "subtitle": "Changer le thème de l'application et la luminosité.",
+      "name(map)": {
         "system": "Système",
         "light": "Lumineux",
         "dark": "Sombre"
+      },
+      "description(map)": {
+        "system": "Suivre le thème du système.",
+        "light": "Utiliser le thème lumineux.",
+        "dark": "Utiliser le thème sombre."
       }
     }
   },
