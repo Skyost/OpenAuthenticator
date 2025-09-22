@@ -10,6 +10,15 @@ subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
+    afterEvaluate { project ->
+        if (project.getName() == 'webcrypto') {
+            project.android {
+                compileSdkVersion = flutter.compileSdkVersion
+            }
+        }
+    }
+}
+subprojects {
     project.evaluationDependsOn(':app')
 }
 
