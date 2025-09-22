@@ -15,6 +15,7 @@ import 'package:open_authenticator/pages/settings/entries/contributor_plan.dart'
 import 'package:open_authenticator/pages/settings/entries/contributor_plan_state.dart';
 import 'package:open_authenticator/pages/settings/entries/delete_account.dart';
 import 'package:open_authenticator/pages/settings/entries/display_copy_button.dart';
+import 'package:open_authenticator/pages/settings/entries/display_search_button.dart';
 import 'package:open_authenticator/pages/settings/entries/enable_local_auth.dart';
 import 'package:open_authenticator/pages/settings/entries/github.dart';
 import 'package:open_authenticator/pages/settings/entries/link.dart';
@@ -57,7 +58,10 @@ class SettingsPage extends ConsumerWidget {
           const ThemeSettingsEntryWidget(),
           CacheTotpPicturesSettingsEntryWidget(),
           if (currentPlatform.isMobile || kDebugMode) //
+          ...[
             DisplayCopyButtonSettingsEntryWidget(),
+            DisplaySearchButtonSettingsEntryWidget(),
+          ],
           _SettingsPageSectionTitle(title: translations.settings.security.title),
           EnableLocalAuthSettingsEntryWidget(),
           SaveDerivedKeySettingsEntryWidget(),

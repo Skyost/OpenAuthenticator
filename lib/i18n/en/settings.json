@@ -26,6 +26,10 @@
       "title": "Display copy button",
       "subtitle": "If enabled, will display a copy button next to your TOTPs. Otherwise, a simple tap will copy the code into your clipboard."
     },
+    "displaySearchIconButton": {
+      "title": "Display search button",
+      "subtitle": "If enabled, will display a search button in the menu bar. Otherwise, the search bar will be placed above the TOTP list."
+    },
     "theme": {
       "title": "Theme",
       "subtitle": "Change the application theme and brightness.",

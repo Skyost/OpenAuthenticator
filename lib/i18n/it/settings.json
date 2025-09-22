@@ -26,6 +26,10 @@
       "title": "Mostra pulsante di copia",
       "subtitle": "Se abilitato, mostrerà un pulsante di copia accanto ai tuoi TOTP. Altrimenti, un semplice tocco copierà il codice negli appunti."
     },
+    "displaySearchIconButton": {
+      "title": "Mostra pulsante di ricerca",
+      "subtitle": "Se abilitato, verrà visualizzato un pulsante di ricerca nella barra dei menu. Altrimenti, la barra di ricerca verrà posizionata sopra l'elenco TOTP."
+    },
     "theme": {
       "title": "Tema",
       "subtitle": "Cambia il tema dell'applicazione e la luminosità.",

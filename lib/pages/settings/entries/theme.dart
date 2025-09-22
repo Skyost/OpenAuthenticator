@@ -44,7 +44,6 @@ class _ThemeRouteWidget extends ConsumerWidget {
         title: Text(translations.settings.application.theme.title),
       ),
       body: ListView(
-        shrinkWrap: true,
         children: [
           for (ThemeMode mode in ThemeMode.values)
             ListTile(
@@ -58,7 +57,6 @@ class _ThemeRouteWidget extends ConsumerWidget {
       ),
     );
   }
-
 }
 
 /// Allows to associate an icon with a theme mode.

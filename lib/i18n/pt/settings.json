@@ -26,6 +26,10 @@
       "title": "Exibir botão de cópia",
       "subtitle": "Se ativado, exibirá um botão de cópia ao lado dos seus TOTPs. Caso contrário, um simples toque copiará o código para a área de transferência."
     },
+    "displaySearchIconButton": {
+      "title": "Exibir botão de pesquisa",
+      "subtitle": "Se ativado, exibirá um botão de pesquisa na barra de menus. Caso contrário, a barra de pesquisa será posicionada acima da lista TOTP."
+    },
     "theme": {
       "title": "Tema",
       "subtitle": "Altere o tema da aplicação e a luminosidade.",

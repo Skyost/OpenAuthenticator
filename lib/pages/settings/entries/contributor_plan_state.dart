@@ -18,14 +18,14 @@ class ContributorPlanStateEntryWidget extends ConsumerWidget {
       enabled: state.hasValue,
       title: const Text('Contributor Plan state'),
       value: state.value,
-        choices: [
-          for (ContributorPlanState state in ContributorPlanState.values)
-            DropdownListTileChoice(
-              title: state.name,
-              value: state,
-            ),
-        ],
-        onChoiceSelected: (choice) => ref.read(contributorPlanStateProvider.notifier).debugChangeState(choice.value),
+      choices: [
+        for (ContributorPlanState state in ContributorPlanState.values)
+          DropdownListTileChoice(
+            title: state.name,
+            value: state,
+          ),
+      ],
+      onChoiceSelected: (choice) => ref.read(contributorPlanStateProvider.notifier).debugChangeState(choice.value),
     );
   }
 }

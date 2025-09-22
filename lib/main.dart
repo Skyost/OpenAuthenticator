@@ -19,7 +19,7 @@ import 'package:open_authenticator/model/settings/theme.dart';
 import 'package:open_authenticator/model/storage/online.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/contributor_plan_paywall/page.dart';
-import 'package:open_authenticator/pages/home.dart';
+import 'package:open_authenticator/pages/home/page.dart';
 import 'package:open_authenticator/pages/intro/page.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';

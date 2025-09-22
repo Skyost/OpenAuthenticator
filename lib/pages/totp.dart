@@ -9,7 +9,7 @@ import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/pages/home.dart';
+import 'package:open_authenticator/pages/home/page.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';

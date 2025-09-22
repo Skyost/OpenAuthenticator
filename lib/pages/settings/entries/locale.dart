@@ -13,7 +13,7 @@ class LocaleEntryWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => DropdownListTile(
     leading: const Icon(Icons.translate),
-    title: Text('Language'),
+    title: const Text('Language'),
     value: TranslationProvider.of(context).locale,
     choices: [
       for (AppLocale locale in AppLocale.values)

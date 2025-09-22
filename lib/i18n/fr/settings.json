@@ -26,6 +26,10 @@
       "title": "Afficher un bouton de copie",
       "subtitle": "Si activé, affiche un bouton de copie à côté des TOTPs. Sinon, un simple appui permet de copier les codes dans votre presse-papiers."
     },
+    "displaySearchIconButton": {
+      "title": "Afficher un bouton de recherche",
+      "subtitle": "Si activé, affiche un bouton de recherche dans la barre de menu. Sinon, la barre de recherche sera placée au-dessus de la liste des TOTPs."
+    },
     "theme": {
       "title": "Thème",
       "subtitle": "Changer le thème de l'application et la luminosité.",

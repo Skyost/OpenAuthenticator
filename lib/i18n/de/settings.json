@@ -26,6 +26,10 @@
       "title": "Schaltfläche „Kopieren“ anzeigen",
       "subtitle": "Ist diese Option aktiviert, wird neben jedem TOTP ein Kopiersymbol angezeigt. Andernfalls kopiert ein einfaches Tippen den Code in die Zwischenablage."
     },
+    "displaySearchIconButton": {
+      "title": "Suchschaltfläche anzeigen",
+      "subtitle": "Wenn aktiviert, wird eine Suchschaltfläche in der Menüleiste angezeigt. Andernfalls wird die Suchleiste über der TOTP-Liste platziert."
+    },
     "theme": {
       "title": "Thema",
       "subtitle": "Ändern Sie den Anwendungsthemen und Helligkeit.",
