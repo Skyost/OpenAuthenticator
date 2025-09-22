@@ -76,8 +76,7 @@ class TotpRepository extends AsyncNotifier<TotpList> {
   /// Queries TOTPs (and decrypt them) from storage.
   Future<TotpList> _queryTotpsFromStorage(Storage storage, CryptoStore? cryptoStore) async {
     List<Totp> totps = await storage.listTotps();
-    TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
-    totpImageCacheManager.fillCache();
+    ref.read(totpImageCacheManagerProvider.notifier).fillCache(totps: totps);
     return TotpList._fromListAndStorage(
       list: await totps.decrypt(cryptoStore),
       storage: storage,
@@ -91,8 +90,7 @@ class TotpRepository extends AsyncNotifier<TotpList> {
       await totpList.waitBeforeNextOperation();
       Storage storage = await ref.read(storageProvider.future);
       await storage.addTotp(totp);
-      TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
-      totpImageCacheManager.cacheImage(totp);
+      ref.read(totpImageCacheManagerProvider.notifier).cacheImage(totp);
       CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
       state = AsyncData(
         TotpList._fromListAndStorage(
@@ -118,10 +116,7 @@ class TotpRepository extends AsyncNotifier<TotpList> {
       await storage.replaceTotps(totps);
       CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
       List<Totp> decrypted = await totps.decrypt(cryptoStore);
-      TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
-      for (Totp updatedTotp in decrypted) {
-        await totpImageCacheManager.cacheImage(updatedTotp);
-      }
+      await ref.read(totpImageCacheManagerProvider.notifier).fillCache(totps: decrypted);
       state = AsyncData(
         TotpList._fromListAndStorage(
           list: _mergeToCurrentList(totpList, totps: decrypted),
@@ -157,10 +152,7 @@ class TotpRepository extends AsyncNotifier<TotpList> {
       } else {
         await storage.updateTotp(totps.first);
       }
-      TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
-      for (Totp totp in totps) {
-        await totpImageCacheManager.cacheImage(totp);
-      }
+      await ref.read(totpImageCacheManagerProvider.notifier).fillCache(totps: totps);
       state = AsyncData(
         TotpList._fromListAndStorage(
           list: _mergeToCurrentList(totpList, totps: totps),
@@ -184,8 +176,7 @@ class TotpRepository extends AsyncNotifier<TotpList> {
       Storage storage = await ref.read(storageProvider.future);
       await storage.deleteTotp(uuid);
       await ref.read(deletedTotpsProvider).markDeleted(uuid);
-      TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
-      totpImageCacheManager.deleteCachedImage(uuid);
+      ref.read(totpImageCacheManagerProvider.notifier).deleteCachedImage(uuid);
       state = AsyncData(
         TotpList._fromListAndStorage(
           list: totpList._list..removeWhere((totp) => totp.uuid == uuid),

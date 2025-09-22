@@ -115,16 +115,19 @@ class TotpImageCacheManager extends AsyncNotifier<Map<String, CacheObject>> {
   }
 
   /// Fills the cache with all TOTPs that can be read from the TOTP repository.
-  Future<void> fillCache({bool checkSettings = true}) async {
+  Future<void> fillCache({Iterable<Totp>? totps, bool checkSettings = true}) async {
     if (checkSettings) {
       bool cacheEnabled = await ref.read(cacheTotpPicturesSettingsEntryProvider.future);
       if (!cacheEnabled) {
         return;
       }
     }
-    TotpList totps = await ref.read(totpRepositoryProvider.future);
-    for (Totp totp in totps) {
-      await cacheImage(totp, checkSettings: false);
+    totps ??= await ref.read(totpRepositoryProvider.future);
+    for (Totp totp in totps!) {
+      await cacheImage(
+        totp,
+        checkSettings: false,
+      );
     }
   }
 
