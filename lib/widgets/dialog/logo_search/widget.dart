@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/i18n/translations.g.dart';
@@ -114,11 +115,11 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
 
     setState(searches.clear);
     String keywords = filteredSearchKeywords;
-    List<String> logos = await Source.sources.search(client, keywords);
+    List<Uri> logos = await Source.sources.search(client, keywords);
     setState(() => searches.putIfAbsent(keywords, () => []));
-    for (String logo in logos) {
+    for (Uri logo in logos) {
       if (await Source.check(client, logo) && mounted && searches.containsKey(keywords)) {
-        setState(() => searches[keywords]?.add(logo));
+        setState(() => searches[keywords]?.add(logo.toString()));
       }
       if (!searches.containsKey(keywords)) {
         break;
@@ -142,6 +143,22 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
         ),
       ),
     );
+    if (kDebugMode) {
+      image = Stack(
+        children: [
+          image,
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: Text(
+              imageUrl,
+              style: const TextStyle(color: Colors.red, fontSize: 6),
+              textAlign: TextAlign.left,
+            ),
+          ),
+        ],
+      );
+    }
     return widget.onLogoClicked == null
         ? image
         : InkWell(

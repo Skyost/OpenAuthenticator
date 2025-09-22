@@ -38,6 +38,8 @@ void main() {
     stripePricesApiKey = stripePricesApiKey.isEmpty ? '' : "'$stripePricesApiKey'";
     stripeTestPricesApiKey = stripeTestPricesApiKey.isEmpty ? '' : "'$stripeTestPricesApiKey'";
   }
+  String logoDevApiKey = stdin.readLineSync() ?? '';
+  stdout.writeln('What is your logo.dev API key ? (See : https://docs.logo.dev/platform/api-keys)');
 
   File file = File('./lib/app.dart');
   if (file.existsSync()) {
@@ -127,6 +129,9 @@ class AppCredentials {
 
   /// The Stripe API key for fetching prices.
   static const String stripePricesApiKey = $stripePricesApiKey;
+
+  /// The `logo.dev` API key.
+  static const String logoDevApiKey = '$logoDevApiKey';
 }
 
 /// Contains all data for the Contributor Plan.

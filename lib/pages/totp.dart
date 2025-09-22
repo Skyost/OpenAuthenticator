@@ -157,6 +157,8 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
             ),
           ),
           ListTilePadding(
+            top: 10,
+            bottom: 10,
             child: TextFormField(
               initialValue: label,
               onChanged: (value) {
@@ -173,6 +175,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
             ),
           ),
           ListTilePadding(
+            bottom: 10,
             child: PasswordFormField(
               initialValue: secret,
               onChanged: (value) {
@@ -189,6 +192,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
             ),
           ),
           ListTilePadding(
+            bottom: 10,
             child: TextFormField(
               initialValue: issuer,
               onChanged: (value) {

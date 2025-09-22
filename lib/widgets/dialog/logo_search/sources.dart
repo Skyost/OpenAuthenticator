@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:open_authenticator/app.dart';
 
 /// A logo search source.
 mixin Source {
   /// All logo sources.
   static const List<Source> sources = [
+    BrandfetchSource(),
     LogoDevSource(),
     UpLeadSource(),
     WikimediaSource(),
@@ -15,26 +18,33 @@ mixin Source {
   String get name;
 
   /// Searches using this source.
-  Future<List<String>> search(http.Client client, String userKeywords);
+  Future<List<Uri>> search(http.Client client, String userKeywords);
 
   /// Check whether the given [imageUrl] is good to display.
-  static Future<bool> check(http.Client client, String imageUrl) async {
-    http.Response response = await client.head(Uri.parse(imageUrl));
-    return response.statusCode == 200;
+  static Future<bool> check(http.Client client, Uri imageUrl) async {
+    http.Response response = await client.head(imageUrl);
+    return response.statusCode == HttpStatus.ok;
   }
 }
 
 /// Used on sources that provide a direct download link.
 mixin DirectApiSource on Source {
-  /// The API path.
-  String get apiPath;
+  /// The API host.
+  String get apiHost;
+
+  /// The query parameters.
+  Map<String, dynamic>? get queryParameters => null;
 
   @override
-  Future<List<String>> search(http.Client client, String userKeywords) => Future.value([
-    '$apiPath/$userKeywords',
-    '$apiPath/${userKeywords.replaceAll(' ', '')}',
-    '$apiPath/${userKeywords.replaceAll(' ', '')}.com',
-  ]);
+  Future<List<Uri>> search(http.Client client, String userKeywords) => Future.value(
+    List.of(
+      {
+        Uri.https(apiHost, userKeywords, queryParameters),
+        Uri.https(apiHost, userKeywords.replaceAll(' ', ''), queryParameters),
+        Uri.https(apiHost, '${userKeywords.replaceAll(' ', '')}.com', queryParameters),
+      },
+    ),
+  );
 }
 
 /// Search using Wikimedia.
@@ -46,9 +56,9 @@ class WikimediaSource with Source {
   String get name => 'Wikimedia';
 
   @override
-  Future<List<String>> search(http.Client client, String userKeywords) async {
+  Future<List<Uri>> search(http.Client client, String userKeywords) async {
     List<String> result = [];
-    http.Response response = await client.get(Uri.parse(buildEndpointUrl(userKeywords)));
+    http.Response response = await client.get(buildEndpointUrl(userKeywords));
     Map<String, dynamic> json = jsonDecode(response.body);
     dynamic query = json['query'];
     if (query is Map<String, dynamic>) {
@@ -57,7 +67,7 @@ class WikimediaSource with Source {
         for (dynamic element in search) {
           if (element is Map<String, dynamic>) {
             String logo = element['title'];
-            if (logo.endsWith('.png') || logo.endsWith('.jpg') || logo.endsWith('.jpeg') || logo.endsWith('.tiff') || logo.endsWith('.svg')) {
+            if (logo.endsWith('.png') || logo.endsWith('.jpg') || logo.endsWith('.jpeg') || logo.endsWith('.tiff') || logo.endsWith('.webp') || logo.endsWith('.svg')) {
               result.add(logo);
             }
           }
@@ -68,10 +78,21 @@ class WikimediaSource with Source {
   }
 
   /// The endpoint URL.
-  String buildEndpointUrl(String keywords) => 'https://commons.wikimedia.org/w/api.php?action=query&format=json&list=search&srsearch=${Uri.encodeComponent(keywords)}%20logo&srnamespace=6&srlimit=20';
+  Uri buildEndpointUrl(String keywords) => Uri.https(
+    'commons.wikimedia.org',
+    '/w/api.php',
+    {
+      'format': 'json',
+      'action': 'query',
+      'list': 'search',
+      'srsearch': keywords,
+      'srnamespace': '6',
+      'srlimit': '20',
+    },
+  );
 
   /// Builds the image URL.
-  String buildImageUrl(String imageFile) => 'https://commons.wikimedia.org/wiki/Special:FilePath/$imageFile';
+  Uri buildImageUrl(String imageFile) => Uri.https('commons.wikimedia.org', '/wiki/Special:FilePath/$imageFile');
 }
 
 /// Search using Logo.dev.
@@ -83,7 +104,15 @@ class LogoDevSource with Source, DirectApiSource {
   String get name => 'Logo.dev';
 
   @override
-  String get apiPath => 'https://img.logo.dev';
+  String get apiHost => 'img.logo.dev';
+
+  @override
+  Map<String, dynamic>? get queryParameters => AppCredentials.logoDevApiKey.isNotEmpty
+      ? {
+          'token': AppCredentials.logoDevApiKey,
+          'format': 'webp',
+        }
+      : null;
 }
 
 /// Search using UpLead.
@@ -95,35 +124,41 @@ class UpLeadSource with Source, DirectApiSource {
   String get name => 'UpLead';
 
   @override
-  String get apiPath => 'https://logo.uplead.com';
+  String get apiHost => 'logo.uplead.com';
 }
 
 /// Search using Brandfetch.
-class Brandfetch with Source {
+class BrandfetchSource with Source {
+  /// Creates a new Brandfetch source instance.
+  const BrandfetchSource();
+
   @override
   String get name => 'Brandfetch';
 
   @override
-  Future<List<String>> search(http.Client client, String userKeywords) async {
-    List<String> result = [];
-    http.Response response = await client.get(Uri.parse(buildEndpointUrl(userKeywords)));
+  Future<List<Uri>> search(http.Client client, String userKeywords) async {
+    List<Uri> result = [];
+    http.Response response = await client.get(buildEndpointUrl(userKeywords));
     List jsonList = jsonDecode(response.body);
     for (dynamic jsonBrand in jsonList) {
       if (jsonBrand['qualityScore'] >= 0.75) {
-        result.add(jsonBrand);
+        Uri? uri = Uri.tryParse(jsonBrand['icon']);
+        if (uri != null) {
+          result.add(uri);
+        }
       }
     }
     return result;
   }
 
   /// The endpoint URL.
-  String buildEndpointUrl(String keywords) => 'https://api.brandfetch.io/v2/search/${Uri.encodeComponent(keywords)}';
+  Uri buildEndpointUrl(String keywords) => Uri.https('api.brandfetch.io', '/v2/search/$keywords');
 }
 
 /// Allows to quickly search on a source list.
 extension Search on List<Source> {
   /// Searches using these sources, avoiding errors.
-  Future<List<String>> search(http.Client client, String userKeywords) async => [
+  Future<List<Uri>> search(http.Client client, String userKeywords) async => [
     for (Source source in this) //
       ...await source.search(client, userKeywords),
   ];
