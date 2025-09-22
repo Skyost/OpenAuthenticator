@@ -107,12 +107,10 @@ class LogoDevSource with Source, DirectApiSource {
   String get apiHost => 'img.logo.dev';
 
   @override
-  Map<String, dynamic>? get queryParameters => AppCredentials.logoDevApiKey.isNotEmpty
-      ? {
-          'token': AppCredentials.logoDevApiKey,
-          'format': 'webp',
-        }
-      : null;
+  Map<String, dynamic>? get queryParameters => {
+    if (AppCredentials.logoDevApiKey.isNotEmpty) 'token': AppCredentials.logoDevApiKey,
+    'format': 'webp',
+  };
 }
 
 /// Search using UpLead.

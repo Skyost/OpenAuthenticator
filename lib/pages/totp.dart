@@ -144,14 +144,27 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
             child: SizedBox(
               width: widget.imageSize,
               child: enabled
-                  ? InkWell(
-                      onTap: () async {
-                        String? imageUrl = await LogoPickerDialog.openDialog(context, initialSearchKeywords: issuer);
-                        if (imageUrl != null && mounted) {
-                          setState(() => this.imageUrl = imageUrl);
-                        }
-                      },
-                      child: createImageWidget(),
+                  ? Stack(
+                      children: [
+                        createImageWidget(),
+                        Positioned.fill(
+                          child: Material(
+                            shape: const CircleBorder(),
+                            clipBehavior: Clip.antiAlias,
+                            color: Colors.transparent,
+                            child: InkWell(
+                              splashColor: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.25),
+                              customBorder: const CircleBorder(),
+                              onTap: () async {
+                                String? imageUrl = await LogoPickerDialog.openDialog(context, initialSearchKeywords: issuer);
+                                if (imageUrl != null && mounted) {
+                                  setState(() => this.imageUrl = imageUrl);
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     )
                   : createImageWidget(),
             ),
@@ -192,7 +205,6 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
             ),
           ),
           ListTilePadding(
-            bottom: 10,
             child: TextFormField(
               initialValue: issuer,
               onChanged: (value) {
@@ -261,6 +273,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   /// Creates the advanced options widgets.
   List<Widget> createAdvancedOptionsWidgets() => [
     ListTilePadding(
+      bottom: 10,
       child: DropdownButtonFormField<Algorithm>(
         initialValue: algorithm ?? Totp.kDefaultAlgorithm,
         decoration: FormLabelWithIcon(
@@ -284,6 +297,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
       ),
     ),
     ListTilePadding(
+      bottom: 10,
       child: TextFormField(
         initialValue: digits?.toString(),
         onChanged: (value) {
@@ -300,6 +314,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
       ),
     ),
     ListTilePadding(
+      bottom: 10,
       child: TextFormField(
         initialValue: validity?.inSeconds.toString(),
         onChanged: (value) {
@@ -330,6 +345,8 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   Widget createQrCodeWidget(BuildContext context) {
     Color color = currentBrightness == Brightness.light ? Theme.of(context).colorScheme.primary : Colors.white;
     return ListTilePadding(
+      top: 10,
+      bottom: 10,
       child: Center(
         child: QrImageView(
           data: DecryptedTotp.toUri(

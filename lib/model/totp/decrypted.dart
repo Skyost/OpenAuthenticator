@@ -164,7 +164,7 @@ class DecryptedTotp extends Totp {
     return Uri(
       scheme: 'otpauth',
       host: 'totp',
-      path: Uri.encodeComponent(label),
+      path: label,
       queryParameters: queryParameters,
     );
   }
