@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ import 'package:open_authenticator/widgets/scan/scanner_error_widget.dart';
 /// A QR code scanner widget.
 class QrCodeScanner extends StatefulWidget {
   /// Triggered when a barcode has been scanned.
-  final Function(BarcodeCapture barcodes)? onScan;
+  final Future<bool> Function(String barcodeValue)? onScan;
 
   /// Triggered when an error occurred.
   final Function(Object ex, StackTrace stackTrace)? onError;
@@ -57,9 +58,15 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
           child: MobileScanner(
             placeholderBuilder: widget.placeholderBuilder,
             onDetect: (barcodes) {
-              widget.onScan?.call(barcodes);
-              if (barcodes.barcodes.firstOrNull != null) {
+              String? barcodeValue = barcodes.barcodes.firstOrNull?.rawValue;
+              if (barcodeValue != null && widget.onScan != null) {
                 controller.stop();
+                widget.onScan!(barcodeValue).then((resume) async {
+                  if (resume) {
+                    await Future.delayed(const Duration(seconds: 2));
+                    controller.start();
+                  }
+                });
               }
             },
             onDetectError: widget.onError ?? handleException,

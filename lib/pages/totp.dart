@@ -75,7 +75,7 @@ class TotpPage extends ConsumerStatefulWidget {
 /// The TOTP edit page state.
 class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   /// The form key.
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   /// The TOTP image URL.
   late String? imageUrl = widget.totp?.imageUrl;
@@ -100,6 +100,16 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
 
   /// Whether the form is enabled.
   bool enabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && widget.totp != null) {
+        formKey.currentState?.validate();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(

@@ -119,7 +119,7 @@ class DecryptedTotp extends Totp {
     int? validity = uri.queryParameters.containsKey(Totp.kValidityKey) ? int.tryParse(uri.queryParameters[Totp.kValidityKey]!) : null;
     return create(
       cryptoStore: cryptoStore,
-      secret: Uri.decodeFull(uri.queryParameters[Totp.kSecretKey]!),
+      secret: uri.queryParameters[Totp.kSecretKey]!,
       label: label,
       issuer: uri.queryParameters[Totp.kIssuerKey],
       algorithm: uri.queryParameters.containsKey(Totp.kAlgorithmKey) ? Algorithm.fromString(uri.queryParameters[Totp.kAlgorithmKey]!) : null,

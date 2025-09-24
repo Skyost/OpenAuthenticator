@@ -37,21 +37,17 @@ class _ScanPageState extends ConsumerState<ScanPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: QrCodeScanner(
-      onScan: (code) async {
-        String? data = code.barcodes.firstOrNull?.rawValue;
-        if (data == null || !context.mounted) {
-          return;
-        }
-        Uri? uri = Uri.tryParse(data);
+      onScan: (barcode) async {
+        Uri? uri = Uri.tryParse(barcode);
         if (uri == null) {
-          Navigator.pop(context);
           SnackBarIcon.showErrorSnackBar(context, text: translations.error.scan.noUri);
-          return;
+          return true;
         }
         await showWaitingOverlay(
           context,
           future: TotpPage.openFromUri(context, ref, uri),
         );
+        return false;
       },
       onError: (exception, listener) => SnackBarIcon.showErrorSnackBar(context, text: translations.error.generic.withException(exception: exception)),
     ),
@@ -63,12 +59,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations(const []);
     WakelockPlus.disable();
     super.dispose();
   }
