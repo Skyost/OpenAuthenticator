@@ -1,7 +1,7 @@
 name: open_authenticator
 description: A cross-platform OTP app, free and open-source.
 publish_to: none
-version: 1.4.1+22
+version: 1.4.2+23
 homepage: https://openauthenticator.app
 repository: https://github.com/Skyost/OpenAuthenticator
 issue_tracker: https://github.com/Skyost/OpenAuthenticator/issues
@@ -18,20 +18,20 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   animations: ^2.0.11
-  cloud_firestore: ^6.0.1
-  firebase_auth: ^6.0.2
-  firebase_core: ^4.1.0
+  cloud_firestore: ^6.0.2
+  firebase_auth: ^6.1.0
+  firebase_core: ^4.1.1
   flutter_riverpod: ^3.0.0
   simple_secure_storage: ^0.3.4
   jovial_svg: ^1.1.28
-  mobile_scanner: ^7.0.1
+  mobile_scanner: ^7.1.2
   path_provider: ^2.1.5
   shared_preferences: ^2.5.3
   uuid: ^4.5.1
   webcrypto: ^0.5.8
   equatable: ^2.0.7
-  drift: ^2.28.1
-  drift_flutter: ^0.2.6
+  drift: ^2.28.2
+  drift_flutter: ^0.2.7
   path: ^1.9.1
   local_auth: ^2.3.0
   package_info_plus: ^9.0.0
@@ -39,10 +39,10 @@ dependencies:
   qr_flutter: ^4.1.0
   intl: any
   url_launcher: ^6.3.2
-  firebase_app_check: ^0.4.0
+  firebase_app_check: ^0.4.1
   purchases_flutter: ^9.6.2
   purchases_ui_flutter: ^9.6.2
-  firebase_crashlytics: ^5.0.1
+  firebase_crashlytics: ^5.0.2
   window_manager: ^0.5.1
   slang: ^4.8.1
   slang_flutter: ^4.8.0
@@ -58,7 +58,7 @@ dependencies:
 dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.6.0
-  drift_dev: ^2.28.2
+  drift_dev: ^2.28.3
   msix: ^3.16.12
   slang_build_runner: ^4.8.1
   custom_lint: ^0.8.0

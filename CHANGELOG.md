@@ -1,4 +1,19 @@
-# 📰 Open Authenticator Changelog
+# 📰 Open Authenticator changelog
+
+## v1.4.2
+Released on September 24, 2025.
+
+* **FEAT**: Added a way to display the search bar by scrolling above the list. ([#3af4645](https://github.com/Skyost/OpenAuthenticator/commit/3af4645))
+* **FEAT**: Added a whole route to configure the app theme. ([#9b828ea](https://github.com/Skyost/OpenAuthenticator/commit/9b828ea))
+* **FEAT**: Better handling of cases where the user is not logged in. ([#9b8028e](https://github.com/Skyost/OpenAuthenticator/commit/9b8028e))
+* **FEAT**: Enabled `logo.dev` fetching. ([#aa7c766](https://github.com/Skyost/OpenAuthenticator/commit/aa7c766))
+* **FIX**: Fixed some problems occurring when refreshing the list. ([#2ee63ca](https://github.com/Skyost/OpenAuthenticator/commit/2ee63ca))
+* **CHORE**: Better handling of QR codes (reading and displaying). ([#10107ad](https://github.com/Skyost/OpenAuthenticator/commit/10107ad))
+* **CHORE**: Improved the TOTP page. ([#a80f55c](https://github.com/Skyost/OpenAuthenticator/commit/a80f55c))
+* **CHORE**: Updated Linux metadata. ([#97a2d92](https://github.com/Skyost/OpenAuthenticator/commit/97a2d92))
+* **CHORE**: Updated changelog. ([#91a23fb](https://github.com/Skyost/OpenAuthenticator/commit/91a23fb))
+* **CHORE**: Updated dependencies and fixed resulting lint warnings. ([#4aaa6de](https://github.com/Skyost/OpenAuthenticator/commit/4aaa6de))
+* **CHORE**: Updated native libraries. ([#48624f5](https://github.com/Skyost/OpenAuthenticator/commit/48624f5))
 
 ## v1.4.1
 Released on May 22, 2025.
