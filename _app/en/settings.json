@@ -1,0 +1,208 @@
+{
+  "title": "Settings",
+  "application": {
+    "title": "Application",
+    "contributorPlan": {
+      "title": "Contributor Plan",
+      "subtitle": {
+        "loading": "Checking your subscription status...",
+        "active": "You have subscribed to the Contributor Plan. Thanks a lot !",
+        "inactive": "You currently have not subscribed to the Contributor Plan."
+      },
+      "subscriptionDialog": {
+        "title": "Your Contributor Plan",
+        "message": "You have successfully subscribed to the Contributor Plan. With this subscription, you're helping this small open-source software to keep growing. Thanks a lot.",
+        "manageSubscription": {
+          "button": "Manage subscription",
+          "error": "Unable to open the subscription management URL. If you have subscribed on another device, try to execute this action on this one."
+        }
+      }
+    },
+    "cacheTotpPictures": {
+      "title": "Cache TOTP pictures",
+      "subtitle": "Ensure that your TOTP pictures will always be available by caching them on your device."
+    },
+    "displayCopyIconButton": {
+      "title": "Display copy button",
+      "subtitle": "If enabled, will display a copy button next to your TOTPs. Otherwise, a simple tap will copy the code into your clipboard."
+    },
+    "displaySearchIconButton": {
+      "title": "Display search button",
+      "subtitle": "If enabled, will display a search button in the menu bar. Otherwise, the search bar will be placed above the TOTP list."
+    },
+    "theme": {
+      "title": "Theme",
+      "subtitle": "Change the application theme and brightness.",
+      "name(map)": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      },
+      "description(map)": {
+        "system": "Follow the system theme.",
+        "light": "Use the light theme.",
+        "dark": "Use the dark theme."
+      }
+    }
+  },
+  "security": {
+    "title": "Security",
+    "enableLocalAuth": {
+      "title": "Enable local authentication",
+      "subtitle": "Adds an additional security layer by asking for unlocking everytime you open the app."
+    },
+    "saveDerivedKey": {
+      "title": "Save encryption / decryption key",
+      "subtitle": "Save your encryption / decryption key so that you do not have to reenter your master password everytime you open the app."
+    },
+    "changeMasterPassword": {
+      "title": "Change master password",
+      "subtitle": {
+        "text": "You can change your master password at any time.",
+        "sync": "Note that you will have to reenter it in all your Open Authenticator instances that are synced together."
+      }
+    }
+  },
+  "synchronization": {
+    "title": "Synchronization",
+    "accountLink": {
+      "title": "Link other providers",
+      "subtitle": {
+        "text": "Link your account to other authentication providers so that you can use them to log in yourself.",
+        "linkedProviders(rich)": "\nAccount currently linked to : $providers.",
+        "providers(map)": {
+          "emailLink": "Email address",
+          "password": "Email address"
+        }
+      }
+    },
+    "accountLogin": {
+      "logIn": {
+        "title": "Log in",
+        "subtitle": "Log in to synchronize your TOTPs between your devices."
+      },
+      "logOut": {
+        "title": "Log out",
+        "subtitle(rich)": "Log out to stop synchronizing your TOTPs with this device.\nCurrently signed in as : $email."
+      }
+    },
+    "confirmEmail": {
+      "title": "Confirm your email",
+      "subtitle(rich)": "A confirmation email has been sent to your email address : $email.\nPlease click on the link to finish your login. You can also tap on this tile to enter it manually.",
+      "success": "Email confirmed with success.",
+      "confirmActionPickerDialog": {
+        "title": "What do you want to do ?",
+        "confirm": {
+          "title": "Confirm your account",
+          "subtitle": "Paste the link you received by email to confirm your account."
+        },
+        "cancelConfirmation": {
+          "title": "Cancel account confirmation",
+          "subtitle": "Cancel your account confirmation.",
+          "validationDialog": {
+            "title": "Confirmation",
+            "message": "Are you sure ?"
+          }
+        }
+      },
+      "linkDialog": {
+        "title": "Confirmation link",
+        "message": "Either visit the link with this device or paste it below to confirm your email address."
+      }
+    },
+    "synchronizeTotps": {
+      "title": "Synchronize TOTPs",
+      "subtitle": {
+        "description": "Synchronize your TOTPs with all your logged in devices.",
+        "totpLimit": {
+          "limit(rich)": "You can synchronize up to $limit TOTPs. You currently have $count TOTPs.",
+          "notEnabled": "Subscribe to the Contributor Plan or delete some TOTPs to enable this option.",
+          "enabled": "Subscribe to the Contributor Plan to synchronize more !"
+        }
+      }
+    }
+  },
+  "backups": {
+    "title": "Backups",
+    "backupNow": {
+      "title": "Backup now",
+      "subtitle": "Backup your TOTPs now.",
+      "passwordDialog": {
+        "title": "Backup password",
+        "message": "Please enter a password for your backup."
+      }
+    },
+    "manageBackups": {
+      "title": "Manage backups",
+      "subtitle": {
+        "zero": "You do not have any backup stored.",
+        "one": "You currently have $n backup stored.",
+        "other": "You currently have $n backups stored."
+      },
+      "backupsDialogTitle": "Manage backups",
+      "restoreBackupPasswordDialog": {
+        "title": "Backup password",
+        "message": "Please enter your backup password."
+      },
+      "deleteBackupConfirmationDialog": {
+        "title": "Delete backup",
+        "message": "Do you want to delete this backup ?"
+      },
+      "shareBackupDialog": {
+        "subject": "Export backup",
+        "text": "Share the backup."
+      },
+      "importBackupDialogTitle": "Import a backup",
+      "exportBackupDialogTitle": "Export a backup",
+      "button": {
+        "import": "Import a backup",
+        "restore": "Restore",
+        "share": "Share",
+        "export": "Export",
+        "delete": "Delete"
+      }
+    }
+  },
+  "about": {
+    "title": "About",
+    "translate": {
+      "title": "Help translating the app",
+      "subtitle": "Open the app translation page. If you speak another language and you want to help translating $appName, you're in the right place !"
+    },
+    "github": {
+      "title": "Report bugs or suggest new features",
+      "subtitle": "Open the Github page of the app to report bugs or to suggest new features."
+    },
+    "aboutApp": {
+      "title": "$appName",
+      "subtitle(rich)": "$appName v$appVersion, by $appAuthor.",
+      "dialogLegalese": "$appName is an open-source application, created by $appAuthor."
+    }
+  },
+  "dangerZone": {
+    "title": "Danger zone",
+    "deleteAccount": {
+      "title": "Delete your account",
+      "subtitle": "Delete your account and all your synchronized data."
+    },
+    "clearData": {
+      "title": "Clear everything",
+      "subtitle": "Clear everything stored by the app on your device.",
+      "confirmationDialog": {
+        "title": "Clear app data",
+        "message": "Are you sure you want to clear the app data ? It will be gone forever. Please note that, if you have synchronized your TOTPs, doing this will not delete them from the online storage."
+      },
+      "backupDeleteConfirmationDialog": {
+        "title": "Delete backups",
+        "message": "Do you also want to delete your backups ?"
+      },
+      "doneDialog": {
+        "title": "Data deleted",
+        "message": {
+          "appWillClose": "The data has been deleted with success. The app will close to finish the operation, but feel free to restart it when you'll be ready !",
+          "closeAppManually": "The data has been deleted with success. Please restart the app to finish the operation."
+        }
+      }
+    }
+  }
+}

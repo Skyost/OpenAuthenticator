@@ -1,0 +1,18 @@
+{
+  "waitingDialog": {
+    "defaultMessage": "Veuillez patienter...",
+    "countdown(rich)": "Temps restant : $countdown."
+  },
+  "masterPasswordDialog": {
+    "title": "Mot de passe maître",
+    "message": "Veuillez entrer votre mot de passe maître pour continuer."
+  },
+  "backupCheckbox": {
+    "checkbox": "Créer une sauvegarde",
+    "input": {
+      "text": "Mot de passe de la sauvegarde",
+      "hint": "Entrez le mot de passe de la sauvegarde"
+    }
+  },
+  "urlCopiedToClipboard": "URL copié dans le presse-papier !"
+}

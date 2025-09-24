@@ -1,0 +1,27 @@
+{
+  "empty": "Nessun TOTP al momento.\nSentiti libero di aggiungerne uno!",
+  "refreshButton": "Aggiorna",
+  "addDialog": {
+    "title": "Aggiungi un TOTP",
+    "qrCode": {
+      "title": "Aggiungi tramite codice QR",
+      "subtitle": "Scansiona un codice QR TOTP e aggiungilo automaticamente all'app!"
+    },
+    "manually": {
+      "title": "Aggiungi manualmente",
+      "subtitle": "Inserisci manualmente i dettagli del tuo TOTP (es. secret, etichetta, emittente, ...)."
+    }
+  },
+  "noCryptoStore": {
+    "message": "Si è verificato un errore durante il caricamento del tuo archivio crittografico. Ciò significa che non è possibile leggerlo. Riavvia l'app o inserisci una nuova password principale utilizzando il pulsante qui sotto.",
+    "resetButton": "Reimposta password principale"
+  },
+  "logInFailed": {
+    "message": "Accesso non riuscito. Riprova, effettua nuovamente l'accesso o cambia il tipo di archiviazione.",
+    "button": {
+      "retry": "Riprova",
+      "relogIn": "Accedi di nuovo",
+      "changeStorageType": "Cambia tipo di archiviazione"
+    }
+  }
+}
