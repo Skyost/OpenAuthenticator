@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:local_auth_platform_interface/types/auth_exception.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/reason.dart';
 import 'package:open_authenticator/model/crypto.dart';
@@ -26,6 +27,11 @@ sealed class AppUnlockMethod<T> {
       }
       return await _tryUnlock(context, ref, reason);
     } catch (ex, stacktrace) {
+      if (ex is LocalAuthException) {
+        if (ex.code == LocalAuthExceptionCode.userCanceled || ex.code == LocalAuthExceptionCode.systemCanceled) {
+          return const ResultCancelled();
+        }
+      }
       return ResultError(
         exception: ex,
         stacktrace: stacktrace,

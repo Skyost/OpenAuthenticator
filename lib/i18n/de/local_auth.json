@@ -3,17 +3,8 @@
     "goToSettings": "Zu den Einstellungen"
   },
   "android": {
-    "biometricHint": "Identität bestätigen",
-    "biometricNotRecognized": "Nicht erkannt. Versuchen Sie es erneut.",
     "signInTitle": "Authentifizierung erforderlich",
-    "biometricRequiredTitle": "Biometrische Authentifizierung erforderlich",
-    "deviceCredentialsRequiredTitle": "Geräteanmeldedaten erforderlich",
-    "deviceCredentialsSetupDescription": "Geräteanmeldedaten erforderlich",
-    "goToSettingsDescription": "Die biometrische Authentifizierung ist auf Ihrem Gerät nicht eingerichtet. Gehen Sie zu „Einstellungen > Sicherheit“, um die biometrische Authentifizierung hinzuzufügen."
-  },
-  "ios": {
-    "lockOut": "Die biometrische Authentifizierung ist deaktiviert. Bitte sperren und entsperren Sie Ihren Bildschirm, um sie zu aktivieren.",
-    "goToSettingsDescription": "Die biometrische Authentifizierung ist auf Ihrem Gerät nicht eingerichtet. Bitte aktivieren Sie entweder Touch ID oder Face ID in den Einstellungen Ihres Geräts."
+    "signInHint": "Identität bestätigen"
   },
   "methodChannel": {
     "title": "Authentifizierung erforderlich",

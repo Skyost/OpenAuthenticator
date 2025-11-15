@@ -3,17 +3,8 @@
     "goToSettings": "Aller dans les paramètres"
   },
   "android": {
-    "biometricHint": "Vérifier votre identité",
-    "biometricNotRecognized": "Non reconnu. Veuillez réessayer.",
     "signInTitle": "Authentification requise",
-    "biometricRequiredTitle": "Biométrie requise",
-    "deviceCredentialsRequiredTitle": "Identifiants de l'appareil requis",
-    "deviceCredentialsSetupDescription": "Identifiants de l'appareil requis",
-    "goToSettingsDescription": "L'authentification par biométrie n'est pas configurée sur votre appareil. Allez dans 'Paramètres > Sécurité' pour activer l'authentification par biométrie."
-  },
-  "ios": {
-    "lockOut": "L'authentification par biométrie est désactivée. Veuillez verrouiller puis déverrouiller votre appareil pour l'activer.",
-    "goToSettingsDescription": "L'authentification par biométrie n'est pas configurée sur votre appareil. Veuillez activer Touch ID ou Face ID sur votre téléphone."
+    "signInHint": "Vérifier votre identité"
   },
   "methodChannel": {
     "title": "Authentification requise",

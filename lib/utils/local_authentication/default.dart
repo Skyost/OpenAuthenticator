@@ -5,6 +5,8 @@ import 'package:local_auth_android/local_auth_android.dart';
 // ignore: depend_on_referenced_packages
 import 'package:local_auth_darwin/local_auth_darwin.dart';
 // ignore: depend_on_referenced_packages
+import 'package:local_auth_darwin/types/auth_messages_macos.dart';
+// ignore: depend_on_referenced_packages
 import 'package:local_auth_windows/local_auth_windows.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/reason.dart';
@@ -32,22 +34,15 @@ class LocalAuthenticationDefault extends LocalAuthentication {
       localizedReason: translations.appUnlock.localAuthentication[reason.name] ?? 'Authenticate to access the app.',
       authMessages: [
         IOSAuthMessages(
-          lockOut: translations.localAuth.ios.lockOut,
-          goToSettingsButton: translations.localAuth.common.goToSettings,
-          goToSettingsDescription: translations.localAuth.ios.goToSettingsDescription,
+          cancelButton: cancelButton,
+        ),
+        MacOSAuthMessages(
           cancelButton: cancelButton,
         ),
         AndroidAuthMessages(
-          biometricHint: translations.localAuth.android.biometricHint,
-          biometricNotRecognized: translations.localAuth.android.biometricNotRecognized,
-          biometricRequiredTitle: translations.localAuth.android.biometricRequiredTitle,
-          biometricSuccess: translations.error.noError,
-          cancelButton: cancelButton,
-          deviceCredentialsRequiredTitle: translations.localAuth.android.deviceCredentialsRequiredTitle,
-          deviceCredentialsSetupDescription: translations.localAuth.android.deviceCredentialsSetupDescription,
-          goToSettingsButton: translations.localAuth.common.goToSettings,
-          goToSettingsDescription: translations.localAuth.android.goToSettingsDescription,
+          signInHint: translations.localAuth.android.signInHint,
           signInTitle: translations.localAuth.android.signInTitle,
+          cancelButton: cancelButton,
         ),
         const WindowsAuthMessages(),
       ],
