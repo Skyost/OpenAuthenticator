@@ -7,7 +7,14 @@ project(runner LANGUAGES CXX)
 set(BINARY_NAME "open_authenticator")
 # The unique GTK application identifier for this application. See:
 # https://wiki.gnome.org/HowDoI/ChooseApplicationID
+# Default (Snap-friendly)
 set(APPLICATION_ID "app.openauthenticator")
+
+# Allow override from environment (Flatpak)
+if(DEFINED ENV{APPLICATION_ID})
+    message(STATUS "Using APPLICATION_ID from environment: $ENV{APPLICATION_ID}")
+    set(APPLICATION_ID "$ENV{APPLICATION_ID}")
+endif()
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.

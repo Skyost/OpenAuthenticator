@@ -86,6 +86,10 @@
       "5": {
         "question": "Why data synchronization is not enabled on Linux ?",
         "answer": "<p>It is not enabled because both Firebase Auth and Firebase Firestore are <a href=\"https://github.com/Skyost/OpenAuthenticator/blob/main/linux/README.md\">currently unsupported</a> on Linux. Your current option is to manually import all your TOTPs on Linux. You can also use the backup feature in the app to do so.</p>"
+      },
+      "6": {
+        "question": "I cannot enable local authentication on Linux. What should I do ?",
+        "answer": "<p>If you're in this case, it probably means that Open Authenticator has been installed via Flatpak.</p><p>Local authentication on Linux relies on a Polkit policy file that must be present on your host under <code>/usr/share/polkit-1/actions</code>.</p><p>If it's not present, you can install it using <code>sudo wget -O /usr/share/polkit-1/actions/app.openauthenticator.policy https://openauthenticator.app/polkit/app.openauthenticator.policy && sudo chmod 644 /usr/share/polkit-1/actions/app.openauthenticator.policy</code>. Then restart Open Authenticator (or your session).</p>"
       }
     },
     "questionLeft": {

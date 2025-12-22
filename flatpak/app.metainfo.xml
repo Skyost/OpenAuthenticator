@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>app.openauthenticator.OpenAuthenticator</id>
+    <name>Open Authenticator</name>
+    <summary>A cross-platform OTP app, free and open-source</summary>
+    <metadata_license>CC-BY-SA-4.0</metadata_license>
+    <project_license>GPL-3.0-only</project_license>
+    <developer id="fr.skyost">
+        <name>Skyost</name>
+    </developer>
+    <url type="bugtracker">https://github.com/Skyost/OpenAuthenticator/issues</url>
+    <url type="homepage">https://openauthenticator.app</url>
+    <url type="donation">https://github.com/Skyost/OpenAuthenticator?tab=readme-ov-file#donate</url>
+    <url type="contact">https://openauthenticator.app/contact/</url>
+    <url type="faq">https://openauthenticator.app/faq/</url>
+    <url type="translate">https://openauthenticator.app/translate/</url>
+    <url type="contribute">https://github.com/Skyost/OpenAuthenticator?tab=readme-ov-file#contribute</url>
+    <url type="vcs-browser">https://github.com/Skyost/OpenAuthenticator</url>
+    <description>
+        <p>Protect your online accounts with Open Authenticator</p>
+        <p>Open Authenticator generates Time-Based One-Time Passwords (TOTPs), which serve as the second factor in the 2FA process. These temporary codes are valid for a short period of time and are used alongside your password to verify your identity when logging into your accounts. This significantly enhances the security of your online accounts and protects them from unauthorized access.</p>
+        <p>Key features</p>
+        <p>Open-Source &amp; Free to use : Our commitment to transparency and security means our app is open-source and will always remain free for local use. If it doesn't cost anything for us, then it shouldn't cost anything for you !</p>
+        <p>Cross-Platform Compatibility : Seamlessly use your TOTP tokens on all your devices, whether you're using Linux, Android, iOS, macOS or Windows.</p>
+        <p>A lovely crafted app : Open Authenticator has been designed to be fast and easy to use. Quickly find all your TOTPs and copy them directly from the main page !</p>
+        <p>In summary, why Open Authenticator ?</p>
+        <p>Here are the reasons why you should download Open Authenticator :</p>
+        <p>Enhanced Security : Protect your online accounts from unauthorized access with strong 2FA.</p>
+        <p>User-Friendly Interface : Intuitive design makes it easy to add, manage, and organize your TOTP tokens.</p>
+        <p>Continuous Improvement : We're dedicated to delivering the best user experience and regularly update our app with new features and improvements.</p>
+        <p>Links</p>
+        <ul>
+            <li>
+                Check it out on Github : <a href="https://github.com/Skyost/OpenAuthenticator">https://github.com/Skyost/OpenAuthenticator</a>
+            </li>
+            <li>
+                Visit our website : <a href="https://openauthenticator.app">https://openauthenticator.app</a>
+            </li>
+            <li>
+                Download Open Authenticator for other platforms : <a href="https://openauthenticator.app/#download">https://openauthenticator.app/#download</a>
+            </li>
+        </ul>
+    </description>
+    <launchable type="desktop-id">app.openauthenticator.OpenAuthenticator</launchable>
+    <screenshots>
+        <screenshot type="default">
+            <image>https://dashboard.snapcraft.io/site_media/appmedia/2025/05/1-1748336574.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://dashboard.snapcraft.io/site_media/appmedia/2025/05/2-1748336574.png</image>
+        </screenshot>
+        <screenshot>
+            <image>https://dashboard.snapcraft.io/site_media/appmedia/2025/05/3-1748336574.png</image>
+        </screenshot>
+    </screenshots>
+    <categories>
+        <category>Utility</category>
+    </categories>
+    <keywords>
+        <keyword>authenticator</keyword>
+        <keyword>otp</keyword>
+        <keyword>totp</keyword>
+        <keyword>2fa</keyword>
+        <keyword>security</keyword>
+    </keywords>
+    <icon type="stock">app.openauthenticator.OpenAuthenticator</icon>
+    <icon type="remote">https://openauthenticator.app/images/logo.svg</icon>
+    <branding>
+        <color type="primary" scheme_preference="light">#4caf50</color>
+        <color type="primary" scheme_preference="dark">#212529</color>
+    </branding>
+    <content_rating type="oars-1.1" />
+</component>

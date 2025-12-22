@@ -53,8 +53,18 @@ lib/app.dart
 **/*.g.dart
 /assets/images/*.si
 /assets/images/**/*.si
+
+# Snap
 snap/meta/polkit
 open-authenticator_*.snap
+
+# Flatpak
+flatpak/.flatpak-builder
+flatpak/build-dir
+flatpak/repo
+flatpak/*.flatpak
+flatpak/*.tar.gz
+flatpak.sh
 
 # Firebase files
 firebase

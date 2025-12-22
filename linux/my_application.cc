@@ -32,13 +32,44 @@ static void can_authenticate(FlMethodCall* method_call) {
         fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_success_response_new(fl_value_new_bool(false))), nullptr);
         return;
     }
-    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_success_response_new(fl_value_new_bool(true))), nullptr);
+    GList* actions = polkit_authority_enumerate_actions_sync(authority, nullptr, &error);
+    if (error) {
+        fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_error_response_new("authCheckError", error->message, nullptr)), nullptr);
+        g_clear_error(&error);
+        return;
+    }
+    bool hasOpenApp = false, hasSensible = false, hasEnable = false, hasDisable = false;
+    for (GList* l = actions; l; l = g_list_next(l)) {
+        auto* desc = static_cast<PolkitActionDescription*>(l->data);
+        const gchar* id = polkit_action_description_get_action_id(desc);
+        if (!id) {
+            continue;
+        }
+        if (strcmp(id, "app.openauthenticator.openApp") == 0) {
+            hasOpenApp = true;
+        }
+        else if (strcmp(id, "app.openauthenticator.sensibleAction") == 0) {
+            hasSensible = true;
+        }
+        else if (strcmp(id, "app.openauthenticator.enable") == 0) {
+            hasEnable = true;
+        }
+        else if (strcmp(id, "app.openauthenticator.disable") == 0) {
+            hasDisable = true;
+        }
+        if (hasOpenApp && hasSensible && hasEnable && hasDisable) {
+            break;
+        }
+    }
+    gboolean success = hasOpenApp && hasSensible && hasEnable && hasDisable;
+    g_list_free_full(actions, g_object_unref);
+    g_object_unref(authority);
+    fl_method_call_respond(method_call, FL_METHOD_RESPONSE(fl_method_success_response_new(fl_value_new_bool(success))), nullptr);
 }
 
 static void authenticate_async_callback(PolkitAuthority* authority, GAsyncResult* result, gpointer user_data) {
     GError* error = nullptr;
 
-    // Retrieve the result from the async operation
     PolkitAuthorizationResult* auth_result = polkit_authority_check_authorization_finish(authority, result, &error);
 
     if (error) {
@@ -57,7 +88,26 @@ static void authenticate_async_callback(PolkitAuthority* authority, GAsyncResult
     gboolean success = polkit_authorization_result_get_is_authorized(auth_result);
     fl_method_call_respond((FlMethodCall*)user_data, FL_METHOD_RESPONSE(fl_method_success_response_new(fl_value_new_bool(success))), nullptr);
 
-    g_object_unref(user_data); // Unref the method call after use
+    g_object_unref(user_data);
+}
+
+static PolkitSubject* make_subject_from_system_bus(GError** error) {
+    GDBusConnection* system_bus = g_bus_get_sync(G_BUS_TYPE_SYSTEM, nullptr, error);
+    if (!system_bus) {
+        return nullptr;
+    }
+
+    const gchar* unique = g_dbus_connection_get_unique_name(system_bus);
+    if (!unique) {
+        g_set_error(error, G_IO_ERROR, G_IO_ERROR_FAILED, "No unique D-Bus name on system bus");
+        g_object_unref(system_bus);
+        return nullptr;
+    }
+
+    PolkitSubject* subject = polkit_system_bus_name_new(unique);
+
+    g_object_unref(system_bus);
+    return subject;
 }
 
 static void authenticate(const std::string reason, FlMethodCall* method_call) {
@@ -68,7 +118,15 @@ static void authenticate(const std::string reason, FlMethodCall* method_call) {
         return;
     }
 
-    PolkitSubject* subject = polkit_unix_process_new_for_owner(getpid(), 0, -1);
+    PolkitSubject* subject = make_subject_from_system_bus(&error);
+    if (!subject) {
+        fl_method_call_respond(method_call,FL_METHOD_RESPONSE(fl_method_error_response_new("authError", error ? error->message : "subject error", nullptr)), nullptr);
+        if (error) {
+            g_clear_error(&error);
+        }
+        return;
+    }
+
     polkit_authority_check_authorization(
         authority,
         subject,

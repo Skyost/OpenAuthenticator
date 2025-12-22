@@ -1,0 +1,43 @@
+id: app.openauthenticator.OpenAuthenticator
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: open_authenticator
+
+finish-args:
+  # Network
+  - --share=network
+  # GUI
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  # D-Bus
+  - --own-name=app.openauthenticator
+  # Libsecret
+  - --talk-name=org.freedesktop.secrets
+  # Polkit
+  - --system-talk-name=org.freedesktop.PolicyKit1
+  - --filesystem=xdg-data/polkit-1:ro
+
+modules:
+  - name: openauthenticator
+    buildsystem: simple
+    only-arches:
+      - x86_64
+    build-commands:
+      - "./build-flatpak.sh"
+    sources:
+      - type: file
+        path: ./build-flatpak.sh
+      - type: file
+        path: ./OpenAuthenticator-Linux-Portable.tar.gz
+      - type: file
+        path: ../assets/svg/logo.svg
+        dest-filename: app.openauthenticator.OpenAuthenticator.svg
+      - type: file
+        path: ./app.desktop
+        dest-filename: app.openauthenticator.OpenAuthenticator.desktop
+      - type: file
+        path: ./app.metainfo.xml
+        dest-filename: app.openauthenticator.OpenAuthenticator.metainfo.xml

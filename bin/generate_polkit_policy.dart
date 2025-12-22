@@ -38,10 +38,12 @@ Future<void> main() async {
 ''';
   }
   policyFileContent += '</policyconfig>';
-  File policyFile = File('snap/meta/polkit/polkit.app.openauthenticator.policy');
-  policyFile.parent.createSync(recursive: true);
-  policyFile.writeAsStringSync(policyFileContent);
-  stdout.writeln('Done : ${policyFile.path}.');
+  for (String path in ['snap/meta/polkit/polkit.app.openauthenticator.policy', 'docs/public/polkit/app.openauthenticator.policy']) {
+    File policyFile = File(path);
+    policyFile.parent.createSync(recursive: true);
+    policyFile.writeAsStringSync(policyFileContent);
+    stdout.writeln('Done : ${policyFile.path}.');
+  }
 
   for (String locale in locales) {
     if (locale == 'en') {
