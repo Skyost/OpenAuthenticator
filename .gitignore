@@ -64,7 +64,6 @@ flatpak/build-dir
 flatpak/repo
 flatpak/*.flatpak
 flatpak/*.tar.gz
-flatpak.sh
 
 # Firebase files
 firebase
