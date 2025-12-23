@@ -1,5 +1,12 @@
 # 📰 Open Authenticator changelog
 
+## v1.4.3
+Released on December 23, 2025.
+
+* **FEAT**: Added an experimental way to build Flatpaks. ([#38a608b](https://github.com/Skyost/OpenAuthenticator/commit/38a608b))
+* **CHORE**: Now using `.gradle.kts` file format instead of `.gradle`. ([#a4adcd0](https://github.com/Skyost/OpenAuthenticator/commit/a4adcd0))
+* **CHORE**: Updated snap links. ([#c07b6fb](https://github.com/Skyost/OpenAuthenticator/commit/c07b6fb))
+
 ## v1.4.2
 Released on September 24, 2025.
 
