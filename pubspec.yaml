@@ -63,7 +63,7 @@ dev_dependencies:
   slang_build_runner: ^4.11.0
   custom_lint: ^0.8.1
   riverpod_lint: ^3.0.3
-  release: ^0.1.5
+  release: ^0.1.6
 
 flutter:
   uses-material-design: true
@@ -87,3 +87,4 @@ msix_config:
 release:
   changelog:
     header: '# 📰 Open Authenticator changelog'
+    defaultIgnoredScopes: 'docs', 'version', 'deps', 'flatpak'
