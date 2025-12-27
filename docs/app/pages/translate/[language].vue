@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// @ts-expect-error `dot-object` is not a TS library.
-import * as dot from 'dot-object'
+import dot from 'dot-object'
 import { useI18n } from 'vue-i18n'
 import type { LanguageWithData } from '~~/modules/get-info-from-parent'
 import {
@@ -85,6 +84,7 @@ const {
   },
   {
     watch: [languagesData],
+    deep: true,
   },
 )
 
@@ -195,9 +195,9 @@ onUnmounted(removeGuard)
               />{{ file.fileName }}
             </span>
           </template>
-          <TranslationTable
+          <translation-table
             v-model="files[index]"
-            @update="hasChanged = true"
+            @update:model-value="hasChanged = true"
           />
           <b-row class="mb-0 mb-md-5">
             <b-col class="d-flex align-items-center mb-2 mb-md-0">

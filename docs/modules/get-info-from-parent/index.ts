@@ -1,7 +1,6 @@
 import * as fs from 'fs'
-// @ts-expect-error `dot-object` is not a TS library.
-import * as dot from 'dot-object'
-import { addServerHandler, createResolver, defineNuxtModule, extendRouteRules, useLogger } from '@nuxt/kit'
+import dot from 'dot-object'
+import { addServerHandler, createResolver, defineNuxtModule, useLogger } from '@nuxt/kit'
 import * as yaml from 'yaml'
 import { storageKey } from './common'
 

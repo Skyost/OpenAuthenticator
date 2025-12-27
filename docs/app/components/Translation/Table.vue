@@ -1,6 +1,5 @@
 <script lang="ts">
-// @ts-expect-error `dot-object` is not a TS library.
-import * as dot from 'dot-object'
+import dot from 'dot-object'
 
 export interface TranslationEntry {
   key: string
@@ -59,13 +58,15 @@ export const generateJson = (data: TranslationData): string => {
 <script setup lang="ts">
 const model = defineModel<TranslationFile>()
 
-const emit = defineEmits<{ update: [key: string, value: string] }>()
+const emit = defineEmits<{
+  (event: 'update:modelValue', file: TranslationFile): void
+}>()
+
 const onUpdate = (key: string, value: string): void => {
   const file: TranslationFile | undefined = model.value
   if (!file || !file.data[key]) {
     return
   }
-  emit('update', key, value)
   file.data[key].translatedValue = value
   if (value.length === 0) {
     file.complete = false
@@ -73,6 +74,7 @@ const onUpdate = (key: string, value: string): void => {
   else if (!file.complete) {
     file.complete = checkComplete(file.data)
   }
+  emit('update:modelValue', file)
 }
 </script>
 

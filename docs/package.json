@@ -26,6 +26,7 @@
     "@nuxt/icon": "^2.1.1",
     "@nuxtjs/robots": "^5.6.7",
     "@nuxtjs/sitemap": "^7.5.0",
+    "@types/dot-object": "^2.1.6",
     "@types/node": "^25.0.3",
     "bootstrap": "^5.3.8",
     "bootstrap-vue-next": "^0.42.0",

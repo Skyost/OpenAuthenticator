@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// @ts-expect-error `dot-object` is not a TS library.
-import * as dot from 'dot-object'
+import dot from 'dot-object'
 import {
   generateJson,
   fromJson,
