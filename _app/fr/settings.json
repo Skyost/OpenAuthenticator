@@ -1,0 +1,208 @@
+{
+  "title": "Paramètres",
+  "application": {
+    "title": "Application",
+    "contributorPlan": {
+      "title": "Abonnement Contributeur",
+      "subtitle": {
+        "loading": "Vérification de l'état de votre abonnement...",
+        "active": "Vous avez souscrit à l'Abonnement Contributeur. Merci beaucoup !",
+        "inactive": "Vous n'avez pas encore souscrit à l'Abonnement Contributeur."
+      },
+      "subscriptionDialog": {
+        "title": "Votre Abonnement Contributeur",
+        "message": "Vous avez souscrit à l'Abonnement Contributeur avec succès. Avec cette souscription, vous aidez ce petit logiciel open-source à grandir. Merci beaucoup.",
+        "manageSubscription": {
+          "button": "Gérer l'abonnement",
+          "error": "Impossible d'ouvrir l'URL de gestion de l'abonnement. Si vous avez souscrit sur un autre appareil, essayez d'effectuer cette action sur celui-ci."
+        }
+      }
+    },
+    "cacheTotpPictures": {
+      "title": "Cacher les images des TOTPs",
+      "subtitle": "S'assure que les images de vos TOTPs soient toujours disponibles en les cachant sur votre appareil."
+    },
+    "displayCopyIconButton": {
+      "title": "Afficher un bouton de copie",
+      "subtitle": "Si activé, affiche un bouton de copie à côté des TOTPs. Sinon, un simple appui permet de copier les codes dans votre presse-papiers."
+    },
+    "displaySearchIconButton": {
+      "title": "Afficher un bouton de recherche",
+      "subtitle": "Si activé, affiche un bouton de recherche dans la barre de menu. Sinon, la barre de recherche sera placée au-dessus de la liste des TOTPs."
+    },
+    "theme": {
+      "title": "Thème",
+      "subtitle": "Changer le thème de l'application et la luminosité.",
+      "name(map)": {
+        "system": "Système",
+        "light": "Lumineux",
+        "dark": "Sombre"
+      },
+      "description(map)": {
+        "system": "Suivre le thème du système.",
+        "light": "Utiliser le thème lumineux.",
+        "dark": "Utiliser le thème sombre."
+      }
+    }
+  },
+  "security": {
+    "title": "Sécurité",
+    "enableLocalAuth": {
+      "title": "Activer l'authentification locale",
+      "subtitle": "Permet d'ajouter un niveau de sécurité en demandant un déverrouillage à chaque fois que vous ouvrez l'application."
+    },
+    "saveDerivedKey": {
+      "title": "Enregistrer la clé de chiffrement / déchiffrement",
+      "subtitle": "Enregistre votre clé de chiffrement / déchiffrement pour ne pas avoir à entrer votre mot de passe maître à chaque fois que vous démarrez l'application."
+    },
+    "changeMasterPassword": {
+      "title": "Changer le mot de passe maître",
+      "subtitle": {
+        "text": "Vous pouvez changer votre mot de passe maître quand vous le souhaitez.",
+        "sync": "Veuillez noter que vous devrez le réentrer dans toutes les instances d'Open Authenticator qui sont synchronisées."
+      }
+    }
+  },
+  "synchronization": {
+    "title": "Synchronisation",
+    "accountLink": {
+      "title": "Relier d'autres fournisseurs",
+      "subtitle": {
+        "text": "Relier d'autres fournisseurs d'authentification à votre compte afin que vous puissiez les utiliser pour vous connecter.",
+        "linkedProviders(rich)": "\nCompte actuellement relié à : $providers.",
+        "providers(map)": {
+          "emailLink": "Adresse mail",
+          "password": "Adresse mail"
+        }
+      }
+    },
+    "accountLogin": {
+      "logIn": {
+        "title": "Connexion",
+        "subtitle": "Connectez vous pour synchroniser vos TOTPs entre vos appareils."
+      },
+      "logOut": {
+        "title": "Déconnexion",
+        "subtitle(rich)": "Se déconnecter pour arrêter la synchronisation des TOTPs avec cet appareil.\nActuellement connecté en tant que : $email."
+      }
+    },
+    "confirmEmail": {
+      "title": "Confirmer votre adresse mail",
+      "subtitle(rich)": "Un email de confirmation a été envoyé à votre adresse mail : $email.\nVeuillez cliquer sur le lien pour poursuivre la connexion. Vous pouvez également taper ici pour l'entrer manuellement.",
+      "success": "Adresse mail confirmée avec succès.",
+      "confirmActionPickerDialog": {
+        "title": "Que voulez-vous faire ?",
+        "confirm": {
+          "title": "Valider votre compte",
+          "subtitle": "Coller le lien reçu par email pour confirmer votre compte."
+        },
+        "cancelConfirmation": {
+          "title": "Annuler la confirmation du compte",
+          "subtitle": "Annuler la confirmation du compte.",
+          "validationDialog": {
+            "title": "Confirmation",
+            "message": "Êtes-vous sûr ?"
+          }
+        }
+      },
+      "linkDialog": {
+        "title": "Lien de confirmation",
+        "message": "Visitez le lien de confirmation avec cet appareil ou collez-le ci-dessous pour confirmer votre adresse mail."
+      }
+    },
+    "synchronizeTotps": {
+      "title": "Synchroniser vos TOTPs",
+      "subtitle": {
+        "description": "Synchroniser vos TOTPs avec tous les appareils connectés.",
+        "totpLimit": {
+          "limit(rich)": "Vous pouvez synchroniser $limit TOTPs. Vous en avez $count.",
+          "notEnabled": "Souscrivez à l'Abonnement Contributeur ou supprimez des TOTPs pour activer cette option.",
+          "enabled": "Souscrivez à l'Abonnement Contributeur pour en synchroniser plus !"
+        }
+      }
+    }
+  },
+  "backups": {
+    "title": "Sauvegardes",
+    "backupNow": {
+      "title": "Sauvegarder maintenant",
+      "subtitle": "Créer une sauvegarde de vos TOTPs.",
+      "passwordDialog": {
+        "title": "Mot de passe de la sauvegarde",
+        "message": "Veuillez entrer un mot de passe pour la sauvegarde."
+      }
+    },
+    "manageBackups": {
+      "title": "Gestion des sauvegardes",
+      "subtitle": {
+        "zero": "Vous n'avez aucune sauvegarde.",
+        "one": "Vous avez actuellement $n sauvegarde.",
+        "other": "Vous avez actuellement $n sauvegardes."
+      },
+      "backupsDialogTitle": "Gestion des sauvegardes",
+      "restoreBackupPasswordDialog": {
+        "title": "Mot de passe de la sauvegarde",
+        "message": "Veuillez entrer un mot de passe pour la sauvegarde."
+      },
+      "deleteBackupConfirmationDialog": {
+        "title": "Supprimer la sauvegarde",
+        "message": "Voulez-vous vraiment supprimer cette sauvegarde ?"
+      },
+      "shareBackupDialog": {
+        "subject": "Partager la sauvegarde",
+        "text": "Partager la sauvegarde."
+      },
+      "importBackupDialogTitle": "Importer une sauvegarde",
+      "exportBackupDialogTitle": "Exporter une sauvegarde",
+      "button": {
+        "import": "Importer une sauvegarde",
+        "restore": "Restaurer",
+        "share": "Partager",
+        "export": "Exporter",
+        "delete": "Supprimer"
+      }
+    }
+  },
+  "about": {
+    "title": "À propos",
+    "translate": {
+      "title": "Aider à traduire l'application",
+      "subtitle": "Ouvrir la page de traduction de l'application. Si vous parlez une autre langue et que vous souhaitez aider à traduire $appName, c'est ici !"
+    },
+    "github": {
+      "title": "Signaler un bug ou suggérer des fonctionnalités",
+      "subtitle": "Ouvrir la page Github de l'application pour signaler un bug ou suggérer des fonctionnalités."
+    },
+    "aboutApp": {
+      "title": "$appName",
+      "subtitle(rich)": "$appName v$appVersion, par $appAuthor.",
+      "dialogLegalese": "$appName est une application open-source, créée par $appAuthor."
+    }
+  },
+  "dangerZone": {
+    "title": "Zone dangereuse",
+    "deleteAccount": {
+      "title": "Supprimer votre compte",
+      "subtitle": "Supprime votre compte ainsi que vos données synchronisées en ligne."
+    },
+    "clearData": {
+      "title": "Supprimer toutes les données",
+      "subtitle": "Supprime toutes les données stockées par l'application sur votre appareil.",
+      "confirmationDialog": {
+        "title": "Suppression des données de l'application",
+        "message": "Voulez-vous vraiment supprimer les données de l'application ? Vous ne pourrez plus les récupérer. Veuillez noter que, si vous avez synchronisé des TOTPs, cette aciton ne les supprimera pas du stockage en ligne."
+      },
+      "backupDeleteConfirmationDialog": {
+        "title": "Suppression des backups",
+        "message": "Voulez-vous également supprimer les backups enregistrées ?"
+      },
+      "doneDialog": {
+        "title": "Données supprimées",
+        "message": {
+          "appWillClose": "Les données ont été supprimées avec succès. L'application va fermer pour terminer l'opération, mais n'hésitez pas à la relancer quand vous le souhaiterez !",
+          "closeAppManually": "Les données ont été supprimées avec succès. Veuillez redémarrer l'application pour terminer l'opération."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "title": "Einstellungen",
+  "application": {
+    "title": "Anwendung",
+    "contributorPlan": {
+      "title": "Mitwirkender-Plan",
+      "subtitle": {
+        "loading": "Überprüfen Sie Ihren Abonnementstatus...",
+        "active": "Sie haben sich für den Mitwirkender-Plan angemeldet. Herzlichen Dank!",
+        "inactive": "Sie haben derzeit kein Abonnement für den Mitwirkender-Plan."
+      },
+      "subscriptionDialog": {
+        "title": "Ihr Mitwirkender-Plan",
+        "message": "Sie haben sich erfolgreich für den Mitwirkender-Plan angemeldet. Mit diesem Abonnement helfen Sie dieser kleinen Open-Source-Software, weiterzuwachsen. Herzlichen Dank!",
+        "manageSubscription": {
+          "button": "Abonnement verwalten",
+          "error": "Die URL der Abonnementverwaltung kann nicht geöffnet werden. Wenn Sie auf einem anderen Gerät abonniert haben, versuchen Sie, diese Aktion auf dem anderen Gerät auszuführen."
+        }
+      }
+    },
+    "cacheTotpPictures": {
+      "title": "TOTP-Bilder im Cache",
+      "subtitle": "Speichern Sie Ihre TOTP-Bilder auf dem Gerät, um deren Verfügbarkeit zu gewährleisten."
+    },
+    "displayCopyIconButton": {
+      "title": "Schaltfläche „Kopieren“ anzeigen",
+      "subtitle": "Ist diese Option aktiviert, wird neben jedem TOTP ein Kopiersymbol angezeigt. Andernfalls kopiert ein einfaches Tippen den Code in die Zwischenablage."
+    },
+    "displaySearchIconButton": {
+      "title": "Suchschaltfläche anzeigen",
+      "subtitle": "Wenn aktiviert, wird eine Suchschaltfläche in der Menüleiste angezeigt. Andernfalls wird die Suchleiste über der TOTP-Liste platziert."
+    },
+    "theme": {
+      "title": "Thema",
+      "subtitle": "Ändern Sie den Anwendungsthemen und Helligkeit.",
+      "name(map)": {
+        "system": "System",
+        "light": "Hell",
+        "dark": "Dunkel"
+      },
+      "description(map)": {
+        "system": "Verwenden Sie das Systemthema.",
+        "light": "Verwenden Sie das Hellenthema.",
+        "dark": "Verwenden Sie das Dunkelthema."
+      }
+    }
+  },
+  "security": {
+    "title": "Sicherheit",
+    "enableLocalAuth": {
+      "title": "Lokale Authentifizierung aktivieren",
+      "subtitle": "Fügt eine zusätzliche Sicherheitsebene hinzu, indem jedes Mal, wenn die App geöffnet wird, eine Entsperrung verlangt wird."
+    },
+    "saveDerivedKey": {
+      "title": "Verschlüsselungs-/Entschlüsselungscode speichern",
+      "subtitle": "Speichern Sie Ihren Schlüssel, um das Master-Passwort nicht jedes Mal beim Öffnen der App eingeben zu müssen."
+    },
+    "changeMasterPassword": {
+      "title": "Master-Kennwort ändern",
+      "subtitle": {
+        "text": "Sie können Ihr Master-Passwort jederzeit ändern.",
+        "sync": "Beachten Sie, dass Sie ihn in all Ihren Open Authenticator-Instanzen, die miteinander synchronisiert sind, erneut eingeben müssen."
+      }
+    }
+  },
+  "synchronization": {
+    "title": "Synchronisierung",
+    "accountLink": {
+      "title": "Verknüpfung mit anderen Anbietern",
+      "subtitle": {
+        "text": "Verknüpfen Sie Ihr Konto mit anderen Authentifizierungsanbietern, damit Sie sich mit diesen anmelden können.",
+        "linkedProviders(rich)": "Aktuell verknüpft mit: $providers.",
+        "providers(map)": {
+          "emailLink": "E-Mail Adresse",
+          "password": "E-Mail Adresse"
+        }
+      }
+    },
+    "accountLogin": {
+      "logIn": {
+        "title": "Einloggen",
+        "subtitle": "Melden Sie sich an, um Ihre TOTPs zwischen Ihren Geräten zu synchronisieren."
+      },
+      "logOut": {
+        "title": "Ausloggen",
+        "subtitle(rich)": "Melden Sie sich ab, um die Synchronisierung mit diesem Gerät zu beenden. Angemeldet als: $email."
+      }
+    },
+    "confirmEmail": {
+      "title": "E-Mail bestätigt.",
+      "subtitle(rich)": "Eine Bestätigungs-E-Mail wurde an $email gesendet. Klicken Sie auf den Link, um die Anmeldung abzuschließen, oder tippen Sie hier, um den Code manuell einzugeben.",
+      "success": "E-Mail erfolgreich bestätigt.",
+      "confirmActionPickerDialog": {
+        "title": "Was möchten Sie tun?",
+        "confirm": {
+          "title": "Bestätigen Sie Ihr Konto",
+          "subtitle": "Fügen Sie den Link ein, den Sie per E-Mail erhalten haben, um Ihr Konto zu bestätigen."
+        },
+        "cancelConfirmation": {
+          "title": "Kontobestätigung aufheben",
+          "subtitle": "Heben Sie Ihre Kontobestätigung auf.",
+          "validationDialog": {
+            "title": "Bestätigung",
+            "message": "Sind Sie sicher?"
+          }
+        }
+      },
+      "linkDialog": {
+        "title": "Bestätigungslink",
+        "message": "Rufen Sie entweder den Link mit diesem Gerät auf oder fügen Sie ihn unten ein, um Ihre E-Mail-Adresse zu bestätigen."
+      }
+    },
+    "synchronizeTotps": {
+      "title": "TOTPs synchronisieren",
+      "subtitle": {
+        "description": "Synchronisieren Sie Ihre TOTPs mit all Ihren eingeloggten Geräten.",
+        "totpLimit": {
+          "limit(rich)": "Sie können bis zu $limit TOTPs synchronisieren. Sie haben derzeit $count TOTPs.",
+          "notEnabled": "Um diese Option zu aktivieren, abonnieren Sie den Mitwirkender-Plan oder löschen Sie einige TOTPs.",
+          "enabled": "Abonnieren Sie den Mitwirkender-Plan, um mehr zu synchronisieren!"
+        }
+      }
+    }
+  },
+  "backups": {
+    "title": "Sicherungskopien",
+    "backupNow": {
+      "title": "Jetzt sichern",
+      "subtitle": "Sichern Sie Ihre TOTPs jetzt.",
+      "passwordDialog": {
+        "title": "Sicherungskennwort",
+        "message": "Bitte geben Sie das Passwort für die Sicherung ein."
+      }
+    },
+    "manageBackups": {
+      "title": "Sicherungen verwalten",
+      "subtitle": {
+        "zero": "Sie haben keine Sicherung gespeichert.",
+        "one": "Sie haben derzeit $n Sicherung gespeichert.",
+        "other": "Sie haben derzeit $n Sicherungen gespeichert."
+      },
+      "backupsDialogTitle": "Sicherungen verwalten",
+      "restoreBackupPasswordDialog": {
+        "title": "Sicherungskennwort",
+        "message": "Bitte geben Sie das Passwort für die Sicherung ein."
+      },
+      "deleteBackupConfirmationDialog": {
+        "title": "Sicherung löschen",
+        "message": "Möchten Sie diese Sicherung löschen?"
+      },
+      "shareBackupDialog": {
+        "subject": "Sicherung exportieren",
+        "text": "Teilen Sie die Sicherung."
+      },
+      "importBackupDialogTitle": "Sicherung importieren",
+      "exportBackupDialogTitle": "Sicherung exportieren",
+      "button": {
+        "import": "Sicherung importieren",
+        "restore": "Wiederherstellen",
+        "share": "Teilen",
+        "export": "Exportieren",
+        "delete": "Löschen"
+      }
+    }
+  },
+  "about": {
+    "title": "Über",
+    "translate": {
+      "title": "Hilfe bei der Übersetzung der App",
+      "subtitle": "Öffnen Sie die App-Übersetzungsseite. Wenn Sie eine andere Sprache sprechen und bei der Übersetzung von $appName helfen wollen, sind Sie hier richtig!"
+    },
+    "github": {
+      "title": "Fehler melden oder neue Funktionen vorschlagen",
+      "subtitle": "Öffnen Sie die Github-Seite der App, um Fehler zu melden oder neue Funktionen vorzuschlagen."
+    },
+    "aboutApp": {
+      "title": "$appName",
+      "subtitle(rich)": "$appName v$appVersion, by $appAuthor.",
+      "dialogLegalese": "$appName ist eine Open-Source-Anwendung, die von $appAuthor erstellt wurde."
+    }
+  },
+  "dangerZone": {
+    "title": "Gefährliche Zone",
+    "deleteAccount": {
+      "title": "Ihr Konto löschen",
+      "subtitle": "Löschen Sie Ihr Konto und alle Ihre synchronisierten Daten."
+    },
+    "clearData": {
+      "title": "Alles löschen",
+      "subtitle": "Löschen Sie alles, was die App auf Ihrem Gerät gespeichert hat.",
+      "confirmationDialog": {
+        "title": "App-Daten löschen",
+        "message": "Sind Sie sicher, dass Sie die Daten der App löschen wollen? Sie sind dann für immer weg. Bitte beachten Sie, dass Ihre TOTPs nicht aus dem Online-Speicher gelöscht werden, wenn Sie sie synchronisiert haben."
+      },
+      "backupDeleteConfirmationDialog": {
+        "title": "Backups löschen",
+        "message": "Möchten Sie auch Ihre Backups löschen?"
+      },
+      "doneDialog": {
+        "title": "Daten gelöscht",
+        "message": {
+          "appWillClose": "Die Daten wurden erfolgreich gelöscht. Die App wird geschlossen, um den Vorgang zu beenden, aber Sie können sie neu starten, sobald Sie bereit sind!",
+          "closeAppManually": "Die Daten wurden erfolgreich gelöscht. Bitte starten Sie die App neu, um den Vorgang abzuschließen."
+        }
+      }
+    }
+  }
+}

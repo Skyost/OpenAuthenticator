@@ -1,0 +1,27 @@
+{
+  "empty": "Nenhum TOTP no momento.\nSinta-se à vontade para adicionar um!",
+  "refreshButton": "Atualizar",
+  "addDialog": {
+    "title": "Adicionar um TOTP",
+    "qrCode": {
+      "title": "Adicionar usando um QR code",
+      "subtitle": "Escaneie um código QR TOTP e adicione-o automaticamente ao aplicativo!"
+    },
+    "manually": {
+      "title": "Adicionar manualmente",
+      "subtitle": "Insira manualmente os detalhes do seu TOTP (ex: segredo, rótulo, emissor, ...)."
+    }
+  },
+  "noCryptoStore": {
+    "message": "Ocorreu um erro ao carregar seu armazenamento criptográfico. Isso significa que não podemos realizar nenhuma operação de criptografia/descriptografia. Reinicie o aplicativo ou defina uma nova senha mestra usando o botão abaixo.",
+    "resetButton": "Redefinir senha mestra"
+  },
+  "logInFailed": {
+    "message": "Falha ao fazer login. Tente novamente, faça login novamente ou altere o tipo de armazenamento.",
+    "button": {
+      "retry": "Tentar novamente",
+      "relogIn": "Fazer login novamente",
+      "changeStorageType": "Alterar tipo de armazenamento"
+    }
+  }
+}

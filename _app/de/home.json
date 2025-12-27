@@ -1,0 +1,27 @@
+{
+  "empty": "Momentan gibt es keine TOTP.\nFügen Sie einen hinzu!",
+  "refreshButton": "Aktualisieren",
+  "addDialog": {
+    "title": "TOTP hinzufügen",
+    "qrCode": {
+      "title": "Mit einem QR-Code hinzufügen",
+      "subtitle": "Scannen Sie einen TOTP-QR-Code, um ihn automatisch zur App hinzuzufügen!"
+    },
+    "manually": {
+      "title": "Manuell hinzufügen",
+      "subtitle": "Geben Sie Ihre TOTP-Daten manuell ein (z. B. Geheimnis, Bezeichnung, Aussteller …)."
+    }
+  },
+  "noCryptoStore": {
+    "message": "Beim Laden Ihres Kryptospeichers ist ein Fehler aufgetreten. Das bedeutet, dass keine Verschlüsselungs- oder Entschlüsselungsvorgänge durchgeführt werden können. Bitte starten Sie die App neu oder legen Sie ein neues Master-Passwort über die Schaltfläche unten fest.",
+    "resetButton": "Master-Passwort zurücksetzen"
+  },
+  "logInFailed": {
+    "message": "Anmeldung fehlgeschlagen. Versuchen Sie es erneut, melden Sie sich erneut an oder ändern Sie den Speichertyp.",
+    "button": {
+      "retry": "Erneut versuchen",
+      "relogIn": "Erneut anmelden",
+      "changeStorageType": "Speichertyp ändern"
+    }
+  }
+}

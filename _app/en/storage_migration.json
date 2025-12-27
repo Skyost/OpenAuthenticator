@@ -1,0 +1,21 @@
+{
+  "confirmDialog": {
+    "title": "Confirmation",
+    "message": {
+      "enable": "Do you really want to synchronize your TOTPs ? They will be available on all your synced devices.",
+      "disable": "Do you really want to stop synchronizing your TOTPs ? Any change made on this instance of the app will not be reflected anymore on the other linked devices."
+    }
+  },
+  "deletedTotpPolicyPickerDialog": {
+    "title": "Migrate TOTPs",
+    "message": "Some TOTPs have been deleted on this device, but not on the remote storage. What do you want to do with them ?",
+    "delete": {
+      "title": "Delete them",
+      "subtitle": "Delete the conflicting TOTPs. This cannot be undone."
+    },
+    "restore": {
+      "title": "Keep them",
+      "subtitle": "Undo the deletion, and keep all TOTPs."
+    }
+  }
+}

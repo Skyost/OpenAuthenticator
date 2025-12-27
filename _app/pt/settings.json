@@ -1,0 +1,208 @@
+{
+  "title": "Configurações",
+  "application": {
+    "title": "Aplicação",
+    "contributorPlan": {
+      "title": "Plano Contributor",
+      "subtitle": {
+        "loading": "Verificando o status da sua assinatura...",
+        "active": "Você assinou o Plano Contributor. Muito obrigado!",
+        "inactive": "Atualmente, você não assinou o Plano Contributor."
+      },
+      "subscriptionDialog": {
+        "title": "Seu Plano Contributor",
+        "message": "Você assinou com sucesso o Plano Contributor. Com essa assinatura, você está ajudando este pequeno software de código aberto a continuar crescendo. Muito obrigado.",
+        "manageSubscription": {
+          "button": "Gerenciar assinatura",
+          "error": "Não foi possível abrir a URL de gerenciamento de assinatura. Se você assinou em outro dispositivo, tente executar esta ação nele."
+        }
+      }
+    },
+    "cacheTotpPictures": {
+      "title": "Armazenar imagens do TOTP",
+      "subtitle": "Garanta que suas imagens TOTP estejam sempre disponíveis armazenando-as no seu dispositivo."
+    },
+    "displayCopyIconButton": {
+      "title": "Exibir botão de cópia",
+      "subtitle": "Se ativado, exibirá um botão de cópia ao lado dos seus TOTPs. Caso contrário, um simples toque copiará o código para a área de transferência."
+    },
+    "displaySearchIconButton": {
+      "title": "Exibir botão de pesquisa",
+      "subtitle": "Se ativado, exibirá um botão de pesquisa na barra de menus. Caso contrário, a barra de pesquisa será posicionada acima da lista TOTP."
+    },
+    "theme": {
+      "title": "Tema",
+      "subtitle": "Altere o tema da aplicação e a luminosidade.",
+      "name(map)": {
+        "system": "Sistema",
+        "light": "Claro",
+        "dark": "Escuro"
+      },
+      "description(map)": {
+        "system": "Use o tema do sistema.",
+        "light": "Use o tema escuro.",
+        "dark": "Use o tema escuro."
+      }
+    }
+  },
+  "security": {
+    "title": "Segurança",
+    "enableLocalAuth": {
+      "title": "Ativar autenticação local",
+      "subtitle": "Adiciona uma camada extra de segurança solicitando desbloqueio sempre que você abrir o aplicativo."
+    },
+    "saveDerivedKey": {
+      "title": "Salvar chave de criptografia / descriptografia",
+      "subtitle": "Salve sua chave de criptografia / descriptografia para não precisar digitar sua senha mestra toda vez que abrir o aplicativo."
+    },
+    "changeMasterPassword": {
+      "title": "Alterar senha mestra",
+      "subtitle": {
+        "text": "Você pode alterar sua senha mestra a qualquer momento.",
+        "sync": "Observe que será necessário digitá-la novamente em todas as instâncias do Open Authenticator que estiverem sincronizadas."
+      }
+    }
+  },
+  "synchronization": {
+    "title": "Sincronização",
+    "accountLink": {
+      "title": "Vincular outros provedores",
+      "subtitle": {
+        "text": "Vincule sua conta a outros provedores de autenticação para poder usá-los para fazer login.",
+        "linkedProviders(rich)": "\nConta atualmente vinculada a: $providers.",
+        "providers(map)": {
+          "emailLink": "Endereço de e-mail",
+          "password": "Endereço de e-mail"
+        }
+      }
+    },
+    "accountLogin": {
+      "logIn": {
+        "title": "Entrar",
+        "subtitle": "Faça login para sincronizar seus TOTPs entre seus dispositivos."
+      },
+      "logOut": {
+        "title": "Sair",
+        "subtitle(rich)": "Saia para interromper a sincronização dos seus TOTPs com este dispositivo.\nAtualmente conectado como: $email."
+      }
+    },
+    "confirmEmail": {
+      "title": "Confirme seu e-mail",
+      "subtitle(rich)": "Um e-mail de confirmação foi enviado para o endereço: $email.\nClique no link para concluir o login. Você também pode tocar nesta opção para digitá-lo manualmente.",
+      "success": "E-mail confirmado com sucesso.",
+      "confirmActionPickerDialog": {
+        "title": "O que você deseja fazer?",
+        "confirm": {
+          "title": "Confirmar sua conta",
+          "subtitle": "Cole o link que recebeu por e-mail para confirmar sua conta."
+        },
+        "cancelConfirmation": {
+          "title": "Cancelar confirmação da conta",
+          "subtitle": "Cancelar a confirmação da sua conta.",
+          "validationDialog": {
+            "title": "Confirmação",
+            "message": "Tem certeza?"
+          }
+        }
+      },
+      "linkDialog": {
+        "title": "Link de confirmação",
+        "message": "Acesse o link com este dispositivo ou cole-o abaixo para confirmar seu e-mail."
+      }
+    },
+    "synchronizeTotps": {
+      "title": "Sincronizar TOTPs",
+      "subtitle": {
+        "description": "Sincronize seus TOTPs com todos os dispositivos conectados.",
+        "totpLimit": {
+          "limit(rich)": "Você pode sincronizar até $limit TOTPs. Atualmente, você possui $count TOTPs.",
+          "notEnabled": "Assine o Plano Contributor ou exclua alguns TOTPs para ativar esta opção.",
+          "enabled": "Assine o Plano Contributor para sincronizar mais!"
+        }
+      }
+    }
+  },
+  "backups": {
+    "title": "Backups",
+    "backupNow": {
+      "title": "Fazer backup agora",
+      "subtitle": "Faça backup dos seus TOTPs agora.",
+      "passwordDialog": {
+        "title": "Senha do backup",
+        "message": "Digite uma senha para o seu backup."
+      }
+    },
+    "manageBackups": {
+      "title": "Gerenciar backups",
+      "subtitle": {
+        "zero": "Você não possui nenhum backup armazenado.",
+        "one": "Atualmente, você possui $n backup armazenado.",
+        "other": "Atualmente, você possui $n backups armazenados."
+      },
+      "backupsDialogTitle": "Gerenciar backups",
+      "restoreBackupPasswordDialog": {
+        "title": "Senha do backup",
+        "message": "Digite a senha do seu backup."
+      },
+      "deleteBackupConfirmationDialog": {
+        "title": "Excluir backup",
+        "message": "Deseja excluir este backup?"
+      },
+      "shareBackupDialog": {
+        "subject": "Exportar backup",
+        "text": "Compartilhar o backup."
+      },
+      "importBackupDialogTitle": "Importar um backup",
+      "exportBackupDialogTitle": "Exportar um backup",
+      "button": {
+        "import": "Importar um backup",
+        "restore": "Restaurar",
+        "share": "Compartilhar",
+        "export": "Exportar",
+        "delete": "Excluir"
+      }
+    }
+  },
+  "about": {
+    "title": "Sobre",
+    "translate": {
+      "title": "Ajude a traduzir o app",
+      "subtitle": "Abra a página de tradução do aplicativo. Se você fala outro idioma e deseja ajudar a traduzir $appName, este é o lugar certo!"
+    },
+    "github": {
+      "title": "Relatar bugs ou sugerir novos recursos",
+      "subtitle": "Abra a página do GitHub do aplicativo para relatar bugs ou sugerir novos recursos."
+    },
+    "aboutApp": {
+      "title": "$appName",
+      "subtitle(rich)": "$appName v$appVersion, por $appAuthor.",
+      "dialogLegalese": "$appName é um aplicativo de código aberto, criado por $appAuthor."
+    }
+  },
+  "dangerZone": {
+    "title": "Zona de perigo",
+    "deleteAccount": {
+      "title": "Excluir sua conta",
+      "subtitle": "Exclua sua conta e todos os seus dados sincronizados."
+    },
+    "clearData": {
+      "title": "Limpar tudo",
+      "subtitle": "Apague todos os dados armazenados pelo aplicativo no seu dispositivo.",
+      "confirmationDialog": {
+        "title": "Limpar dados do aplicativo",
+        "message": "Tem certeza de que deseja limpar os dados do aplicativo? Eles serão removidos permanentemente. Observe que, se você sincronizou seus TOTPs, esta ação não os excluirá do armazenamento online."
+      },
+      "backupDeleteConfirmationDialog": {
+        "title": "Excluir backups",
+        "message": "Você também deseja excluir seus backups?"
+      },
+      "doneDialog": {
+        "title": "Dados excluídos",
+        "message": {
+          "appWillClose": "Os dados foram excluídos com sucesso. O aplicativo será fechado para concluir a operação, mas você pode reabri-lo quando estiver pronto!",
+          "closeAppManually": "Os dados foram excluídos com sucesso. Reinicie o aplicativo para concluir a operação."
+        }
+      }
+    }
+  }
+}
