@@ -60,10 +60,12 @@ open-authenticator_*.snap
 
 # Flatpak
 flatpak/.flatpak-builder
-flatpak/build-dir
+flatpak/appdir
 flatpak/repo
+flatpak/OpenAuthenticatorFlatpak
 flatpak/*.flatpak
 flatpak/*.tar.gz
+flatpak-build-publish.sh
 
 # Firebase files
 firebase

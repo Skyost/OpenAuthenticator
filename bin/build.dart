@@ -82,10 +82,14 @@ void main() {
           break;
         case 'flatpak':
           stdout.writeln('Building Docker image...');
-          runSync('docker', ['build', '--platform', 'linux/amd64', '-t', 'flutterpack:1.0.0', './flatpak']);
+          ProcessResult userResult = Process.runSync('id -u', []);
+          String userId = userResult.stdout.toString().trim();
+          ProcessResult groupResult = Process.runSync('id -g', []);
+          String groupId = groupResult.stdout.toString().trim();
+          runSync('docker', ['build', '--platform', 'linux/amd64', '--build-arg', 'USER_ID=$userId', '--build-arg', 'GROUP_ID=$groupId', '-t', 'flutterpack:1.0.0', './flatpak']);
           stdout.writeln('Done.');
           stdout.writeln('Building Flatpak file...');
-          runSync('docker', ['run', '--rm', '--privileged', '--platform', 'linux/amd64', '-u', 'root', '-v', './work', '-w', '/work/flatpak', 'flutterpack:1.0.0', './build-flutter-app.sh']);
+          runSync('docker', ['run', '--rm', '--privileged', '--platform', 'linux/amd64', '-u', '$userId:$groupId', '-v', './work', '-w', '/work/flatpak', 'flutterpack:1.0.0', './build-flutter-app.sh']);
           stdout.writeln('Done.');
           break;
         default:

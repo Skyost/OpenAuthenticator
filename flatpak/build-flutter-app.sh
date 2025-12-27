@@ -26,5 +26,5 @@ tar -czaf $archiveName ./*
 mv $archiveName "$baseDir"/
 popd
 
-flatpak-builder --force-clean build-dir app.yaml --repo=repo
+flatpak-builder --force-clean appdir app.yaml --repo=repo
 flatpak build-bundle repo app.openauthenticator.OpenAuthenticator.flatpak app.openauthenticator.OpenAuthenticator
