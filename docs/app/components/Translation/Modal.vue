@@ -2,6 +2,8 @@
 import { siteMeta } from '~/site'
 import { generateJson, type TranslationFile } from '~/components/Translation/Table.vue'
 
+const markdownT = useMarkdownT()
+
 const showModal = defineModel<boolean>()
 
 const props = defineProps<{
@@ -22,25 +24,25 @@ const modalCode = computed<string>(() => props.file ? generateJson(props.file.da
     v-model="showModal"
     class="translation-modal"
     size="xl"
-    :title="$t('translate.modal.modalTitle')"
-    :ok-title="$t('translate.modal.close')"
+    :title="markdownT('translate.modal.modalTitle')"
+    :ok-title="markdownT('translate.modal.close')"
     ok-variant="secondary"
     ok-only
   >
     <div class="text-center mt-3 mb-3">
-      <h1>{{ $t('translate.modal.title') }}</h1>
-      <p>{{ $t('translate.modal.subtitle') }}</p>
+      <h1>{{ markdownT('translate.modal.title') }}</h1>
+      <p>{{ markdownT('translate.modal.subtitle') }}</p>
     </div>
-    <h2>{{ $t('translate.modal.grabCode.title') }}</h2>
-    <p>{{ $t('translate.modal.grabCode.copyCode') }}</p>
+    <h2>{{ markdownT('translate.modal.grabCode.title') }}</h2>
+    <p>{{ markdownT('translate.modal.grabCode.copyCode') }}</p>
     <json-highlight
       class="mb-3"
       :content="modalCode"
-      :copy-text="$t('translate.modal.grabCode.copyToClipboard')"
+      :copy-text="markdownT('translate.modal.grabCode.copyToClipboard')"
     />
-    <p>{{ $t('translate.modal.grabCode.translationData') }}</p>
-    <h2>{{ $t('translate.modal.openGithub.title') }}</h2>
-    <p>{{ $t('translate.modal.openGithub.click') }}</p>
+    <p>{{ markdownT('translate.modal.grabCode.translationData') }}</p>
+    <h2>{{ markdownT('translate.modal.openGithub.title') }}</h2>
+    <p>{{ markdownT('translate.modal.openGithub.click') }}</p>
     <b-alert
       :model-value="true"
       variant="light"
@@ -67,15 +69,15 @@ const modalCode = computed<string>(() => props.file ? generateJson(props.file.da
       />
       <p
         class="mb-0"
-        v-html="$t('translate.modal.openGithub.note')"
+        v-html="markdownT('translate.modal.openGithub.note')"
       />
     </b-alert>
-    <h2>{{ $t('translate.modal.fork.title') }}</h2>
+    <h2>{{ markdownT('translate.modal.fork.title') }}</h2>
     <p>
-      <span v-html="$t('translate.modal.fork.fork')" /> <span v-html="$t('translate.modal.fork.pasteTheCode')" /> <span v-html="$t('translate.modal.fork.commit')" />
+      <span v-html="markdownT('translate.modal.fork.fork')" /> <span v-html="markdownT('translate.modal.fork.pasteTheCode')" /> <span v-html="markdownT('translate.modal.fork.commit')" />
     </p>
-    <h2>{{ $t('translate.modal.pullRequest.title') }}</h2>
-    <p v-html="$t('translate.modal.pullRequest.beforeCreate')" />
+    <h2>{{ markdownT('translate.modal.pullRequest.title') }}</h2>
+    <p v-html="markdownT('translate.modal.pullRequest.beforeCreate')" />
     <b-alert
       :model-value="true"
       variant="light"
@@ -83,17 +85,17 @@ const modalCode = computed<string>(() => props.file ? generateJson(props.file.da
     >
       <ul class="mb-0">
         <li>
-          <strong>Title :</strong> <span v-html="$t('translate.modal.pullRequest.form.title', { file: file?.fileName, language: file?.targetLanguage })" />
+          <strong>Title :</strong> <span v-html="markdownT('translate.modal.pullRequest.form.title', { file: file?.fileName, language: file?.targetLanguage })" />
         </li>
         <li>
-          <strong>Message :</strong> <span v-html="$t('translate.modal.pullRequest.form.message')" />
+          <strong>Message :</strong> <span v-html="markdownT('translate.modal.pullRequest.form.message')" />
         </li>
       </ul>
     </b-alert>
-    <p v-html="$t('translate.modal.pullRequest.create')" />
-    <h2>{{ $t('translate.modal.done.title') }}</h2>
+    <p v-html="markdownT('translate.modal.pullRequest.create')" />
+    <h2>{{ markdownT('translate.modal.done.title') }}</h2>
     <p class="mb-0">
-      {{ $t('translate.modal.done.message') }}
+      {{ markdownT('translate.modal.done.message') }}
     </p>
   </b-modal>
 </template>

@@ -73,7 +73,7 @@ const tip = computed(() => {
 @import 'assets/bootstrap-mixins';
 
 .store-button-card {
-  max-width: 300px;
+  max-width: min(300px, 90%);
   width: 100%;
   display: inline-block;
 

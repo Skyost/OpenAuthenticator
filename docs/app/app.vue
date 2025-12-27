@@ -16,7 +16,7 @@ onMounted(() => {
       wantedLanguage = languageCode
     }
   }
-  locale.value = wantedLanguage
+  locale.value = wantedLanguage as string
   watch (locale, newLocale => i18nCookieValue.value = newLocale)
 })
 </script>

@@ -12,6 +12,7 @@ enum FormState {
 }
 
 const { t, locale } = useI18n()
+const markdownT = useMarkdownT()
 watch(
   locale,
   () => usePageHead({ title: t('contact.title') }),
@@ -87,7 +88,7 @@ const onFormSubmit = async () => {
         lg="9"
       >
         <h1>{{ t('contact.title') }}</h1>
-        <p v-html="t('contact.description')" />
+        <p v-html="markdownT('contact.description')" />
       </b-col>
       <b-col
         sm="12"

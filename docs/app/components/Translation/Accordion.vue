@@ -8,7 +8,7 @@ import {
   type TranslationFile,
   type TranslationData,
 } from '~/components/Translation/Table.vue'
-import type { LanguageWithData } from '~/modules/get-info-from-parent'
+import type { LanguageWithData } from '~~/modules/get-info-from-parent'
 
 interface RawTranslationFile {
   fileName: string
@@ -60,12 +60,12 @@ const {
     const originalLanguage = await fetchTranslationFiles(props.originalLanguage)
     const translation = await fetchTranslationFiles(props.language)
     for (const fileName in originalLanguage) {
-      const rawTranslationFile = originalLanguage[fileName]
+      const rawTranslationFile = originalLanguage[fileName]!
       const data: TranslationData = {}
       for (const key in rawTranslationFile.data) {
         data[key] = {
           key: key,
-          originalValue: rawTranslationFile.data[key],
+          originalValue: rawTranslationFile.data[key]!,
           translatedValue: translation[fileName]?.data[key] ?? '',
         }
       }
@@ -109,10 +109,10 @@ const load = (index: number) => {
         const content = event.target?.result?.toString()
         if (content && files.value) {
           try {
-            const currentData = files.value[index].data
+            const currentData = files.value[index]!.data
             const data = fromJson(content, (key: string) => currentData[key]?.originalValue)
-            files.value[index].data = data
-            files.value[index].complete = checkComplete(data)
+            files.value[index]!.data = data
+            files.value[index]!.complete = checkComplete(data)
           }
           catch (ex) {
             console.error(ex)
@@ -131,7 +131,7 @@ const download = (index: number) => {
   if (!files.value) {
     return
   }
-  const translationFile = files.value[index]
+  const translationFile = files.value[index]!
   const element = document.createElement('a')
   element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(generateJson(translationFile.data)))
   element.setAttribute('download', translationFile.fileName)
@@ -191,7 +191,7 @@ const download = (index: number) => {
             <b-button
               class="w-100 w-md-auto"
               variant="primary"
-              :disabled="!files[index].complete"
+              :disabled="!files[index]!.complete"
               @click="openTranslationModal(files[index])"
             >
               <icon name="bi:check-lg" />

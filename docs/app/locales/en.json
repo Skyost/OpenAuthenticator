@@ -27,13 +27,13 @@
     "main": {
       "title": {
         "1": "Secure your online accounts",
-        "2": "with a <strong>free</strong>, <strong>open-source</strong> and <strong>lovely-crafted</strong> app"
+        "2": "with a **free**, **open-source** and **lovely-crafted** app"
       },
       "features": {
-        "1": "<strong>Free</strong> & <strong>open-source</strong>.",
-        "2": "Easily <strong>synchronize</strong> your TOTPs (<em>Time-based One-Time Password</em>).",
-        "3": "<strong>Protect</strong> your data.",
-        "4": "Use it on (almost) <strong>any platform</strong>."
+        "1": "**Free** & **open-source**.",
+        "2": "Easily **synchronize** your TOTPs (*Time-based One-Time Password*).",
+        "3": "**Protect** your data.",
+        "4": "Use it on (almost) **any platform**."
       },
       "downloadButton": "Download now",
       "latestVersion": {
@@ -42,8 +42,8 @@
       }
     },
     "download": {
-      "title": "<strong>Download</strong> the app",
-      "description": "Open Authenticator has been built using Flutter. Therefore, you can use it on <strong>Android</strong>\nand <strong>iOS</strong>, but also on <strong>macOS</strong>, <strong>Windows</strong> and <strong>Linux</strong> !",
+      "title": "**Download** the app",
+      "description": "Open Authenticator has been built using Flutter. Therefore, you can use it on **Android**\nand **iOS**, but also on **macOS**, **Windows** and **Linux** !",
       "storeButtons": {
         "availableSoonTemplate": "Available for {os} soon !",
         "availableOnTemplate": "Download for {os}",
@@ -53,8 +53,8 @@
     "openSource": {
       "title": "Open-source",
       "description": {
-        "1": "Open Authenticator is an open-source app and is completely free to use.\nIt's licensed under <a class=\"underline\" href=\"https://github.com/Skyost/OpenAuthenticator\">GNU GPL v3</a>.\nFeel free to contribute to the project by submitting your <strong>pull requests</strong> on Github,\nby <strong>donating</strong> or just by <strong>starring it</strong> on Github !",
-        "2": "You can help translating Open Authenticator. To do so, go on the <a href=\"/translate/\">translation</a> page.\nThanks a lot to <a class=\"underline\" href=\"https://github.com/Skyost/OpenAuthenticator/contributors\">all contributors</a> !"
+        "1": "Open Authenticator is an open-source app and is completely free to use.\nIt's licensed under [GNU GPL v3](https://github.com/Skyost/OpenAuthenticator).\nFeel free to contribute to the project by submitting your **pull requests** on Github,\nby **donating** or just by **starring it** on Github !",
+        "2": "You can help translating Open Authenticator. To do so, go on the [translation](/translate/)\npage.\nThanks a lot to [all contributors](https://github.com/Skyost/OpenAuthenticator/contributors) !"
       },
       "linkButtons": {
         "github": "Github",
@@ -65,31 +65,31 @@
   },
   "faq": {
     "title": "Frequently asked questions",
-    "lastUpdated": "Last updated July 12, 2024",
+    "lastUpdated": "Last updated December 27, 2025",
     "questions": {
       "1": {
         "question": "What if I forget my master password ?",
-        "answer": "<p>We cannot do anything. Like, for real. Your TOTPs are encrypted using a key derived from your master password with the <a href=\"https://en.wikipedia.org/wiki/Argon2\">Argon2</a> algorithm. We will be unable to recover your data if you forget your master password. For this reason, you're strongly advised to do regular backups.</p><p>The app automatically asks you to make a backup before sensitive operations, but you can manually create one in the app settings.</p>"
+        "answer": "We cannot do anything. Like, for real. Your TOTPs are encrypted using a key derived from your master password with the [Argon2](https://en.wikipedia.org/wiki/Argon2) algorithm. We will be unable to recover your data if you forget your master password. For this reason, you're strongly advised to do regular backups.\n\nThe app automatically asks you to make a backup before sensitive operations, but you can manually create one in the app settings."
       },
       "2": {
         "question": "Where is my data stored ?",
-        "answer": "<p>If you don't have enabled data synchronization, then everything is stored locally in a SQLite database managed using <a href=\"https://drift.simonbinder.eu/\">Drift</a>. Even in this case, everything is encrypted. If you have enabled data synchronization, we use Firestore to store you data. If the app become popular, we plan to create our own backend.</p>"
+        "answer": "If you don't have enabled data synchronization, then everything is stored locally in a SQLite database managed using [Drift](https://drift.simonbinder.eu/). Even in this case, everything is encrypted. If you have enabled data synchronization, we use Firestore to store you data. If the app become popular, we plan to create our own backend."
       },
       "3": {
         "question": "What is the Contributor Plan ?",
-        "answer": "<p>As you may know, servers are not free. In our case, because we rely on Firebase, the more users we have, the more we have to pay. So, either we :</p><ol><li>put ads in our app ;</li><li>rely exclusively on donations ;</li><li>ask our users to pay some money.</li></ol><p>Option 2. is not realistic at all. Option 1. could be a solution, but ads generally result in a bad user experience. Therefore, the choice we made to be able to be sustainable enough is to create a subscription based model called <q>Contributor Plan</q>. Currently, you can store and synchronize up to six TOTPs for free, with all your devices. By subscribing to the Contributor Plan, you get unlimited TOTP synchronization.</p><p>In the future, we hope to be able to raise these limitations, or even to remove them ! Anyway, you can totally use the app locally without any limitation nor any ad.</p>"
+        "answer": "As you may know, servers are not free. In our case, because we rely on Firebase, the more users we have, the more we have to pay. So, either we :\n\n1. put ads in our app ;\n2. rely exclusively on donations ;\n3. ask our users to pay some money.\n\nOption 2. is not realistic at all. Option 1. could be a solution, but ads generally result in a bad user experience. Therefore, the choice we made to be able to be sustainable enough is to create a subscription based model called \"Contributor Plan\". Currently, you can store and synchronize up to six TOTPs for free, with all your devices. By subscribing to the Contributor Plan, you get unlimited TOTP synchronization.\n\nIn the future, we hope to be able to raise these limitations, or even to remove them ! Anyway, you can totally use the app locally without any limitation nor any ad."
       },
       "4": {
         "question": "Should I download this if my password manager does generate TOTPs ?",
-        "answer": "<p>Yes, you should. If your password manager ever get compromised, then both your passwords and your TOTPs will be exposed. Therefore, the second authentication factor will not act as it should.</p><p><em>Don't put all your eggs in one basket !</em></p>"
+        "answer": "Yes, you should. If your password manager ever get compromised, then both your passwords and your TOTPs will be exposed. Therefore, the second authentication factor will not act as it should.\n\n*Don't put all your eggs in one basket !*"
       },
       "5": {
         "question": "Why data synchronization is not enabled on Linux ?",
-        "answer": "<p>It is not enabled because both Firebase Auth and Firebase Firestore are <a href=\"https://github.com/Skyost/OpenAuthenticator/blob/main/linux/README.md\">currently unsupported</a> on Linux. Your current option is to manually import all your TOTPs on Linux. You can also use the backup feature in the app to do so.</p>"
+        "answer": "It is not enabled because both Firebase Auth and Firebase Firestore are [currently unsupported](https://github.com/Skyost/OpenAuthenticator/blob/main/linux/README.md) on Linux. Your current option is to manually import all your TOTPs on Linux. You can also use the backup feature in the app to do so."
       },
       "6": {
         "question": "I cannot enable local authentication on Linux. What should I do ?",
-        "answer": "<p>If you're in this case, it probably means that Open Authenticator has been installed via Flatpak.</p><p>Local authentication on Linux relies on a Polkit policy file that must be present on your host under <code>/usr/share/polkit-1/actions</code>.</p><p>If it's not present, you can install it by copying <a href=\"https://flatpak.openauthenticator.app/app.openauthenticator.policy\">this file</a> into <code>/usr/share/polkit-1/actions</code>. Then restart Open Authenticator (or your session).</p>"
+        "answer": "If you're in this case, it probably means that Open Authenticator has been installed via Flatpak.\n\nLocal authentication on Linux relies on a Polkit policy file that must be present on your host under `/usr/share/polkit-1/actions`.\n\nIf it's not present, you can install it by copying [this file](https://flatpak.openauthenticator.app/app.openauthenticator.policy) into `/usr/share/polkit-1/actions`. Then restart Open Authenticator (or your session)."
       }
     },
     "questionLeft": {
@@ -100,7 +100,7 @@
   "privacyPolicy": {
     "title": "Privacy policy",
     "lastUpdated": "Last updated April 01, 2024",
-    "intro": "This privacy policy is applicable to the Open Authenticator app (hereinafter referred to as <q>Application</q>) for mobile devices, which was developed by Skyost (hereinafter referred to as <q>Service Provider</q>) as a subscription supported service. This service is provided <q>AS IS</q>.",
+    "intro": "This privacy policy is applicable to the Open Authenticator app (hereinafter referred to as \"Application\") for mobile devices, which was developed by Skyost (hereinafter referred to as \"Service Provider\") as a subscription supported service. This service is provided \"AS IS\".",
     "userProvidedInfo": {
       "title": "User Provided Information",
       "content": "The Application acquires the information you supply when you download and register the\nApplication. Registration with the Service Provider is not mandatory.\nHowever, bear in mind that you might not be able to utilize some of the features offered by the\nApplication unless you register with them. The Service Provider may also use the information you provided\nthem to contact you from time to time to provide you with important information, required notices,\nand marketing promotions."
@@ -121,9 +121,9 @@
       "title": "Third-Party Providers",
       "content": "Please note that the Application utilizes third-party services that have their own\nPrivacy Policy about handling data. Below are the links to the Privacy Policy of the\nthird-party service providers used by the Application :",
       "list": {
-        "googlePlayServices": "<a href=\"https://www.google.com/policies/privacy/\" target=\"_blank\">Google Play Services</a>",
-        "firebase": "<a href=\"https://firebase.google.com/support/privacy/\" target=\"_blank\">Firebase (including but not limited to Crashlytics, Cloud Firestore, ...)</a>",
-        "revenueCat": "<a href=\"https://www.revenuecat.com/privacy\" target=\"_blank\">RevenueCat</a>"
+        "googlePlayServices": "[Google Play Services](https://www.google.com/policies/privacy/)",
+        "firebase": "[Firebase (including but not limited to Crashlytics, Cloud Firestore, ...)](https://firebase.google.com/support/privacy/)",
+        "revenueCat": "[RevenueCat](https://www.revenuecat.com/privacy)"
       }
     },
     "disclosure": {
@@ -141,7 +141,7 @@
     },
     "dataRetention": {
       "title": "Data Retention Policy, Managing Your Information",
-      "content": "The Service Provider will retain User Provided data for as long as you use the\nApplication and for a reasonable time thereafter. The Service Provider will retain Automatically Collected\ninformation for up to 24 months and thereafter may store it in aggregate.\nIf you'd like the Service Provider to delete User Provided Data that you have provided via the Application,\nplease <a href=\"/contact/\">contact them</a> and they will respond in a reasonable time.\nPlease note that some or all of the User Provided Data may be required in order for the Application\nto function properly.\nYour master password is not transmitted to any remote server.\n<strong>If you forget it, we cannot help your recovering it.</strong>\nPlease be aware that, although we endeavor provide reasonable security for\ninformation we process and maintain, no security system can prevent all potential security breaches."
+      "content": "The Service Provider will retain User Provided data for as long as you use the\nApplication and for a reasonable time thereafter. The Service Provider will retain Automatically Collected\ninformation for up to 24 months and thereafter may store it in aggregate.\nIf you'd like the Service Provider to delete User Provided Data that you have provided via the Application,\nplease [contact them](/contact/) and they will respond in a reasonable time.\nPlease note that some or all of the User Provided Data may be required in order for the Application\nto function properly.\nYour master password is not transmitted to any remote server.\n**If you forget it, we cannot help your recovering it.**\nPlease be aware that, although we endeavor provide reasonable security for\ninformation we process and maintain, no security system can prevent all potential security breaches."
     },
     "children": {
       "title": "Children",
@@ -149,7 +149,7 @@
     },
     "security": {
       "title": "Security",
-      "content": "The Service Provider is concerned about safeguarding the confidentiality of your information.\nThe Service Provider provides physical, electronic, and procedural safeguards to protect information we\nprocess and maintain. For example, if you choose to synchronize your data between your devices,\nwe use Firebase Cloud Firestore to store your TOTPs.\nTheir <a href=\"https://en.wikipedia.org/wiki/Time-based_one-time_password#Security\">secret & metadata</a> are\nencrypted using an <a href=\"https://en.wikipedia.org/wiki/Galois/Counter_Mode\">AES-GCM</a> algorithm with an\n<a href=\"https://en.wikipedia.org/wiki/Argon2\">Argon2</a> derived key based on your master password and a random salt."
+      "content": "The Service Provider is concerned about safeguarding the confidentiality of your information.\nThe Service Provider provides physical, electronic, and procedural safeguards to protect information we\nprocess and maintain. For example, if you choose to synchronize your data between your devices,\nwe use Firebase Cloud Firestore to store your TOTPs.\nTheir [secret & metadata](https://en.wikipedia.org/wiki/Time-based_one-time_password#Security) are\nencrypted using an [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) algorithm with an\n[Argon2](https://en.wikipedia.org/wiki/Argon2) derived key based on your master password and a random salt."
     },
     "changes": {
       "title": "Changes",
@@ -158,22 +158,22 @@
     },
     "contact": {
       "title": "Contact Us",
-      "content": "If you have any questions regarding privacy while using the Application, or\nhave questions about the practices, please <a href=\"/contact/\">contact</a> the Service Provider."
+      "content": "If you have any questions regarding privacy while using the Application, or\nhave questions about the practices, please [contact](/contact/) the Service Provider."
     },
-    "credit": "Thanks to <a href=\"https://app-privacy-policy-generator.firebaseapp.com/\"><em>nisrulz</em></a> for this privacy policy."
+    "credit": "Thanks to [nisrulz](https://app-privacy-policy-generator.firebaseapp.com/) for this privacy policy."
   },
   "termsOfService": {
     "title": "Terms & Conditions",
     "lastUpdated": "Last updated April 01, 2024",
-    "intro": "These terms and conditions applies to the Open Authenticator app (hereby referred to as <q>Application</q>)\nfor mobile devices that was created by Skyost (hereby referred to as <q>Service Provider</q>) as a subscription supported service.",
-    "agreement": "Upon downloading or utilizing the Application, you are automatically agreeing to the following terms\nand to the <nuxt-link to=\"/privacy-policy\">Privacy policy</nuxt-link>.\nIt is strongly advised that you thoroughly read and understand these terms prior to using the Application.\nUnauthorized copying, modification of the Application, any part of the Application, or our trademarks\nis strictly prohibited.\nAny attempts to create derivative versions or <q>copycats</q> are not permitted.\nAll trademarks, copyrights, database rights, and other intellectual property rights related to the\nApplication remain the property of the Service Provider.",
+    "intro": "These terms and conditions applies to the Open Authenticator app (hereby referred to as \"Application\")\nfor mobile devices that was created by Skyost (hereby referred to as \"Service Provider\") as a subscription supported service.",
+    "agreement": "Upon downloading or utilizing the Application, you are automatically agreeing to the following terms\nand to the [Privacy policy](/privacy-policy).\nIt is strongly advised that you thoroughly read and understand these terms prior to using the Application.\nUnauthorized copying, modification of the Application, any part of the Application, or our trademarks\nis strictly prohibited.\nAny attempts to create derivative versions or \"copycats\" are not permitted.\nAll trademarks, copyrights, database rights, and other intellectual property rights related to the\nApplication remain the property of the Service Provider.",
     "modification": "The Service Provider is dedicated to ensuring that the Application is as beneficial and efficient as\npossible. As such, they reserve the right to modify the Application or charge for their services at\nany time and for any reason. The Service Provider assures you that any charges for the Application or\nits services will be clearly communicated to you.",
     "dataProcessing": "The Application stores and processes personal data that you have provided to the Service Provider in\norder to provide the Service. It is your responsibility to maintain the security of your phone and\naccess to the Application. The Service Provider strongly advise against jailbreaking or rooting your\nphone, which involves removing software restrictions and limitations imposed by the official operating\nsystem of your device. Such actions could expose your phone to malware, viruses, malicious programs,\ncompromise your phone's security features, and may result in the Application not functioning correctly\nor at all.",
     "thirdPartyTerms": "Please note that the Application utilizes third-party services that have their own Terms and Conditions.\nBelow are the links to the Terms and Conditions of the third-party service providers used by the\nApplication :",
     "thirdPartyTermsList": {
-      "googlePlayServices": "<a href=\"https://www.google.com/policies/privacy/\" target=\"_blank\">Google Play Services</a>",
-      "firebase": "<a href=\"https://firebase.google.com/support/privacy/\" target=\"_blank\">Firebase (including but not limited to Crashlytics, Cloud Firestore, ...)</a>",
-      "revenueCat": "<a href=\"https://www.revenuecat.com/privacy\" target=\"_blank\">RevenueCat</a>"
+      "googlePlayServices": "[Google Play Services](https://www.google.com/policies/privacy/)",
+      "firebase": "[Firebase (including but not limited to Crashlytics, Cloud Firestore, ...)](https://firebase.google.com/support/privacy/)",
+      "revenueCat": "[RevenueCat](https://www.revenuecat.com/privacy)"
     },
     "responsibility": "Please be aware that the Service Provider does not assume responsibility for certain aspects.\nSome functions of the Application require an active internet connection, which can be Wi-Fi or provided\nby your mobile network provider. The Service Provider cannot be held responsible if the Application does\nnot function at full capacity due to lack of access to Wi-Fi or if you have exhausted your data allowance.",
     "charges": "If you are using the application outside of a Wi-Fi area, please be aware that your mobile network\nprovider's agreement terms still apply. Consequently, you may incur charges from your mobile provider\nfor data usage during the connection to the application, or other third-party charges.\nBy using the application, you accept responsibility for any such charges, including roaming data\ncharges if you use the application outside of your home territory (i.e., region or country) without\ndisabling data roaming.\nIf you are not the bill payer for the device on which you are using the application, they assume\nthat you have obtained permission from the bill payer.",
@@ -205,13 +205,13 @@
     },
     "contact": {
       "title": "Contact Us",
-      "content": "If you have any questions or suggestions about the Terms and Conditions,\nplease do not hesitate to <nuxt-link to=\"/contact/\">contact</nuxt-link> the Service Provider."
+      "content": "If you have any questions or suggestions about the Terms and Conditions,\nplease do not hesitate to [contact](/contact/) the Service Provider."
     },
-    "credit": "Thanks to <a href=\"https://app-privacy-policy-generator.firebaseapp.com/\"><em>nisrulz</em></a> for these terms of service."
+    "credit": "Thanks to [nisrulz](https://app-privacy-policy-generator.firebaseapp.com/) for these terms of service."
   },
   "contact": {
     "title": "Contact",
-    "description": "If you want to contact me for Open Authenticator development and related subjects\n(eg. you want to report a bug), please open a new issue on <a href=\"https://github.com/Skyost/OpenAuthenticator\">Github</a>.\nIf you want to contact me for anything else or for deleting your account, please use the contact form below.",
+    "description": "If you want to contact me for Open Authenticator development and related subjects\n(eg. you want to report a bug), please open a new issue on [Github](https://github.com/Skyost/OpenAuthenticator).\nIf you want to contact me for anything else or for deleting your account, please use the contact form below.",
     "form": {
       "name": {
         "label": "Your name",
@@ -244,8 +244,8 @@
     "title": "Help translating Open Authenticator",
     "notYourLanguage": "Not your language ?",
     "description": "Speaking another language ? Want to contribute ton an open-source project ? Say no more, Open Authenticator is looking for translators !",
-    "pickLanguage": "First, choose your locale. If it is not available below, feel free to send us a <a href=\"/contact/\">little message</a>.",
-    "languageDescription": "<p>The translation is organized into multiple files. To translate one, you must first expand it.\nOnce done, you will see the original texts displayed in the left column, and the existing translation on the right.\nWhen you have finished translating a file, you can send it by clicking on the green submit button.</p>\n<p>It is possible to save your progress at any time using the <q>Save</q> button.\nThe <q>Load</q> button will then allow you to resume the translation.</p>",
+    "pickLanguage": "First, choose your locale. If it is not available below, feel free to send us a [little message](/contact/).",
+    "languageDescription": "The translation is organized into multiple files. To translate one, you must first expand it.\nOnce done, you will see the original texts displayed in the left column, and the existing translation on the right.\nWhen you have finished translating a file, you can send it by clicking on the green submit button.\n\nIt is possible to save your progress at any time using the \"Save\" button.\nThe \"Load\" button will then allow you to resume the translation.",
     "accordion": {
       "load": "Load",
       "save": "Save",
@@ -268,22 +268,22 @@
       "openGithub": {
         "title": "Open Github",
         "click": "Click on the following link to edit the current file on Github.",
-        "note": "<strong>Note.</strong> You need a Github account.\nPlease <a class=\"link-danger\" href=\"https://github.com/\">create one</a> first before going further."
+        "note": "**Note.** You need a Github account.\nPlease [create one](https://github.com/) first before going further."
       },
       "fork": {
         "title": "Fork the repository",
-        "fork": "Click on <button class=\"btn btn-success text-button\">Fork this repository</button>.",
-        "pasteTheCode": "Once done, paste the code copied during <em>Step <strong>#1</strong></em>.",
-        "commit": "Then, click on <button class=\"btn btn-success text-button\">Commit changes...</button> and on <button class=\"btn btn-success text-button\">Propose changes</button>."
+        "fork": "Click on **Fork this repository**.",
+        "pasteTheCode": "Once done, paste the code copied during *Step **#1***.",
+        "commit": "Then, click on **Commit changes...** and on **Propose changes**."
       },
       "pullRequest": {
         "title": "Create a pull request",
-        "beforeCreate": "Click on <button class=\"btn btn-success text-button\">Create pull request</button>, and fill the form.",
+        "beforeCreate": "Click on **Create pull request**, and fill the form.",
         "form": {
-          "title": "You can put something like <q><span class=\"font-monospace\">feat: Translated `{file}` into `{language}`.</span></q>.",
+          "title": "You can put something like \"`feat: Translated {file} into {language}.`\".",
           "message": "Leave a message detailing what you have translated, and what still need to be translated."
         },
-        "create": "Then, click on <button class=\"btn btn-success text-button\">Create pull request</button>."
+        "create": "Then, click on **Create pull request**."
       },
       "done": {
         "title": "Done !",

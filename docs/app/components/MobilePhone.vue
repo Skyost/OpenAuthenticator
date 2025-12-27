@@ -84,7 +84,7 @@ $md-width: 200px;
   width: $speaker-original-width;
   height: $speaker-original-height;
   position: absolute;
-  top: calc(50% + $speaker-original-height);
+  top: calc(50% + #{$speaker-original-height});
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: black;

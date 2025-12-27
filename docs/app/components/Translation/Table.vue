@@ -46,9 +46,10 @@ export const fromJson = (json: string, getOriginalValue: (key: string) => string
 export const generateJson = (data: TranslationData): string => {
   const dottedObject: Record<string, string> = {}
   for (const key in data) {
-    const entry = data[key]
-    if (entry.translatedValue.trim().length > 0) {
-      dottedObject[entry.key] = entry.translatedValue
+    const entry = data[key]!
+    const translatedValue = entry.translatedValue
+    if (translatedValue.trim().length > 0) {
+      dottedObject[entry.key] = translatedValue
     }
   }
   return JSON.stringify(dot.object(dottedObject), null, 2)
@@ -111,11 +112,18 @@ const onUpdate = (key: string, value: string): void => {
           <template #description>
             <span class="font-monospace"><icon name="bi:chevron-right" />{{ key }}</span>
           </template>
-          <b-form-textarea
-            :model-value="model.data[key].originalValue"
-            disabled
-            no-resize
-          />
+          <client-only>
+            <b-form-textarea
+              :model-value="model.data[key]!.originalValue"
+              disabled
+              no-resize
+            />
+            <template #fallback>
+              <pre>
+                {{ model.data[key]!.originalValue }}
+              </pre>
+            </template>
+          </client-only>
         </b-form-group>
       </b-col>
       <b-col
@@ -123,11 +131,18 @@ const onUpdate = (key: string, value: string): void => {
         md="6"
         class="pb-4"
       >
-        <b-form-textarea
-          :model-value="model.data[key].translatedValue"
-          :placeholder="model.data[key].originalValue"
-          @update:model-value="value => onUpdate(key, value?.toString() ?? '')"
-        />
+        <client-only>
+          <b-form-textarea
+            :model-value="model.data[key]!.translatedValue"
+            :placeholder="model.data[key]!.originalValue"
+            @update:model-value="value => onUpdate(key, value?.toString() ?? '')"
+          />
+          <template #fallback>
+            <pre>
+                {{ model.data[key]!.translatedValue }}
+              </pre>
+          </template>
+        </client-only>
       </b-col>
     </template>
   </b-row>

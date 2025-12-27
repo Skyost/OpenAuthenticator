@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n'
 
 const { t, te, locale } = useI18n()
+const markdownT = useMarkdownT()
 watch(
   locale,
   () => usePageHead({ title: t('faq.title') }),
@@ -13,7 +14,7 @@ const questions = computed(() => {
   for (let i = 1; te(`faq.questions.${i}.question`); i++) {
     result.push({
       question: t(`faq.questions.${i}.question`),
-      answer: t(`faq.questions.${i}.answer`),
+      answer: markdownT(`faq.questions.${i}.answer`),
     })
   }
   return result

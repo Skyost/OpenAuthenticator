@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { BaseColorVariant } from 'bootstrap-vue-next'
-import type { LanguageWithData } from '~/modules/get-info-from-parent'
+import type { LanguageWithData } from '~~/modules/get-info-from-parent'
 
 const props = defineProps<{
   language: LanguageWithData
@@ -11,6 +11,8 @@ const progress = ref<number>(0)
 onMounted(() => {
   setTimeout(() => progress.value = props.language.progress, 500)
 })
+
+const flagCode = computed<string>(() => props.language.code === 'en' ? 'gb' : props.language.code)
 
 const variant = computed<keyof BaseColorVariant>(() => {
   if (props.language.progress >= 0.75) {
@@ -34,7 +36,7 @@ const animate = ref<boolean>(false)
     <b-card class="language-card">
       <img
         class="flag"
-        :src="`https://flagcdn.com/${language.code}.svg`"
+        :src="`https://flagcdn.com/${flagCode}.svg`"
         :alt="language.name"
       >
       <b-card-text>

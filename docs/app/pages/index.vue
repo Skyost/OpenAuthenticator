@@ -4,13 +4,14 @@ import QrcodeVue from 'qrcode.vue'
 import AutoDetectButton from '~/components/Store/AutoDetectButton.vue'
 import { siteMeta } from '~/site'
 
-const { t, te } = useI18n()
+const { te, t } = useI18n()
+const markdownT = useMarkdownT()
 usePageHead()
 
 const features = computed(() => {
   const result = []
   for (let i = 1; te(`index.main.features.${i}`); i++) {
-    result.push(t(`index.main.features.${i}`))
+    result.push(markdownT(`index.main.features.${i}`))
   }
   return result
 })
@@ -30,7 +31,7 @@ const features = computed(() => {
             <div class="text-center text-md-start mb-5 mb-md-0">
               <h1>
                 <span class="d-block">{{ t('index.main.title.1') }}</span>
-                <span v-html="t('index.main.title.2')" />
+                <span v-html="markdownT('index.main.title.2')" />
               </h1>
               <ul class="list-unstyled text-start mt-3 mb-5">
                 <li
@@ -104,11 +105,11 @@ const features = computed(() => {
             <div class="text-center text-lg-start">
               <h2
                 id="download"
-                v-html="t('index.download.title')"
+                v-html="markdownT('index.download.title')"
               />
               <p
                 class="mt-3 mb-3"
-                v-html="t('index.download.description')"
+                v-html="markdownT('index.download.description')"
               />
             </div>
             <auto-detect-button
@@ -155,10 +156,10 @@ const features = computed(() => {
         </b-col>
         <b-col class="d-flex align-items-center">
           <div class="text-center text-md-start">
-            <h2 v-html="t('index.openSource.title')" />
+            <h2 v-html="markdownT('index.openSource.title')" />
             <div class="mt-3 mb-3">
-              <p v-html="t('index.openSource.description.1')" />
-              <p v-html="t('index.openSource.description.2')" />
+              <p v-html="markdownT('index.openSource.description.1')" />
+              <p v-html="markdownT('index.openSource.description.2')" />
             </div>
             <b-row>
               <b-col

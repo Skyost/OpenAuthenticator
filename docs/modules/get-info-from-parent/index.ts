@@ -1,8 +1,9 @@
 import * as fs from 'fs'
 // @ts-expect-error `dot-object` is not a TS library.
 import * as dot from 'dot-object'
-import { createResolver, defineNuxtModule, extendRouteRules, useLogger } from '@nuxt/kit'
+import { addServerHandler, createResolver, defineNuxtModule, extendRouteRules, useLogger } from '@nuxt/kit'
 import * as yaml from 'yaml'
+import { storageKey } from './common'
 
 /**
  * Represents a language.
@@ -136,7 +137,7 @@ export default defineNuxtModule<ModuleOptions>({
         }
       }
       languagesFileContent[subFileName] = {
-        ...languages[subFileName],
+        ...languages[subFileName]!,
         progress: translatedKeys / totalKeys,
         files: files,
       }
@@ -168,11 +169,23 @@ export default defineNuxtModule<ModuleOptions>({
       dir: destinationDir,
       fallthrough: true,
     })
-    for (const language in languagesFileContent) {
-      extendRouteRules(`/translate/${language}/`, {
-        prerender: true,
-      })
-    }
+    nuxt.options.nitro.serverAssets = nuxt.options.nitro.serverAssets || []
+    nuxt.options.nitro.serverAssets.push({
+      baseName: storageKey,
+      dir: destinationDir,
+    })
+    addServerHandler({
+      route: `/${options.destinationDirectory}/`,
+      handler: resolver.resolve(`./handler.ts`),
+    })
+    addServerHandler({
+      route: `/${options.destinationDirectory}/:file`,
+      handler: resolver.resolve(`./handler.ts`),
+    })
+    addServerHandler({
+      route: `/${options.destinationDirectory}/:directory/:file`,
+      handler: resolver.resolve(`./handler.ts`),
+    })
     logger.success(`Done.`)
   },
 })
