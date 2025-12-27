@@ -5,6 +5,6 @@ export default withNuxt({
     '@typescript-eslint/no-explicit-any': 'off',
     'vue/multi-word-component-names': 'off',
     'import/first': 'off',
-    'vue/no-v-html': 'off'
-  }
+    'vue/no-v-html': 'off',
+  },
 })

@@ -89,7 +89,7 @@
       },
       "6": {
         "question": "I cannot enable local authentication on Linux. What should I do ?",
-        "answer": "<p>If you're in this case, it probably means that Open Authenticator has been installed via Flatpak.</p><p>Local authentication on Linux relies on a Polkit policy file that must be present on your host under <code>/usr/share/polkit-1/actions</code>.</p><p>If it's not present, you can install it using <code>sudo wget -O /usr/share/polkit-1/actions/app.openauthenticator.policy https://openauthenticator.app/polkit/app.openauthenticator.policy && sudo chmod 644 /usr/share/polkit-1/actions/app.openauthenticator.policy</code>. Then restart Open Authenticator (or your session).</p>"
+        "answer": "<p>If you're in this case, it probably means that Open Authenticator has been installed via Flatpak.</p><p>Local authentication on Linux relies on a Polkit policy file that must be present on your host under <code>/usr/share/polkit-1/actions</code>.</p><p>If it's not present, you can install it by copying <a href=\"https://flatpak.openauthenticator.app/app.openauthenticator.policy\">this file</a> into <code>/usr/share/polkit-1/actions</code>. Then restart Open Authenticator (or your session).</p>"
       }
     },
     "questionLeft": {
@@ -243,8 +243,8 @@
     "pageTitle": "Localization",
     "title": "Help translating Open Authenticator",
     "notYourLanguage": "Not your language ?",
-    "description": "Speaking another language ? Want to contribute ton an open-source project ? Say no more, Open Authenticator\nis looking for translators !",
-    "pickLanguage": "First, choose your language.",
+    "description": "Speaking another language ? Want to contribute ton an open-source project ? Say no more, Open Authenticator is looking for translators !",
+    "pickLanguage": "First, choose your locale. If it is not available below, feel free to send us a <a href=\"/contact/\">little message</a>.",
     "languageDescription": "<p>The translation is organized into multiple files. To translate one, you must first expand it.\nOnce done, you will see the original texts displayed in the left column, and the existing translation on the right.\nWhen you have finished translating a file, you can send it by clicking on the green submit button.</p>\n<p>It is possible to save your progress at any time using the <q>Save</q> button.\nThe <q>Load</q> button will then allow you to resume the translation.</p>",
     "accordion": {
       "load": "Load",

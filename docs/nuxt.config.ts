@@ -4,7 +4,7 @@ import StylelintPlugin from 'vite-plugin-stylelint'
 import eslintPlugin from '@nabla/vite-plugin-eslint'
 import VueI18nVitePlugin from '@intlify/unplugin-vue-i18n/vite'
 
-import { siteMeta } from './site'
+import { siteMeta } from './app/site'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -75,7 +75,7 @@ export default defineNuxtConfig({
       preprocessorOptions: {
         scss: {
           api: 'modern-compiler',
-          silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import'],
+          silenceDeprecations: ['if-function', 'color-functions', 'global-builtin', 'import'],
         },
       },
     },

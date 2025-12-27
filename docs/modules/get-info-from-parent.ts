@@ -25,7 +25,6 @@ export interface LanguageWithData extends Language {
 export interface ModuleOptions {
   pubspecPath: string
   libI18nPath: string
-  docsI18nPath: string
   destinationDirectory: string
   primaryLanguage: string
   languages: Language[]
@@ -48,13 +47,12 @@ export default defineNuxtModule<ModuleOptions>({
   meta: {
     name,
     version: '0.0.1',
-    compatibility: { nuxt: '^3.0.0' },
+    compatibility: { nuxt: '^4.0.0' },
     configKey: 'getInfoFromParent',
   },
   defaults: {
     pubspecPath: '../pubspec.yaml',
     libI18nPath: '../lib/i18n/',
-    docsI18nPath: './i18n/locales/',
     destinationDirectory: '_app',
     primaryLanguage: 'en',
     languages: [
@@ -82,20 +80,16 @@ export default defineNuxtModule<ModuleOptions>({
         code: 'it',
         name: 'Italiano',
       },
-      {
-        code: 'jp',
-        name: '日本語',
-      },
     ],
   },
   setup: async (options, nuxt) => {
     const resolver = createResolver(import.meta.url)
-    const srcDir = nuxt.options.srcDir
-    const moduleDir = resolver.resolve(srcDir, 'node_modules', `.${name}`)
+    const rootDir = nuxt.options.rootDir
+    const moduleDir = resolver.resolve(rootDir, 'node_modules', `.${name}`)
     const destinationDir = resolver.resolve(moduleDir, options.destinationDirectory)
     fs.mkdirSync(destinationDir, { recursive: true })
     logger.info('Extracting application version...')
-    const pubspec = yaml.parse(fs.readFileSync(resolver.resolve(srcDir, options.pubspecPath), 'utf8'))
+    const pubspec = yaml.parse(fs.readFileSync(resolver.resolve(rootDir, options.pubspecPath), 'utf8'))
     let version = pubspec['version']
     if (version.includes('+')) {
       version = version.substring(0, version.indexOf('+'))
@@ -109,7 +103,7 @@ export default defineNuxtModule<ModuleOptions>({
       languages[language.code] = language
     }
     fs.writeFileSync(languagesFile, JSON.stringify({}), 'utf8')
-    const libI18nDir = resolver.resolve(srcDir, options.libI18nPath)
+    const libI18nDir = resolver.resolve(rootDir, options.libI18nPath)
     const primaryLanguageDir = resolver.resolve(libI18nDir, options.primaryLanguage)
     const primaryLanguageFiles: Record<string, object> = {}
     let totalKeys = 0
@@ -161,7 +155,7 @@ export default defineNuxtModule<ModuleOptions>({
     fs.writeFileSync(languagesFile, JSON.stringify(languagesFileContent), 'utf8')
     logger.success(`Done.`)
     // logger.info('Extracting docs languages...')
-    // const languages = await import(resolver.resolve(srcDir, options.docsI18nPath))
+    // const languages = await import(resolver.resolve(rootDir, options.docsI18nPath))
     // for (const language in languages) {
     //   fs.writeFileSync(resolver.resolve(destinationDir, language, 'docs.json'), JSON.stringify(languages[language]), 'utf8')
     //   logger.info(`Found ${language}.`)

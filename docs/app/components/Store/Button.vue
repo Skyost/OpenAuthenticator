@@ -1,43 +1,36 @@
 <script setup lang="ts">
-import { storesLink, type StoreInfo, type OS } from '~/site'
+import { type StoreInfo, type OS, stores } from '~/site'
 
 const props = defineProps<{
   os: OS
+  store: StoreInfo
   availableSoonText?: (os: string) => string
   availableOnText?: (os: string) => string
 }>()
 
 interface ExtendedStoreInfo extends StoreInfo {
-  image: string
   target: string
 }
 
-const store = computed<ExtendedStoreInfo>(() => {
+const extendedStoreInfo = computed<ExtendedStoreInfo>(() => {
+  let target = 'Unknown'
   switch (props.os) {
     case 'android':
-      return {
-        ...storesLink.android,
-        image: '/images/stores/google-play.svg',
-        target: 'Android',
-      }
+      target = 'Android'
+      break
     case 'darwin':
-      return {
-        ...storesLink.darwin,
-        image: '/images/stores/app-store.svg',
-        target: 'iOS / macOS',
-      }
+      target = 'iOS / macOS'
+      break
     case 'windows':
-      return {
-        ...storesLink.windows,
-        image: '/images/stores/microsoft-store.svg',
-        target: 'Windows',
-      }
+      target = 'Windows'
+      break
     case 'linux':
-      return {
-        ...storesLink.linux,
-        image: '/images/stores/snapcraft.svg',
-        target: 'Linux',
-      }
+      target = 'Linux'
+      break
+  }
+  return {
+    ...props.store,
+    target,
   }
 })
 
@@ -45,7 +38,12 @@ const tip = computed(() => {
   if (!props.availableOnText || !props.availableSoonText) {
     return null
   }
-  return (store.value.url ? props.availableOnText : props.availableSoonText)(store.value.target)
+  let tip = (extendedStoreInfo.value.url ? props.availableOnText : props.availableSoonText)(extendedStoreInfo.value.target)
+  const info = stores[props.os]
+  if (info && info.length > 1) {
+    tip += ` (${props.store.name})`
+  }
+  return tip
 })
 </script>
 
@@ -55,18 +53,18 @@ const tip = computed(() => {
     class="store-button-card"
   >
     <b-button
-      :href="store.url ?? '#download'"
+      :href="extendedStoreInfo.url ?? '#download'"
       :size="'lg'"
       class="store-button"
-      :class="{ disabled: store.url ? null : true }"
+      :class="{ disabled: extendedStoreInfo.url ? null : true }"
       variant="light"
     >
       <img
-        :src="store.image"
-        :alt="store.name"
+        :src="`/images/stores/${extendedStoreInfo.id}.svg`"
+        :alt="extendedStoreInfo.name"
         class="me-1"
       >
-      <span>{{ store.name }}</span>
+      <span>{{ extendedStoreInfo.name }}</span>
     </b-button>
   </div>
 </template>

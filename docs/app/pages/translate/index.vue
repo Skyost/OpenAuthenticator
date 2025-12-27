@@ -15,7 +15,10 @@ watch(
   <b-container class="pt-5 pb-5">
     <div class="pb-3">
       <h1>{{ t('translate.title') }}</h1>
-      <p>{{ t('translate.description') }} {{ t('translate.pickLanguage') }}</p>
+      <p>
+        {{ t('translate.description') }}
+        <span v-html="t('translate.pickLanguage')" />
+      </p>
     </div>
     <client-only>
       <language-picker>

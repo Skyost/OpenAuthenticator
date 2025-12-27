@@ -89,7 +89,7 @@
       },
       "6": {
         "question": "Je ne peux pas activer l’authentification locale sur Linux. Que faire ?",
-        "answer": "<p>Si vous êtes dans ce cas, cela signifie probablement qu’Open Authenticator a été installé via Flatpak.</p><p>L’authentification locale sous Linux repose sur un fichier de politique Polkit qui doit être présent sur votre système hôte dans <code>/usr/share/polkit-1/actions</code>.</p><p>S’il n’est pas présent, vous pouvez l’installer avec la commande suivante : <code>sudo wget -O /usr/share/polkit-1/actions/app.openauthenticator.policy https://openauthenticator.app/polkit/app.openauthenticator.policy && sudo chmod 644 /usr/share/polkit-1/actions/app.openauthenticator.policy</code>. Redémarrez ensuite Open Authenticator (ou votre session).</p>"
+        "answer": "<p>Si vous êtes dans ce cas, cela signifie probablement qu’Open Authenticator a été installé via Flatpak.</p><p>L’authentification locale sous Linux repose sur un fichier de politique Polkit qui doit être présent sur votre système hôte dans <code>/usr/share/polkit-1/actions</code>.</p><p>S’il n’est pas présent, vous pouvez l’installer en copiant <a href=\"https://flatpak.openauthenticator.app/app.openauthenticator.policy\">ce fichier</a> dans <code>/usr/share/polkit-1/actions</code>. Redémarrez ensuite Open Authenticator (ou votre session).</p>"
       }
     },
     "questionLeft": {
@@ -244,7 +244,7 @@
     "title": "Aider à traduire Open Authenticator",
     "notYourLanguage": "Pas votre langue ?",
     "description": "Vous parlez une autre langue ? Vous souhaitez contributer à un projet open-source ? N'en dites pas plus,\nOpen Authenticator cherche des traducteurs !",
-    "pickLanguage": "D'abord, choisissez votre langage.",
+    "pickLanguage": "D'abord, choisissez votre langue. Si jamais elle n'est pas disponible, n'hésitez pas à nous envoyer un <a href=\"/contact/\">petit message</a>.",
     "languageDescription": "<p>La traduction s'organise en plusieurs fichiers. Pour en traduire un, il faut d'abord le dérouler.\nUne fois fait, vous verrez s'afficher les textes originaux dans la colonne de gauche, et la traduction existante dans la colonne\nde droite. Lorsque vous aurez terminé la traduction d'un fichier, vous pouvez l'envoyer en cliquant sur le bouton de soumission vert.</p>\n<p>Il est possible de sauvegarder votre progression à tout moment en utilisant le bouton <q>Sauvegarder</q>.\nLe bouton <q>Charger</q> permettra alors de reprendre la traduction.</p>",
     "accordion": {
       "load": "Charger",

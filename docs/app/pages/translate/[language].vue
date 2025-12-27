@@ -28,7 +28,7 @@ onUnmounted(removeGuard)
   <b-container class="pt-5 pb-5">
     <client-only>
       <translation-accordion
-        :language="$route.params.language.toString()"
+        :language="$route.params.language!.toString()"
         @update="hasChanged = true"
       >
         <template #title="slotProps">

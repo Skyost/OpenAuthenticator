@@ -22,8 +22,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <nuxt-layout>
-    <b-modal-orchestrator />
-    <nuxt-page />
-  </nuxt-layout>
+  <b-app>
+    <nuxt-layout>
+      <nuxt-page />
+    </nuxt-layout>
+  </b-app>
 </template>

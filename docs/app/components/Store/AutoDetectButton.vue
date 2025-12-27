@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { storesLink, type OS } from '~/site'
+import { stores, type OS } from '~/site'
 
 defineProps<{
   moreButton?: string
@@ -26,9 +26,9 @@ const os = computed<OS | null>(() => {
   return null
 })
 
-const oSToShow = computed<OS[]>(() => {
+const availableOs = computed<OS[]>(() => {
   const result: OS[] = []
-  for (const storeOs in storesLink) {
+  for (const storeOs in stores) {
     if (storeOs !== os.value) {
       result.push(storeOs as OS)
     }
@@ -40,13 +40,21 @@ const oSToShow = computed<OS[]>(() => {
 <template>
   <client-only>
     <div v-if="os">
-      <div class="text-center w-100">
-        <store-button
-          class="mb-4"
-          :os="os"
-          :available-on-text="availableOnText"
-          :available-soon-text="availableSoonText"
-        />
+      <div class="store-buttons">
+        <div
+          v-for="store in stores[os]"
+          :key="`button-container-${store}`"
+          class="button-container"
+        >
+          <store-button
+            :key="`button-${store.id}`"
+            class="mb-4"
+            :os="os"
+            :store="store"
+            :available-on-text="availableOnText"
+            :available-soon-text="availableSoonText"
+          />
+        </div>
       </div>
       <b-accordion v-if="moreButton">
         <b-accordion-item
@@ -55,14 +63,17 @@ const oSToShow = computed<OS[]>(() => {
           body-class="bg-black text-white"
           button-class="accordion-black-button bg-black text-white"
         >
-          <div class="accordion-content-buttons">
+          <div class="store-buttons">
             <div
-              v-for="(storeOs, index) in oSToShow"
-              :key="`store-${index}`"
-              class="accordion-content-button"
+              v-for="storeOs in availableOs"
+              :key="`button-container-${storeOs}`"
+              class="button-container"
             >
               <store-button
+                v-for="store in stores[storeOs]"
+                :key="'button-' + store.id"
                 :os="storeOs"
+                :store="store"
                 :available-on-text="availableOnText"
                 :available-soon-text="availableSoonText"
               />
@@ -72,13 +83,19 @@ const oSToShow = computed<OS[]>(() => {
       </b-accordion>
     </div>
     <div v-else>
-      <store-button
-        v-for="(storeOs, index) in oSToShow"
-        :key="`store-${index}`"
-        :os="storeOs"
-        :available-on-text="availableOnText"
-        :available-soon-text="availableSoonText"
-      />
+      <div
+        v-for="storeOs in availableOs"
+        :key="`button-container-${storeOs}`"
+      >
+        <store-button
+          v-for="store in stores[storeOs]"
+          :key="'button-' + store.id"
+          :os="storeOs"
+          :store="store"
+          :available-on-text="availableOnText"
+          :available-soon-text="availableSoonText"
+        />
+      </div>
     </div>
     <template #fallback>
       <spinner />
@@ -101,13 +118,14 @@ const oSToShow = computed<OS[]>(() => {
 <style lang="scss" scoped>
 @import 'assets/bootstrap-mixins';
 
-.accordion-content-buttons {
+.store-buttons {
   display: flex;
   justify-content: space-evenly;
   gap: 20px;
 
-  .accordion-content-button {
+  .button-container {
     flex: 1;
+    text-align: center;
   }
 
   @include media-breakpoint-down(lg) {
