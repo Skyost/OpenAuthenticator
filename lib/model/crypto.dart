@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hashlib/hashlib.dart';
 import 'package:open_authenticator/app.dart';
-import 'package:open_authenticator/model/app_unlock/method.dart';
+import 'package:open_authenticator/model/app_unlock/methods/method.dart';
 import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/utils/utils.dart';
@@ -67,8 +67,8 @@ class StoredCryptoStore extends AsyncNotifier<CryptoStore?> {
     Future<void> saveCryptoStoreOnLocalStorage() async => await SimpleSecureStorage.write(_kPasswordDerivedKeyKey, base64.encode(await newCryptoStore!.key.exportRawKey()));
     await salt.saveToLocalStorage();
     if (checkSettings) {
-      AppUnlockMethod unlockMethod = await ref.read(appUnlockMethodSettingsEntryProvider.future);
-      if (unlockMethod is MasterPasswordAppUnlockMethod) {
+      String unlockMethod = await ref.read(appUnlockMethodSettingsEntryProvider.future);
+      if (unlockMethod == MasterPasswordAppUnlockMethod.kMethodId) {
         await ref.read(passwordSignatureVerificationMethodProvider.notifier).enable(newPassword);
       } else {
         await saveCryptoStoreOnLocalStorage();

@@ -21,7 +21,7 @@
     "title": "Konto löschen",
     "message": "Möchten Sie Ihr Konto wirklich löschen? Bitte beachten Sie, dass wir eine erneute Authentifizierung verlangen, da es sich um eine sensible Aktion handelt."
   },
-  "firebaseAuthenticationProvider": {
+  "firebaseAuthenticationProvider(map)": {
     "email": {
       "name": "E-Mail",
       "description": "Verwenden Sie Ihre E-Mail zur Anmeldung. Es ist kein Passwort erforderlich, ein Bestätigungslink wird Ihnen per E-Mail zugesandt."

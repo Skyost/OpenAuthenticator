@@ -2,9 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
-import 'package:open_authenticator/model/authentication/providers/provider.dart';
-import 'package:open_authenticator/model/authentication/state.dart';
 import 'package:open_authenticator/pages/settings/entries/about.dart';
 import 'package:open_authenticator/pages/settings/entries/backup_now.dart';
 import 'package:open_authenticator/pages/settings/entries/cache_totp_pictures.dart';
@@ -19,10 +16,10 @@ import 'package:open_authenticator/pages/settings/entries/display_search_button.
 import 'package:open_authenticator/pages/settings/entries/enable_local_auth.dart';
 import 'package:open_authenticator/pages/settings/entries/github.dart';
 import 'package:open_authenticator/pages/settings/entries/link.dart';
+import 'package:open_authenticator/pages/settings/entries/link_input.dart';
 import 'package:open_authenticator/pages/settings/entries/locale.dart';
 import 'package:open_authenticator/pages/settings/entries/log_in.dart';
 import 'package:open_authenticator/pages/settings/entries/manage_backups.dart';
-import 'package:open_authenticator/pages/settings/entries/refresh_id_token.dart';
 import 'package:open_authenticator/pages/settings/entries/save_derived_key.dart';
 import 'package:open_authenticator/pages/settings/entries/show_intro_page.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
@@ -66,13 +63,11 @@ class SettingsPage extends ConsumerWidget {
           EnableLocalAuthSettingsEntryWidget(),
           SaveDerivedKeySettingsEntryWidget(),
           const ChangeMasterPasswordSettingsEntryWidget(),
-          if (ref.watch(userAuthenticationProviders).availableProviders.isNotEmpty) ...[
-            const _SynchronizationSectionTitle(),
-            const ConfirmEmailSettingsEntryWidget(),
-            const AccountLinkSettingsEntryWidget(),
-            SynchronizeSettingsEntryWidget(),
-            const AccountLogInSettingsEntryWidget(),
-          ],
+          _SettingsPageSectionTitle(title: translations.settings.synchronization.title),
+          const ConfirmEmailSettingsEntryWidget(),
+          const AccountLinkSettingsEntryWidget(),
+          SynchronizeSettingsEntryWidget(),
+          const AccountLogInSettingsEntryWidget(),
           _SettingsPageSectionTitle(title: translations.settings.backups.title),
           const BackupNowSettingsEntryWidget(),
           const ManageBackupSettingsEntryWidget(),
@@ -88,7 +83,7 @@ class SettingsPage extends ConsumerWidget {
             const ShowIntroPageSettingsEntryWidget(),
             const ContributorPlanStateEntryWidget(),
             const LocaleEntryWidget(),
-            const RefreshUserSettingsEntryWidget(),
+            const LinkInputSettingsEntryWidget(),
           ],
         ],
       ),
@@ -113,32 +108,4 @@ class _SettingsPageSectionTitle extends StatelessWidget {
       style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
     ),
   );
-}
-
-/// The "Synchronization" page section title.
-class _SynchronizationSectionTitle extends ConsumerWidget with RequiresAuthenticationProvider {
-  /// Creates a new synchronization section title.
-  const _SynchronizationSectionTitle();
-
-  @override
-  Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) => _SettingsPageSectionTitle(title: translations.settings.synchronization.title);
-}
-
-/// A widget that needs some authentication providers.
-mixin RequiresAuthenticationProvider on ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    bool hasProvider = ref.watch(userAuthenticationProviders.select((providers) => providers.availableProviders.isNotEmpty));
-    if (!hasProvider) {
-      return const SizedBox.shrink();
-    }
-    FirebaseAuthenticationState authenticationState = ref.watch(firebaseAuthenticationProvider);
-    return isAuthenticationStateValid(authenticationState) ? buildWidgetWithAuthenticationProviders(context, ref) : const SizedBox.shrink();
-  }
-
-  /// Whether this settings entry requires a specific state to be displayed.
-  bool isAuthenticationStateValid(FirebaseAuthenticationState authenticationState) => true;
-
-  /// Builds the widget when authentication providers are available.
-  Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref);
 }

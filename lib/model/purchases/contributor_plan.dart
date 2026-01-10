@@ -14,7 +14,7 @@ final contributorPlanStateProvider = AsyncNotifierProvider<ContributorPlan, Cont
 class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
   @override
   FutureOr<ContributorPlanState> build() async {
-    RevenueCatClient? client = await ref.watch(revenueCatClientProvider);
+    RevenueCatClient? client = await ref.watch(revenueCatClientProvider.future);
     if (client == null) {
       return ContributorPlanState.impossible;
     }
@@ -29,13 +29,10 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
     }
   }
 
-  /// Returns the purchase timeout.
-  Duration? getPurchaseTimeout() => ref.read(revenueCatClientProvider)?.purchaseTimeout;
-
   /// Returns the prices of the contributor plan.
   Future<Result<Prices>> getPrices() async {
     try {
-      RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
+      RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
       if (revenueCatClient == null) {
         throw _NoRevenueCatClientException();
       }
@@ -73,7 +70,7 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
   /// Tries to restore the subscription.
   Future<Result> restore() async {
     try {
-      RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
+      RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
       if (revenueCatClient == null) {
         throw _NoRevenueCatClientException();
       }
@@ -94,7 +91,7 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
   /// Tries to refresh the subscription state.
   Future<Result<ContributorPlanState>> refresh() async {
     try {
-      RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
+      RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
       if (revenueCatClient == null) {
         throw _NoRevenueCatClientException();
       }
@@ -110,12 +107,16 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
   }
 
   /// Purchases the given item.
-  Future<Result> purchaseManually(PackageType packageType) async {
+  Future<Result> purchase(PackageType packageType) async {
     try {
-      RevenueCatClient? revenueCatClient = ref.read(revenueCatClientProvider);
-      List<String>? entitlements = await revenueCatClient?.purchaseManually(Purchasable.contributorPlan, packageType);
-      if (entitlements != null && entitlements.contains(AppContributorPlan.entitlementId)) {
-        state = const AsyncData(ContributorPlanState.active);
+      RevenueCatClient? revenueCatClient = await ref.read(revenueCatClientProvider.future);
+      if (revenueCatClient == null) {
+        throw _NoRevenueCatClientException();
+      }
+      await revenueCatClient.purchase(Purchasable.contributorPlan, packageType);
+      ContributorPlanState contributorPlanState = await revenueCatClient.hasEntitlement(AppContributorPlan.entitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive;
+      if (contributorPlanState == ContributorPlanState.active) {
+        state = AsyncData(contributorPlanState);
         return const ResultSuccess();
       }
       return const ResultCancelled();

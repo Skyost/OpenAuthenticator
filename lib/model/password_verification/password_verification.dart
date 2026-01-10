@@ -15,10 +15,10 @@ class PasswordVerification extends AsyncNotifier<List<PasswordVerificationMethod
   FutureOr<List<PasswordVerificationMethod>> build() async {
     CryptoStoreVerificationMethod cryptoStoreVerificationMethod = await ref.watch(cryptoStoreVerificationMethodProvider.future);
     PasswordSignatureVerificationMethod passwordSignatureVerificationMethod = await ref.watch(passwordSignatureVerificationMethodProvider.future);
-    return [
+    return List.unmodifiable([
       if (cryptoStoreVerificationMethod.enabled) cryptoStoreVerificationMethod,
       if (passwordSignatureVerificationMethod.enabled) passwordSignatureVerificationMethod,
-    ];
+    ]);
   }
 }
 

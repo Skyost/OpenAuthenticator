@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
@@ -44,10 +43,12 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
                   actions: [
                     TextButton(
                       onPressed: () async {
-                        RevenueCatClient? client = ref.read(revenueCatClientProvider);
                         String? url = await showWaitingOverlay(
                           context,
-                          future: client?.getManagementUrl(AppContributorPlan.offeringId),
+                          future: (() async {
+                            RevenueCatClient? client = await ref.read(revenueCatClientProvider.future);
+                            return client?.getManagementUrl();
+                          })(),
                         );
                         if (url != null) {
                           launchUrlString(url);

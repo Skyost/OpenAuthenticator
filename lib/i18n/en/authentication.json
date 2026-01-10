@@ -21,7 +21,7 @@
     "title": "Delete account",
     "message": "Do you really want to delete your account ? Note that, because it is a sensitive action, we require you to reauthenticate before proceeding."
   },
-  "firebaseAuthenticationProvider": {
+  "firebaseAuthenticationProvider(map)": {
     "email": {
       "name": "Email",
       "description": "Use your email to login. No password required, a confirmation link will be sent."

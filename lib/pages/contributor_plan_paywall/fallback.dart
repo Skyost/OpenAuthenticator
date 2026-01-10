@@ -113,8 +113,8 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
           children: [
             TextButton(
               onPressed: () async {
-                if (await canLaunchUrlString(AppContributorPlan.restPrivacyPolicyLink)) {
-                  await launchUrlString(AppContributorPlan.restPrivacyPolicyLink);
+                if (await canLaunchUrlString(AppContributorPlan.privacyPolicyLink)) {
+                  await launchUrlString(AppContributorPlan.privacyPolicyLink);
                 }
               },
               style: ButtonStyle(
@@ -124,8 +124,8 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () async {
-                if (await canLaunchUrlString(AppContributorPlan.restTermsOfServiceLink)) {
-                  await launchUrlString(AppContributorPlan.restTermsOfServiceLink);
+                if (await canLaunchUrlString(AppContributorPlan.termsOfServiceLink)) {
+                  await launchUrlString(AppContributorPlan.termsOfServiceLink);
                 }
               },
               style: ButtonStyle(
@@ -151,9 +151,8 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
     ContributorPlan contributorPlan = ref.read(contributorPlanStateProvider.notifier);
     Result result = await showWaitingOverlay(
       context,
-      future: contributorPlan.purchaseManually(packageType),
+      future: contributorPlan.purchase(packageType),
       message: translations.contributorPlan.subscribe.waitingDialogMessage,
-      timeout: contributorPlan.getPurchaseTimeout(),
       timeoutMessage: translations.error.timeout.contributorPlan,
     );
     if (context.mounted) {

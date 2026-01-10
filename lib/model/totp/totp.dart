@@ -33,6 +33,9 @@ class Totp extends Equatable implements Comparable<Totp> {
   /// The encryption salt key.
   static const String kEncryptionSaltKey = 'encryptionSalt';
 
+  /// The updated timestamp key.
+  static const String kUpdatedAtKey = 'updatedAt';
+
   /// The default algorithm to use.
   static const Algorithm kDefaultAlgorithm = Algorithm.sha1;
 
@@ -57,6 +60,9 @@ class Totp extends Equatable implements Comparable<Totp> {
   /// The validity period.
   final Duration? validity;
 
+  /// The last update date.
+  final DateTime updatedAt;
+
   /// Creates a new TOTP instance.
   const Totp({
     required this.uuid,
@@ -64,6 +70,7 @@ class Totp extends Equatable implements Comparable<Totp> {
     this.algorithm,
     this.digits,
     this.validity,
+    required this.updatedAt,
   });
 
   @override
@@ -73,6 +80,7 @@ class Totp extends Equatable implements Comparable<Totp> {
     algorithm,
     digits,
     validity,
+    updatedAt,
   ];
 
   /// Tries to decrypt the current TOTP [secret].
@@ -114,6 +122,7 @@ class Totp extends Equatable implements Comparable<Totp> {
             algorithm: result.algorithm,
             digits: result.digits,
             validity: result.validity,
+            updatedAt: result.updatedAt,
           )
         : null;
   }

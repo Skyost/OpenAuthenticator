@@ -2,10 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
+import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
-import 'package:open_authenticator/model/storage/storage.dart';
-import 'package:open_authenticator/model/storage/type.dart';
+import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
@@ -27,10 +26,9 @@ class StorageMigrationUtils {
     bool logout = false,
     String currentStorageMasterPassword = '',
     StorageMigrationDeletedTotpPolicy storageMigrationDeletedTotpPolicy = StorageMigrationDeletedTotpPolicy.ask,
-    bool ignoreCurrentStorage = false,
   }) async {
     if (showConfirmation) {
-      _ConfirmationResult? result = await _ConfirmationDialog.ask(context, newType == StorageType.online);
+      _ConfirmationResult? result = await _ConfirmationDialog.ask(context, newType == StorageType.shared);
       if (result == null || !result.confirm || !context.mounted) {
         return false;
       }
@@ -53,13 +51,12 @@ class StorageMigrationUtils {
     Result result = await showWaitingOverlay(
       context,
       future: ref
-          .read(storageProvider.notifier)
-          .changeStorageType(
-            currentStorageMasterPassword,
+          .read(storageTypeSettingsEntryProvider.notifier)
+          .changeValue(
             newType,
+            masterPassword: currentStorageMasterPassword,
             backupPassword: backupPassword,
             storageMigrationDeletedTotpPolicy: storageMigrationDeletedTotpPolicy,
-            ignoreCurrentStorage: ignoreCurrentStorage,
           ),
     );
     if (!context.mounted) {
@@ -93,7 +90,7 @@ class StorageMigrationUtils {
         if (logout) {
           Result logoutResult = await showWaitingOverlay(
             context,
-            future: ref.read(firebaseAuthenticationProvider.notifier).logout(),
+            future: ref.read(userProvider.notifier).logoutUser(),
           );
           if (context.mounted) {
             context.showSnackBarForResult(logoutResult, retryIfError: true);

@@ -5,15 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/main.dart';
-import 'package:open_authenticator/model/app_unlock/method.dart';
+import 'package:open_authenticator/model/app_unlock/methods/method.dart';
 import 'package:open_authenticator/model/app_unlock/state.dart';
+import 'package:open_authenticator/model/backend/synchronization/queue.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/display_copy_button.dart';
 import 'package:open_authenticator/model/settings/display_search_button.dart';
-import 'package:open_authenticator/model/storage/online.dart';
-import 'package:open_authenticator/model/storage/type.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
-import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/home/app_bar.dart';
@@ -25,11 +23,9 @@ import 'package:open_authenticator/pages/home/utils/image_text_buttons.dart';
 import 'package:open_authenticator/pages/home/utils/require_provider_value.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/totp.dart';
-import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/master_password.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/app_filled_button.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
@@ -71,7 +67,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
-    ref.read(totpImageCacheManagerProvider.notifier).convertLegacyCacheObjects();
     ref.listenManual(displaySearchButtonSettingsEntryProvider, (previous, next) {
       if (next.value == true && showSearchBox && mounted) {
         setState(() => showSearchBox = false);
@@ -120,62 +115,24 @@ class _HomePageState extends ConsumerState<HomePage> {
             },
             child: (displaySearchButton || (!displaySearchButton && showSearchBox)) && (currentPlatform.isMobile || kDebugMode)
                 ? RefreshIndicator(
-                    onRefresh: () => ref.read(totpRepositoryProvider.notifier).refresh(),
+                    onRefresh: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
                     child: buildTotpListWidget(value),
                   )
                 : buildTotpListWidget(value),
           ),
         ),
       ),
-      AsyncError(:final error) =>
-        error is NotLoggedInException
-            ? FutureBuilder(
-                future: Future.delayed(const Duration(seconds: 5), () => true),
-                builder: (context, snapshot) => snapshot.data == true
-                    ? ImageTextButtonsWidget.icon(
-                        icon: Icons.wifi_off,
-                        text: translations.home.logInFailed.message,
-                        buttons: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: AppFilledButton(
-                              onPressed: () => ref.refresh(onlineStorageProvider),
-                              label: Text(translations.home.logInFailed.button.retry),
-                              icon: const Icon(Icons.refresh),
-                            ),
-                          ),
-                          AppFilledButton(
-                            onPressed: () => AccountUtils.trySignIn(context, ref),
-                            label: Text(translations.home.logInFailed.button.relogIn),
-                            icon: const Icon(Icons.login),
-                            tonal: true,
-                          ),
-                          AppFilledButton(
-                            onPressed: () => StorageMigrationUtils.changeStorageType(
-                              context,
-                              ref,
-                              StorageType.local,
-                              ignoreCurrentStorage: true,
-                            ),
-                            label: Text(translations.home.logInFailed.button.changeStorageType),
-                            icon: const Icon(Icons.wifi),
-                            tonal: true,
-                          ),
-                        ],
-                      )
-                    : const CenteredCircularProgressIndicator(),
-              )
-            : ImageTextButtonsWidget.icon(
-                icon: Icons.bug_report,
-                text: translations.error.generic.withException(exception: error),
-                buttons: [
-                  AppFilledButton(
-                    label: Text(translations.home.refreshButton),
-                    icon: const Icon(Icons.sync),
-                    onPressed: ref.read(totpRepositoryProvider.notifier).refresh,
-                  ),
-                ],
-              ),
+      AsyncError(:final error) => ImageTextButtonsWidget.icon(
+        icon: Icons.bug_report,
+        text: translations.error.generic.withException(exception: error),
+        buttons: [
+          AppFilledButton(
+            label: Text(translations.home.refreshButton),
+            icon: const Icon(Icons.sync),
+            onPressed: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
+          ),
+        ],
+      ),
       _ => const CenteredCircularProgressIndicator(),
     };
 

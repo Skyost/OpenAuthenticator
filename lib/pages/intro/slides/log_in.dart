@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
-import 'package:open_authenticator/model/authentication/providers/provider.dart';
-import 'package:open_authenticator/model/authentication/state.dart';
+import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
@@ -34,7 +32,7 @@ class LogInIntroPageSlide extends IntroPageSlide {
         child: _LogInButton(),
       ),
       SynchronizeSettingsEntryWidget.intro(),
-      IntroPageSlideParagraphWidget(text: translations.intro.logIn.thirdParagraph(limit: App.freeTotpsLimit.toString())),
+      IntroPageSlideParagraphWidget(text: translations.intro.logIn.thirdParagraph(limit: App.defaultTotpsLimit.toString())),
       IntroPageSlideParagraphWidget(
         text: translations.intro.logIn.fourthParagraph(app: App.appName),
         padding: 0,
@@ -44,14 +42,8 @@ class LogInIntroPageSlide extends IntroPageSlide {
 
   @override
   Future<bool> shouldSkip(WidgetRef ref) async {
-    if (ref.read(userAuthenticationProviders).availableProviders.isEmpty) {
-      return true;
-    }
     TotpList totps = await ref.read(totpRepositoryProvider.future);
-    if (totps.isNotEmpty) {
-      return true;
-    }
-    return false;
+    return totps.isNotEmpty;
   }
 }
 
@@ -59,20 +51,17 @@ class LogInIntroPageSlide extends IntroPageSlide {
 class _LogInButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    FirebaseAuthenticationState authenticationState = ref.watch(firebaseAuthenticationProvider);
-    switch (authenticationState) {
-      case FirebaseAuthenticationStateLoggedOut():
-        return AppFilledButton(
-          onPressed: () => AccountUtils.trySignIn(context, ref),
-          icon: const Icon(Icons.login),
-          label: Text(translations.intro.logIn.button.loggedOut),
-        );
-      case FirebaseAuthenticationStateLoggedIn():
-        return AppFilledButton(
-          onPressed: null,
-          icon: const Icon(Icons.check),
-          label: Text(translations.intro.logIn.button.loggedIn),
-        );
-    }
+    User? user = ref.watch(userProvider).value;
+    return user == null
+        ? AppFilledButton(
+            onPressed: () => AccountUtils.trySignIn(context, ref),
+            icon: const Icon(Icons.login),
+            label: Text(translations.intro.logIn.button.loggedOut),
+          )
+        : AppFilledButton(
+            onPressed: null,
+            icon: const Icon(Icons.check),
+            label: Text(translations.intro.logIn.button.loggedIn),
+          );
   }
 }

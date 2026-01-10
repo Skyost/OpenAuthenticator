@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/storage/type.dart';
+import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
@@ -26,13 +26,14 @@ class TotpLimitDialog extends ConsumerWidget {
     required this.cancelButton,
   });
 
+  // TODO: handle when the user has already subscribed to the Contributor Plan.
   @override
   Widget build(BuildContext context, WidgetRef ref) => AppDialog(
     title: Text(title),
     displayCloseButton: false,
     actions: [
       TextButton(
-        onPressed: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.local)),
+        onPressed: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.localOnly)),
         child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
       ),
       TextButton(
@@ -81,11 +82,7 @@ class TotpLimitDialog extends ConsumerWidget {
         context: context,
         builder: (context) => TotpLimitDialog(
           title: title ?? translations.totpLimit.autoDialog.title,
-          message:
-              message ??
-              translations.totpLimit.autoDialog.message(
-                count: App.freeTotpsLimit.toString(),
-              ),
+          message: message ?? translations.totpLimit.autoDialog.message(count: App.defaultTotpsLimit),
           cancelButton: cancelButton,
         ),
         barrierDismissible: false,

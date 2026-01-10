@@ -1,9 +1,12 @@
 import 'dart:math';
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hashlib_codecs/hashlib_codecs.dart';
-import 'package:open_authenticator/utils/firebase.dart';
+import 'package:open_authenticator/app.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
+/// Whether Sentry is enabled.
+bool kSentryEnabled = !kDebugMode && App.sentryDsn.isNotEmpty;
 
 /// Contains some useful iterable methods.
 extension IterableUtils<T> on Iterable<T> {
@@ -26,16 +29,15 @@ bool isValidBase32(String string) {
 }
 
 /// Handles an exception.
-void handleException(Object? ex, StackTrace? stacktrace, {bool? sendToCrashlytics}) {
+void handleException(Object? ex, StackTrace? stacktrace, {bool? sendToSentry}) {
   if (kDebugMode) {
     print(ex);
     print(stacktrace);
   }
-  if (sendToCrashlytics ?? isCrashlyticsEnabled) {
-    FirebaseCrashlytics.instance.recordError(
+  if (sendToSentry ?? kSentryEnabled) {
+    Sentry.captureException(
       ex,
-      stacktrace,
-      printDetails: false,
+      stackTrace: stacktrace,
     );
   }
 }

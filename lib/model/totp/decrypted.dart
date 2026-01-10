@@ -14,6 +14,7 @@ class DecryptedTotp extends Totp {
     super.algorithm,
     super.digits,
     super.validity,
+    required super.updatedAt,
   }) : super(
          encryptedData: decryptedData,
        );
@@ -28,6 +29,7 @@ class DecryptedTotp extends Totp {
          algorithm: totp.algorithm,
          digits: totp.digits,
          validity: totp.validity,
+         updatedAt: totp.updatedAt,
        );
 
   /// Returns the decrypted data.
@@ -81,6 +83,7 @@ class DecryptedTotp extends Totp {
     int? digits,
     Duration? validity,
     String? imageUrl,
+    DateTime? updatedAt,
   }) async {
     EncryptedData? encryptedData = await EncryptedData.encrypt(
       cryptoStore: cryptoStore,
@@ -104,6 +107,7 @@ class DecryptedTotp extends Totp {
       algorithm: algorithm,
       digits: digits,
       validity: validity,
+      updatedAt: updatedAt ?? DateTime.now(),
     );
   }
 

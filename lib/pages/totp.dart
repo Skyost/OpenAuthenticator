@@ -7,6 +7,7 @@ import 'package:open_authenticator/main.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
+import 'package:open_authenticator/model/totp/limit.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/home/page.dart';
@@ -451,9 +452,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
         await TotpLimitDialog.show(
           context,
           title: translations.totpLimit.addDialog.title,
-          message: translations.totpLimit.addDialog.message(
-            count: App.freeTotpsLimit.toString(),
-          ),
+          message: translations.totpLimit.addDialog.message(count: App.defaultTotpsLimit),
           cancelButton: true,
         );
       }

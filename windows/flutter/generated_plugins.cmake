@@ -4,11 +4,10 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
-  cloud_firestore
-  firebase_auth
-  firebase_core
+  connectivity_plus
   local_auth_windows
   screen_retriever_windows
+  sentry_flutter
   share_plus
   simple_secure_storage_windows
   sqlite3_flutter_libs
@@ -18,6 +17,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  jni
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

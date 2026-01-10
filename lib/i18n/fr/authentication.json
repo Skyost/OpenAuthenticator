@@ -21,7 +21,7 @@
     "title": "Supprimer votre compte",
     "message": "Voulez-vous vraiment supprimer votre compte ? Veuillez noter que, parce qu'il s'agit d'une action sensible, vous devez vous réautentifier avant de continuer."
   },
-  "firebaseAuthenticationProvider": {
+  "firebaseAuthenticationProvider(map)": {
     "email": {
       "name": "Email",
       "description": "Utilisez votre adresse mail pour vous connecter. Pas besoin de mot de passe, nous vous enverrons un lien de confirmation."

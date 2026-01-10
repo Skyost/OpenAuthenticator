@@ -1,20 +1,18 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/reason.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
+import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
-import 'package:open_authenticator/model/storage/local.dart';
+import 'package:open_authenticator/model/totp/database/database.dart';
 import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/pages/settings/entries/widgets.dart';
-import 'package:open_authenticator/utils/firebase.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';
@@ -63,7 +61,7 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
       await showWaitingOverlay(
         context,
         future: () async {
-          Result logoutResult = await ref.read(firebaseAuthenticationProvider.notifier).logout();
+          Result logoutResult = await ref.read(userProvider.notifier).logoutUser();
           if (!context.mounted) {
             return;
           }
@@ -71,17 +69,13 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
             context.showSnackBarForResult(logoutResult, retryIfError: true);
             return;
           }
-          if (isFirebaseSupported) {
-            await FirebaseFirestore.instance.terminate();
-            await FirebaseFirestore.instance.clearPersistence();
-          }
           await SimpleSecureStorage.clear();
           TotpImageCacheManager totpImageCacheManager = ref.read(totpImageCacheManagerProvider.notifier);
           await totpImageCacheManager.clearCache();
           SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
           await preferences.clear();
-          LocalStorage localStorage = await ref.read(localStorageProvider);
-          await localStorage.clearTotps();
+          TotpDatabase database = ref.read(totpsDatabaseProvider);
+          await database.clear();
           if (deleteBackups) {
             List<Backup> backups = await ref.read(backupStoreProvider.future);
             for (Backup backup in backups) {

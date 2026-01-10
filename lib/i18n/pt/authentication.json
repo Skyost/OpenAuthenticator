@@ -21,7 +21,7 @@
     "title": "Excluir conta",
     "message": "Deseja realmente excluir sua conta? Como esta é uma ação sensível, exigimos que você se reautentique antes de continuar."
   },
-  "firebaseAuthenticationProvider": {
+  "firebaseAuthenticationProvider(map)": {
     "email": {
       "name": "E-mail",
       "description": "Use seu e-mail para fazer login. Não é necessária senha, um link de confirmação será enviado."

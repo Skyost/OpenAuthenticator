@@ -61,19 +61,11 @@ class ResultError<T> extends Result<T> {
 
 /// When it has been cancelled. It should not be handled.
 class ResultCancelled<T> extends Result<T> {
-  /// Whether this is the result of a timeout.
-  final bool timedOut;
-
   /// Creates a new result cancelled instance.
-  const ResultCancelled({
-    this.timedOut = false,
-  });
+  const ResultCancelled();
 
   /// Creates a new result cancelled instance from another [result].
-  ResultCancelled.fromAnother(ResultCancelled result)
-    : this(
-        timedOut: result.timedOut,
-      );
+  ResultCancelled.fromAnother(ResultCancelled result) : this();
 
   @override
   ResultCancelled<U> to<U>(_) => ResultCancelled<U>.fromAnother(this);

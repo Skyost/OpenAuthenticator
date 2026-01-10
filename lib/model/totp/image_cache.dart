@@ -33,30 +33,6 @@ class TotpImageCacheManager extends AsyncNotifier<Map<String, CacheObject>> {
     };
   }
 
-  /// Converts legacy cache objects to new cache objects.
-  Future<void> convertLegacyCacheObjects() async {
-    Map<String, CacheObject> cached = await future;
-    Map<String, CacheObject> copy = Map.from(cached);
-    bool hasChanged = false;
-    for (MapEntry<String, CacheObject> entry in cached.entries) {
-      if (entry.value.legacy) {
-        CacheObject newCacheObject = entry.value.copyWith(legacy: false);
-        if (entry.value.imageType == ImageType.svg) {
-          File? cachedImage = (await cached.getCachedImage(entry.key, entry.value.url))?.$1;
-          if (cachedImage != null && cachedImage.existsSync() && (await JovialSvgUtils.svgToSi(cachedImage.readAsStringSync(), cachedImage))) {
-            newCacheObject = entry.value.copyWith(imageType: ImageType.si);
-          }
-        }
-        copy[entry.key] = newCacheObject;
-        hasChanged = true;
-      }
-    }
-    if (hasChanged) {
-      await _saveIndex(content: copy);
-      state = AsyncData(copy);
-    }
-  }
-
   /// Caches the TOTP image.
   Future<void> cacheImage(Totp totp, {bool checkSettings = true}) async {
     try {

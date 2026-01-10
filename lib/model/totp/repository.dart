@@ -2,19 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_authenticator/app.dart';
+import 'package:open_authenticator/model/backend/synchronization/operation.dart';
+import 'package:open_authenticator/model/backend/synchronization/queue.dart';
 import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/model/crypto.dart';
-import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
-import 'package:open_authenticator/model/storage/storage.dart';
-import 'package:open_authenticator/model/storage/type.dart';
+import 'package:open_authenticator/model/totp/database/database.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
-import 'package:open_authenticator/model/totp/deleted_totps.dart';
 import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/utils/utils.dart';
 
 /// The provider instance.
 final totpRepositoryProvider = AsyncNotifierProvider.autoDispose<TotpRepository, TotpList>(TotpRepository.new);
@@ -23,11 +20,11 @@ final totpRepositoryProvider = AsyncNotifierProvider.autoDispose<TotpRepository,
 class TotpRepository extends AsyncNotifier<TotpList> {
   @override
   FutureOr<TotpList> build() async {
-    Storage storage = await ref.watch(storageProvider.future);
+    TotpDatabase database = ref.watch(totpsDatabaseProvider);
     CryptoStore? cryptoStore = await ref.watch(cryptoStoreProvider.future);
-    return TotpList._fromListAndStorage(
-      list: await (await storage.listTotps()).decrypt(cryptoStore),
-      storage: storage,
+    return TotpList._fromListAndStorageType(
+      list: await (await database.listTotps()).decrypt(cryptoStore),
+      storageType: await ref.watch(storageTypeSettingsEntryProvider.future),
     );
   }
 
@@ -38,64 +35,62 @@ class TotpRepository extends AsyncNotifier<TotpList> {
     state = const AsyncLoading();
     TotpList newTotpList = TotpList._(
       list: await totpList._list.decrypt(cryptoStore),
-      operationThreshold: totpList.operationThreshold,
+      storageType: totpList.storageType,
     );
     Set<DecryptedTotp> difference = newTotpList.decryptedTotps.toSet().difference(totpList.decryptedTotps.toSet());
     state = AsyncData(newTotpList);
     return difference;
   }
 
-  /// Refreshes the current state.
-  Future<void> refresh() async {
-    AsyncValue<TotpList> currentState = state;
-    Future<void> refresh([TotpList? totpList]) async {
-      state = const AsyncLoading();
-      try {
-        await totpList?.waitBeforeNextOperation();
-        Storage storage = await ref.read(storageProvider.future);
-        CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
-        state = AsyncData(await _queryTotpsFromStorage(storage, cryptoStore));
-      } catch (ex, stacktrace) {
-        handleException(ex, stacktrace);
-        state = AsyncError(ex, stacktrace);
-      }
-    }
-
-    switch (currentState) {
-      case AsyncData(:final value):
-        await refresh(value);
-        break;
-      case AsyncError():
-        await refresh();
-        break;
-      default:
-        break;
-    }
-  }
-
-  /// Queries TOTPs (and decrypt them) from storage.
-  Future<TotpList> _queryTotpsFromStorage(Storage storage, CryptoStore? cryptoStore) async {
-    List<Totp> totps = await storage.listTotps();
-    ref.read(totpImageCacheManagerProvider.notifier).fillCache(totps: totps);
-    return TotpList._fromListAndStorage(
-      list: await totps.decrypt(cryptoStore),
-      storage: storage,
-    );
-  }
+  /// Adds the given [totps].
+  Future<Result<Totp>> addTotps(
+    List<Totp> totps, {
+    bool fromNetwork = false,
+  }) => _addTotp(
+    totps,
+    fromNetwork: fromNetwork,
+  );
 
   /// Adds the given [totp].
-  Future<Result<Totp>> addTotp(Totp totp) async {
+  Future<Result<Totp>> addTotp(
+    Totp totp, {
+    bool fromNetwork = false,
+  }) => _addTotp(
+    [totp],
+    fromNetwork: fromNetwork,
+  );
+
+  /// Adds the given [totp].
+  Future<Result<Totp>> _addTotp(
+    List<Totp> totps, {
+    bool fromNetwork = false,
+  }) async {
     try {
       TotpList totpList = await future;
       await totpList.waitBeforeNextOperation();
-      Storage storage = await ref.read(storageProvider.future);
-      await storage.addTotp(totp);
-      ref.read(totpImageCacheManagerProvider.notifier).cacheImage(totp);
+      TotpDatabase database = ref.read(totpsDatabaseProvider);
+      totps = [
+        for (Totp totp in totps)
+          if (!(await database.isMarkedAsDeleted(totp.uuid))) totp,
+      ];
+      if (totps.length == 1) {
+        await database.addTotp(totps.first);
+      } else {
+        await database.addTotps(totps);
+      }
+      if (totpList.storageType == StorageType.shared && !fromNetwork) {
+        _enqueue(
+          PushOperation.setTotps(
+            totps: totps,
+          ),
+        );
+      }
+      ref.read(totpImageCacheManagerProvider.notifier).fillCache(totps: totps);
       CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
       state = AsyncData(
-        TotpList._fromListAndStorage(
-          list: _mergeToCurrentList(totpList, totp: await totp.decrypt(cryptoStore)),
-          storage: storage,
+        TotpList._fromListAndStorageType(
+          list: _mergeToCurrentList(totpList, totps: await totps.decrypt(cryptoStore)),
+          storageType: totpList.storageType,
         ),
       );
       return const ResultSuccess();
@@ -108,19 +103,34 @@ class TotpRepository extends AsyncNotifier<TotpList> {
   }
 
   /// Clears all TOTPs and then adds the [totps].
-  Future<Result<List<Totp>>> replaceBy(List<Totp> totps) async {
+  Future<Result<List<Totp>>> replaceBy(List<Totp> totps, {bool fromNetwork = false}) async {
     try {
       TotpList totpList = await future;
       await totpList.waitBeforeNextOperation();
-      Storage storage = await ref.read(storageProvider.future);
-      await storage.replaceTotps(totps);
+      TotpDatabase database = ref.read(totpsDatabaseProvider);
+      await database.replaceTotps(totps);
+      if (totpList.storageType == StorageType.shared && !fromNetwork) {
+        _enqueue(
+          PushOperation.deleteTotps(
+            uuids: [
+              for (Totp totp in totpList) totp.uuid,
+            ],
+          ),
+          andRun: false,
+        );
+        _enqueue(
+          PushOperation.setTotps(
+            totps: totps,
+          ),
+        );
+      }
       CryptoStore? cryptoStore = await ref.read(cryptoStoreProvider.future);
       List<Totp> decrypted = await totps.decrypt(cryptoStore);
       await ref.read(totpImageCacheManagerProvider.notifier).fillCache(totps: decrypted);
       state = AsyncData(
-        TotpList._fromListAndStorage(
+        TotpList._fromListAndStorageType(
           list: _mergeToCurrentList(totpList, totps: decrypted),
-          storage: storage,
+          storageType: totpList.storageType,
         ),
       );
       return const ResultSuccess();
@@ -133,30 +143,53 @@ class TotpRepository extends AsyncNotifier<TotpList> {
   }
 
   /// Updates the [totp].
-  Future<Result<Totp>> updateTotp(DecryptedTotp totp) async => await _updateTotps([totp]);
+  Future<Result<Totp>> updateTotp(
+    DecryptedTotp totp, {
+    bool fromNetwork = false,
+    bool insertIfNonExistent = false,
+  }) async => await _updateTotps(
+    [totp],
+    fromNetwork: fromNetwork,
+  );
 
   /// Updates the [totps].
-  Future<Result<Totp>> updateTotps(List<Totp> totps) async => await _updateTotps(totps);
+  Future<Result<Totp>> updateTotps(
+    List<Totp> totps, {
+    bool fromNetwork = false,
+  }) async => await _updateTotps(
+    totps,
+    fromNetwork: fromNetwork,
+  );
 
   /// Updates the [totps].
-  Future<Result<Totp>> _updateTotps(List<Totp> totps) async {
+  Future<Result<Totp>> _updateTotps(
+    List<Totp> totps, {
+    bool fromNetwork = false,
+  }) async {
     try {
       if (totps.isEmpty) {
         return const ResultSuccess();
       }
       TotpList totpList = await future;
       await totpList.waitBeforeNextOperation();
-      Storage storage = await ref.read(storageProvider.future);
+      TotpDatabase database = ref.read(totpsDatabaseProvider);
       if (totps.length > 1) {
-        await storage.updateTotps(totps);
+        await database.updateTotps(totps);
       } else {
-        await storage.updateTotp(totps.first);
+        await database.updateTotp(totps.first);
+      }
+      if (totpList.storageType == StorageType.shared && !fromNetwork) {
+        _enqueue(
+          PushOperation.setTotps(
+            totps: totps,
+          ),
+        );
       }
       await ref.read(totpImageCacheManagerProvider.notifier).fillCache(totps: totps);
       state = AsyncData(
-        TotpList._fromListAndStorage(
+        TotpList._fromListAndStorageType(
           list: _mergeToCurrentList(totpList, totps: totps),
-          storage: storage,
+          storageType: totpList.storageType,
         ),
       );
       return const ResultSuccess();
@@ -169,18 +202,25 @@ class TotpRepository extends AsyncNotifier<TotpList> {
   }
 
   /// Deletes the TOTP associated with the given [uuid].
-  Future<Result> deleteTotp(String uuid) async {
+  Future<Result> deleteTotp(String uuid, {bool fromNetwork = false}) async {
     try {
       TotpList totpList = await future;
       await totpList.waitBeforeNextOperation();
-      Storage storage = await ref.read(storageProvider.future);
-      await storage.deleteTotp(uuid);
-      await ref.read(deletedTotpsProvider).markDeleted(uuid);
+      TotpDatabase database = ref.read(totpsDatabaseProvider);
+      await database.deleteTotp(uuid);
+      await database.markAsDeleted(uuid);
+      if (totpList.storageType == StorageType.shared && !fromNetwork) {
+        _enqueue(
+          PushOperation.deleteTotps(
+            uuids: [uuid],
+          ),
+        );
+      }
       ref.read(totpImageCacheManagerProvider.notifier).deleteCachedImage(uuid);
       state = AsyncData(
-        TotpList._fromListAndStorage(
+        TotpList._fromListAndStorageType(
           list: totpList._list..removeWhere((totp) => totp.uuid == uuid),
-          storage: storage,
+          storageType: totpList.storageType,
         ),
       );
       return const ResultSuccess();
@@ -213,13 +253,20 @@ class TotpRepository extends AsyncNotifier<TotpList> {
       CryptoStore? currentCryptoStore = await storedCryptoStore.future;
       if (updateTotps && currentCryptoStore != null) {
         CryptoStore newCryptoStore = await CryptoStore.fromPassword(password, currentCryptoStore.salt);
-        Storage storage = await ref.read(storageProvider.future);
         List<Totp> newTotps = [];
         for (Totp totp in totpList) {
           DecryptedTotp? decryptedTotp = await totp.changeEncryptionKey(currentCryptoStore, newCryptoStore);
           newTotps.add(decryptedTotp ?? totp);
         }
-        await storage.replaceTotps(newTotps);
+        TotpDatabase database = ref.read(totpsDatabaseProvider);
+        await database.replaceTotps(newTotps);
+        if (totpList.storageType == StorageType.shared) {
+          _enqueue(
+            PushOperation.setTotps(
+              totps: newTotps,
+            ),
+          );
+        }
         await storedCryptoStore.changeCryptoStore(password, newCryptoStore: newCryptoStore);
       } else {
         await storedCryptoStore.changeCryptoStore(password);
@@ -232,6 +279,14 @@ class TotpRepository extends AsyncNotifier<TotpList> {
       );
     }
   }
+
+  /// Enqueues the given [operation].
+  void _enqueue(PushOperation operation, {bool andRun = true}) => ref
+      .read(pushOperationsQueueProvider.notifier)
+      .enqueue(
+        operation,
+        andRun: andRun,
+      );
 
   /// Merges the [totp] to the current TOTP list.
   List<Totp> _mergeToCurrentList(TotpList totpList, {Totp? totp, List<Totp>? totps}) {
@@ -268,14 +323,14 @@ class TotpList extends Iterable<Totp> {
   /// The last update time.
   final DateTime updated;
 
-  /// The time to wait between two operations.
-  final Duration operationThreshold;
+  /// The storage type.
+  final StorageType storageType;
 
   /// Creates a new TOTP list instance.
   TotpList._({
     required List<Totp> list,
     DateTime? updated,
-    required this.operationThreshold,
+    required this.storageType,
     bool sort = true,
   }) : updated = updated ?? DateTime.now() {
     if (sort) {
@@ -286,14 +341,14 @@ class TotpList extends Iterable<Totp> {
   }
 
   /// Creates a new TOTP list from the [list] and the [storage].
-  TotpList._fromListAndStorage({
+  TotpList._fromListAndStorageType({
     required List<Totp> list,
-    required Storage storage,
+    required StorageType storageType,
     DateTime? updated,
   }) : this._(
          list: list,
          updated: updated,
-         operationThreshold: storage.operationThreshold,
+         storageType: storageType,
        );
 
   /// Returns the object at the given [index] in the list.
@@ -302,11 +357,14 @@ class TotpList extends Iterable<Totp> {
   @override
   Iterator<Totp> get iterator => _list.iterator;
 
+  /// Returns whether the list contains a TOTP with the given [uuid].
+  bool has(String uuid) => _list.any((totp) => totp.uuid == uuid);
+
   /// Returns the index of the given [totp].
   int indexOf(Totp totp) => _list.indexOf(totp);
 
   /// The next possible operation time.
-  DateTime get nextPossibleOperationTime => updated.add(operationThreshold);
+  DateTime get nextPossibleOperationTime => updated.add(storageType.operationThreshold);
 
   /// Waits before the next operation.
   Future<void> waitBeforeNextOperation() {
@@ -322,65 +380,4 @@ class TotpList extends Iterable<Totp> {
     for (Totp totp in _list)
       if (totp.isDecrypted) totp as DecryptedTotp,
   ];
-}
-
-/// The TOTP limit provider.
-final totpLimitProvider = FutureProvider<TotpLimit>((ref) async {
-  StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
-  ContributorPlanState contributorPlanState = await ref.watch(contributorPlanStateProvider.future);
-  TotpList totps = await ref.watch(totpRepositoryProvider.future);
-  return TotpLimit(
-    storageType: storageType,
-    contributorPlanState: contributorPlanState,
-    currentTotpCount: totps.length,
-  );
-});
-
-/// The class that allows to check whether TOTP limit has been reached.
-class TotpLimit {
-  /// The storage type.
-  final StorageType storageType;
-
-  /// The contributor plan state.
-  final ContributorPlanState contributorPlanState;
-
-  /// The current TOTP count.
-  final int currentTotpCount;
-
-  /// Creates a new TOTP limit instance.
-  const TotpLimit({
-    required this.storageType,
-    required this.contributorPlanState,
-    required this.currentTotpCount,
-  });
-
-  /// Returns whether the limit will be exceeded if one more TOTP is added.
-  bool _willExceedIfAddMore({
-    int count = 1,
-    StorageType? storageType,
-  }) {
-    if ((storageType ?? this.storageType) == StorageType.local || contributorPlanState == ContributorPlanState.active) {
-      return false;
-    }
-    return currentTotpCount + count > App.freeTotpsLimit;
-  }
-
-  /// Returns whether the limit will be exceeded if one more TOTP is added.
-  bool willExceedIfAddMore({int count = 1}) => _willExceedIfAddMore(
-    count: count,
-  );
-
-  /// Returns whether the user should be able to change the current storage type.
-  bool canChangeStorageType(StorageType currentStorageType) {
-    if (currentStorageType == StorageType.online) {
-      return true;
-    }
-    return !_willExceedIfAddMore(
-      count: 0,
-      storageType: currentStorageType == StorageType.online ? StorageType.local : StorageType.online,
-    );
-  }
-
-  /// Returns whether the TOTP limit is exceeded.
-  bool get isExceeded => willExceedIfAddMore(count: 0);
 }

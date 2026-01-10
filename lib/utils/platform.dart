@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
 /// Returns the current platform.
 Platform currentPlatform = () {
@@ -52,4 +53,7 @@ enum Platform {
     this.isMobile = false,
     this.isDesktop = false,
   });
+
+  /// Generates a new app client ID.
+  String generateAppClientId() => '${name.toLowerCase()}-${const Uuid().v4()}';
 }

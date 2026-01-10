@@ -21,7 +21,7 @@
     "title": "Elimina account",
     "message": "Vuoi davvero eliminare il tuo account? Nota che, trattandosi di un'azione sensibile, ti chiediamo di autenticarti nuovamente prima di procedere."
   },
-  "firebaseAuthenticationProvider": {
+  "firebaseAuthenticationProvider(map)": {
     "email": {
       "name": "Email",
       "description": "Usa la tua email per accedere. Non è richiesta password, verrà inviato un link di conferma."

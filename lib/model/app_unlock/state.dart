@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_authenticator/model/app_unlock/method.dart';
+import 'package:open_authenticator/model/app_unlock/methods/method.dart';
 import 'package:open_authenticator/model/app_unlock/reason.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -14,7 +14,8 @@ final appLockStateProvider = AsyncNotifierProvider<AppLockStateNotifier, AppLock
 class AppLockStateNotifier extends AsyncNotifier<AppLockState> {
   @override
   FutureOr<AppLockState> build() async {
-    AppUnlockMethod unlockMethod = await ref.watch(appUnlockMethodSettingsEntryProvider.future);
+    String unlockMethodId = await ref.watch(appUnlockMethodSettingsEntryProvider.future);
+    AppUnlockMethod unlockMethod = ref.watch(appUnlockMethodProvider(unlockMethodId))!;
     return state.value ?? unlockMethod.defaultAppLockState;
   }
 

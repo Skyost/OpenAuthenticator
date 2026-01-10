@@ -15,4 +15,9 @@ class AppLinksListener extends AsyncNotifier<Uri?> {
     ref.onDispose(subscription.cancel);
     return appLinks.getInitialLink();
   }
+
+  /// Manually provides the [uri].
+  void provideLink(Uri uri) {
+    state = AsyncData(uri);
+  }
 }

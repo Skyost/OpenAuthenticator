@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/providers/email_link.dart';
-import 'package:open_authenticator/model/authentication/providers/provider.dart';
-import 'package:open_authenticator/pages/settings/page.dart';
+import 'package:open_authenticator/model/backend/authentication/providers/provider.dart';
 import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
@@ -12,15 +10,15 @@ import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Allows the user to confirm its email from the app.
-class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthenticationProvider {
+class ConfirmEmailSettingsEntryWidget extends ConsumerWidget {
   /// Creates a new confirm email settings entry widget instance.
   const ConfirmEmailSettingsEntryWidget({
     super.key,
   });
 
   @override
-  Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
-    AsyncValue<String?> emailToConfirm = ref.watch(emailLinkConfirmationStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    AsyncValue<EmailConfirmationData?> emailToConfirm = ref.watch(emailConfirmationStateProvider);
     if (emailToConfirm.value == null) {
       return const SizedBox.shrink();
     }
@@ -30,7 +28,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
       subtitle: Text.rich(
         translations.settings.synchronization.confirmEmail.subtitle(
           email: TextSpan(
-            text: emailToConfirm.value,
+            text: emailToConfirm.value!.email,
             style: const TextStyle(fontStyle: FontStyle.italic),
           ),
         ),
@@ -64,7 +62,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
     }
     Result result = await showWaitingOverlay(
       context,
-      future: ref.read(emailLinkConfirmationStateProvider.notifier).cancelConfirmation(),
+      future: ref.read(emailAuthenticationProvider).cancelConfirmation(),
     );
     if (context.mounted) {
       context.showSnackBarForResult(result, retryIfError: true);
@@ -73,16 +71,16 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with RequiresAuthen
 
   /// Tries to confirm the user. He has to enter the link manually.
   Future<void> _tryConfirm(BuildContext context, WidgetRef ref) async {
-    String? emailLink = await TextInputDialog.prompt(
+    String? code = await TextInputDialog.prompt(
       context,
       title: translations.settings.synchronization.confirmEmail.linkDialog.title,
       message: translations.settings.synchronization.confirmEmail.linkDialog.message,
       keyboardType: TextInputType.url,
     );
-    if (emailLink == null || !context.mounted) {
+    if (code == null || !context.mounted) {
       return;
     }
-    Result<AuthenticationObject> result = await ref.read(emailLinkConfirmationStateProvider.notifier).confirm(context, emailLink);
+    Result result = await ref.read(emailAuthenticationProvider).confirm(code);
     if (context.mounted) {
       AccountUtils.handleAuthenticationResult(context, ref, result);
     }

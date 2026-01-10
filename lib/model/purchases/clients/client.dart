@@ -1,19 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
-import 'package:open_authenticator/model/authentication/state.dart';
+import 'package:open_authenticator/model/backend/user.dart';
+import 'package:open_authenticator/model/purchases/clients/dart.dart';
 import 'package:open_authenticator/model/purchases/clients/method_channel.dart';
-import 'package:open_authenticator/model/purchases/clients/rest.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:purchases_flutter/models/offering_wrapper.dart';
-import 'package:purchases_flutter/models/package_wrapper.dart';
 import 'package:purchases_flutter/models/purchases_configuration.dart' as rc_purchases_configuration;
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 /// The RevenueCat client provider.
-final revenueCatClientProvider = Provider((ref) {
-  FirebaseAuthenticationState authenticationState = ref.watch(firebaseAuthenticationProvider);
-  if (authenticationState is! FirebaseAuthenticationStateLoggedIn) {
+final revenueCatClientProvider = FutureProvider((ref) async {
+  User? user = await ref.watch(userProvider.future);
+  if (user == null) {
     return null;
   }
   PurchasesConfiguration? configuration = switch (currentPlatform) {
@@ -27,8 +25,8 @@ final revenueCatClientProvider = Provider((ref) {
     return null;
   }
   configuration = configuration
-    ..appUserID = authenticationState.user.uid
-    ..email = authenticationState.user.email;
+    ..appUserID = user.id
+    ..email = user.email;
   return RevenueCatClient.fromPlatform(purchasesConfiguration: configuration);
 });
 
@@ -58,34 +56,75 @@ abstract class RevenueCatClient {
       case Platform.macOS:
         return RevenueCatMethodChannelClient(purchasesConfiguration: purchasesConfiguration);
       default:
-        return RevenueCatRestClient(purchasesConfiguration: purchasesConfiguration);
+        return RevenueCatDartClient(purchasesConfiguration: purchasesConfiguration);
     }
   }
 
   /// Initializes this client instance.
   Future<void> initialize() async {}
 
+  /// Returns the customer info.
+  Future<CustomerInfo?> getCustomerInfo();
+
+  /// Returns the offerings.
+  Future<Offerings?> getOfferings();
+
   /// Returns the available package types.
   /// Note that only RevenueCat default identifiers are supported.
-  Future<List<PackageType>> getAvailablePackageTypes(String offeringId);
+  Future<List<PackageType>> getAvailablePackageTypes(String offeringId) async {
+    Offerings? offerings = await getOfferings();
+    Offering? offering = offerings?.getOffering(offeringId);
+    return offering?.availablePackages.map((package) => package.packageType).toList() ?? [];
+  }
 
   /// Returns whether the user has the given [entitlementId].
-  Future<bool> hasEntitlement(String entitlementId);
+  Future<bool> hasEntitlement(String entitlementId) async {
+    CustomerInfo? customerInfo = await getCustomerInfo();
+    return customerInfo?.entitlements.active[entitlementId]?.isActive ?? false;
+  }
 
-  /// Purchases the given item.
-  Future<List<String>> purchaseManually(Purchasable purchasable, PackageType packageType);
+  /// Purchases the given [purchasable].
+  Future<void> purchase(Purchasable purchasable, PackageType packageType) async {
+    Offerings offerings = await Purchases.getOfferings();
+    Offering? offering = offerings.getOffering(purchasable.offeringId);
+    if (offering == null) {
+      return;
+    }
 
-  /// Returns the list of offerings.
-  Future<Map<String, Offering>> getOfferings();
+    Package? package = offering.availablePackages.firstWhereOrNull((package) => package.packageType == packageType);
+    if (package != null) {
+      await purchasePackage(package);
+    }
+  }
+
+  /// Purchases the given [package].
+  Future<void> purchasePackage(Package package);
 
   /// Returns the prices of the [purchasable].
-  Future<Map<PackageType, Price>> getPrices(Purchasable purchasable);
+  Future<Map<PackageType, Price>> getPrices(Purchasable purchasable) async {
+    Offerings? offerings = await getOfferings();
+    Offering? offering = offerings?.getOffering(purchasable.offeringId);
+    if (offering == null) {
+      return {};
+    }
+    Map<PackageType, Price> result = {};
+    for (Package package in offering.availablePackages) {
+      result[package.packageType] = Price(
+        amount: package.storeProduct.price,
+        formattedAmount: package.storeProduct.priceString,
+      );
+    }
+    return result;
+  }
 
   /// Restores the user purchases, if possible.
   Future<Result> restorePurchases();
 
   /// Returns the user management URL.
-  Future<String?> getManagementUrl(String entitlementId);
+  Future<String?> getManagementUrl() async {
+    CustomerInfo? customerInfo = await getCustomerInfo();
+    return customerInfo?.managementURL;
+  }
 
   /// Invalidates the user info.
   Future<void> invalidateUserInfo() => Future.value();
@@ -114,28 +153,15 @@ enum Purchasable {
   /// Allows to subscribe to the Contributor Plan.
   contributorPlan(
     offeringId: AppContributorPlan.offeringId,
-    stripeBuyUrls: AppContributorPlan.stripeBuyUrls,
-    stripePrices: AppContributorPlan.stripePrices,
   );
 
   /// The offering ID.
   final String offeringId;
 
-  /// The Stripe "buy" URLs.
-  final Map<PackageType, String> stripeBuyUrls;
-
-  /// The Stripe prices ids.
-  final Map<PackageType, String> stripePrices;
-
   /// Creates a new purchasable instance.
   const Purchasable({
     required this.offeringId,
-    required this.stripeBuyUrls,
-    required this.stripePrices,
   });
-
-  /// Returns the Stripe "buy" URL corresponding to the [packageType].
-  Uri? getStripeBuyUrl(PackageType packageType) => stripeBuyUrls.containsKey(packageType) ? Uri.https('buy.stripe.com', stripeBuyUrls[packageType]!) : null;
 }
 
 /// The purchases configuration object.

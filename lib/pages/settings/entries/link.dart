@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/providers/provider.dart';
-import 'package:open_authenticator/model/authentication/state.dart';
-import 'package:open_authenticator/pages/settings/page.dart';
+import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/utils/account.dart';
-import 'package:open_authenticator/utils/firebase_auth/firebase_auth.dart';
 
 /// Allows the user to link its account to another provider.
-class AccountLinkSettingsEntryWidget extends ConsumerWidget with RequiresAuthenticationProvider {
+class AccountLinkSettingsEntryWidget extends ConsumerWidget {
   /// Creates a new account link settings entry widget instance.
   const AccountLinkSettingsEntryWidget({
     super.key,
   });
 
   @override
-  Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
-    List<FirebaseAuthenticationProvider> providers = ref.watch(userAuthenticationProviders.select((providers) => providers.loggedInProviders));
+  Widget build(BuildContext context, WidgetRef ref) {
+    User? user = ref.watch(userProvider).value;
+    if (user == null) {
+      return const SizedBox.shrink();
+    }
+    List<String> providers = [
+      if (user.email != null) 'email',
+      if (user.googleId != null) 'google.com',
+      if (user.githubId != null) 'github.com',
+      if (user.microsoftId != null) 'microsoft.com',
+      if (user.appleId != null) 'apple.com',
+    ];
     return ListTile(
       leading: const Icon(Icons.link),
       title: Text(translations.settings.synchronization.accountLink.title),
@@ -26,32 +33,28 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget with RequiresAuthent
             TextSpan(
               text: translations.settings.synchronization.accountLink.subtitle.text,
             ),
-            if (FirebaseAuth.instance.currentUser?.providers.isNotEmpty ?? false)
-              translations.settings.synchronization.accountLink.subtitle.linkedProviders(
-                providers: TextSpan(
-                  children: [
-                    for (int i = 0; i < providers.length; i++)
-                      TextSpan(
-                        text: translations.settings.synchronization.accountLink.subtitle.providers[providers[i].providerId] ?? providers[i].providerId,
-                        children: [
-                          if (i < providers.length - 1)
-                            const TextSpan(
-                              text: ', ',
-                              style: TextStyle(fontStyle: FontStyle.normal),
-                            ),
-                        ],
-                        style: const TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                  ],
-                ),
+            translations.settings.synchronization.accountLink.subtitle.linkedProviders(
+              providers: TextSpan(
+                children: [
+                  for (int i = 0; i < providers.length; i++)
+                    TextSpan(
+                      text: providers[i],
+                      children: [
+                        if (i < providers.length - 1)
+                          const TextSpan(
+                            text: ', ',
+                            style: TextStyle(fontStyle: FontStyle.normal),
+                          ),
+                      ],
+                      style: const TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                ],
               ),
+            ),
           ],
         ),
       ),
       onTap: () => AccountUtils.tryToggleLink(context, ref),
     );
   }
-
-  @override
-  bool isAuthenticationStateValid(FirebaseAuthenticationState authenticationState) => authenticationState is FirebaseAuthenticationStateLoggedIn;
 }

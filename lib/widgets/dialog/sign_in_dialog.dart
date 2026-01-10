@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/providers/apple.dart';
-import 'package:open_authenticator/model/authentication/providers/email_link.dart';
-import 'package:open_authenticator/model/authentication/providers/github.dart';
-import 'package:open_authenticator/model/authentication/providers/google.dart';
-import 'package:open_authenticator/model/authentication/providers/microsoft.dart';
-import 'package:open_authenticator/model/authentication/providers/provider.dart';
-import 'package:open_authenticator/model/authentication/providers/twitter.dart';
-import 'package:open_authenticator/model/authentication/state.dart';
+import 'package:open_authenticator/model/backend/authentication/providers/provider.dart';
+import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/app_filled_button.dart';
@@ -54,8 +48,7 @@ class _SignInDialogState extends ConsumerState<SignInDialog> {
             Navigator.pop(
               context,
               SignInDialogResult(
-                provider: provider,
-                signIn: (context, provider) => (provider as EmailLinkAuthenticationProvider).signIn(context, email: email),
+                action: () => ref.read(emailAuthenticationProvider).requestSignIn(email),
               ),
             );
           },
@@ -68,13 +61,12 @@ class _SignInDialogState extends ConsumerState<SignInDialog> {
         ),
       ),
       ListTilePadding(
-        child: _OtherProvidersWrap(
+        child: _OAuthenticationProvidersWrap(
           onProviderSelected: (provider) {
             Navigator.pop(
               context,
               SignInDialogResult(
-                provider: provider,
-                signIn: (context, provider) => provider.signIn(context),
+                action: provider.requestSignIn,
               ),
             );
           },
@@ -84,28 +76,21 @@ class _SignInDialogState extends ConsumerState<SignInDialog> {
   );
 }
 
-/// Represents a sign-in action.
-typedef SignIn = Future<Result<AuthenticationObject>> Function(BuildContext context, FirebaseAuthenticationProvider provider);
-
 /// Represents a sign-in dialog action.
 class SignInDialogResult {
-  /// The provider.
-  final FirebaseAuthenticationProvider provider;
-
   /// The action.
-  final SignIn signIn;
+  final Future<Result> Function() action;
 
   /// Creates a new sign-in dialog result instance.
   const SignInDialogResult({
-    required this.provider,
-    required this.signIn,
+    required this.action,
   });
 }
 
 /// Displays the email form.
 class _EmailForm extends ConsumerStatefulWidget {
   /// Triggered when an email has been validated.
-  final Function(EmailLinkAuthenticationProvider, String) onEmailValidated;
+  final Function(EmailAuthenticationProvider, String) onEmailValidated;
 
   /// Creates a new email form instance.
   const _EmailForm({
@@ -123,16 +108,17 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
 
   @override
   Widget build(BuildContext context) {
-    String? emailToConfirm = ref.watch(emailLinkConfirmationStateProvider).value;
-    Map<FirebaseAuthenticationProvider, FirebaseAuthenticationState> providers = ref.watch(userAuthenticationProviders);
-    FirebaseAuthenticationState? emailAuthenticationState = providers.getAuthenticationState<EmailLinkAuthenticationProvider>();
-    bool canAuthenticateByEmail =
-        emailToConfirm == null && emailAuthenticationState is FirebaseAuthenticationStateLoggedOut && providers.availableProviders.whereType<EmailLinkAuthenticationProvider>().isNotEmpty;
+    User? user = ref.watch(userProvider).value;
+    EmailAuthenticationProvider provider = ref.watch(emailAuthenticationProvider);
+    bool hasEmailProvider = user != null && user.hasAuthenticationProvider(provider.id);
+
+    String? emailToConfirm = ref.watch(emailConfirmationStateProvider).value?.email;
+    bool canAuthenticateByEmail = emailToConfirm == null && !hasEmailProvider;
     Widget child = Text(translations.authentication.signInDialog.email.button);
     String description = canAuthenticateByEmail ? translations.authentication.signInDialog.email.description.signIn : translations.authentication.signInDialog.email.description.cannotUse;
     if (emailToConfirm != null) {
       description = translations.authentication.signInDialog.email.description.waitingForConfirmation;
-    } else if (emailAuthenticationState is FirebaseAuthenticationStateLoggedIn) {
+    } else if (hasEmailProvider) {
       child = _ButtonChildWithAuthenticatedBadge(child: child);
       description = translations.authentication.signInDialog.email.description.alreadySignedIn;
     }
@@ -149,10 +135,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
             decoration: FormLabelWithIcon(
               icon: Icons.email,
               text: translations.authentication.signInDialog.email.title,
-              hintText:
-                  emailToConfirm ??
-                  (emailAuthenticationState is FirebaseAuthenticationStateLoggedIn ? emailAuthenticationState.user.email : null) ??
-                  translations.authentication.signInDialog.email.hint,
+              hintText: emailToConfirm ?? (hasEmailProvider ? user.email : null) ?? translations.authentication.signInDialog.email.hint,
             ),
             textInputAction: TextInputAction.done,
             validator: TextInputDialog.validateEmail,
@@ -173,7 +156,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
         ),
         AppFilledButton(
           icon: const Icon(Icons.send),
-          onPressed: email.trim().isNotEmpty && TextInputDialog.validateEmail(email) == null ? (() => onEmailChosen(providers.getProvider<EmailLinkAuthenticationProvider>())) : null,
+          onPressed: email.trim().isNotEmpty && TextInputDialog.validateEmail(email) == null ? (() => onEmailChosen(provider)) : null,
           label: child,
         ),
       ],
@@ -181,7 +164,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
   }
 
   /// Sends a mail confirmation.
-  Future<void> onEmailChosen(EmailLinkAuthenticationProvider provider) async {
+  Future<void> onEmailChosen(EmailAuthenticationProvider provider) async {
     if (TextInputDialog.validateEmail(email) == null) {
       widget.onEmailValidated(provider, email);
     }
@@ -189,9 +172,9 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
 }
 
 /// Allows to display other providers.
-class _OtherProvidersWrap extends ConsumerWidget {
+class _OAuthenticationProvidersWrap extends ConsumerWidget {
   /// Triggered when a provider has been selected.
-  final Function(FirebaseAuthenticationProvider) onProviderSelected;
+  final Function(OAuthenticationProvider) onProviderSelected;
 
   /// The circle button size.
   final double circleButtonSize;
@@ -203,7 +186,7 @@ class _OtherProvidersWrap extends ConsumerWidget {
   final double circleButtonPadding;
 
   /// Creates a new others providers wrap instance.
-  const _OtherProvidersWrap({
+  const _OAuthenticationProvidersWrap({
     required this.onProviderSelected,
     this.circleButtonSize = 30,
     this.circleButtonSpace = 10,
@@ -212,8 +195,9 @@ class _OtherProvidersWrap extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<FirebaseAuthenticationProvider> providers = ref.watch(userAuthenticationProviders).availableProviders;
-    providers.removeWhere((provider) => provider is EmailLinkAuthenticationProvider);
+    Iterable<OAuthenticationProvider> providers = ref.watch(
+      authenticationProviders.select((providers) => providers.whereType<OAuthenticationProvider>()),
+    );
     double circleLineWidth = providers.length * (circleButtonSize + circleButtonSpace * 2 + circleButtonPadding * 2);
     return LayoutBuilder(
       builder: (context, constraints) => circleLineWidth <= constraints.maxWidth && providers.length >= 3
@@ -221,10 +205,10 @@ class _OtherProvidersWrap extends ConsumerWidget {
               alignment: WrapAlignment.center,
               spacing: circleButtonSpace,
               children: [
-                for (FirebaseAuthenticationProvider provider in providers)
+                for (OAuthenticationProvider provider in providers)
                   _ProviderCircleButton(
                     onTapIfLoggedOut: () => onProviderSelected(provider),
-                    provider: provider,
+                    providerId: provider.id,
                     size: circleButtonSize,
                     padding: EdgeInsets.all(circleButtonPadding),
                   ),
@@ -237,8 +221,8 @@ class _OtherProvidersWrap extends ConsumerWidget {
                   Padding(
                     padding: EdgeInsets.only(bottom: i < providers.length - 1 ? 10 : 0),
                     child: _ProviderButton(
-                      onTapIfLoggedOut: () => onProviderSelected(providers[i]),
-                      provider: providers[i],
+                      onTapIfLoggedOut: () => onProviderSelected(providers.elementAt(i)),
+                      providerId: providers.elementAt(i).id,
                     ),
                   ),
               ],
@@ -249,8 +233,8 @@ class _OtherProvidersWrap extends ConsumerWidget {
 
 /// A circle button that allows to choose a provider.
 class _ProviderCircleButton extends ConsumerWidget {
-  /// The provider.
-  final FirebaseAuthenticationProvider provider;
+  /// The provider id.
+  final String providerId;
 
   /// The button size.
   final double size;
@@ -263,7 +247,7 @@ class _ProviderCircleButton extends ConsumerWidget {
 
   /// Creates a new provider button instance.
   const _ProviderCircleButton({
-    required this.provider,
+    required this.providerId,
     required this.size,
     required this.padding,
     this.onTapIfLoggedOut,
@@ -271,32 +255,25 @@ class _ProviderCircleButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    FirebaseAuthenticationState? state = ref.watch(userAuthenticationProviders.select((providers) => providers[provider]));
+    User? user = ref.watch(userProvider).value;
+    bool isLoggedIn = user != null && user.hasAuthenticationProvider(providerId);
     Widget button = Tooltip(
-      message: switch (provider) {
-        EmailLinkAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.email.name,
-        GoogleAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.google.name,
-        AppleAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.apple.name,
-        GithubAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.github.name,
-        MicrosoftAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.microsoft.name,
-        TwitterAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.twitter.name,
-        _ => null,
-      },
+      message: translations.authentication.firebaseAuthenticationProvider[providerId].name,
       child: FilledButton.tonal(
-        onPressed: state is FirebaseAuthenticationStateLoggedOut ? onTapIfLoggedOut : null,
+        onPressed: isLoggedIn ? null : onTapIfLoggedOut,
         style: FilledButton.styleFrom(
           shape: const CircleBorder(),
           padding: const EdgeInsets.all(20),
           backgroundColor: Colors.white,
         ),
-        child: FirebaseAuthenticationProviderImage(
-          provider: provider,
+        child: AuthenticationProviderImage(
+          providerId: providerId,
           width: size,
           height: size,
         ),
       ),
     );
-    if (state is FirebaseAuthenticationStateLoggedIn) {
+    if (isLoggedIn) {
       button = _AuthenticatedBadge(
         offset: Offset(-padding.right / 2, 0),
         child: button,
@@ -308,44 +285,36 @@ class _ProviderCircleButton extends ConsumerWidget {
 
 /// A button that allows to choose a provider.
 class _ProviderButton extends ConsumerWidget {
-  /// The provider.
-  final FirebaseAuthenticationProvider provider;
+  /// The provider id.
+  final String providerId;
 
   /// Triggered when tapped on (only if user is logged out for the selected provider).
   final VoidCallback? onTapIfLoggedOut;
 
   /// Creates a new provider button instance.
   const _ProviderButton({
-    required this.provider,
+    required this.providerId,
     this.onTapIfLoggedOut,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    FirebaseAuthenticationState? state = ref.watch(userAuthenticationProviders.select((providers) => providers[provider]));
-    String? title = switch (provider) {
-      EmailLinkAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.email.name,
-      GoogleAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.google.name,
-      AppleAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.apple.name,
-      GithubAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.github.name,
-      MicrosoftAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.microsoft.name,
-      TwitterAuthenticationProvider() => translations.authentication.firebaseAuthenticationProvider.twitter.name,
-      _ => null,
-    };
+    User? user = ref.watch(userProvider).value;
+    String? title = translations.authentication.firebaseAuthenticationProvider[providerId].name;
     Widget child = title == null ? const SizedBox.shrink() : Text(title);
-    if (state is FirebaseAuthenticationStateLoggedIn) {
+    if (user != null && user.hasAuthenticationProvider(providerId)) {
       child = _ButtonChildWithAuthenticatedBadge(
         child: child,
       );
     }
     return AppFilledButton(
-      onPressed: state is FirebaseAuthenticationStateLoggedOut ? onTapIfLoggedOut : null,
+      onPressed: onTapIfLoggedOut,
       style: FilledButton.styleFrom(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
       ),
-      icon: FirebaseAuthenticationProviderImage(
-        provider: provider,
+      icon: AuthenticationProviderImage(
+        providerId: providerId,
         width: 16,
         height: 16,
       ),

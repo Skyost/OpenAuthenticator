@@ -1,40 +1,33 @@
 import 'dart:async';
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_authenticator/app.dart';
-import 'package:open_authenticator/firebase_options.dart';
+import 'package:open_authenticator/app.dart'; // TODO
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_links.dart';
-import 'package:open_authenticator/model/authentication/providers/email_link.dart';
-import 'package:open_authenticator/model/authentication/providers/provider.dart';
+import 'package:open_authenticator/model/backend/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
-import 'package:open_authenticator/model/storage/online.dart';
-import 'package:open_authenticator/model/totp/repository.dart';
+import 'package:open_authenticator/model/totp/limit.dart';
 import 'package:open_authenticator/pages/contributor_plan_paywall/page.dart';
 import 'package:open_authenticator/pages/home/page.dart';
 import 'package:open_authenticator/pages/intro/page.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
-import 'package:open_authenticator/utils/account.dart';
-import 'package:open_authenticator/utils/firebase.dart';
-import 'package:open_authenticator/utils/firebase_app_check/firebase_app_check.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/rate_my_app.dart';
-import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/totp_limit.dart';
 import 'package:open_authenticator/widgets/unlock_challenge.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:rate_my_app/rate_my_app.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -57,32 +50,20 @@ Future<void> main() async {
       },
     );
   }
-  if (isFirebaseSupported) {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    await FirebaseAppCheck.instance.activate();
-    if (isCrashlyticsEnabled) {
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-      PlatformDispatcher.instance.onError = (error, stack) {
-        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-        return true;
-      };
-    }
-  }
   await LocaleSettings.useDeviceLocale();
-  runApp(
+  void appRunner() => runApp(
     ProviderScope(
-      retry: (retryCount, error) {
-        if (error is NotLoggedInException) {
-          return null;
-        }
-
-        return ProviderContainer.defaultRetry(retryCount, error);
-      },
       child: TranslationProvider(
         child: const OpenAuthenticatorApp(),
       ),
     ),
   );
+  return kSentryEnabled
+      ? SentryFlutter.init(
+          (options) => options..dsn = App.sentryDsn,
+          appRunner: appRunner,
+        )
+      : appRunner();
 }
 
 /// Allows to initialize [SimpleSecureStorage] with parameters that depend on the current mode.
@@ -285,8 +266,8 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
             return;
           }
           Uri uri = next.value!;
-          if (uri.host == Uri.parse(App.firebaseLoginUrl).host) {
-            WidgetsBinding.instance.addPostFrameCallback((_) => handleLoginLink(uri));
+          if (uri.scheme == 'openauthenticator') {
+            WidgetsBinding.instance.addPostFrameCallback((_) => handleAppLink(uri));
             return;
           }
           if (uri.scheme == 'otpauth') {
@@ -330,27 +311,18 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
     child: widget.child,
   );
 
-  /// Handles a login link.
-  Future<void> handleLoginLink(Uri loginLink) async {
-    if (!mounted) {
-      return;
-    }
-    Uri? link = Uri.tryParse(loginLink.queryParameters['link'] ?? '');
-    if (link == null) {
-      return;
-    }
-    String? mode = link.queryParameters['mode'];
-    switch (mode) {
-      case 'signIn':
-        String? emailToConfirm = await ref.read(emailLinkConfirmationStateProvider.future);
-        if (emailToConfirm == null || !mounted) {
-          return;
-        }
-        Result<AuthenticationObject> result = await ref.read(emailLinkConfirmationStateProvider.notifier).confirm(context, link.toString());
-        if (mounted) {
-          AccountUtils.handleAuthenticationResult(context, ref, result);
-        }
-        break;
+  /// Handles an in-app link.
+  Future<void> handleAppLink(Uri appLink) async {
+    if (appLink.host == 'auth' && appLink.path.startsWith('/provider/') && appLink.pathSegments.length >= 2) {
+      String? providerId = appLink.pathSegments[1];
+      AuthenticationProvider? provider = ref.read(authenticationProvider(providerId));
+      if (provider == null) {
+        return;
+      }
+      await showWaitingOverlay(
+        context,
+        future: provider.onRedirectReceived(appLink),
+      );
     }
   }
 

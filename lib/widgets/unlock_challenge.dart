@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/app_unlock/method.dart';
+import 'package:open_authenticator/model/app_unlock/methods/method.dart';
 import 'package:open_authenticator/model/app_unlock/state.dart';
 import 'package:open_authenticator/model/password_verification/methods/method.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
@@ -70,7 +70,7 @@ class _UnlockChallengeWidgetState extends ConsumerState<UnlockChallengeWidget> {
                       return;
                     }
                   }
-                  await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValue(NoneAppUnlockMethod());
+                  await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValue(NoneAppUnlockMethod.kMethodId);
                   await tryUnlockIfNeeded();
                 },
               ),
@@ -81,12 +81,7 @@ class _UnlockChallengeWidgetState extends ConsumerState<UnlockChallengeWidget> {
                 onButtonPressed: () async {
                   Result<String> changeResult = await MasterPasswordUtils.changeMasterPassword(context, ref, askForUnlock: false);
                   if (changeResult is ResultSuccess<String>) {
-                    await ref
-                        .read(appUnlockMethodSettingsEntryProvider.notifier)
-                        .changeValue(
-                          NoneAppUnlockMethod(),
-                          disableResult: changeResult,
-                        );
+                    await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValue(NoneAppUnlockMethod.kMethodId, disableResult: changeResult);
                     await tryUnlockIfNeeded();
                   }
                 },

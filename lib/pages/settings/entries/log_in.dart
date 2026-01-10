@@ -1,29 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/authentication/firebase_authentication.dart';
-import 'package:open_authenticator/model/authentication/state.dart';
-import 'package:open_authenticator/model/storage/type.dart';
-import 'package:open_authenticator/pages/settings/page.dart';
+import 'package:open_authenticator/model/backend/user.dart';
+import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 
 /// Allows the user to login or logout from the app.
-class AccountLogInSettingsEntryWidget extends ConsumerWidget with RequiresAuthenticationProvider {
+class AccountLogInSettingsEntryWidget extends ConsumerWidget {
   /// Creates a new account login settings entry widget instance.
   const AccountLogInSettingsEntryWidget({
     super.key,
   });
 
   @override
-  Widget buildWidgetWithAuthenticationProviders(BuildContext context, WidgetRef ref) {
-    FirebaseAuthenticationState state = ref.watch(firebaseAuthenticationProvider);
-    switch (state) {
-      case FirebaseAuthenticationStateLoggedOut():
-        return const _LogInListTile();
-      case FirebaseAuthenticationStateLoggedIn(:final user):
-        return _LogOutListTile(user: user.email ?? user.uid);
-    }
+  Widget build(BuildContext context, WidgetRef ref) {
+    User? user = ref.watch(userProvider).value;
+    return user == null ? const _LogInListTile() : _LogOutListTile(user: user.email ?? user.id);
   }
 }
 
@@ -63,6 +56,6 @@ class _LogOutListTile extends ConsumerWidget {
         ),
       ),
     ),
-    onTap: () => StorageMigrationUtils.changeStorageType(context, ref, StorageType.local, logout: true),
+    onTap: () => StorageMigrationUtils.changeStorageType(context, ref, StorageType.localOnly, logout: true),
   );
 }

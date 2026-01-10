@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/model/backend/synchronization/queue.dart';
 import 'package:open_authenticator/model/settings/display_search_button.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
@@ -62,7 +63,7 @@ class HomePageAppBar extends ConsumerWidget implements PreferredSizeWidget {
       if (currentPlatform.isDesktop)
         RequireProviderValueWidget.cryptoStoreAndTotpList(
           child: IconButton(
-            onPressed: () => ref.read(totpRepositoryProvider.notifier).refresh(),
+            onPressed: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
             icon: const Icon(Icons.sync),
           ),
         ),
