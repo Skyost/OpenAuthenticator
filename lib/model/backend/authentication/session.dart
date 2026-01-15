@@ -31,10 +31,10 @@ class Session {
           refreshToken: response.refreshToken,
         ),
       );
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -71,13 +71,13 @@ class StoredSessionNotifier extends AsyncNotifier<Session?> {
       }
       await storeAndUse(result.value);
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       if (ex is BackendRequestError && (ex.errorCode == BackendRequestError.kInvalidPayloadError || ex.errorCode == BackendRequestError.kInvalidTokenError)) {
         await clear();
       }
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

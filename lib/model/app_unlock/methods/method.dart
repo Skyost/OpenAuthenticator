@@ -63,7 +63,7 @@ sealed class AppUnlockMethod<T> {
         return const ResultCancelled();
       }
       return await _tryUnlock(context, reason);
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       if (ex is LocalAuthException) {
         if (ex.code == LocalAuthExceptionCode.userCanceled || ex.code == LocalAuthExceptionCode.systemCanceled) {
           return const ResultCancelled();
@@ -71,7 +71,7 @@ sealed class AppUnlockMethod<T> {
       }
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

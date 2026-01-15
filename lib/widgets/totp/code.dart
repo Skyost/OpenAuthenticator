@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/widgets/totp/time_based.dart';
 
@@ -24,10 +25,20 @@ class _TotpCodeWidgetState extends TimeBasedTotpWidgetState<TotpCodeWidget> {
   late String code = currentTimeCode;
 
   @override
-  Widget build(BuildContext context) => Text(
-    code,
-    style: widget.textStyle,
-  );
+  Widget build(BuildContext context) {
+    TextStyle textStyle = widget.textStyle ?? context.theme.typography.base;
+    return Container(
+      decoration: BoxDecoration(
+        color: context.theme.colors.primary.withValues(alpha: 0.15),
+        borderRadius: context.theme.style.borderRadius,
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+      child: Text(
+        code,
+        style: textStyle,
+      ),
+    );
+  }
 
   @override
   void updateState() {

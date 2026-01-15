@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/utils/utils.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
+import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/toast.dart';
 
 /// Used all around the project to either return a success, a failure or a cancellation.
 sealed class Result<T> {
@@ -38,21 +39,21 @@ class ResultError<T> extends Result<T> {
   final Object? exception;
 
   /// The current stacktrace.
-  final StackTrace stacktrace;
+  final StackTrace stackTrace;
 
   /// Creates a new result error instance.
   ResultError({
     this.exception,
-    StackTrace? stacktrace,
-  }) : stacktrace = stacktrace ?? StackTrace.current {
-    handleException(exception, stacktrace);
+    StackTrace? stackTrace,
+  }) : stackTrace = stackTrace ?? StackTrace.current {
+    handleException(exception, stackTrace);
   }
 
   /// Creates a new result error instance from another [result].
   ResultError.fromAnother(ResultError result)
     : this(
         exception: result.exception,
-        stacktrace: result.stacktrace,
+        stackTrace: result.stackTrace,
       );
 
   @override
@@ -74,20 +75,29 @@ class ResultCancelled<T> extends Result<T> {
 /// Allows to display a result into a SnackBar.
 extension DisplayResult on BuildContext {
   /// Display the given [result].
-  void showSnackBarForResult(
+  void handleResult(
     Result result, {
+    bool showDialogIfError = true,
     bool retryIfError = false,
     String? successMessage,
   }) {
     switch (result) {
       case ResultSuccess():
-        SnackBarIcon.showSuccessSnackBar(this, text: successMessage ?? translations.error.noError);
+        showSuccessToast(this, text: successMessage ?? translations.error.noError);
         break;
-      case ResultError(:final exception):
+      case ResultError(:final exception, :final stackTrace):
+        if (showDialogIfError) {
+          ErrorDialog.openDialog(
+            this,
+            error: exception,
+            stackTrace: stackTrace,
+          );
+          break;
+        }
         if (exception == null) {
-          SnackBarIcon.showErrorSnackBar(this, text: retryIfError ? translations.error.generic.tryAgain : translations.error.generic.noTryAgain);
+          showErrorToast(this, text: retryIfError ? translations.error.generic.tryAgain : translations.error.generic.noTryAgain);
         } else {
-          SnackBarIcon.showErrorSnackBar(this, text: translations.error.generic.withException(exception: exception));
+          showErrorToast(this, text: translations.error.generic.withException(exception: exception));
         }
         break;
       default:

@@ -94,10 +94,10 @@ class TotpRepository extends AsyncNotifier<TotpList> {
         ),
       );
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -134,10 +134,10 @@ class TotpRepository extends AsyncNotifier<TotpList> {
         ),
       );
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -193,10 +193,10 @@ class TotpRepository extends AsyncNotifier<TotpList> {
         ),
       );
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -224,10 +224,10 @@ class TotpRepository extends AsyncNotifier<TotpList> {
         ),
       );
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -272,10 +272,10 @@ class TotpRepository extends AsyncNotifier<TotpList> {
         await storedCryptoStore.changeCryptoStore(password);
       }
       return ResultSuccess(value: password);
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
+import 'package:open_authenticator/widgets/dialog/error.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 /// Allows the user to subscribe to the Contributor Plan.
-class ContributorPlanEntryWidget extends ConsumerWidget {
+class ContributorPlanEntryWidget extends ConsumerWidget with FTileMixin {
   /// Creates a new Contributor Plan entry widget instance.
   const ContributorPlanEntryWidget({
     super.key,
@@ -25,24 +27,25 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
           case ContributorPlanState.impossible:
             return const SizedBox.shrink();
           case ContributorPlanState.inactive:
-            return ListTile(
-              leading: const Icon(Icons.sentiment_dissatisfied),
+            return ClickableTile(
+              prefix: const Icon(FIcons.userX),
               title: Text(translations.settings.application.contributorPlan.title),
               subtitle: Text(translations.settings.application.contributorPlan.subtitle.inactive),
-              onTap: () => ContributorPlanUtils.purchase(context),
+              onPress: () => ContributorPlanUtils.purchase(context),
             );
           case ContributorPlanState.active:
-            return ListTile(
-              leading: const Icon(Icons.verified),
+            return ClickableTile(
+              prefix: const Icon(FIcons.userCheck),
               title: Text(translations.settings.application.contributorPlan.title),
               subtitle: Text(translations.settings.application.contributorPlan.subtitle.active),
-              onTap: () => showDialog(
+              onPress: () => showDialog(
                 context: context,
                 builder: (context) => AppDialog(
                   title: Text(translations.settings.application.contributorPlan.subscriptionDialog.title),
                   actions: [
-                    TextButton(
-                      onPressed: () async {
+                    ClickableButton(
+                      style: FButtonStyle.secondary(),
+                      onPress: () async {
                         String? url = await showWaitingOverlay(
                           context,
                           future: (() async {
@@ -55,16 +58,17 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
                           return;
                         }
                         if (context.mounted) {
-                          SnackBarIcon.showErrorSnackBar(
+                          ErrorDialog.openDialog(
                             context,
-                            text: translations.settings.application.contributorPlan.subscriptionDialog.manageSubscription.error,
+                            message: translations.settings.application.contributorPlan.subscriptionDialog.manageSubscription.error,
                           );
                         }
                       },
                       child: Text(translations.settings.application.contributorPlan.subscriptionDialog.manageSubscription.button),
                     ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
+                    ClickableButton(
+                      style: FButtonStyle.secondary(),
+                      onPress: () => Navigator.pop(context),
                       child: Text(MaterialLocalizations.of(context).closeButtonLabel),
                     ),
                   ],
@@ -76,8 +80,8 @@ class ContributorPlanEntryWidget extends ConsumerWidget {
             );
         }
       case AsyncLoading():
-        return ListTile(
-          leading: const CircularProgressIndicator(),
+        return ClickableTile(
+          prefix: const CircularProgressIndicator(),
           title: Text(translations.settings.application.contributorPlan.title),
           subtitle: Text(translations.settings.application.contributorPlan.subtitle.loading),
         );

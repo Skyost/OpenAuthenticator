@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/authentication/providers/provider.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/account.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Allows the user to confirm its email from the app.
-class ConfirmEmailSettingsEntryWidget extends ConsumerWidget {
+class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with FTileMixin {
   /// Creates a new confirm email settings entry widget instance.
   const ConfirmEmailSettingsEntryWidget({
     super.key,
@@ -22,8 +25,9 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget {
     if (emailToConfirm.value == null) {
       return const SizedBox.shrink();
     }
-    return ListTile(
-      leading: const Icon(Icons.email),
+    return ClickableTile(
+      prefix: const Icon(FIcons.mail),
+      suffix: const RightChevronSuffix(),
       title: Text(translations.settings.synchronization.confirmEmail.title),
       subtitle: Text.rich(
         translations.settings.synchronization.confirmEmail.subtitle(
@@ -33,7 +37,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget {
           ),
         ),
       ),
-      onTap: () async {
+      onPress: () async {
         _ConfirmAction? confirmAction = await _ConfirmActionPickerDialog.openDialog(context);
         if (confirmAction == null || !context.mounted) {
           return;
@@ -65,7 +69,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget {
       future: ref.read(emailAuthenticationProvider).cancelConfirmation(),
     );
     if (context.mounted) {
-      context.showSnackBarForResult(result, retryIfError: true);
+      context.handleResult(result, retryIfError: true);
     }
   }
 
@@ -93,23 +97,24 @@ class _ConfirmActionPickerDialog extends StatelessWidget {
   Widget build(BuildContext context) => AppDialog(
     title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.title),
     actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
+      ClickableButton(
+        style: FButtonStyle.secondary(),
+        onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
     ],
     children: [
-      ListTile(
-        leading: const Icon(Icons.check),
+      ClickableTile(
+        prefix: const Icon(FIcons.check),
         title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.title),
         subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.confirm.subtitle),
-        onTap: () => Navigator.pop(context, _ConfirmAction.tryConfirm),
+        onPress: () => Navigator.pop(context, _ConfirmAction.tryConfirm),
       ),
-      ListTile(
-        leading: const Icon(Icons.clear),
+      ClickableTile(
+        prefix: const Icon(FIcons.x),
         title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.title),
         subtitle: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.cancelConfirmation.subtitle),
-        onTap: () => Navigator.pop(context, _ConfirmAction.cancelConfirmation),
+        onPress: () => Navigator.pop(context, _ConfirmAction.cancelConfirmation),
       ),
     ],
   );

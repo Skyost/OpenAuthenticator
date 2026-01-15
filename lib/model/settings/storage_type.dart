@@ -134,10 +134,10 @@ class StorageTypeSettingsEntry extends EnumSettingsEntry<StorageType> {
       await super.changeValue(value);
 
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

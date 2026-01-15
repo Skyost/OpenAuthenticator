@@ -44,10 +44,10 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<String> {
   Future<Result> unlockWithCurrentMethod(BuildContext context, UnlockReason unlockReason, {bool? allowNone}) async {
     try {
       return _tryUnlockWithCurrentMethod(context, unlockReason, allowNone: allowNone);
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/user.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/account.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 
 /// Allows the user to link its account to another provider.
-class AccountLinkSettingsEntryWidget extends ConsumerWidget {
+class AccountLinkSettingsEntryWidget extends ConsumerWidget with FTileMixin {
   /// Creates a new account link settings entry widget instance.
   const AccountLinkSettingsEntryWidget({
     super.key,
@@ -24,8 +27,9 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget {
       if (user.microsoftId != null) 'microsoft.com',
       if (user.appleId != null) 'apple.com',
     ];
-    return ListTile(
-      leading: const Icon(Icons.link),
+    return ClickableTile(
+      suffix: const RightChevronSuffix(),
+      prefix: const Icon(FIcons.link),
       title: Text(translations.settings.synchronization.accountLink.title),
       subtitle: Text.rich(
         TextSpan(
@@ -54,7 +58,7 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget {
           ],
         ),
       ),
-      onTap: () => AccountUtils.tryToggleLink(context, ref),
+      onPress: () => AccountUtils.tryToggleLink(context, ref),
     );
   }
 }

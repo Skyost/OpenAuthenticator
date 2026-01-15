@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:http/http.dart' as http;
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/utils/debounce.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
@@ -45,7 +47,12 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
   final http.Client client = http.Client();
 
   /// The search keywords.
-  late String? searchKeywords = widget.initialSearchKeywords;
+  late TextEditingController searchKeywordsController = TextEditingController(text: widget.initialSearchKeywords ?? kDefaultSearch)
+    ..addListener(() {
+      if (mounted) {
+        debounce.milliseconds(500, search);
+      }
+    });
 
   /// All searches triggered by the user.
   final Map<String, List<String>> searches = {};
@@ -62,25 +69,27 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
   Widget build(BuildContext context) => Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-      TextFormField(
-        initialValue: searchKeywords,
-        decoration: FormLabelWithIcon(
-          icon: Icons.search,
-          text: translations.logoSearch.keywords.text,
-          hintText: translations.logoSearch.keywords.hint,
+      FTextFormField(
+        control: .managed(controller: searchKeywordsController),
+        style: (style) => style.copyWith(
+          filled: true,
+          fillColor: context.theme.tileStyle.decoration.resolve({})?.color,
         ),
-        onChanged: (value) {
-          searchKeywords = value;
-          debounce.milliseconds(500, search);
-        },
+        label: FormLabelWithIcon(
+          icon: FIcons.search,
+          text: translations.logoSearch.keywords.text,
+        ),
+        hint: translations.logoSearch.keywords.hint,
       ),
       SizedBox(
         width: double.infinity,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(top: kSpace, bottom: kBigSpace),
           child: Text(
             translations.logoSearch.credits(sources: Source.sources.map((source) => source.name).join(' / ')),
-            style: Theme.of(context).textTheme.labelSmall,
+            style: context.theme.typography.xs.copyWith(
+              color: context.theme.colors.foreground.withValues(alpha: 0.75),
+            ),
             textAlign: TextAlign.right,
           ),
         ),
@@ -105,16 +114,16 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
   );
 
   /// Returns the search keywords, non null and lowercased.
-  String get filteredSearchKeywords => searchKeywords == null || searchKeywords!.trim().isEmpty ? kDefaultSearch : searchKeywords!.toLowerCase();
+  String get filteredSearchKeywords => searchKeywordsController.text.trim().isEmpty ? kDefaultSearch : searchKeywordsController.text.trim().toLowerCase();
 
   /// Triggers the search.
   Future<void> search() async {
-    if (!mounted || searches.containsKey(searchKeywords)) {
+    String keywords = filteredSearchKeywords;
+    if (!mounted || searches.containsKey(keywords)) {
       return;
     }
 
     setState(searches.clear);
-    String keywords = filteredSearchKeywords;
     List<Uri> logos = await Source.sources.search(client, keywords);
     setState(() => searches.putIfAbsent(keywords, () => []));
     for (Uri logo in logos) {
@@ -161,12 +170,17 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
     }
     return widget.onLogoClicked == null
         ? image
-        : InkWell(
-            onTap: () => widget.onLogoClicked!.call(imageUrl),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: image,
+        : FTappable(
+            builder: (context, states, child) => Container(
+              decoration: BoxDecoration(
+                color: (states.contains(WidgetState.hovered) || states.contains(WidgetState.pressed)) ? context.theme.colors.secondary : context.theme.colors.background,
+                borderRadius: context.theme.style.borderRadius,
+              ),
+              padding: const EdgeInsets.all(kSpace),
+              child: child!,
             ),
+            child: image,
+            onPress: () => widget.onLogoClicked!.call(imageUrl),
           );
   }
 }

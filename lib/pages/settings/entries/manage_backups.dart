@@ -5,21 +5,24 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:intl/intl.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backup.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
+import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
-import 'package:open_authenticator/widgets/list/expand_list_tile.dart';
-import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
+import 'package:open_authenticator/widgets/expandable_tile.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:share_plus/share_plus.dart';
 
 /// Allows the user to restore a backup.
-class ManageBackupSettingsEntryWidget extends ConsumerWidget {
+class ManageBackupSettingsEntryWidget extends ConsumerWidget with FTileMixin {
   /// Creates a new manage backup settings entry widget instance.
   const ManageBackupSettingsEntryWidget({
     super.key,
@@ -29,12 +32,13 @@ class ManageBackupSettingsEntryWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<List<Backup>> backups = ref.watch(backupStoreProvider);
     int backupCount = backups.value?.length ?? 0;
-    return ListTile(
-      leading: const Icon(Icons.access_time),
+    return ClickableTile(
+      suffix: const RightChevronSuffix(),
+      prefix: const Icon(FIcons.clock),
       title: Text(translations.settings.backups.manageBackups.title),
       subtitle: Text(translations.settings.backups.manageBackups.subtitle(n: backupCount)),
       enabled: backups.hasValue,
-      onTap: () {
+      onPress: () {
         showDialog(
           context: context,
           builder: (context) => _RestoreBackupDialog(),
@@ -67,10 +71,9 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
       case AsyncData(:final value):
         children = [
           if (value.isEmpty)
-            ListTilePadding(
+            Padding(
               key: shareActionKey,
-              top: 20,
-              bottom: 20,
+              padding: const EdgeInsets.symmetric(vertical: kBigSpace),
               child: Text(
                 translations.settings.backups.manageBackups.subtitle(n: 0),
                 textAlign: TextAlign.center,
@@ -78,7 +81,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
               ),
             ),
           for (Backup backup in value)
-            ExpandListTile(
+            ExpandableTile(
               title: Text(
                 formatter.format(backup.dateTime),
               ),
@@ -102,12 +105,14 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
     return AppDialog(
       title: Text(translations.settings.backups.manageBackups.backupsDialogTitle),
       actions: [
-        TextButton(
-          onPressed: importBackup,
+        ClickableButton(
+          style: FButtonStyle.secondary(),
+          onPress: importBackup,
           child: Text(translations.settings.backups.manageBackups.button.import),
         ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
+        ClickableButton(
+          style: FButtonStyle.secondary(),
+          onPress: () => Navigator.pop(context),
           child: Text(MaterialLocalizations.of(context).closeButtonLabel),
         ),
       ],
@@ -117,29 +122,29 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
 
   /// Creates the buttons to interact with a given [backup].
   List<Widget> createBackupActions(Backup backup) => [
-    ListTile(
-      dense: true,
-      onTap: () => restoreBackup(backup),
-      title: Text(translations.settings.backups.manageBackups.button.restore),
-      leading: const Icon(Icons.upload),
+    ClickableButton(
+      style: FButtonStyle.secondary(),
+      onPress: () => restoreBackup(backup),
+      prefix: const Icon(FIcons.upload),
+      child: Text(translations.settings.backups.manageBackups.button.restore),
     ),
-    ListTile(
-      dense: true,
-      onTap: () => shareBackup(backup),
-      title: Text(translations.settings.backups.manageBackups.button.share),
-      leading: const Icon(Icons.share),
+    ClickableButton(
+      style: FButtonStyle.secondary(),
+      onPress: () => shareBackup(backup),
+      prefix: const Icon(FIcons.share),
+      child: Text(translations.settings.backups.manageBackups.button.share),
     ),
-    ListTile(
-      dense: true,
-      onTap: () => exportBackup(backup),
-      title: Text(translations.settings.backups.manageBackups.button.export),
-      leading: const Icon(Icons.import_export),
+    ClickableButton(
+      style: FButtonStyle.secondary(),
+      onPress: () => exportBackup(backup),
+      prefix: const Icon(FIcons.arrowUpDown),
+      child: Text(translations.settings.backups.manageBackups.button.export),
     ),
-    ListTile(
-      dense: true,
-      onTap: () => deleteBackup(backup),
-      title: Text(translations.settings.backups.manageBackups.button.delete),
-      leading: const Icon(Icons.delete),
+    ClickableButton(
+      style: FButtonStyle.secondary(),
+      onPress: () => deleteBackup(backup),
+      prefix: const Icon(FIcons.trash),
+      child: Text(translations.settings.backups.manageBackups.button.delete),
     ),
   ];
 
@@ -168,11 +173,11 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
         context,
         future: ref.read(backupStoreProvider.notifier).import(File(backupFilePath)),
       );
-    } catch (ex, stacktrace) {
-      result = ResultError(exception: ex, stacktrace: stacktrace);
+    } catch (ex, stackTrace) {
+      result = ResultError(exception: ex, stackTrace: stackTrace);
     } finally {
       if (mounted) {
-        context.showSnackBarForResult(result);
+        context.handleResult(result);
       }
     }
   }
@@ -193,7 +198,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
       future: backup.restore(password),
     );
     if (mounted) {
-      context.showSnackBarForResult(result);
+      context.handleResult(result);
       Navigator.pop(context);
     }
   }
@@ -242,11 +247,11 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
       File backupFile = await backup.getBackupPath();
       backupFile.copySync(outputFilePath);
       result = const ResultSuccess();
-    } catch (ex, stacktrace) {
-      result = ResultError(exception: ex, stacktrace: stacktrace);
+    } catch (ex, stackTrace) {
+      result = ResultError(exception: ex, stackTrace: stackTrace);
     } finally {
       if (mounted) {
-        context.showSnackBarForResult(result);
+        context.handleResult(result);
       }
     }
   }
@@ -263,7 +268,7 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
     }
     Result deleteResult = await backup.delete();
     if (mounted) {
-      context.showSnackBarForResult(deleteResult);
+      context.handleResult(deleteResult);
     }
   }
 }

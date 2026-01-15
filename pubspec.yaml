@@ -27,7 +27,7 @@ dependencies:
   uuid: ^4.5.2
   webcrypto: ^0.6.0
   equatable: ^2.0.8
-  drift: ^2.30.0
+  drift: ^2.30.1
   drift_flutter: ^0.2.8
   path: ^1.9.1
   local_auth: ^3.0.0
@@ -36,8 +36,8 @@ dependencies:
   qr_flutter: ^4.1.0
   intl: any
   url_launcher: ^6.3.2
-  purchases_flutter: ^9.10.4
-  purchases_ui_flutter: ^9.10.4
+  purchases_flutter: ^9.10.6
+  purchases_ui_flutter: ^9.10.6
   window_manager: ^0.5.1
   slang: ^4.11.2
   slang_flutter: ^4.11.0
@@ -52,12 +52,15 @@ dependencies:
   connectivity_plus: ^7.0.0
   retry: ^3.1.2
   purchases_dart: ^2.0.0
-  sentry_flutter: ^9.9.2
+  sentry_flutter: ^9.10.0
+  forui: ^0.17.0
+  forui_assets: ^0.17.1
+  custom_refresh_indicator: ^4.0.1
 
 dev_dependencies:
   flutter_lints: ^6.0.0
-  build_runner: ^2.10.4
-  drift_dev: ^2.30.0
+  build_runner: ^2.10.5
+  drift_dev: ^2.30.1
   msix: ^3.16.12
   slang_build_runner: ^4.11.0
   custom_lint: ^0.8.1
@@ -65,7 +68,6 @@ dev_dependencies:
   release: ^0.1.6
 
 flutter:
-  uses-material-design: true
   assets:
     - assets/images/
     - assets/images/authentication/

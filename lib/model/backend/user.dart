@@ -146,10 +146,10 @@ class UserNotifier extends AsyncNotifier<User?> {
       }
       await ref.read(storedSessionProvider.notifier).clear();
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -163,10 +163,10 @@ class UserNotifier extends AsyncNotifier<User?> {
       );
       await ref.read(storedSessionProvider.notifier).clear();
       return result;
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError<DeleteUserResponse>(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/pages/home/search/delegate.dart';
+import 'package:open_authenticator/pages/home/search/route.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 
 /// Displays a search button if the TOTP list is available.
-class SearchButton extends ConsumerWidget {
+class SearchAction extends ConsumerWidget {
   /// Triggered when a TOTP has been found by the user.
   final Function(Totp totp)? onTotpFound;
 
   /// Creates a new search button instance.
-  const SearchButton({
+  const SearchAction({
     super.key,
     this.onTotpFound,
   });
@@ -22,17 +24,14 @@ class SearchButton extends ConsumerWidget {
       AsyncData<TotpList>(:final value) =>
         value.isEmpty
             ? const SizedBox.shrink()
-            : IconButton(
-                onPressed: () async {
-                  Totp? result = await TotpSearchDelegate.openDelegate(
-                    context,
-                    totpList: value,
-                  );
+            : ClickableHeaderAction(
+                onPress: () async {
+                  Totp? result = await showTotpSearch(context);
                   if (result != null) {
                     onTotpFound?.call(result);
                   }
                 },
-                icon: const Icon(Icons.search),
+                icon: const Icon(FIcons.search),
               ),
       _ => const SizedBox.shrink(),
     };

@@ -2,20 +2,57 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/widgets/app_filled_button.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/divider_text.dart';
-import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 import 'package:open_authenticator/widgets/title.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:purchases_flutter/purchases_flutter.dart' hide Price;
 import 'package:url_launcher/url_launcher_string.dart';
+
+/// The contributor plan fallback paywall header.
+class ContributorPlanFallbackPaywallHeader extends StatelessWidget {
+  /// Triggered on dismiss.
+  final VoidCallback onDismiss;
+
+  /// Creates a new contributor plan fallback paywall header instance.
+  const ContributorPlanFallbackPaywallHeader({
+    super.key,
+    required this.onDismiss,
+  });
+
+  @override
+  Widget build(BuildContext context) => FHeader.nested(
+    prefixes: [
+      ClickableHeaderAction.x(
+        onPress: onDismiss,
+      ),
+    ],
+    title: FittedBox(
+      fit: BoxFit.fitWidth,
+      child: Text.rich(
+        translations.contributorPlan.fallbackPaywall.title(
+          title: (text) => WidgetSpan(
+            child: TitleWidget(
+              text: text,
+              textStyle: Theme.of(context).textTheme.headlineLarge,
+            ),
+            alignment: PlaceholderAlignment.middle,
+          ),
+        ),
+        style: Theme.of(context).textTheme.headlineLarge,
+        textAlign: TextAlign.center,
+      ),
+    ),
+  );
+}
 
 /// Allows to pick for a billing plan (annual / monthly).
 /// Displayed only if `purchases_ui_flutter` is unavailable on the current OS.
@@ -23,63 +60,43 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
   /// Triggered when the purchase has completed.
   final VoidCallback onPurchaseCompleted;
 
-  /// Triggered on dismiss.
-  final VoidCallback onDismiss;
-
   /// Creates a new contributor plan fallback paywall instance.
   const ContributorPlanFallbackPaywall({
     super.key,
     required this.onPurchaseCompleted,
-    required this.onDismiss,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => ListView(
-    shrinkWrap: true,
-    children: [
-      AppBar(
-        leading: CloseButton(
-          onPressed: onDismiss,
-        ),
-        backgroundColor: Colors.transparent,
-        scrolledUnderElevation: 0,
-        title: FittedBox(
-          fit: BoxFit.fitWidth,
-          child: Text.rich(
-            translations.contributorPlan.fallbackPaywall.title(
-              title: (text) => WidgetSpan(
-                child: TitleWidget(
-                  text: text,
-                  textStyle: Theme.of(context).textTheme.headlineLarge,
-                ),
-                alignment: PlaceholderAlignment.middle,
-              ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    FBaseButtonStyle Function(FButtonStyle) bottomButtonsStyle = FButtonStyle.ghost(
+      (buttonStyle) => buttonStyle.copyWith(
+        contentStyle: (contentStyle) => contentStyle.copyWith(
+          textStyle: contentStyle.textStyle.map(
+            (textStyle) => textStyle.copyWith(
+              fontSize: context.theme.typography.sm.fontSize,
             ),
-            style: Theme.of(context).textTheme.headlineLarge,
-            textAlign: TextAlign.center,
           ),
         ),
-        centerTitle: true,
       ),
-      const ListTilePadding(
-        top: 20,
-        bottom: 20,
-        child: SizedBox(
+    );
+    // TODO: style should be changed
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        const SizedBox(
           height: 150,
           child: SizedScalableImageWidget(
             asset: 'assets/images/logo.si',
           ),
         ),
-      ),
-      for (String feature in translations.contributorPlan.fallbackPaywall.features)
-        ListTilePadding(
-          child: Row(
+        for (String feature in translations.contributorPlan.fallbackPaywall.features)
+          Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
                 padding: const EdgeInsets.only(right: 6),
                 child: Icon(
-                  Icons.check,
+                  FIcons.check,
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
@@ -88,63 +105,50 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
               ),
             ],
           ),
-        ),
-      ListTilePadding(
-        top: 20,
-        bottom: 20,
-        child: DividerText(
+        DividerText(
           text: Text(
             translations.contributorPlan.fallbackPaywall.packageType.choose,
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-      ),
-      ListTilePadding(
-        child: _ContributorPlanBillingPlanPicker(
-          onContinuePressed: (packageType) => _tryPurchase(context, ref, packageType),
+        _ContributorPlanBillingPlanPicker(
+          onContinuePress: (packageType) => _tryPurchase(context, ref, packageType),
         ),
-      ),
-      ListTilePadding(
-        top: 20,
-        bottom: 10,
-        child: Wrap(
+        Wrap(
           alignment: WrapAlignment.spaceAround,
           children: [
-            TextButton(
-              onPressed: () async {
+            ClickableButton(
+              onPress: () async {
                 if (await canLaunchUrlString(AppContributorPlan.privacyPolicyLink)) {
                   await launchUrlString(AppContributorPlan.privacyPolicyLink);
                 }
               },
-              style: ButtonStyle(
-                textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
-              ),
+              mainAxisSize: .min,
+              style: bottomButtonsStyle,
               child: Text(translations.contributorPlan.fallbackPaywall.button.privacyPolicy),
             ),
-            TextButton(
-              onPressed: () async {
+            ClickableButton(
+              onPress: () async {
                 if (await canLaunchUrlString(AppContributorPlan.termsOfServiceLink)) {
                   await launchUrlString(AppContributorPlan.termsOfServiceLink);
                 }
               },
-              style: ButtonStyle(
-                textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
-              ),
+              mainAxisSize: .min,
+              style: bottomButtonsStyle,
               child: Text(translations.contributorPlan.fallbackPaywall.button.termsOfService),
             ),
-            TextButton(
-              onPressed: () => _tryRestorePurchases(context, ref),
-              style: ButtonStyle(
-                textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.bodySmall),
-              ),
+            ClickableButton(
+              onPress: () => _tryRestorePurchases(context, ref),
+              mainAxisSize: .min,
+              style: bottomButtonsStyle,
               child: Text(translations.contributorPlan.fallbackPaywall.button.restorePurchases),
             ),
           ],
         ),
-      ),
-    ],
-  );
+      ],
+    );
+  }
 
   /// Tries to do purchase the [packageType].
   Future<void> _tryPurchase(BuildContext context, WidgetRef ref, PackageType packageType) async {
@@ -156,7 +160,7 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
       timeoutMessage: translations.error.timeout.contributorPlan,
     );
     if (context.mounted) {
-      context.showSnackBarForResult(
+      context.handleResult(
         result,
         successMessage: translations.contributorPlan.subscribe.success,
         retryIfError: true,
@@ -175,7 +179,7 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
     }
     Result result = await showWaitingOverlay(context, future: contributorPlan.restore());
     if (context.mounted) {
-      context.showSnackBarForResult(
+      context.handleResult(
         result,
         successMessage: translations.contributorPlan.fallbackPaywall.restorePurchasesSuccess,
         retryIfError: true,
@@ -190,11 +194,11 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
 /// Displays the billing plan list and a "Continue" button.
 class _ContributorPlanBillingPlanPicker extends ConsumerStatefulWidget {
   /// Triggered when a package type has been chosen.
-  final Function(PackageType) onContinuePressed;
+  final Function(PackageType) onContinuePress;
 
   /// Creates a new contributor plan billing plan picker instance.
   const _ContributorPlanBillingPlanPicker({
-    required this.onContinuePressed,
+    required this.onContinuePress,
   });
 
   @override
@@ -268,9 +272,9 @@ class _ContributorPlanBillingPlanPickerState extends ConsumerState<_ContributorP
           },
         ),
       ),
-      AppFilledButton(
-        label: Text(MaterialLocalizations.of(context).continueButtonLabel),
-        onPressed: packageType == null ? null : (() => widget.onContinuePressed(packageType!)),
+      ClickableButton(
+        onPress: packageType == null ? null : (() => widget.onContinuePress(packageType!)),
+        child: Text(MaterialLocalizations.of(context).continueButtonLabel),
       ),
     ],
   );
@@ -347,7 +351,7 @@ class _ContributorPlanBillingPlanPickerState extends ConsumerState<_ContributorP
             top: -6,
             right: -6,
             child: Icon(
-              Icons.circle,
+              FIcons.circle,
               color: theme.colorScheme.onPrimary,
             ),
           ),
@@ -356,7 +360,7 @@ class _ContributorPlanBillingPlanPickerState extends ConsumerState<_ContributorP
             top: -6,
             right: -6,
             child: Icon(
-              Icons.check_circle,
+              FIcons.circleCheck,
               color: theme.colorScheme.primary,
             ),
           ),

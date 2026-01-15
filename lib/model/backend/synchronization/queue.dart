@@ -211,12 +211,12 @@ class SynchronizationController extends Notifier<SynchronizationStatus> with Wid
 
         retry = pendingAfter.isNotEmpty;
       }
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       List<PushOperation> pending = await ref.read(pushOperationsQueueProvider.future);
       state = state.update(
         phase: SynchronizationPhaseError(
           exception: ex,
-          stacktrace: stacktrace,
+          stackTrace: stackTrace,
         ),
         pendingOperations: pending.length,
       );

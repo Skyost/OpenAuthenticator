@@ -1,11 +1,15 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide AboutDialog;
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/pages/settings/entries/widgets.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
+import 'package:open_authenticator/widgets/dialog/about_dialog.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// Shows various info about the app.
-class AboutSettingsEntryWidget extends StatelessWidget {
+class AboutSettingsEntryWidget extends StatelessWidget with FTileMixin {
   /// Creates a new about settings entry widget instance.
   const AboutSettingsEntryWidget({
     super.key,
@@ -15,8 +19,9 @@ class AboutSettingsEntryWidget extends StatelessWidget {
   Widget build(BuildContext context) => FutureBuilder<PackageInfo>(
     future: PackageInfo.fromPlatform(),
     initialData: _DefaultPackageInfo(),
-    builder: (context, snapshot) => ListTile(
-      leading: const Icon(Icons.favorite),
+    builder: (context, snapshot) => ClickableTile(
+      suffix: const RightChevronSuffix(),
+      prefix: const Icon(FIcons.heart),
       title: Text(translations.settings.about.aboutApp.title(appName: App.appName)),
       subtitle: Text.rich(
         translations.settings.about.aboutApp.subtitle(
@@ -35,8 +40,8 @@ class AboutSettingsEntryWidget extends StatelessWidget {
         ),
       ),
       enabled: snapshot.data is! _DefaultPackageInfo,
-      onTap: () => showAboutDialog(
-        context: context,
+      onPress: () => AboutDialog.show(
+        context,
         applicationName: snapshot.data!.appName,
         applicationVersion: 'v${snapshot.data!.version}',
         applicationIcon: const SizedScalableImageWidget(

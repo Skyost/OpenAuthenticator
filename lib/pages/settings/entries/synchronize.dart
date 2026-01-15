@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/user.dart';
@@ -7,7 +8,6 @@ import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/totp/limit.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 
@@ -16,8 +16,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
   /// Creates a new synchronize settings entry widget instance.
   SynchronizeSettingsEntryWidget({
     super.key,
-    super.contentPadding,
-    super.icon = Icons.sync,
+    super.icon = FIcons.refreshCcw,
   }) : super(
          provider: storageTypeSettingsEntryProvider,
          title: translations.settings.synchronization.synchronizeTotps.title,
@@ -30,9 +29,6 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
   }) : this(
          key: key,
          icon: null,
-         contentPadding: const EdgeInsets.only(
-           bottom: IntroPageSlideParagraphWidget.kDefaultPadding,
-         ),
        );
 
   @override
@@ -45,9 +41,9 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
   }
 
   @override
-  Widget createListTile(BuildContext context, WidgetRef ref, {StorageType? value, bool enabled = true}) {
+  Widget createTile(BuildContext context, WidgetRef ref, {StorageType? value, bool enabled = true}) {
     if (value == null) {
-      return super.createListTile(
+      return super.createTile(
         context,
         ref,
         enabled: false,
@@ -61,7 +57,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
           case ContributorPlanState.inactive:
             return FutureBuilder(
               future: ref.watch(totpLimitProvider.future),
-              builder: (context, snapshot) => super.createListTile(
+              builder: (context, snapshot) => super.createTile(
                 context,
                 ref,
                 value: storageType,
@@ -69,7 +65,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
               ),
             );
           case ContributorPlanState.active:
-            return super.createListTile(
+            return super.createTile(
               context,
               ref,
               value: storageType,
@@ -80,7 +76,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
         }
       case AsyncLoading():
       default:
-        return super.createListTile(
+        return super.createTile(
           context,
           ref,
           value: value,

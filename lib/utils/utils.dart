@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:hashlib_codecs/hashlib_codecs.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -29,15 +30,15 @@ bool isValidBase32(String string) {
 }
 
 /// Handles an exception.
-void handleException(Object? ex, StackTrace? stacktrace, {bool? sendToSentry}) {
+void handleException(Object? ex, StackTrace? stackTrace, {bool? sendToSentry}) {
   if (kDebugMode) {
     print(ex);
-    print(stacktrace);
+    print(stackTrace);
   }
   if (sendToSentry ?? kSentryEnabled) {
     Sentry.captureException(
       ex,
-      stackTrace: stacktrace,
+      stackTrace: stackTrace,
     );
   }
 }
@@ -154,3 +155,25 @@ Uint8List kTransparentImage = Uint8List.fromList([
   0x60,
   0x82,
 ]);
+
+extension ColorUtils on Color {
+  Color highlight({double amount = 0.1}) => computeLuminance() > 0.4 ? darken(amount: amount) : lighten(amount: amount);
+
+  Color lighten({double amount = 0.1}) {
+    assert(amount >= 0 && amount <= 1);
+
+    HSLColor hsl = HSLColor.fromColor(this);
+    HSLColor hslDark = hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0));
+
+    return hslDark.toColor();
+  }
+
+  Color darken({double amount = 0.1}) {
+    assert(amount >= 0 && amount <= 1);
+
+    HSLColor hsl = HSLColor.fromColor(this);
+    HSLColor hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
+
+    return hslDark.toColor();
+  }
+}

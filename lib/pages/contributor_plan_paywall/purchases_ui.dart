@@ -6,7 +6,8 @@ import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
+import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/toast.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 /// Allows to pick for a billing plan (annual / monthly).
@@ -54,20 +55,20 @@ class ContributorPlanPaywall extends ConsumerWidget {
               return;
             }
             if (result is! ResultSuccess<ContributorPlanState>) {
-              context.showSnackBarForResult(
+              context.handleResult(
                 result,
                 retryIfError: true,
               );
               return;
             }
             if (result.value == ContributorPlanState.active) {
-              SnackBarIcon.showSuccessSnackBar(
+              showSuccessToast(
                 context,
                 text: translations.contributorPlan.subscribe.success,
               );
               onPurchaseCompleted();
             } else {
-              SnackBarIcon.showErrorSnackBar(
+              showErrorToast(
                 context,
                 text: translations.error.generic.tryAgain,
               );
@@ -82,18 +83,18 @@ class ContributorPlanPaywall extends ConsumerWidget {
             onPurchaseError: (error) {
               handleException(error, StackTrace.current);
               if (context.mounted) {
-                SnackBarIcon.showErrorSnackBar(
+                ErrorDialog.openDialog(
                   context,
-                  text: translations.error.generic.withException(exception: error),
+                  error: error,
                 );
               }
             },
             onRestoreError: (error) {
               handleException(error, StackTrace.current);
               if (context.mounted) {
-                SnackBarIcon.showErrorSnackBar(
+                ErrorDialog.openDialog(
                   context,
-                  text: translations.error.generic.withException(exception: error),
+                  error: error,
                 );
               }
             },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 
@@ -21,9 +22,7 @@ class ScannerErrorWidget extends StatelessWidget {
       children: [
         const Padding(
           padding: EdgeInsets.only(bottom: 20),
-          child: Icon(
-            Icons.error,
-          ),
+          child: Icon(FIcons.circleAlert),
         ),
         Text(
           switch (error.errorCode) {

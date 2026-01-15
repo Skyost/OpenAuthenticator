@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 
 /// A dialog that blocks everything until the user has either changed its storage type or subscribed to the Contributor Plan.
@@ -32,17 +34,18 @@ class TotpLimitDialog extends ConsumerWidget {
     title: Text(title),
     displayCloseButton: false,
     actions: [
-      TextButton(
-        onPressed: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.localOnly)),
+      ClickableButton(
+        onPress: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.localOnly)),
         child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
       ),
-      TextButton(
-        onPressed: () => _returnIfSucceeded(context, ContributorPlanUtils.purchase(context)),
+      ClickableButton(
+        onPress: () => _returnIfSucceeded(context, ContributorPlanUtils.purchase(context)),
         child: Text(translations.totpLimit.autoDialog.actions.subscribe),
       ),
       if (cancelButton)
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
+        ClickableButton(
+          style: FButtonStyle.secondary(),
+          onPress: () => Navigator.pop(context, false),
           child: Text(translations.totpLimit.addDialog.actions.cancel),
         ),
     ],

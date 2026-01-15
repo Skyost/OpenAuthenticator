@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/reason.dart';
 import 'package:open_authenticator/model/backend/user.dart';
@@ -12,28 +13,28 @@ import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
 import 'package:open_authenticator/model/totp/database/database.dart';
 import 'package:open_authenticator/model/totp/image_cache.dart';
-import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
 
 /// Allows to clear all the app data.
-class ClearDataSettingsEntryWidget extends ConsumerWidget {
+class ClearDataSettingsEntryWidget extends ConsumerWidget with FTileMixin {
   /// Creates a new clear data settings entry widget instance.
   const ClearDataSettingsEntryWidget({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => DangerZoneListTile(
-    icon: Icons.delete_forever,
-    title: translations.settings.dangerZone.clearData.title,
-    subtitle: translations.settings.dangerZone.clearData.subtitle,
-    onTap: () async {
+  Widget build(BuildContext context, WidgetRef ref) => ClickableTile(
+    prefix: const Icon(FIcons.trash),
+    title: Text(translations.settings.dangerZone.clearData.title),
+    subtitle: Text(translations.settings.dangerZone.clearData.subtitle),
+    onPress: () async {
       bool confirm = await ConfirmationDialog.ask(
         context,
         title: translations.settings.dangerZone.clearData.confirmationDialog.title,
@@ -66,7 +67,7 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
             return;
           }
           if (logoutResult is! ResultSuccess) {
-            context.showSnackBarForResult(logoutResult, retryIfError: true);
+            context.handleResult(logoutResult, retryIfError: true);
             return;
           }
           await SimpleSecureStorage.clear();
@@ -105,8 +106,9 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget {
         displayCloseButton: false,
         actions: canExitWithConfirmDialog
             ? [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
+                ClickableButton(
+                  style: FButtonStyle.destructive(),
+                  onPress: () => Navigator.pop(context),
                   child: Text(MaterialLocalizations.of(context).continueButtonLabel),
                 ),
               ]

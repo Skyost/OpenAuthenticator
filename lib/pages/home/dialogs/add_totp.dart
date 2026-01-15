@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 
 /// A dialog that allows to choose a method to add a TOTP.
@@ -17,21 +19,22 @@ class AddTotpDialog extends StatelessWidget {
   Widget build(BuildContext context) => AppDialog(
     title: Text(translations.home.addDialog.title),
     actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
+      ClickableButton(
+        style: FButtonStyle.secondary(),
+        onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
     ],
     children: [
-      ListTile(
-        leading: const Icon(Icons.qr_code),
-        onTap: () => Navigator.pop(context, AddTotpDialogResult.qrCode),
+      ClickableTile(
+        prefix: const Icon(FIcons.qrCode),
+        onPress: () => Navigator.pop(context, AddTotpDialogResult.qrCode),
         title: Text(translations.home.addDialog.qrCode.title),
         subtitle: Text(translations.home.addDialog.qrCode.subtitle),
       ),
-      ListTile(
-        leading: const Icon(Icons.short_text),
-        onTap: () => Navigator.pop(context, AddTotpDialogResult.manually),
+      ClickableTile(
+        prefix: const Icon(FIcons.textAlignStart),
+        onPress: () => Navigator.pop(context, AddTotpDialogResult.manually),
         title: Text(translations.home.addDialog.manually.title),
         subtitle: Text(translations.home.addDialog.manually.subtitle),
       ),

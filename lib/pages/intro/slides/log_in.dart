@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/user.dart';
@@ -7,7 +8,7 @@ import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/utils/account.dart';
-import 'package:open_authenticator/widgets/app_filled_button.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 
 /// The slide that allows the user to login to Firebase.
 class LogInIntroPageSlide extends IntroPageSlide {
@@ -53,15 +54,15 @@ class _LogInButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     User? user = ref.watch(userProvider).value;
     return user == null
-        ? AppFilledButton(
-            onPressed: () => AccountUtils.trySignIn(context, ref),
-            icon: const Icon(Icons.login),
-            label: Text(translations.intro.logIn.button.loggedOut),
+        ? ClickableButton(
+            onPress: () => AccountUtils.trySignIn(context, ref),
+            prefix: const Icon(FIcons.logIn),
+            child: Text(translations.intro.logIn.button.loggedOut),
           )
-        : AppFilledButton(
-            onPressed: null,
-            icon: const Icon(Icons.check),
-            label: Text(translations.intro.logIn.button.loggedIn),
+        : ClickableButton(
+            onPress: null,
+            prefix: const Icon(FIcons.check),
+            child: Text(translations.intro.logIn.button.loggedIn),
           );
   }
 }

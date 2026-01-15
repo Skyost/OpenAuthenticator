@@ -75,8 +75,8 @@ class TotpImageCacheManager extends AsyncNotifier<Map<String, CacheObject>> {
         imageCache.clear();
         _saveIndex(content: cached);
       }
-    } catch (ex, stacktrace) {
-      handleException(ex, stacktrace);
+    } catch (ex, stackTrace) {
+      handleException(ex, stackTrace);
     }
   }
 

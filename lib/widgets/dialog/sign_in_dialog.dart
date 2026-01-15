@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/backend/user.dart';
+import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/widgets/app_filled_button.dart';
 import 'package:open_authenticator/widgets/authentication_provider_image.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/divider_text.dart';
-import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
 
 /// Allows to sign in in the user.
 class SignInDialog extends ConsumerStatefulWidget {
@@ -35,14 +36,15 @@ class _SignInDialogState extends ConsumerState<SignInDialog> {
   Widget build(BuildContext context) => AppDialog(
     title: Text(translations.authentication.signInDialog.title),
     actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
+      ClickableButton(
+        style: FButtonStyle.secondary(),
+        onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
     ],
     children: [
-      ListTilePadding(
-        bottom: 20,
+      Padding(
+        padding: const EdgeInsets.only(bottom: kBigSpace),
         child: _EmailForm(
           onEmailValidated: (provider, email) {
             Navigator.pop(
@@ -54,23 +56,21 @@ class _SignInDialogState extends ConsumerState<SignInDialog> {
           },
         ),
       ),
-      ListTilePadding(
-        bottom: 20,
+      Padding(
+        padding: const EdgeInsets.only(bottom: kBigSpace),
         child: DividerText(
           text: Text(translations.authentication.signInDialog.separator),
         ),
       ),
-      ListTilePadding(
-        child: _OAuthenticationProvidersWrap(
-          onProviderSelected: (provider) {
-            Navigator.pop(
-              context,
-              SignInDialogResult(
-                action: provider.requestSignIn,
-              ),
-            );
-          },
-        ),
+      _OAuthenticationProvidersWrap(
+        onProviderSelected: (provider) {
+          Navigator.pop(
+            context,
+            SignInDialogResult(
+              action: provider.requestSignIn,
+            ),
+          );
+        },
       ),
     ],
   );
@@ -106,6 +106,14 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
   /// The email.
   String email = '';
 
+  /// The email text editing controller.
+  late final TextEditingController emailController = TextEditingController(text: email)
+    ..addListener(() {
+      if (mounted) {
+        setState(() => email = emailController.text);
+      }
+    });
+
   @override
   Widget build(BuildContext context) {
     User? user = ref.watch(userProvider).value;
@@ -127,16 +135,14 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 6),
-          child: TextFormField(
+          child: FTextFormField(
+            control: .managed(controller: emailController),
             enabled: canAuthenticateByEmail,
-            onChanged: (value) {
-              setState(() => email = value);
-            },
-            decoration: FormLabelWithIcon(
-              icon: Icons.email,
+            label: FormLabelWithIcon(
+              icon: FIcons.mail,
               text: translations.authentication.signInDialog.email.title,
-              hintText: emailToConfirm ?? (hasEmailProvider ? user.email : null) ?? translations.authentication.signInDialog.email.hint,
             ),
+            hint: emailToConfirm ?? (hasEmailProvider ? user.email : null) ?? translations.authentication.signInDialog.email.hint,
             textInputAction: TextInputAction.done,
             validator: TextInputDialog.validateEmail,
             keyboardType: TextInputType.emailAddress,
@@ -154,13 +160,19 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
             ),
           ),
         ),
-        AppFilledButton(
-          icon: const Icon(Icons.send),
-          onPressed: email.trim().isNotEmpty && TextInputDialog.validateEmail(email) == null ? (() => onEmailChosen(provider)) : null,
-          label: child,
+        ClickableButton(
+          prefix: const Icon(FIcons.send),
+          onPress: email.trim().isNotEmpty && TextInputDialog.validateEmail(email) == null ? (() => onEmailChosen(provider)) : null,
+          child: child,
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
   }
 
   /// Sends a mail confirmation.
@@ -221,7 +233,7 @@ class _OAuthenticationProvidersWrap extends ConsumerWidget {
                   Padding(
                     padding: EdgeInsets.only(bottom: i < providers.length - 1 ? 10 : 0),
                     child: _ProviderButton(
-                      onTapIfLoggedOut: () => onProviderSelected(providers.elementAt(i)),
+                      onPressIfLoggedOut: () => onProviderSelected(providers.elementAt(i)),
                       providerId: providers.elementAt(i).id,
                     ),
                   ),
@@ -289,12 +301,12 @@ class _ProviderButton extends ConsumerWidget {
   final String providerId;
 
   /// Triggered when tapped on (only if user is logged out for the selected provider).
-  final VoidCallback? onTapIfLoggedOut;
+  final VoidCallback? onPressIfLoggedOut;
 
   /// Creates a new provider button instance.
   const _ProviderButton({
     required this.providerId,
-    this.onTapIfLoggedOut,
+    this.onPressIfLoggedOut,
   });
 
   @override
@@ -307,18 +319,15 @@ class _ProviderButton extends ConsumerWidget {
         child: child,
       );
     }
-    return AppFilledButton(
-      onPressed: onTapIfLoggedOut,
-      style: FilledButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-      ),
-      icon: AuthenticationProviderImage(
+    return ClickableButton(
+      style: FButtonStyle.secondary(),
+      onPress: onPressIfLoggedOut,
+      prefix: AuthenticationProviderImage(
         providerId: providerId,
         width: 16,
         height: 16,
       ),
-      label: child,
+      child: child,
     );
   }
 }
@@ -362,11 +371,11 @@ class _AuthenticatedBadge extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Badge(
+  Widget build(BuildContext context) => Badge( // TODO: FBadge ?
     offset: offset,
     alignment: alignment,
     label: const Icon(
-      Icons.check,
+      FIcons.check,
       color: Colors.white,
     ),
     backgroundColor: Colors.green.shade700,

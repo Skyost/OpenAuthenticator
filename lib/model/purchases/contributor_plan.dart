@@ -59,10 +59,10 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
           promotions: promotions,
         ),
       );
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -80,10 +80,10 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
       }
       state = AsyncData(await revenueCatClient.hasEntitlement(AppContributorPlan.entitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive);
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -98,10 +98,10 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
       ContributorPlanState contributorPlanState = await revenueCatClient.hasEntitlement(AppContributorPlan.entitlementId) ? ContributorPlanState.active : ContributorPlanState.inactive;
       state = AsyncData(contributorPlanState);
       return ResultSuccess(value: contributorPlanState);
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -120,10 +120,10 @@ class ContributorPlan extends AsyncNotifier<ContributorPlanState> {
         return const ResultSuccess();
       }
       return const ResultCancelled();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

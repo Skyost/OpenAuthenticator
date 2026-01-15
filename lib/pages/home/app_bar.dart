@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/model/backend/synchronization/queue.dart';
 import 'package:open_authenticator/model/settings/display_search_button.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
+import 'package:open_authenticator/pages/home/search/action.dart';
 import 'package:open_authenticator/pages/home/search/box.dart';
-import 'package:open_authenticator/pages/home/search/button.dart';
 import 'package:open_authenticator/pages/home/utils/require_provider_value.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 import 'package:open_authenticator/widgets/title.dart';
 
 /// The app bar for the home page.
-class HomePageAppBar extends ConsumerWidget implements PreferredSizeWidget {
+class HomePageHeader extends ConsumerWidget {
   /// Whether to show the add button.
   final bool showAddButton;
 
   /// Triggered when the add button is pressed.
-  final VoidCallback? onAddButtonPressed;
+  final VoidCallback? onAddButtonPress;
 
   /// Triggered when a TOTP is selected following a search.
   final Function(int index)? onTotpSelectedFollowingSearch;
@@ -27,57 +29,53 @@ class HomePageAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final bool showSearchBox;
 
   /// Creates a new app bar instance.
-  const HomePageAppBar({
+  const HomePageHeader({
     super.key,
     this.showAddButton = false,
-    this.onAddButtonPressed,
+    this.onAddButtonPress,
     this.onTotpSelectedFollowingSearch,
     this.showSearchBox = false,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => AppBar(
-    toolbarHeight: preferredSize.height,
-    title: const _AppBarTitle(),
-    bottom: showSearchBox
-        ? SearchBoxWidget(
-            onTotpFound: (totp) => onTotpFound(ref, totp),
-          )
-        : null,
-    actions: [
-      if (ref.watch(displaySearchButtonSettingsEntryProvider).value ?? true)
+  Widget build(BuildContext context, WidgetRef ref) {
+    Widget header = FHeader.nested(
+      title: const _AppBarTitle(),
+      prefixes: [
         RequireProviderValueWidget.cryptoStoreAndTotpList(
-          child: Builder(
-            builder: (context) => SearchButton(
-              onTotpFound: (totp) => onTotpFound(ref, totp),
+          child: ClickableHeaderAction(
+            onPress: () => Navigator.pushNamed(context, SettingsPage.name),
+            icon: const Icon(FIcons.settings),
+          ),
+        ),
+      ],
+      suffixes: [
+        if (ref.watch(displaySearchButtonSettingsEntryProvider).value ?? true)
+          RequireProviderValueWidget.cryptoStoreAndTotpList(
+            child: Builder(
+              builder: (context) => SearchAction(
+                onTotpFound: (totp) => onTotpFound(ref, totp),
+              ),
             ),
           ),
-        ),
-      if (showAddButton)
-        RequireProviderValueWidget.cryptoStoreAndTotpList(
-          child: IconButton(
-            onPressed: onAddButtonPressed,
-            icon: const Icon(Icons.add),
+        if (showAddButton)
+          RequireProviderValueWidget.cryptoStoreAndTotpList(
+            child: ClickableHeaderAction(
+              onPress: onAddButtonPress,
+              icon: const Icon(FIcons.plus),
+            ),
           ),
-        ),
-      if (currentPlatform.isDesktop)
-        RequireProviderValueWidget.cryptoStoreAndTotpList(
-          child: IconButton(
-            onPressed: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
-            icon: const Icon(Icons.sync),
+        if (currentPlatform.isDesktop)
+          RequireProviderValueWidget.cryptoStoreAndTotpList(
+            child: ClickableHeaderAction(
+              onPress: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
+              icon: const Icon(FIcons.refreshCcw),
+            ),
           ),
-        ),
-      RequireProviderValueWidget.cryptoStoreAndTotpList(
-        child: IconButton(
-          onPressed: () => Navigator.pushNamed(context, SettingsPage.name),
-          icon: const Icon(Icons.settings),
-        ),
-      ),
-    ],
-  );
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight + (showSearchBox ? 48 : 0));
+      ],
+    );
+    return showSearchBox ? SearchBox(header: header) : header;
+  }
 
   Future<void> onTotpFound(WidgetRef ref, Totp totp) async {
     TotpList totps = await ref.read(totpRepositoryProvider.future);
@@ -103,7 +101,7 @@ class _AppBarTitle extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       if (textMaxWidth != null && constraints.maxWidth <= textMaxWidth!) {
-        double size = Theme.of(context).textTheme.titleLarge?.fontSize ?? 32;
+        double size = context.theme.typography.xl3.fontSize ?? 32;
         return SizedScalableImageWidget(
           height: size,
           width: size,

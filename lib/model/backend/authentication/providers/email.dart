@@ -56,10 +56,10 @@ class EmailAuthenticationProvider extends AuthenticationProvider {
       }
       Uri uri = response.value.url;
       return await onRedirectReceived(uri);
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -83,10 +83,10 @@ class EmailAuthenticationProvider extends AuthenticationProvider {
       }
       await _ref.read(emailConfirmationStateProvider.notifier)._cancelConfirmation();
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

@@ -76,10 +76,10 @@ sealed class AuthenticationProvider {
               provider: this,
             ),
           );
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -132,10 +132,10 @@ sealed class AuthenticationProvider {
         await _ref.read(userProvider.notifier).changeUser(_changeId(user, response.value.providerUserId));
       }
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

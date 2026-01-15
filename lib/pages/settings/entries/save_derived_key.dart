@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/methods/method.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
-import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/result.dart';
 
@@ -12,8 +12,7 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
   /// Creates a new save derived key settings entry widget instance.
   SaveDerivedKeySettingsEntryWidget({
     super.key,
-    super.contentPadding,
-    super.icon = Icons.key,
+    super.icon = FIcons.key,
   }) : super(
          provider: appUnlockMethodSettingsEntryProvider,
          title: translations.settings.security.saveDerivedKey.title,
@@ -26,9 +25,6 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
   }) : this(
          key: key,
          icon: null,
-         contentPadding: const EdgeInsets.only(
-           bottom: IntroPageSlideParagraphWidget.kDefaultPadding,
-         ),
        );
 
   @override
@@ -45,7 +41,7 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
     String newMethod = newValue ? NoneAppUnlockMethod.kMethodId : MasterPasswordAppUnlockMethod.kMethodId;
     Result result = await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValueIfUnlockSucceed(newMethod, context);
     if (context.mounted && result is! ResultSuccess) {
-      context.showSnackBarForResult(result, retryIfError: true);
+      context.handleResult(result, retryIfError: true);
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/methods/method.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
@@ -15,7 +16,7 @@ class EnableLocalAuthSettingsEntryWidget extends CheckboxSettingsEntryWidget<App
          provider: appUnlockMethodSettingsEntryProvider,
          title: translations.settings.security.enableLocalAuth.title,
          subtitle: translations.settings.security.enableLocalAuth.subtitle,
-         icon: Icons.lock,
+         icon: FIcons.lock,
        );
 
   @override
@@ -23,7 +24,7 @@ class EnableLocalAuthSettingsEntryWidget extends CheckboxSettingsEntryWidget<App
     future: LocalAuthentication.instance.isSupported(),
     builder: (context, snapshot) {
       if (snapshot.data == null) {
-        return createListTile(context, ref, enabled: false);
+        return createTile(context, ref, enabled: false);
       }
       return snapshot.data == true ? super.build(context, ref) : const SizedBox.shrink();
     },

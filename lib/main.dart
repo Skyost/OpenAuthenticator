@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/app.dart'; // TODO
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_links.dart';
@@ -19,11 +19,13 @@ import 'package:open_authenticator/pages/intro/page.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
 import 'package:open_authenticator/pages/totp.dart';
+import 'package:open_authenticator/themes.dart';
+import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/rate_my_app.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
-import 'package:open_authenticator/widgets/dialog/totp_limit.dart';
+import 'package:open_authenticator/widgets/dialog/totp_limit_dialog.dart';
 import 'package:open_authenticator/widgets/unlock_challenge.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -43,6 +45,7 @@ Future<void> main() async {
         size: Size(800, 600),
         minimumSize: Size(400, 400),
         center: true,
+        titleBarStyle: TitleBarStyle.hidden,
       ),
       () async {
         await windowManager.show();
@@ -125,110 +128,82 @@ class OpenAuthenticatorApp extends ConsumerWidget {
     required Locale locale,
     String? initialRoute,
     Widget? home,
-  }) {
-    ColorScheme light = ColorScheme.fromSeed(
-      seedColor: Colors.green,
-    );
-    ColorScheme dark = ColorScheme.fromSeed(
-      seedColor: Colors.green,
-      brightness: Brightness.dark,
-    );
-    return MaterialApp(
-      key: ValueKey('materialApp.$showIntroState'),
-      title: App.appName,
-      locale: locale,
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: AppLocaleUtils.supportedLocales,
-      themeMode: theme.value,
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        appBarTheme: AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.light,
-            systemNavigationBarColor: dark.surface,
-          ),
-          shape: const RoundedRectangleBorder(),
-          surfaceTintColor: Colors.green,
-        ),
-        colorScheme: dark,
-        // iconButtonTheme: IconButtonThemeData(
-        //   style: ButtonStyle(
-        //     foregroundColor: MaterialStatePropertyAll(Colors.green.shade300),
-        //   ),
-        // ),
-        buttonTheme: const ButtonThemeData(
-          alignedDropdown: true,
-        ),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          shape: const CircleBorder(),
-          backgroundColor: Colors.green.shade700,
-          foregroundColor: Colors.green.shade50,
-        ),
-      ),
-      theme: ThemeData(
-        colorScheme: light,
-        appBarTheme: AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.dark,
-            systemNavigationBarColor: light.surface,
-          ),
-          shape: const RoundedRectangleBorder(),
-        ),
-        buttonTheme: const ButtonThemeData(
-          alignedDropdown: true,
-        ),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          shape: const CircleBorder(),
-          backgroundColor: Colors.green.shade50,
-          foregroundColor: Colors.green.shade700,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          disabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey.shade400),
-          ),
-        ),
-        dividerTheme: const DividerThemeData(
-          color: Colors.black12,
-        ),
-      ),
-      routes: home == null
-          ? {
-              IntroPage.name: (_) => const _RouteWidget(
-                child: IntroPage(),
-              ),
-              HomePage.name: (_) => const _RouteWidget(
-                listen: true,
-                rateMyApp: true,
-                child: HomePage(),
-              ),
-              ScanPage.name: (_) => const _RouteWidget(
-                child: ScanPage(),
-              ),
-              SettingsPage.name: (_) => const _RouteWidget(
-                child: SettingsPage(),
-              ),
-              TotpPage.name: (context) {
-                Map<String, dynamic>? arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-                return _RouteWidget(
-                  child: TotpPage(
-                    totp: arguments?[kRouteParameterTotp],
-                    add: arguments?[kRouteParameterAddTotp],
-                  ),
-                );
-              },
-              ContributorPlanPaywallPage.name: (_) => const _RouteWidget(
-                child: ContributorPlanPaywallPage(),
-              ),
-            }
-          : {},
-      initialRoute: home == null ? initialRoute : null,
-      home: home,
-    );
-  }
+  }) => MaterialApp(
+    key: ValueKey('materialApp.$showIntroState'),
+    title: App.appName,
+    locale: locale,
+    localizationsDelegates: const [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: AppLocaleUtils.supportedLocales,
+    themeMode: theme.value,
+    darkTheme: greenTheme.dark.toApproximateMaterialTheme(),
+    theme: greenTheme.light.toApproximateMaterialTheme(),
+    builder: (context, child) => _AnimatedTheme(
+      light: greenTheme.light,
+      dark: greenTheme.dark,
+      child: FToaster(child: child!),
+    ),
+    routes: home == null
+        ? {
+            IntroPage.name: (_) => const _RouteWidget(
+              child: IntroPage(),
+            ),
+            HomePage.name: (_) => const _RouteWidget(
+              listen: true,
+              rateMyApp: true,
+              child: HomePage(),
+            ),
+            ScanPage.name: (_) => const _RouteWidget(
+              child: ScanPage(),
+            ),
+            SettingsPage.name: (_) => const _RouteWidget(
+              child: SettingsPage(),
+            ),
+            TotpPage.name: (context) {
+              Map<String, dynamic>? arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+              return _RouteWidget(
+                child: TotpPage(
+                  totp: arguments?[kRouteParameterTotp],
+                  add: arguments?[kRouteParameterAddTotp],
+                ),
+              );
+            },
+            ContributorPlanPaywallPage.name: (_) => const _RouteWidget(
+              child: ContributorPlanPaywallPage(),
+            ),
+          }
+        : {},
+    initialRoute: home == null ? initialRoute : null,
+    home: home,
+  );
+}
+
+class _AnimatedTheme extends ConsumerStatefulWidget {
+  final FThemeData light;
+  final FThemeData dark;
+  final Widget child;
+
+  const _AnimatedTheme({
+    required this.light,
+    required this.dark,
+    required this.child,
+  });
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _AnimatedThemeState();
+
+}
+
+class _AnimatedThemeState extends ConsumerState<_AnimatedTheme> with BrightnessListener {
+  @override
+  Widget build(BuildContext context) => FAnimatedTheme(
+    data: currentBrightness == Brightness.dark ? widget.dark : widget.light,
+    child: widget.child,
+  );
+
 }
 
 /// A route that allows to listen to dynamic links and [totpLimitExceededProvider].

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/authentication/providers/provider.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/authentication_provider_image.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/invert_colors.dart';
@@ -20,11 +22,11 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     List<AuthenticationProvider> providers = ref.watch(authenticationProviders);
     List<AuthenticationProvider> currentProviders = ref.watch(userAuthenticationProviders);
-    Widget createListTile(AuthenticationProvider provider) {
+    Widget createTile(AuthenticationProvider provider) {
       bool unlink = currentProviders.contains(provider);
       return _ProviderTile(
         providerId: provider.id,
-        trailingIcon: unlink ? Icons.link_off : null,
+        trailingIcon: unlink ? FIcons.unlink : null,
         onTap: () => Navigator.pop(
           context,
           AuthenticationProviderToggleLinkResult(
@@ -56,16 +58,16 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
 
     return AppDialog(
       title: Text(translations.authentication.providerPickerDialogTitle),
-      contentPadding: AppDialog.classicChoiceDialogPadding,
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
+        ClickableButton(
+          style: FButtonStyle.secondary(),
+          onPress: () => Navigator.pop(context),
           child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
         ),
       ],
       children: [
         for (AuthenticationProvider provider in providers)
-          if (currentProviders.length != 1 || provider != currentProviders.first) createListTile(provider),
+          if (currentProviders.length != 1 || provider != currentProviders.first) createTile(provider),
       ],
     );
   }
@@ -134,13 +136,13 @@ class _ProviderTileState extends ConsumerState<_ProviderTile> with BrightnessLis
         widget.providerId == GithubAuthenticationProvider.kProviderId;
     String? title = translations.authentication.firebaseAuthenticationProvider[widget.providerId].name;
     String? subtitle = translations.authentication.firebaseAuthenticationProvider[widget.providerId].description;
-    return ListTile(
-      leading: invertIconOnBrightnessChance && currentBrightness == Brightness.dark ? InvertColors(child: image) : image,
-      title: title == null ? null : Text(title),
+    return ClickableTile(
+      prefix: invertIconOnBrightnessChance && currentBrightness == Brightness.dark ? InvertColors(child: image) : image,
+      title: title == null ? const SizedBox.shrink() : Text(title),
       subtitle: subtitle == null ? null : Text(subtitle),
       enabled: widget.onTap != null,
-      onTap: widget.onTap,
-      trailing: widget.trailingIcon == null ? null : Icon(widget.trailingIcon),
+      onPress: widget.onTap,
+      suffix: widget.trailingIcon == null ? null : Icon(widget.trailingIcon),
     );
   }
 }

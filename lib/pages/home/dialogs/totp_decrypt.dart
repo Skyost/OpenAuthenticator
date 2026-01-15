@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
+import 'package:open_authenticator/spacing.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
-import 'package:open_authenticator/widgets/list/list_tile_padding.dart';
 
 /// Allows the user to choose an action to execute when a TOTP decryption has been done with success.
 class TotpDecryptDialog extends StatelessWidget {
@@ -19,40 +21,41 @@ class TotpDecryptDialog extends StatelessWidget {
   Widget build(BuildContext context) => AppDialog(
     title: Text(translations.totp.totpKeyDialog.title),
     actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
+      ClickableButton(
+        style: FButtonStyle.secondary(),
+        onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
     ],
     children: [
-      ListTilePadding(
-        bottom: 10,
+      Padding(
+        padding: const EdgeInsets.only(bottom: kSpace),
         child: Text(
           translations.totp.totpKeyDialog.message(n: decryptedTotps.length),
         ),
       ),
       if (decryptedTotps.length > 1)
-        ListTile(
-          leading: const Icon(Icons.done_all),
-          onTap: () => Navigator.pop(context, TotpDecryptDialogResult.changeAllTotpsKey),
+        ClickableTile(
+          prefix: const Icon(FIcons.checkCheck),
+          onPress: () => Navigator.pop(context, TotpDecryptDialogResult.changeAllTotpsKey),
           title: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.title),
           subtitle: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.subtitle),
         ),
-      ListTile(
-        leading: const Icon(Icons.key),
-        onTap: () => Navigator.pop(context, TotpDecryptDialogResult.changeTotpKey),
+      ClickableTile(
+        prefix: const Icon(FIcons.key),
+        onPress: () => Navigator.pop(context, TotpDecryptDialogResult.changeTotpKey),
         title: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.title(n: decryptedTotps.length)),
         subtitle: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.subtitle),
       ),
-      ListTile(
-        leading: const Icon(Icons.password),
-        onTap: () => Navigator.pop(context, TotpDecryptDialogResult.changeMasterPassword),
+      ClickableTile(
+        prefix: const Icon(FIcons.rectangleEllipsis),
+        onPress: () => Navigator.pop(context, TotpDecryptDialogResult.changeMasterPassword),
         title: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.title),
         subtitle: Text(translations.totp.totpKeyDialog.choices.changeMasterPassword.subtitle),
       ),
-      ListTile(
-        leading: const Icon(Icons.close),
-        onTap: () => Navigator.pop(context),
+      ClickableTile(
+        prefix: const Icon(FIcons.x),
+        onPress: () => Navigator.pop(context),
         title: Text(translations.totp.totpKeyDialog.choices.doNothing.title),
         subtitle: Text(translations.totp.totpKeyDialog.choices.doNothing.subtitle),
       ),

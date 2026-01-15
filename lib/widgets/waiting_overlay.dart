@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/countdown.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 
@@ -81,9 +83,10 @@ class _WaitingDialogState extends State<_WaitingDialog> {
       actions: widget.onCancel == null
           ? null
           : [
-              TextButton(
+              ClickableButton(
+                style: FButtonStyle.secondary(),
                 child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-                onPressed: () {
+                onPress: () {
                   if (widget.onCancel!()) {
                     Navigator.pop(context);
                   }

@@ -61,6 +61,26 @@ class TitleWidget extends StatelessWidget {
 
 /// Displays a widget with the app gradient.
 class AppTitleGradient extends StatelessWidget {
+  /// The gradient.
+  static final LinearGradient gradient = LinearGradient(
+    colors: [
+      Colors.green.shade300,
+      Colors.green.shade400,
+      Colors.green.shade500,
+      Colors.green.shade500,
+      Colors.green.shade600,
+      Colors.green.shade800,
+    ],
+    stops: const [
+      0,
+      0.021,
+      0.293,
+      0.554,
+      0.796,
+      1,
+    ],
+  );
+
   /// The child.
   final Widget child;
 
@@ -74,24 +94,7 @@ class AppTitleGradient extends StatelessWidget {
   Widget build(BuildContext context) => ShaderMask(
     blendMode: BlendMode.srcIn,
     shaderCallback: (bounds) =>
-        LinearGradient(
-          colors: [
-            Colors.green.shade300,
-            Colors.green.shade400,
-            Colors.green.shade500,
-            Colors.green.shade500,
-            Colors.green.shade600,
-            Colors.green.shade800,
-          ],
-          stops: const [
-            0,
-            0.021,
-            0.293,
-            0.554,
-            0.796,
-            1,
-          ],
-        ).createShader(
+        gradient.createShader(
           Rect.fromLTWH(0, 0, bounds.width, bounds.height),
         ),
     child: child,

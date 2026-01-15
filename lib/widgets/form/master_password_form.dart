@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
@@ -45,8 +46,26 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
   /// The password input.
   late String passwordInput = widget.defaultPassword ?? '';
 
+  /// The password text editing controller.
+  late final TextEditingController passwordController = TextEditingController(text: passwordInput)
+    ..addListener(() {
+      if (mounted) {
+        setState(() => passwordInput = passwordController.value.text);
+        notifyChangesIfNeeded(password: passwordController.value.text);
+      }
+    });
+
   /// The confirmation input.
   late String confirmationInput = passwordInput;
+
+  /// The confirmation text editing controller.
+  late final TextEditingController confirmationController = TextEditingController(text: confirmationInput)
+    ..addListener(() {
+      if (mounted) {
+        setState(() => confirmationInput = confirmationController.value.text);
+        notifyChangesIfNeeded(confirmation: confirmationController.value.text);
+      }
+    });
 
   @override
   Widget build(BuildContext context) => Form(
@@ -55,16 +74,12 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
     child: Column(
       children: [
         PasswordFormField(
-          initialValue: widget.defaultPassword,
-          decoration: FormLabelWithIcon(
-            icon: Icons.password,
+          control: .managed(controller: passwordController),
+          label: FormLabelWithIcon(
+            icon: FIcons.rectangleEllipsis,
             text: widget.inputText,
-            hintText: widget.hintText,
           ),
-          onChanged: (value) {
-            setState(() => passwordInput = value);
-            notifyChangesIfNeeded(password: value);
-          },
+          hint: widget.hintText,
           validator: validatePassword,
         ),
         SizedBox(
@@ -79,21 +94,24 @@ class _MasterPasswordFormState extends State<MasterPasswordForm> {
           ),
         ),
         PasswordFormField(
-          initialValue: widget.defaultPassword,
-          decoration: FormLabelWithIcon(
-            icon: Icons.check,
+          control: .managed(controller: confirmationController),
+          label: FormLabelWithIcon(
+            icon: FIcons.check,
             text: translations.masterPassword.form.confirmation.input,
-            hintText: translations.masterPassword.form.confirmation.hint,
           ),
-          onChanged: (value) {
-            confirmationInput = value;
-            notifyChangesIfNeeded(confirmation: value);
-          },
+          hint: translations.masterPassword.form.confirmation.hint,
           validator: validateConfirmation,
         ),
       ],
     ),
   );
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    confirmationController.dispose();
+    super.dispose();
+  }
 
   /// Calls [widget.onChanged] if the password has changed.
   void notifyChangesIfNeeded({String? password, String? confirmation}) {

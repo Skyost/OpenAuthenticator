@@ -1,16 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
+import 'package:open_authenticator/widgets/dialog/error.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Contains some useful methods for migrating storage type.
@@ -93,18 +95,18 @@ class StorageMigrationUtils {
             future: ref.read(userProvider.notifier).logoutUser(),
           );
           if (context.mounted) {
-            context.showSnackBarForResult(logoutResult, retryIfError: true);
+            context.handleResult(logoutResult, retryIfError: true);
           }
           return logoutResult is ResultSuccess;
         } else {
           if (context.mounted) {
-            context.showSnackBarForResult(result);
+            context.handleResult(result);
           }
           return true;
         }
       case ResultError(:final exception):
         if (exception is! StorageMigrationException) {
-          context.showSnackBarForResult(result, retryIfError: true);
+          context.handleResult(result, retryIfError: true);
           return false;
         }
         switch (exception) {
@@ -127,7 +129,10 @@ class StorageMigrationUtils {
           case CurrentStoragePasswordMismatchException():
           case EncryptionKeyChangeFailedError():
           case GenericMigrationError():
-            SnackBarIcon.showErrorSnackBar(context, text: translations.error.storageMigration[exception.code] ?? 'An error occurred.');
+            ErrorDialog.openDialog(
+              context,
+              message: translations.error.storageMigration[exception.code],
+            );
             return false;
         }
       default:
@@ -170,12 +175,15 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
   /// The backup password.
   String? backupPassword;
 
+  /// The backup password text editing controller.
+  late final TextEditingController backupPasswordController = TextEditingController(text: backupPassword);
+
   @override
   Widget build(BuildContext context) => AppDialog(
     title: Text(translations.storageMigration.confirmDialog.title),
     actions: [
-      TextButton(
-        onPressed: () {
+      ClickableButton(
+        onPress: () {
           if (createBackup && !backupPasswordFormKey.currentState!.validate()) {
             return;
           }
@@ -183,8 +191,9 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
         },
         child: Text(MaterialLocalizations.of(context).continueButtonLabel),
       ),
-      TextButton(
-        onPressed: () => Navigator.pop(context, const _ConfirmationResult()),
+      ClickableButton(
+        style: FButtonStyle.secondary(),
+        onPress: () => Navigator.pop(context, const _ConfirmationResult()),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
     ],
@@ -204,22 +213,28 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
         Form(
           key: backupPasswordFormKey,
           child: PasswordFormField(
-            initialValue: backupPassword,
-            onChanged: (value) => backupPassword = value,
+            control: .managed(controller: backupPasswordController),
             validator: isBackupPasswordValid,
-            decoration: FormLabelWithIcon(
-              icon: Icons.save,
+            label: FormLabelWithIcon(
+              icon: FIcons.save,
               text: translations.miscellaneous.backupCheckbox.input.text,
-              hintText: translations.miscellaneous.backupCheckbox.input.hint,
             ),
+            hint: translations.miscellaneous.backupCheckbox.input.hint,
           ),
         ),
     ],
   );
 
+  @override
+  void dispose() {
+    backupPasswordController.dispose();
+    super.dispose();
+  }
+
   /// Checks whether the backup password is valid.
   String? isBackupPasswordValid(String? value) {
-    if (createBackup && (backupPassword == null || backupPassword!.isEmpty)) {
+    value ??= backupPasswordController.text;
+    if (createBackup && value.isEmpty) {
       return translations.error.validation.empty;
     }
     return null;
@@ -247,24 +262,25 @@ class _StorageMigrationDeletedTotpPolicyPickerDialog extends StatelessWidget {
   Widget build(BuildContext context) => AppDialog(
     title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.title),
     actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
+      ClickableButton(
+        style: FButtonStyle.secondary(),
+        onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
     ],
     children: [
       Text(translations.storageMigration.deletedTotpPolicyPickerDialog.message),
-      ListTile(
-        leading: const Icon(Icons.delete),
+      ClickableTile(
+        prefix: const Icon(FIcons.trash),
         title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.title),
         subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.delete.subtitle),
-        onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.delete),
+        onPress: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.delete),
       ),
-      ListTile(
-        leading: const Icon(Icons.restore),
+      ClickableTile(
+        prefix: const Icon(FIcons.upload),
         title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.title),
         subtitle: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.restore.subtitle),
-        onTap: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.keep),
+        onPress: () => Navigator.pop(context, StorageMigrationDeletedTotpPolicy.keep),
       ),
     ],
   );

@@ -39,10 +39,10 @@ extension PasswordValidity on List<PasswordVerificationMethod> {
         }
       }
       return ResultSuccess(value: verificationCount == length);
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

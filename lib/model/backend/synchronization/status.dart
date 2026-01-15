@@ -82,10 +82,10 @@ class SynchronizationPhaseError extends SynchronizationPhase {
   final Object? exception;
 
   /// The current stacktrace.
-  final StackTrace stacktrace;
+  final StackTrace stackTrace;
 
   SynchronizationPhaseError({
     this.exception,
-    StackTrace? stacktrace,
-  }) : stacktrace = stacktrace ?? StackTrace.current;
+    StackTrace? stackTrace,
+  }) : stackTrace = stackTrace ?? StackTrace.current;
 }

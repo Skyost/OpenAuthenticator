@@ -7,8 +7,8 @@ import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/dialog/authentication_provider_picker.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
+import 'package:open_authenticator/widgets/dialog/error.dart';
 import 'package:open_authenticator/widgets/dialog/sign_in_dialog.dart';
-import 'package:open_authenticator/widgets/snackbar_icon.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Contains some useful methods for logging and linking the user's current account.
@@ -74,7 +74,7 @@ class AccountUtils {
       future: ref.read(userProvider.notifier).deleteUser(),
     );
     if (context.mounted) {
-      context.showSnackBarForResult(deleteResult, retryIfError: true);
+      context.handleResult(deleteResult, retryIfError: true);
     }
   }
 
@@ -91,7 +91,7 @@ class AccountUtils {
       message: waitingDialogMessage,
     );
     if (context.mounted) {
-      context.showSnackBarForResult(
+      context.handleResult(
         result,
         successMessage: successMessage,
       );
@@ -109,16 +109,16 @@ class AccountUtils {
   }) async {
     switch (result) {
       case ResultSuccess():
-        context.showSnackBarForResult(
+        context.handleResult(
           result,
           successMessage: successMessage ?? translations.authentication.logIn.success,
         );
         break;
       case ResultError(:final exception):
         if (exception == null) {
-          context.showSnackBarForResult(result, retryIfError: true);
+          context.handleResult(result, retryIfError: true);
         } else {
-          SnackBarIcon.showErrorSnackBar(context, text: translations.error.authentication.firebaseException(exception: exception));
+          ErrorDialog.openDialog(context, error: exception);
         }
         break;
       default:

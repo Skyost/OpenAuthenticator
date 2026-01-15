@@ -53,7 +53,7 @@ class Backend extends AsyncNotifier<Map<String, String>> {
           retries: retries,
         ),
       );
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       if (autoRefreshAccessToken && (Session.hasExpired(ex) || ex is _NoAccessTokenException)) {
         Result result = await ref.read(storedSessionProvider.notifier).refresh();
         if (result is! ResultSuccess) {
@@ -66,7 +66,7 @@ class Backend extends AsyncNotifier<Map<String, String>> {
       }
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }

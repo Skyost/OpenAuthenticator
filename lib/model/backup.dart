@@ -155,10 +155,10 @@ class Backup implements Comparable<Backup> {
         throw _InvalidPasswordException();
       }
       return await _ref.read(totpRepositoryProvider.notifier).replaceBy(totps);
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -189,10 +189,10 @@ class Backup implements Comparable<Backup> {
         }),
       );
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -206,10 +206,10 @@ class Backup implements Comparable<Backup> {
       }
       _ref.invalidateSelf();
       return const ResultSuccess();
-    } catch (ex, stacktrace) {
+    } catch (ex, stackTrace) {
       return ResultError(
         exception: ex,
-        stacktrace: stacktrace,
+        stackTrace: stackTrace,
       );
     }
   }
