@@ -9,7 +9,7 @@ import 'package:simple_secure_storage/simple_secure_storage.dart';
 import 'package:webcrypto/webcrypto.dart';
 
 /// The provider instance.
-final passwordSignatureVerificationMethodProvider = AsyncNotifierProvider.autoDispose<PasswordSignatureVerificationMethodNotifier, PasswordSignatureVerificationMethod>(
+final passwordSignatureVerificationMethodProvider = AsyncNotifierProvider<PasswordSignatureVerificationMethodNotifier, PasswordSignatureVerificationMethod>(
   PasswordSignatureVerificationMethodNotifier.new,
 );
 

@@ -1,8 +1,5 @@
 {
-  "subscribe": {
-    "waitingDialogMessage": "Waiting for your purchase...",
-    "success": "You have successfully subscribed to the Contributor Plan. Thanks a lot !"
-  },
+  "subscribeSuccess": "You have successfully subscribed to the Contributor Plan. Thanks a lot !",
   "fallbackPaywall": {
     "title(rich)": "${title(Contributor)} Plan",
     "features": [

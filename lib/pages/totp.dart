@@ -387,7 +387,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
 
   /// Creates the QR code widget.
   Widget createQrCodeWidget(BuildContext context) {
-    Color color = currentBrightness == Brightness.light ? Theme.of(context).colorScheme.primary : Colors.white;
+    Color color = currentBrightness == Brightness.light ? context.theme.colors.primary : Colors.white;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kSpace),
       child: Center(

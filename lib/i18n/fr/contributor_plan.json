@@ -1,8 +1,5 @@
 {
-  "subscribe": {
-    "waitingDialogMessage": "En attente de votre paiement...",
-    "success": "Vous avez souscrit à l'Abonnement Contributeur avec succès. Merci beaucoup !"
-  },
+  "subscribeSuccess": "Vous avez souscrit à l'Abonnement Contributeur avec succès. Merci beaucoup !",
   "fallbackPaywall": {
     "title(rich)": "Abonnement ${title(Contributeur)}",
     "features": [

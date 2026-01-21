@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 
 /// The widget to use in decorations.
 class FormLabelWithIcon extends StatelessWidget {
@@ -23,7 +24,7 @@ class FormLabelWithIcon extends StatelessWidget {
           padding: const EdgeInsets.only(top: 2, right: 6),
           child: Icon(
             icon,
-            color: Theme.of(context).colorScheme.primary,
+            color: context.theme.colors.primary,
             size: 12,
           ),
         ),

@@ -57,9 +57,6 @@ class _UnlockChallengeWidgetState extends ConsumerState<UnlockChallengeWidget> {
           return widget.child;
         }
         return AppScaffold(
-          scaffoldStyle: (scaffoldStyle) => scaffoldStyle.copyWith(
-            backgroundColor: Colors.transparent,
-          ),
           center: true,
           children: [
             BlurWidget(
@@ -82,7 +79,7 @@ class _UnlockChallengeWidgetState extends ConsumerState<UnlockChallengeWidget> {
                 ),
                 MasterPasswordNoPasswordVerificationMethodAvailable() || MasterPasswordNoSalt() => _UnlockChallengeWidgetContent(
                   text: translations.appUnlock.cannotUnlock.masterPassword.noPasswordVerificationMethodAvailable,
-                  buttonIcon: FIcons.key,
+                  buttonIcon: FIcons.keyRound,
                   buttonLabel: translations.appUnlock.cannotUnlock.masterPassword.button,
                   onButtonPress: () async {
                     Result<String> changeResult = await MasterPasswordUtils.changeMasterPassword(context, ref, askForUnlock: false);
@@ -94,7 +91,7 @@ class _UnlockChallengeWidgetState extends ConsumerState<UnlockChallengeWidget> {
                 ),
                 _ => _UnlockChallengeWidgetContent(
                   text: translations.appUnlock.widget.text(app: App.appName),
-                  buttonIcon: FIcons.key,
+                  buttonIcon: FIcons.keyRound,
                   buttonLabel: translations.appUnlock.widget.button,
                   onButtonPress: value == AppLockState.unlockChallengedStarted ? null : tryUnlockIfNeeded,
                 ),
@@ -159,7 +156,7 @@ class _UnlockChallengeWidgetContent extends StatelessWidget {
             fit: BoxFit.scaleDown,
             child: TitleWidget(
               textAlign: TextAlign.center,
-              textStyle: Theme.of(context).textTheme.headlineLarge,
+              textStyle: context.theme.typography.xl2,
             ),
           ),
         ),
@@ -172,7 +169,7 @@ class _UnlockChallengeWidgetContent extends StatelessWidget {
         ),
         Center(
           child: SizedBox(
-            width: math.min(MediaQuery.sizeOf(context).width - 20, 300),
+            width: math.min(MediaQuery.sizeOf(context).width - kBigSpace, 300),
             child: ClickableButton(
               onPress: onButtonPress,
               prefix: buttonIcon == null ? null : Icon(buttonIcon),

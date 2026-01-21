@@ -28,6 +28,7 @@ import 'package:open_authenticator/widgets/centered_circular_progress_indicator.
 import 'package:open_authenticator/widgets/dialog/totp_limit_dialog.dart';
 import 'package:open_authenticator/widgets/unlock_challenge.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
+import 'package:open_authenticator/widgets/window_frame.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:simple_secure_storage/simple_secure_storage.dart';
@@ -144,7 +145,11 @@ class OpenAuthenticatorApp extends ConsumerWidget {
     builder: (context, child) => _AnimatedTheme(
       light: greenTheme.light,
       dark: greenTheme.dark,
-      child: FToaster(child: child!),
+      child: FToaster(
+        child: WindowFrameWidget(
+          child: child!,
+        ),
+      ),
     ),
     routes: home == null
         ? {
@@ -194,16 +199,14 @@ class _AnimatedTheme extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AnimatedThemeState();
-
 }
 
 class _AnimatedThemeState extends ConsumerState<_AnimatedTheme> with BrightnessListener {
   @override
   Widget build(BuildContext context) => FAnimatedTheme(
-    data: currentBrightness == Brightness.dark ? widget.dark : widget.light,
+    data: currentBrightness == .dark ? widget.dark : widget.light,
     child: widget.child,
   );
-
 }
 
 /// A route that allows to listen to dynamic links and [totpLimitExceededProvider].

@@ -42,7 +42,7 @@ class TotpDecryptDialog extends StatelessWidget {
           subtitle: Text(translations.totp.totpKeyDialog.choices.changeAllDecryptedTotpsKey.subtitle),
         ),
       ClickableTile(
-        prefix: const Icon(FIcons.key),
+        prefix: const Icon(FIcons.keyRound),
         onPress: () => Navigator.pop(context, TotpDecryptDialogResult.changeTotpKey),
         title: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.title(n: decryptedTotps.length)),
         subtitle: Text(translations.totp.totpKeyDialog.choices.changeTotpKey.subtitle),

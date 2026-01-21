@@ -210,7 +210,7 @@ FSelectStyle _adaptSelectStyle(
 
 FPopoverMenuStyle _adaptPopoverMenuStyle(
   FPopoverMenuStyle popoverMenuStyle, {
-    Color? hoveredBackgroundColor,
+  Color? hoveredBackgroundColor,
   List<BoxShadow>? boxShadow,
 }) => popoverMenuStyle.copyWith(
   decoration: popoverMenuStyle.decoration.copyWith(

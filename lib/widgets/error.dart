@@ -28,7 +28,7 @@ class ErrorDisplayWidget extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     children: [
       Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: kSpace),
         child: FAlert(
           style: FAlertStyle.destructive(),
           title: const Text('Erreur'),
@@ -36,7 +36,7 @@ class ErrorDisplayWidget extends StatelessWidget {
         ),
       ),
       Padding(
-        padding: EdgeInsets.only(bottom: onRetryPressed == null ? 0 : 10),
+        padding: EdgeInsets.only(bottom: onRetryPressed == null ? 0 : kSpace),
         child: FutureBuilder(
           future: canLaunchUrl(reportIssueUrl),
           builder: (context, asyncSnapshot) => ClickableButton(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_authenticator/spacing.dart';
 
 /// A divider with a text in the middle.
 class DividerText extends StatelessWidget {
@@ -24,7 +25,7 @@ class DividerText extends StatelessWidget {
     children: [
       Expanded(child: leftDivider),
       Padding(
-        padding: const EdgeInsets.only(right: 10, bottom: 4, left: 10),
+        padding: const EdgeInsets.only(right: kSpace, bottom: kSpace / 2, left: kSpace),
         child: text,
       ),
       Expanded(child: rightDivider),

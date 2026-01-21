@@ -1,7 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/utils.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
+import 'package:open_authenticator/widgets/title.dart';
 
 /// A widget that triggers a callback when the user scrolls, so that the floating action button can be hidden or shown.
 class RevealFloatingActionButtonWidget extends StatelessWidget {
@@ -42,4 +46,61 @@ class RevealFloatingActionButtonWidget extends StatelessWidget {
           child: child,
         )
       : child;
+}
+
+/// The floating add button widget.
+class FloatingAddButton extends StatelessWidget {
+  /// Whether to display the floating action button.
+  final bool showFloatingActionButton;
+
+  /// Triggered when the "Add" button is pressed.
+  final Function(BuildContext) onAddButtonPress;
+
+  /// Creates a new floating add button instance.
+  const FloatingAddButton({
+    super.key,
+    required this.showFloatingActionButton,
+    required this.onAddButtonPress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    BoxDecoration createGradient(double darken) => BoxDecoration(
+      shape: BoxShape.circle,
+      boxShadow: context.theme.style.shadow,
+      gradient: LinearGradient(
+        begin: const Alignment(-1, -1),
+        end: const Alignment(0.8, 0.8),
+        colors: [
+          for (Color color in AppTitleGradient.gradient.colors) color.darken(amount: darken),
+        ],
+        stops: AppTitleGradient.gradient.stops,
+      ),
+    );
+    return AnimatedSlide(
+      duration: const Duration(milliseconds: 200),
+      offset: showFloatingActionButton ? Offset.zero : const Offset(0, 2),
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 200),
+        opacity: showFloatingActionButton ? 1 : 0,
+        child: Padding(
+          padding: context.theme.style.pagePadding,
+          child: ClickableButton(
+            style: (style) => style.copyWith(
+              decoration: FWidgetStateMap({
+                WidgetState.hovered: createGradient(0.05),
+                WidgetState.any: createGradient(0),
+              }),
+            ),
+            mainAxisSize: .min,
+            child: const Icon(
+              FIcons.plus,
+              size: 40,
+            ),
+            onPress: () => onAddButtonPress(context),
+          ),
+        ),
+      ),
+    );
+  }
 }

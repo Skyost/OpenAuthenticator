@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
@@ -26,7 +27,7 @@ class WelcomeIntroPageSlide extends IntroPageSlide {
         text: translations.intro.welcome.thirdParagraph,
         textStyle: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary,
+          color: context.theme.colors.primary,
         ),
       ),
     ],

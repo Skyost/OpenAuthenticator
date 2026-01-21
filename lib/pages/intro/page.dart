@@ -7,6 +7,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/pages/home/page.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
+import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/step_progress_indicator.dart';
@@ -87,10 +88,10 @@ class IntroPageState extends ConsumerState<IntroPage> with BrightnessListener {
   Widget build(BuildContext context) => Scaffold(
     bottomNavigationBar: Padding(
       padding: EdgeInsets.only(
-        top: 10,
-        right: 20,
-        bottom: 10 + MediaQuery.paddingOf(context).bottom,
-        left: 20,
+        top: kSpace,
+        right: kBigSpace,
+        bottom: kSpace + MediaQuery.paddingOf(context).bottom,
+        left: kBigSpace,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

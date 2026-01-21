@@ -1,8 +1,5 @@
 {
-  "subscribe": {
-    "waitingDialogMessage": "Warten auf Ihren Kauf...",
-    "success": "Sie haben sich erfolgreich für den Mitwirkender-Plan angemeldet. Herzlichen Dank!"
-  },
+  "subscribeSuccess": "Sie haben sich erfolgreich für den Mitwirkender-Plan angemeldet. Herzlichen Dank!",
   "fallbackPaywall": {
     "title(rich)": "${title(Mitwirkender)}-Plan",
     "features": [

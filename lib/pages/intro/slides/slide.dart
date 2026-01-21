@@ -1,9 +1,11 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/pages/intro/slides/log_in.dart';
 import 'package:open_authenticator/pages/intro/slides/password.dart';
 import 'package:open_authenticator/pages/intro/slides/welcome.dart';
+import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 
@@ -44,7 +46,8 @@ enum IntroPageSlideType {
   password(create: PasswordIntroPageSlide.new),
 
   /// The slide that allows the user to login to Firebase.
-  logIn(create: LogInIntroPageSlide.new);
+  logIn(create: LogInIntroPageSlide.new)
+  ;
 
   /// Allows to create a new intro page slide instance.
   final IntroPageSlide Function() create;
@@ -122,25 +125,25 @@ class IntroPageSlideWidgetState extends ConsumerState<IntroPageSlideWidget> with
     child: Center(
       child: ListView(
         padding: EdgeInsets.only(
-          top: MediaQuery.sizeOf(context).width <= 768 ? 40 : 20,
-          right: 20,
-          left: 20,
-          bottom: 20,
+          top: MediaQuery.sizeOf(context).width <= context.theme.breakpoints.md ? (kBigSpace * 2) : kBigSpace,
+          right: kBigSpace,
+          left: kBigSpace,
+          bottom: kBigSpace,
         ),
         shrinkWrap: true,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 40),
+            padding: const EdgeInsets.only(bottom: kBigSpace * 2),
             child: DefaultTextStyle.merge(
               child: FadeTransition(
                 opacity: _textAnimation,
                 child: widget.titleWidget,
               ),
-              style: Theme.of(context).textTheme.headlineLarge,
+              style: context.theme.typography.xl2,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 40),
+            padding: const EdgeInsets.only(bottom: kBigSpace * 2),
             child: FadeScaleTransition(
               animation: _imageAnimation,
               child: SizedBox(
@@ -205,7 +208,9 @@ class IntroPageSlideParagraphWidget extends StatelessWidget {
          key: key,
          textSpan: TextSpan(
            text: text,
-           style: textStyle,
+           style: (textStyle ?? const TextStyle()).copyWith(
+             height: 1.25,
+           ),
          ),
          padding: padding,
        );

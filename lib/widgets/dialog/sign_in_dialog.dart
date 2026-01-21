@@ -155,7 +155,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
             alignment: Alignment.topRight,
             child: Text(
               description,
-              style: Theme.of(context).textTheme.labelSmall,
+              style: context.theme.typography.sm,
               textAlign: TextAlign.right,
             ),
           ),
@@ -270,7 +270,7 @@ class _ProviderCircleButton extends ConsumerWidget {
     User? user = ref.watch(userProvider).value;
     bool isLoggedIn = user != null && user.hasAuthenticationProvider(providerId);
     Widget button = Tooltip(
-      message: translations.authentication.firebaseAuthenticationProvider[providerId].name,
+      message: translations.authentication.authenticationProvider[providerId].name,
       child: FilledButton.tonal(
         onPressed: isLoggedIn ? null : onTapIfLoggedOut,
         style: FilledButton.styleFrom(
@@ -312,7 +312,7 @@ class _ProviderButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     User? user = ref.watch(userProvider).value;
-    String? title = translations.authentication.firebaseAuthenticationProvider[providerId].name;
+    String? title = translations.authentication.authenticationProvider[providerId].name;
     Widget child = title == null ? const SizedBox.shrink() : Text(title);
     if (user != null && user.hasAuthenticationProvider(providerId)) {
       child = _ButtonChildWithAuthenticatedBadge(
@@ -371,7 +371,7 @@ class _AuthenticatedBadge extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Badge( // TODO: FBadge ?
+  Widget build(BuildContext context) => Badge(
     offset: offset,
     alignment: alignment,
     label: const Icon(

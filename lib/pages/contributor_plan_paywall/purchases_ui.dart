@@ -64,7 +64,7 @@ class ContributorPlanPaywall extends ConsumerWidget {
             if (result.value == ContributorPlanState.active) {
               showSuccessToast(
                 context,
-                text: translations.contributorPlan.subscribe.success,
+                text: translations.contributorPlan.subscribeSuccess,
               );
               onPurchaseCompleted();
             } else {

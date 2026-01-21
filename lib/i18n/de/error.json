@@ -11,12 +11,6 @@
     "masterPassword": "Ungültiges Passwort eingegeben.",
     "confirmation": "Die Bestätigung stimmt nicht überein."
   },
-  "timeout": {
-    "generic": "Es ist eine Zeitüberschreitung aufgetreten. Bitte versuchen Sie es später erneut.",
-    "authentication": "Zeitüberschreitung bei der Anmeldung über den ausgewählten Anbieter. Bitte versuchen Sie es erneut.",
-    "unlink": "Zeitüberschreitung beim Aufheben der Verknüpfung Ihres Kontos mit diesem Authentifizierungsanbieter. Bitte versuchen Sie es erneut.",
-    "contributorPlan": "Zeitüberschreitung beim Warten auf den Kauf Ihres Mitwirkender-Plan-Abonnements. Bitte versuchen Sie es erneut."
-  },
   "generic": {
     "noTryAgain": "Ups, da ist etwas schiefgelaufen.",
     "tryAgain": "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
@@ -46,10 +40,5 @@
     "currentStoragePasswordMismatch": "Ungültiges Master-Passwort eingegeben.",
     "encryptionKeyChangeFailed": "Beim Verschlüsseln Ihrer Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
     "genericError": "Beim Migrieren Ihrer Daten ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut."
-  },
-  "authenticationValidation": {
-    "incorrectPath": "Etwas ist schiefgelaufen (Pfad: '$path'). Bitte melden Sie diesen Fehler.",
-    "generic": "Anfrage konnte nicht validiert werden (Fehlermeldung: $exception). Bitte versuchen Sie es später erneut.",
-    "oauth2": "Anmeldung mit $name nicht möglich. Bitte versuchen Sie es später erneut."
   }
 }

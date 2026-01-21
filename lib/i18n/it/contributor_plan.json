@@ -1,8 +1,5 @@
 {
-  "subscribe": {
-    "waitingDialogMessage": "Completa il tuo acquisto...",
-    "success": "Piano Contributore sottoscritto con successo. Grazie mille!"
-  },
+  "subscribeSuccess": "Piano Contributore sottoscritto con successo. Grazie mille!",
   "fallbackPaywall": {
     "title(rich)": "Piano ${title(Contributore)}",
     "features": [

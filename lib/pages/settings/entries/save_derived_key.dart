@@ -12,7 +12,7 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
   /// Creates a new save derived key settings entry widget instance.
   SaveDerivedKeySettingsEntryWidget({
     super.key,
-    super.icon = FIcons.key,
+    super.icon = FIcons.keyRound,
   }) : super(
          provider: appUnlockMethodSettingsEntryProvider,
          title: translations.settings.security.saveDerivedKey.title,

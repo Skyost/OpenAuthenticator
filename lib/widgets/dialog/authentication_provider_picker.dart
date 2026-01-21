@@ -134,8 +134,8 @@ class _ProviderTileState extends ConsumerState<_ProviderTile> with BrightnessLis
         widget.providerId == AppleAuthenticationProvider.kProviderId ||
         // widget.providerId == TwitterAuthenticationProvider.kProviderId ||
         widget.providerId == GithubAuthenticationProvider.kProviderId;
-    String? title = translations.authentication.firebaseAuthenticationProvider[widget.providerId].name;
-    String? subtitle = translations.authentication.firebaseAuthenticationProvider[widget.providerId].description;
+    String? title = translations.authentication.authenticationProvider[widget.providerId].name;
+    String? subtitle = translations.authentication.authenticationProvider[widget.providerId].description;
     return ClickableTile(
       prefix: invertIconOnBrightnessChance && currentBrightness == Brightness.dark ? InvertColors(child: image) : image,
       title: title == null ? const SizedBox.shrink() : Text(title),

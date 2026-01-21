@@ -7,6 +7,7 @@ import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/home/search/extension.dart';
 import 'package:open_authenticator/widgets/app_scaffold.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
+import 'package:open_authenticator/widgets/error.dart';
 import 'package:open_authenticator/widgets/totp/widget.dart';
 
 /// Shows a full screen search page and returns the search result selected by
@@ -62,7 +63,10 @@ class _SearchPageRoute extends PageRoute<Totp> {
           totps: value,
           animation: animation,
         ),
-        AsyncError() => const Text('Error'), // TODO
+        AsyncError(:final error, :final stackTrace) => ErrorDisplayWidget(
+          error: error,
+          stackTrace: stackTrace,
+        ),
         _ => const CircularProgressIndicator(),
       };
     },

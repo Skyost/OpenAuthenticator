@@ -9,12 +9,6 @@
     "masterPassword": "Password inserita non valida",
     "confirmation": "La conferma non corrisponde"
   },
-  "timeout": {
-    "generic": "Si è verificato un timeout. Riprova più tardi.",
-    "authentication": "Timeout durante l'accesso utilizzando il provider selezionato. Riprova.",
-    "unlink": "Timeout durante il tentativo di scollegare il tuo account da questo provider di autenticazione. Riprova.",
-    "contributorPlan": "Timeout durante l'attesa dell'acquisto del tuo Piano Contributor. Riprova."
-  },
   "appUnlock": "Impossibile sbloccare l'app. Riprova.",
   "generic": {
     "noTryAgain": "Ops, qualcosa è andato storto.",
@@ -45,11 +39,6 @@
     "currentStoragePasswordMismatch": "Password principale inserita non valida.",
     "encryptionKeyChangeFailed": "Si è verificato un errore durante la cifratura dei tuoi dati. Riprova più tardi.",
     "genericError": "Si è verificato un errore durante la migrazione dei tuoi dati. Riprova più tardi."
-  },
-  "authenticationValidation": {
-    "incorrectPath": "Qualcosa è andato storto (il percorso è '$path'). Segnala questo errore.",
-    "generic": "Impossibile convalidare la richiesta (eccezione: $exception). Riprova più tardi.",
-    "oauth2": "Impossibile accedere utilizzando $name. Riprova più tardi."
   },
   "totpDecrypt": "Impossibile decifrare questo TOTP. Assicurati di aver inserito la password corretta."
 }

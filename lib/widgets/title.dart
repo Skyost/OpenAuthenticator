@@ -50,7 +50,7 @@ class TitleWidget extends StatelessWidget {
       child: Text(
         text,
         style: (textStyle ?? const TextStyle()).copyWith(
-          height: 2,
+          height: 1.275,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -93,10 +93,9 @@ class AppTitleGradient extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ShaderMask(
     blendMode: BlendMode.srcIn,
-    shaderCallback: (bounds) =>
-        gradient.createShader(
-          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-        ),
+    shaderCallback: (bounds) => gradient.createShader(
+      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+    ),
     child: child,
   );
 }

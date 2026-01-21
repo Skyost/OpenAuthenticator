@@ -7,7 +7,9 @@ import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/purchases/clients/client.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
+import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/divider_text.dart';
@@ -42,12 +44,12 @@ class ContributorPlanFallbackPaywallHeader extends StatelessWidget {
           title: (text) => WidgetSpan(
             child: TitleWidget(
               text: text,
-              textStyle: Theme.of(context).textTheme.headlineLarge,
+              textStyle: context.theme.typography.xl3,
             ),
             alignment: PlaceholderAlignment.middle,
           ),
         ),
-        style: Theme.of(context).textTheme.headlineLarge,
+        style: context.theme.typography.xl3,
         textAlign: TextAlign.center,
       ),
     ),
@@ -79,13 +81,13 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
         ),
       ),
     );
-    // TODO: style should be changed
     return ListView(
       shrinkWrap: true,
       children: [
-        const SizedBox(
+        Container(
           height: 150,
-          child: SizedScalableImageWidget(
+          margin: const EdgeInsets.only(bottom: kBigSpace),
+          child: const SizedScalableImageWidget(
             asset: 'assets/images/logo.si',
           ),
         ),
@@ -94,10 +96,10 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 6),
+                padding: const EdgeInsets.only(right: kSpace / 2),
                 child: Icon(
                   FIcons.check,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: context.theme.colors.primary,
                 ),
               ),
               Expanded(
@@ -105,15 +107,21 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
               ),
             ],
           ),
-        DividerText(
-          text: Text(
-            translations.contributorPlan.fallbackPaywall.packageType.choose,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.only(top: kBigSpace, bottom: kSpace),
+          child: DividerText(
+            text: Text(
+              translations.contributorPlan.fallbackPaywall.packageType.choose,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ),
-        _ContributorPlanBillingPlanPicker(
-          onContinuePress: (packageType) => _tryPurchase(context, ref, packageType),
+        Padding(
+          padding: const EdgeInsets.only(bottom: kSpace),
+          child: _ContributorPlanBillingPlanPicker(
+            onContinuePress: (packageType) => _tryPurchase(context, ref, packageType),
+          ),
         ),
         Wrap(
           alignment: WrapAlignment.spaceAround,
@@ -156,13 +164,11 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
     Result result = await showWaitingOverlay(
       context,
       future: contributorPlan.purchase(packageType),
-      message: translations.contributorPlan.subscribe.waitingDialogMessage,
-      timeoutMessage: translations.error.timeout.contributorPlan,
     );
     if (context.mounted) {
       context.handleResult(
         result,
-        successMessage: translations.contributorPlan.subscribe.success,
+        successMessage: translations.contributorPlan.subscribeSuccess,
         retryIfError: true,
       );
       if (result is ResultSuccess) {
@@ -255,8 +261,8 @@ class _ContributorPlanBillingPlanPickerState extends ConsumerState<_ContributorP
                     for (MapEntry<PackageType, Price> entry in prices.packagesPrice.entries)
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: _createCard(
+                          padding: const EdgeInsets.symmetric(horizontal: kSpace),
+                          child: _createTile(
                             context,
                             packageType: entry.key,
                             price: entry.value,
@@ -280,7 +286,7 @@ class _ContributorPlanBillingPlanPickerState extends ConsumerState<_ContributorP
   );
 
   /// Creates the list tile for the given [packageType].
-  Widget _createCard(
+  Widget _createTile(
     BuildContext context, {
     required PackageType packageType,
     required Price price,
@@ -292,92 +298,91 @@ class _ContributorPlanBillingPlanPickerState extends ConsumerState<_ContributorP
     if (name == null || interval == null || subtitle == null) {
       return const SizedBox.shrink();
     }
-    ThemeData theme = Theme.of(context);
-    Widget card = Card.outlined(
-      clipBehavior: Clip.hardEdge,
-      child: InkWell(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Text(
-                  name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              Text.rich(
-                translations.contributorPlan.fallbackPaywall.packageType.priceSubtitle(
-                  subtitle: TextSpan(text: subtitle),
-                  price: TextSpan(
-                    text: price.formattedAmount,
-                    style: const TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                  interval: TextSpan(
-                    text: interval.toLowerCase(),
-                    style: const TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.75)),
-              ),
-            ],
-          ),
+    Widget tile = FTile.raw(
+      style: (tileStyle) => tileStyle.copyWith(
+        contentStyle: (contentStyle) => contentStyle.copyWith(
+          padding: const EdgeInsets.symmetric(vertical: kSpace, horizontal: kBigSpace),
         ),
-        onTap: () {
-          setState(() => this.packageType = this.packageType == packageType ? null : packageType);
-        },
       ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: kSpace / 2),
+            child: Text(
+              name,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Text.rich(
+            translations.contributorPlan.fallbackPaywall.packageType.priceSubtitle(
+              subtitle: TextSpan(text: subtitle),
+              price: TextSpan(
+                text: price.formattedAmount,
+                style: const TextStyle(fontStyle: FontStyle.italic),
+              ),
+              interval: TextSpan(
+                text: interval.toLowerCase(),
+                style: const TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+            style: TextStyle(color: context.theme.colors.primaryForeground),
+          ),
+        ],
+      ),
+      onPress: () {
+        setState(() => this.packageType = this.packageType == packageType ? null : packageType);
+      },
     );
     return Stack(
       fit: StackFit.expand,
       clipBehavior: Clip.none,
       children: [
         if (this.packageType == packageType)
-          Theme(
-            data: theme.copyWith(
-              colorScheme: theme.colorScheme.copyWith(
-                outlineVariant: theme.colorScheme.primary,
-                surface: theme.colorScheme.surfaceContainerHigh,
+          FTheme(
+            data: context.theme.copyWith(
+              tileStyle: (tileStyle) => tileStyle.copyWith(
+                decoration: tileStyle.decoration.map(
+                  (decoration) => decoration?.copyWith(
+                    color: decoration.color?.highlight(),
+                  ),
+                ),
               ),
             ),
-            child: card,
+            child: tile,
           )
         else
-          card,
+          tile,
         if (this.packageType == packageType)
           Positioned(
-            top: -6,
-            right: -6,
+            top: -kSpace / 2,
+            right: -kSpace / 2,
             child: Icon(
               FIcons.circle,
-              color: theme.colorScheme.onPrimary,
+              color: context.theme.colors.primaryForeground,
             ),
           ),
         if (this.packageType == packageType)
           Positioned(
-            top: -6,
-            right: -6,
+            top: -kSpace / 2,
+            right: -kSpace / 2,
             child: Icon(
               FIcons.circleCheck,
-              color: theme.colorScheme.primary,
+              color: context.theme.colors.primaryForeground,
             ),
           ),
         if (off != null)
           Positioned(
-            top: -10,
-            left: -10,
+            top: -kSpace,
+            left: -kSpace,
             child: Transform.rotate(
               angle: -math.pi / 16,
-              child: Card(
-                color: theme.colorScheme.primary,
-                elevation: 0,
+              child: FBadge(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: kSpace, vertical: kSpace / 2),
                   child: Text(
                     '-${off.abs()}%',
-                    style: TextStyle(color: theme.colorScheme.onPrimary),
+                    style: TextStyle(color: context.theme.colors.primaryForeground),
                   ),
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/widgets/sized_scalable_image.dart';
 import 'package:open_authenticator/widgets/title.dart';
 
@@ -63,14 +64,14 @@ class ImageTextButtonsWidget extends StatelessWidget {
   Widget build(BuildContext context) => Center(
     child: ListView(
       shrinkWrap: true,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(kBigSpace),
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: const EdgeInsets.only(bottom: kBigSpace),
           child: image,
         ),
         Padding(
-          padding: EdgeInsets.only(bottom: buttons.isEmpty ? 0 : 20),
+          padding: EdgeInsets.only(bottom: buttons.isEmpty ? 0 : kBigSpace),
           child: Text(
             text ?? translations.error.generic.noTryAgain,
             textAlign: TextAlign.center,
@@ -79,7 +80,7 @@ class ImageTextButtonsWidget extends StatelessWidget {
         for (int i = 0; i < buttons.length; i++)
           Center(
             child: Padding(
-              padding: EdgeInsets.only(bottom: i == buttons.length - 1 ? 0 : 10),
+              padding: EdgeInsets.only(bottom: i == buttons.length - 1 ? 0 : kSpace),
               child: buttons[i],
             ),
           ),

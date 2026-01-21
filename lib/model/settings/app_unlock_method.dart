@@ -113,9 +113,9 @@ class AppUnlockMethodSettingsEntry extends SettingsEntry<String> {
         return;
     }
     AppUnlockMethod? currentMethod = ref.read(appUnlockMethodProvider(await future));
-    await currentMethod?.onMethodChosen(enableResult: enableResult);
     AppUnlockMethod newMethod = ref.read(appUnlockMethodProvider(value))!;
-    await newMethod.onMethodChanged(disableResult: disableResult);
+    await newMethod.onMethodChosen(enableResult: enableResult);
+    await currentMethod?.onMethodChanged(disableResult: disableResult);
     await super.changeValue(value);
   }
 }

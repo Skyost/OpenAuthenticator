@@ -9,12 +9,6 @@
     "masterPassword": "Invalid password entered",
     "confirmation": "Confirmation doesn't match"
   },
-  "timeout": {
-    "generic": "Timeout occurred. Please try again later.",
-    "authentication": "Timed out while logging in using the selected provider. Please try again.",
-    "unlink": "Timed out while trying to unlink your account from this authentication provider. Please try again.",
-    "contributorPlan": "Timed out while waiting for your Contributor Plan subscription purchase. Please try again."
-  },
   "appUnlock": "Failed to unlock the app. Please try again.",
   "generic": {
     "noTryAgain": "Oops, something went wrong.",
@@ -45,11 +39,6 @@
     "currentStoragePasswordMismatch": "Invalid master password entered.",
     "encryptionKeyChangeFailed": "An error occurred while encrypting your data. Please try again later.",
     "genericError": "An error occurred while migrating your data. Please try again later."
-  },
-  "authenticationValidation": {
-    "incorrectPath": "Something went wrong (path is '$path'). Please report this error.",
-    "generic": "Unable to validate request (exception : $exception). Please try again later.",
-    "oauth2": "Unable to login using $name. Please try again later."
   },
   "totpDecrypt": "Failed to decrypt this TOTP. Please ensure you have entered the correct password."
 }
