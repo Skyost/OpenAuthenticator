@@ -131,7 +131,6 @@ class TotpWidget extends StatelessWidget {
       return (context) => _DesktopActionsWidget(
         totp: totp,
         onDecryptPress: onDecryptPress,
-        onCopyPress: onCopyPress,
         onEditPress: onEditPress,
         onDeletePress: onDeletePress,
       );
@@ -262,9 +261,6 @@ class _DesktopActionsWidget extends StatelessWidget {
   /// Triggered when the user clicks on "Decrypt".
   final VoidCallback? onDecryptPress;
 
-  /// Triggered when the user clicks on "Copy code".
-  final VoidCallback? onCopyPress;
-
   /// Triggered when the user clicks on "Edit".
   final VoidCallback? onEditPress;
 
@@ -275,7 +271,6 @@ class _DesktopActionsWidget extends StatelessWidget {
   const _DesktopActionsWidget({
     required this.totp,
     this.onDecryptPress,
-    this.onCopyPress,
     this.onEditPress,
     this.onDeletePress,
   });

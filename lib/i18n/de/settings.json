@@ -33,15 +33,20 @@
     "theme": {
       "title": "Thema",
       "subtitle": "Ändern Sie den Anwendungsthemen und Helligkeit.",
-      "name(map)": {
-        "system": "System",
-        "light": "Hell",
-        "dark": "Dunkel"
-      },
-      "description(map)": {
-        "system": "Verwenden Sie das Systemthema.",
-        "light": "Verwenden Sie das Hellenthema.",
-        "dark": "Verwenden Sie das Dunkelthema."
+      "themePickerDialog": {
+        "title": "Thema",
+        "theme": {
+          "name(map)": {
+            "system": "System",
+            "light": "Hell",
+            "dark": "Dunkel"
+          },
+          "description(map)": {
+            "system": "Verwenden Sie das Systemthema.",
+            "light": "Verwenden Sie das Hellenthema.",
+            "dark": "Verwenden Sie das Dunkelthema."
+          }
+        }
       }
     }
   },
@@ -69,11 +74,7 @@
       "title": "Verknüpfung mit anderen Anbietern",
       "subtitle": {
         "text": "Verknüpfen Sie Ihr Konto mit anderen Authentifizierungsanbietern, damit Sie sich mit diesen anmelden können.",
-        "linkedProviders(rich)": "Aktuell verknüpft mit: $providers.",
-        "providers(map)": {
-          "emailLink": "E-Mail Adresse",
-          "password": "E-Mail Adresse"
-        }
+        "linkedProviders(rich)": "Aktuell verknüpft mit: $providers."
       }
     },
     "accountLogin": {

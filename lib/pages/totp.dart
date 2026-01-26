@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
-import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/main.dart';
 import 'package:open_authenticator/model/crypto.dart';
@@ -483,9 +482,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
       if (mounted) {
         await TotpLimitDialog.show(
           context,
-          title: translations.totpLimit.addDialog.title,
-          message: translations.totpLimit.addDialog.message(count: App.defaultTotpsLimit),
-          cancelButton: true,
+          autoDialog: false,
         );
       }
       return const ResultCancelled();

@@ -15,22 +15,9 @@
     "tryAgain": "Something went wrong. Please try again later.",
     "withException": "An error occurred (exception : $exception). Please try again later."
   },
-  "authentication": {
-    "accountExistsWithDifferentCredentialsDialog": {
-      "title": "An account already exists",
-      "message": "An account with the same email address exists in our database, but the selected authentication provider has not yet been linked to it.\nPlease try to log in using an already linked authentication provider."
-    },
-    "invalidCredential": "Invalid credentials provided.",
-    "operationNotAllowed": "Operation not allowed. This should not happen, please report this error.",
-    "userDisabled": "Your account has been disabled.",
-    "firebaseException": "An error occurred while trying to authenticate your account (exception : $exception). Please try again later."
-  },
   "scan": {
     "noUri": "Failed to read this QR code. Please ensure it is a valid TOTP QR code.",
-    "accessDeniedDialog": {
-      "title": "Access denied",
-      "message": "Failed to access your camera (access denied : $exception). Do you want to retry ?"
-    },
+    "accessDenied": "Failed to access your camera (access denied : $exception).",
     "controllerUninitialized": "Uninitialized controller (code : $exception).",
     "unsupported": "Scanning is not supported on this device (code : $exception)."
   },

@@ -15,22 +15,9 @@
     "tryAgain": "Qualcosa è andato storto. Riprova più tardi.",
     "withException": "Si è verificato un errore (eccezione: $exception). Riprova più tardi."
   },
-  "authentication": {
-    "accountExistsWithDifferentCredentialsDialog": {
-      "title": "Account già esistente",
-      "message": "Esiste già un account con lo stesso indirizzo email nel nostro database, ma il provider di autenticazione selezionato non è stato ancora collegato.\nProva ad accedere utilizzando un provider di autenticazione già collegato."
-    },
-    "invalidCredential": "Credenziali fornite non valide.",
-    "operationNotAllowed": "Operazione non consentita. È un errore imprevisto, per favore segnalacelo.",
-    "userDisabled": "Il tuo account è stato disabilitato.",
-    "firebaseException": "Si è verificato un errore durante il tentativo di autenticare il tuo account (eccezione: $exception). Riprova più tardi."
-  },
   "scan": {
     "noUri": "Impossibile leggere questo codice QR. Assicurati che sia un codice QR TOTP valido.",
-    "accessDeniedDialog": {
-      "title": "Accesso negato",
-      "message": "Impossibile accedere alla tua fotocamera (accesso negato: $exception). Vuoi riprovare?"
-    },
+    "accessDenied": "Impossibile accedere alla tua fotocamera (accesso negato: $exception).",
     "controllerUninitialized": "Controller non inizializzato (codice: $exception).",
     "unsupported": "La scansione non è supportata su questo dispositivo (codice: $exception)."
   },

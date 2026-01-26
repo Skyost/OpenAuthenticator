@@ -8,13 +8,11 @@
     "title": "Synchronize your TOTPs",
     "firstParagraph": "Click on the \"Log in\" button below to be able synchronize your TOTPs between your devices.",
     "secondParagraph": "This step is completely optional.",
-    "thirdParagraph": "Note that, if you enable this option, we will have to limit you to $limit TOTPs in order to prevent excessive server usage.",
+    "thirdParagraph": "Note that, if you enable this option, we will have to limit your TOTPs count in order to prevent excessive server usage.",
     "fourthParagraph": "This limit can be removed at any time by subscribing to the Contributor Plan in the $app settings.",
     "button": {
       "loggedOut": "Log in",
-      "verifyEmail": "Confirm email address",
-      "loggedIn": "Logged in with success",
-      "error": "Cannot authenticate"
+      "loggedIn": "Logged in with success"
     }
   },
   "password": {

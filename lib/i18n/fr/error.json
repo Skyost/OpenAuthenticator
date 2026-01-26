@@ -15,22 +15,9 @@
     "tryAgain": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
     "withException": "Une erreur est survenue ($exception). Veuillez réessayer plus tard."
   },
-  "authentication": {
-    "accountExistsWithDifferentCredentialsDialog": {
-      "title": "Un compte existe déjà",
-      "message": "Un compte avec la même adresse mail existe dans notre base de données, mais le fournisseur d'authentification sélectionné n'y est pas relié.\nVeuillez vous connecter en utilisant un fournisseur d'authentification qui y est déjà relié."
-    },
-    "invalidCredential": "Identifiants incorrects.",
-    "operationNotAllowed": "Opération non autorisée. Cela ne doit pas arriver, veuillez reporter cette erreur.",
-    "userDisabled": "Votre compte a été désactivé.",
-    "firebaseException": "Une erreur est survenue pendant la connexion à votre compte (erreur : $exception). Veuillez réessayer plus tard."
-  },
   "scan": {
     "noUri": "Impossible de lire ce QR code. Assurez-vous qu'il s'agit d'un QR code de TOTP valide.",
-    "accessDeniedDialog": {
-      "title": "Accès refusé",
-      "message": "Impossible d'accéder à votre caméra (accès refusé : $exception). Voulez-vous réessayer ?"
-    },
+    "accessDenied": "Impossible d'accéder à votre caméra (accès refusé : $exception).",
     "controllerUninitialized": "Controlleur non initialisé (code : $exception).",
     "unsupported": "Le scan n'est pas supporté par cet appareil (code : $exception)."
   },

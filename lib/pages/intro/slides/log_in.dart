@@ -33,7 +33,7 @@ class LogInIntroPageSlide extends IntroPageSlide {
         child: _LogInButton(),
       ),
       SynchronizeSettingsEntryWidget.intro(),
-      IntroPageSlideParagraphWidget(text: translations.intro.logIn.thirdParagraph(limit: App.defaultTotpsLimit.toString())),
+      IntroPageSlideParagraphWidget(text: translations.intro.logIn.thirdParagraph),
       IntroPageSlideParagraphWidget(
         text: translations.intro.logIn.fourthParagraph(app: App.appName),
         padding: 0,

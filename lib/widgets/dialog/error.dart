@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/error.dart';
 
 /// A dialog displaying an error with the option to retry.
@@ -27,14 +27,8 @@ class ErrorDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => FDialog.adaptive(
-    title: const Text('Erreur'), // TODO: Localize
-    body: SingleChildScrollView(
-      child: ErrorDetails(
-        error: error,
-        stackTrace: stackTrace,
-      ),
-    ),
+  Widget build(BuildContext context) => AppDialog(
+    title: const Text('Erreur'),
     actions: [
       if (allowRetry)
         ClickableButton(
@@ -44,6 +38,13 @@ class ErrorDialog extends StatelessWidget {
       ClickableButton(
         onPress: () => Navigator.pop(context, ErrorDialogResult.cancel),
         child: const Text('Annuler'),
+      ),
+    ], // TODO: Localize
+    children: [
+      ErrorDetails(
+        error: error,
+        stackTrace: stackTrace,
+        message: message,
       ),
     ],
   );

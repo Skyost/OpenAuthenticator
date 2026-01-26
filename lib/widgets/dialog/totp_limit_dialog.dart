@@ -1,58 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
-import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/model/backend/user.dart';
+import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
+import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
+import 'package:open_authenticator/widgets/dialog/error.dart';
 
 /// A dialog that blocks everything until the user has either changed its storage type or subscribed to the Contributor Plan.
 class TotpLimitDialog extends ConsumerWidget {
-  /// The dialog title.
-  final String title;
-
-  /// The dialog message.
-  final String message;
-
-  /// Whether to add a cancel button.
-  final bool cancelButton;
+  /// Whether the dialog has been automatically opened.
+  final bool autoDialog;
 
   /// Creates a new mandatory totp limit dialog.
   const TotpLimitDialog({
     super.key,
-    required this.title,
-    required this.message,
-    required this.cancelButton,
+    required this.autoDialog,
   });
 
-  // TODO: handle when the user has already subscribed to the Contributor Plan.
   @override
-  Widget build(BuildContext context, WidgetRef ref) => AppDialog(
-    title: Text(title),
-    displayCloseButton: false,
-    actions: [
-      ClickableButton(
-        onPress: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.localOnly)),
-        child: Text(translations.totpLimit.autoDialog.actions.stopSynchronization),
-      ),
-      ClickableButton(
-        onPress: () => _returnIfSucceeded(context, ContributorPlanUtils.purchase(context)),
-        child: Text(translations.totpLimit.autoDialog.actions.subscribe),
-      ),
-      if (cancelButton)
+  Widget build(BuildContext context, WidgetRef ref) {
+    AsyncValue<ContributorPlanState> state = ref.watch(contributorPlanStateProvider);
+    if (state is AsyncLoading<ContributorPlanState>) {
+      return const AppDialog(
+        displayCloseButton: false,
+        children: [
+          CenteredCircularProgressIndicator(),
+        ],
+      );
+    }
+
+    if (state is AsyncError<ContributorPlanState>) {
+      return ErrorDialog(
+        message: 'Failed to load contributor plan state.', // TODO
+        error: state.error,
+        stackTrace: state.stackTrace,
+      );
+    }
+
+    User user = ref.watch(userProvider).value!;
+    return AppDialog(
+      title: Text(translations.totpLimit.title),
+      displayCloseButton: false,
+      actions: [
         ClickableButton(
-          style: FButtonStyle.secondary(),
-          onPress: () => Navigator.pop(context, false),
-          child: Text(translations.totpLimit.addDialog.actions.cancel),
+          onPress: () => _returnIfSucceeded(context, StorageMigrationUtils.changeStorageType(context, ref, StorageType.localOnly)),
+          child: Text(translations.totpLimit.actions.stopSynchronization),
         ),
-    ],
-    children: [
-      Text(message),
-    ],
-  );
+        ClickableButton(
+          onPress: () => _returnIfSucceeded(context, ContributorPlanUtils.purchase(context)),
+          child: Text(translations.totpLimit.actions.subscribe),
+        ),
+        if (!autoDialog)
+          ClickableButton(
+            style: FButtonStyle.secondary(),
+            onPress: () => Navigator.pop(context, false),
+            child: Text(translations.totpLimit.actions.cancel),
+          ),
+      ],
+      children: [
+        if (state.value == ContributorPlanState.active)
+          Text(autoDialog ? translations.totpLimit.message.alreadySubscribed.auto(count: user.totpsLimit) : translations.totpLimit.message.alreadySubscribed.manual(count: user.totpsLimit))
+        else
+          Text(autoDialog ? translations.totpLimit.message.notSubscribed.auto(count: user.totpsLimit) : translations.totpLimit.message.notSubscribed.manual(count: user.totpsLimit)),
+      ],
+    );
+  }
 
   /// Waits for the [action] result before closing the dialog in case of success.
   Future<void> _returnIfSucceeded(BuildContext context, Future<bool> action) async {
@@ -64,29 +82,26 @@ class TotpLimitDialog extends ConsumerWidget {
 
   static Future<void> showAndBlock(
     BuildContext context, {
-    String? title,
-    String? message,
-    bool cancelButton = false,
+    required bool autoDialog,
   }) async {
     bool result = false;
     while (!result && context.mounted) {
-      result = await show(context);
+      result = await show(
+        context,
+        autoDialog: autoDialog,
+      );
     }
   }
 
   /// Shows the totp limit dialog.
   static Future<bool> show(
     BuildContext context, {
-    String? title,
-    String? message,
-    bool cancelButton = false,
+    required bool autoDialog,
   }) async =>
       (await showDialog<bool>(
         context: context,
         builder: (context) => TotpLimitDialog(
-          title: title ?? translations.totpLimit.autoDialog.title,
-          message: message ?? translations.totpLimit.autoDialog.message(count: App.defaultTotpsLimit),
-          cancelButton: cancelButton,
+          autoDialog: autoDialog,
         ),
         barrierDismissible: false,
       )) ==

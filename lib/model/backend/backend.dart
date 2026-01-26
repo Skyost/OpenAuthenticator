@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/backend/authentication/session.dart';
 import 'package:open_authenticator/model/backend/request/request.dart';
 import 'package:open_authenticator/model/backend/request/response.dart';
+import 'package:open_authenticator/model/settings/backend_url.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -88,10 +88,11 @@ class Backend extends AsyncNotifier<Map<String, String>> {
       headers[HttpHeaders.authorizationHeader] = 'Bearer ${session.accessToken}';
     }
 
+    String backendUrl = await ref.read(backendUrlSettingsEntryProvider.future);
     http.Response response = await retry(
       () => request.execute(
         _client,
-        Uri.parse(App.backendUrl + request.route),
+        Uri.parse(backendUrl + request.route),
         headers: headers,
       ),
       maxAttempts: retries ?? (request is BackendGetRequest ? 1 : 3),

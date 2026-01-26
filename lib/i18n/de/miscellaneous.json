@@ -1,9 +1,6 @@
 {
   "urlCopiedToClipboard": "URL in die Zwischenablage kopiert!",
-  "waitingDialog": {
-    "defaultMessage": "Bitte warten...",
-    "countdown(rich)": "Verbleibende Zeit: $countdown."
-  },
+  "waitingDialogDefaultMessage": "Bitte warten...",
   "masterPasswordDialog": {
     "title": "Master-Passwort",
     "message": "Bitte geben Sie Ihr Master-Passwort ein, um fortzufahren."

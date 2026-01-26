@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
-import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
@@ -95,6 +94,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
         storageType,
       );
     }
+    User user = ref.watch(userProvider).value!;
     AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
     if (totps is! AsyncData<TotpList>) {
       return Text(translations.settings.synchronization.synchronizeTotps.subtitle.description);
@@ -106,7 +106,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
           const TextSpan(text: '\n'),
           translations.settings.synchronization.synchronizeTotps.subtitle.totpLimit.limit(
             limit: TextSpan(
-              text: App.defaultTotpsLimit.toString(),
+              text: user.totpsLimit.toString(),
               style: const TextStyle(fontStyle: FontStyle.italic),
             ),
             count: TextSpan(
@@ -114,7 +114,7 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
               style: const TextStyle(fontStyle: FontStyle.italic),
             ),
           ),
-          if (storageType == StorageType.localOnly && totps.value.length > App.defaultTotpsLimit)
+          if (storageType == StorageType.localOnly && totps.value.length > user.totpsLimit)
             TextSpan(
               text: '\n${translations.settings.synchronization.synchronizeTotps.subtitle.totpLimit.notEnabled}',
             ),

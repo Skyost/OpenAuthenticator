@@ -33,15 +33,20 @@
     "theme": {
       "title": "Thème",
       "subtitle": "Changer le thème de l'application et la luminosité.",
-      "name(map)": {
-        "system": "Système",
-        "light": "Lumineux",
-        "dark": "Sombre"
-      },
-      "description(map)": {
-        "system": "Suivre le thème du système.",
-        "light": "Utiliser le thème lumineux.",
-        "dark": "Utiliser le thème sombre."
+      "themePickerDialog": {
+        "title": "Thème",
+        "theme": {
+          "name(map)": {
+            "system": "Système",
+            "light": "Lumineux",
+            "dark": "Sombre"
+          },
+          "description(map)": {
+            "system": "Suivre le thème du système.",
+            "light": "Utiliser le thème lumineux.",
+            "dark": "Utiliser le thème sombre."
+          }
+        }
       }
     }
   },
@@ -69,11 +74,7 @@
       "title": "Relier d'autres fournisseurs",
       "subtitle": {
         "text": "Relier d'autres fournisseurs d'authentification à votre compte afin que vous puissiez les utiliser pour vous connecter.",
-        "linkedProviders(rich)": "\nCompte actuellement relié à : $providers.",
-        "providers(map)": {
-          "emailLink": "Adresse mail",
-          "password": "Adresse mail"
-        }
+        "linkedProviders(rich)": "\nCompte actuellement relié à : $providers."
       }
     },
     "accountLogin": {

@@ -7,7 +7,6 @@
       "delete": "Elimina TOTP"
     },
     "desktopButtons": {
-      "copy": "Copia codice",
       "edit": "Modifica",
       "delete": "Elimina"
     },

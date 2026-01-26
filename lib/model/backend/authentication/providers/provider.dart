@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/model/backend/authentication/session.dart';
 import 'package:open_authenticator/model/backend/backend.dart';
 import 'package:open_authenticator/model/backend/request/request.dart';
 import 'package:open_authenticator/model/backend/request/response.dart';
 import 'package:open_authenticator/model/backend/user.dart';
+import 'package:open_authenticator/model/settings/backend_url.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/shared_preferences_with_prefix.dart';
@@ -147,7 +147,8 @@ mixin OAuthenticationProvider on AuthenticationProvider {
   Future<Result> requestLinking() => _requestLogin(link: true);
 
   Future<Result> _requestLogin({bool link = false}) async {
-    await launchUrl(Uri.parse('${App.backendUrl}/auth/provider/$id/redirect?mode=${link ? 'link' : 'login'}'));
+    String backendUrl = await _ref.read(backendUrlSettingsEntryProvider.future);
+    await launchUrl(Uri.parse('$backendUrl/auth/provider/$id/redirect?mode=${link ? 'link' : 'login'}'));
     return const ResultSuccess();
   }
 }

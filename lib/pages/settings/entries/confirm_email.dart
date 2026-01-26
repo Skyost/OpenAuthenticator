@@ -86,6 +86,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with FTileMixin {
     }
     Result result = await ref.read(emailAuthenticationProvider).confirm(code);
     if (context.mounted) {
+      // TODO: confirmEmail.success
       AccountUtils.handleAuthenticationResult(context, ref, result);
     }
   }

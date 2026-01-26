@@ -317,7 +317,10 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
   /// Handles TOTP limit exceeded.
   Future<void> handleTotpLimitExceeded() async {
     if (mounted) {
-      TotpLimitDialog.showAndBlock(context);
+      TotpLimitDialog.showAndBlock(
+        context,
+        autoDialog: true,
+      );
     }
   }
 }

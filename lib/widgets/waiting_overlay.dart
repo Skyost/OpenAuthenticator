@@ -91,7 +91,7 @@ class _WaitingDialog extends StatelessWidget {
               child: CircularProgressIndicator(),
             ),
             Expanded(
-              child: Text(message ?? translations.miscellaneous.waitingDialog.defaultMessage),
+              child: Text(message ?? translations.miscellaneous.waitingDialogDefaultMessage),
             ),
           ],
         ),

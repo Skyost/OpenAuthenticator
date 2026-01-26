@@ -33,15 +33,20 @@
     "theme": {
       "title": "Tema",
       "subtitle": "Altere o tema da aplicação e a luminosidade.",
-      "name(map)": {
-        "system": "Sistema",
-        "light": "Claro",
-        "dark": "Escuro"
-      },
-      "description(map)": {
-        "system": "Use o tema do sistema.",
-        "light": "Use o tema escuro.",
-        "dark": "Use o tema escuro."
+      "themePickerDialog": {
+        "title": "Tema",
+        "theme": {
+          "name(map)": {
+            "system": "Sistema",
+            "light": "Claro",
+            "dark": "Escuro"
+          },
+          "description(map)": {
+            "system": "Use o tema do sistema.",
+            "light": "Use o tema escuro.",
+            "dark": "Use o tema escuro."
+          }
+        }
       }
     }
   },
@@ -69,11 +74,7 @@
       "title": "Vincular outros provedores",
       "subtitle": {
         "text": "Vincule sua conta a outros provedores de autenticação para poder usá-los para fazer login.",
-        "linkedProviders(rich)": "\nConta atualmente vinculada a: $providers.",
-        "providers(map)": {
-          "emailLink": "Endereço de e-mail",
-          "password": "Endereço de e-mail"
-        }
+        "linkedProviders(rich)": "\nConta atualmente vinculada a: $providers."
       }
     },
     "accountLogin": {

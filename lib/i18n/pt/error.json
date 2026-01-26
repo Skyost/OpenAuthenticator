@@ -15,22 +15,9 @@
     "tryAgain": "Algo deu errado. Tente novamente mais tarde.",
     "withException": "Ocorreu um erro (exceção: $exception). Tente novamente mais tarde."
   },
-  "authentication": {
-    "accountExistsWithDifferentCredentialsDialog": {
-      "title": "Uma conta já existe",
-      "message": "Uma conta com o mesmo endereço de e-mail já existe em nosso banco de dados, mas o provedor de autenticação selecionado ainda não foi vinculado a ela.\nTente fazer login usando um provedor de autenticação já vinculado."
-    },
-    "invalidCredential": "Credenciais inválidas fornecidas.",
-    "operationNotAllowed": "Operação não permitida. Isso não deveria acontecer, por favor, reporte este erro.",
-    "userDisabled": "Sua conta foi desativada.",
-    "firebaseException": "Ocorreu um erro ao tentar autenticar sua conta (exceção: $exception). Tente novamente mais tarde."
-  },
   "scan": {
     "noUri": "Falha ao ler este código QR. Certifique-se de que é um código QR TOTP válido.",
-    "accessDeniedDialog": {
-      "title": "Acesso negado",
-      "message": "Falha ao acessar sua câmera (acesso negado: $exception). Deseja tentar novamente?"
-    },
+    "accessDenied": "Falha ao acessar sua câmera (acesso negado: $exception).",
     "controllerUninitialized": "Controlador não inicializado (código: $exception).",
     "unsupported": "A digitalização não é suportada neste dispositivo (código: $exception)."
   },

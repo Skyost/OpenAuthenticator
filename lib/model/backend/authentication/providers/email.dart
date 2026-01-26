@@ -33,7 +33,8 @@ class EmailAuthenticationProvider extends AuthenticationProvider {
   Future<Result> requestLinking(String email) => _requestLogin(email, link: true);
 
   Future<Result> _requestLogin(String email, {bool link = false}) async {
-    await launchUrl(Uri.parse('${App.backendUrl}/auth/provider/$id/redirect?email=$email&mode=${link ? 'link' : 'login'}'));
+    String backendUrl = await _ref.read(backendUrlSettingsEntryProvider.future);
+    await launchUrl(Uri.parse('$backendUrl/auth/provider/$id/redirect?email=$email&mode=${link ? 'link' : 'login'}'));
     return const ResultSuccess();
   }
 

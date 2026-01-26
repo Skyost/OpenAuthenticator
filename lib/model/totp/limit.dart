@@ -1,36 +1,35 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_authenticator/app.dart';
-import 'package:open_authenticator/model/purchases/contributor_plan.dart';
+import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 
 /// The TOTP limit provider.
 final totpLimitProvider = FutureProvider<TotpLimit>((ref) async {
+  User? user = await ref.watch(userProvider.future);
   StorageType storageType = await ref.watch(storageTypeSettingsEntryProvider.future);
-  ContributorPlanState contributorPlanState = await ref.watch(contributorPlanStateProvider.future);
   TotpList totps = await ref.watch(totpRepositoryProvider.future);
-  return TotpLimit(
+  return TotpLimit._(
+    userTotpsLimit: user?.totpsLimit,
     storageType: storageType,
-    contributorPlanState: contributorPlanState,
     currentTotpCount: totps.length,
   );
 });
 
 /// The class that allows to check whether TOTP limit has been reached.
 class TotpLimit {
+  /// The user TOTPs limit.
+  final int? userTotpsLimit;
+
   /// The storage type.
   final StorageType storageType;
-
-  /// The contributor plan state.
-  final ContributorPlanState contributorPlanState;
 
   /// The current TOTP count.
   final int currentTotpCount;
 
   /// Creates a new TOTP limit instance.
-  const TotpLimit({
+  const TotpLimit._({
+    this.userTotpsLimit,
     required this.storageType,
-    required this.contributorPlanState,
     required this.currentTotpCount,
   });
 
@@ -38,14 +37,7 @@ class TotpLimit {
   bool _willExceedIfAddMore({
     int count = 1,
     StorageType? storageType,
-  }) {
-    if (storageType == StorageType.localOnly) {
-      return false;
-    }
-
-    int limit = contributorPlanState == ContributorPlanState.active ? App.contributorTotpsLimit : App.defaultTotpsLimit;
-    return currentTotpCount + count > limit;
-  }
+  }) => (storageType ?? this.storageType) == StorageType.shared && currentTotpCount + count > userTotpsLimit!;
 
   /// Returns whether the limit will be exceeded if one more TOTP is added.
   bool willExceedIfAddMore({int count = 1}) => _willExceedIfAddMore(
@@ -53,7 +45,8 @@ class TotpLimit {
   );
 
   /// Returns whether the user should be able to change the current storage type.
-  bool canChangeStorageType(StorageType currentStorageType) {
+  bool canChangeStorageType(StorageType? currentStorageType) {
+    currentStorageType ??= storageType == StorageType.shared ? StorageType.localOnly : StorageType.shared;
     if (currentStorageType == StorageType.shared) {
       return true;
     }

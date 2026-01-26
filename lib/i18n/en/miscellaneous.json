@@ -1,8 +1,6 @@
 {
-  "waitingDialog": {
-    "defaultMessage": "Please wait...",
-    "countdown(rich)": "Time left : $countdown."
-  },
+  "urlCopiedToClipboard": "URL copied to clipboard !",
+  "waitingDialogDefaultMessage": "Please wait...",
   "masterPasswordDialog": {
     "title": "Master password",
     "message": "Please enter your master password to continue."
@@ -13,6 +11,5 @@
       "text": "Backup password",
       "hint": "Enter the backup password"
     }
-  },
-  "urlCopiedToClipboard": "URL copied to clipboard !"
+  }
 }

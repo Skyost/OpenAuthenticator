@@ -24,7 +24,7 @@ class ThemeSettingsEntryWidget extends ConsumerWidget with FTileMixin {
       prefix: Icon(theme.value?.icon),
       suffix: const RightChevronSuffix(),
       onPress: () async {
-        ThemeMode? themeMode = await _ThemeDialog.show(context);
+        ThemeMode? themeMode = await _ThemePickerDialog.show(context);
         if (themeMode != null) {
           await ref.read(themeSettingsEntryProvider.notifier).changeValue(themeMode);
         }
@@ -34,7 +34,7 @@ class ThemeSettingsEntryWidget extends ConsumerWidget with FTileMixin {
 }
 
 /// Allows to configure the theme.
-class _ThemeDialog extends ConsumerWidget {
+class _ThemePickerDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<ThemeMode> theme = ref.watch(themeSettingsEntryProvider);
@@ -51,8 +51,8 @@ class _ThemeDialog extends ConsumerWidget {
         for (ThemeMode mode in ThemeMode.values)
           ClickableTile(
             prefix: Icon(mode.icon),
-            title: Text(translations.settings.application.theme.name[mode.name]!),
-            subtitle: Text(translations.settings.application.theme.description[mode.name]!),
+            title: Text(translations.settings.application.theme.themePickerDialog.theme.name[mode.name]!),
+            subtitle: Text(translations.settings.application.theme.themePickerDialog.theme.description[mode.name]!),
             suffix: theme.value == mode ? const Icon(FIcons.check) : null,
             onPress: () => Navigator.pop(context, mode),
           ),
@@ -63,7 +63,7 @@ class _ThemeDialog extends ConsumerWidget {
   /// Shows a theme selection dialog.
   static Future<ThemeMode?> show(BuildContext context) => showFDialog<ThemeMode>(
     context: context,
-    builder: (context, style, animation) => _ThemeDialog(),
+    builder: (context, style, animation) => _ThemePickerDialog(),
   );
 }
 

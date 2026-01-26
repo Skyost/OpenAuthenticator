@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 
 class User {
   final String id;
+  final int totpsLimit;
   final String? email;
   final String? googleId;
   final String? githubId;
@@ -21,6 +22,7 @@ class User {
 
   const User._({
     required this.id,
+    required this.totpsLimit,
     this.email,
     this.googleId,
     this.githubId,
@@ -31,6 +33,7 @@ class User {
   User.fromJson(Map<String, dynamic> json)
     : this._(
         id: json['id'],
+        totpsLimit: json['totpsLimit'],
         email: json['email'],
         googleId: json['googleId'],
         githubId: json['githubId'],
@@ -71,6 +74,7 @@ class User {
   }
 
   User copyWith({
+    int? totpsLimit,
     String? email,
     String? googleId,
     String? githubId,
@@ -78,6 +82,7 @@ class User {
     String? appleId,
   }) => User._(
     id: id,
+    totpsLimit: totpsLimit ?? this.totpsLimit,
     email: email ?? this.email,
     googleId: googleId ?? this.googleId,
     githubId: githubId ?? this.githubId,
@@ -87,6 +92,7 @@ class User {
 
   Map<String, String> toJson() => {
     'id': id,
+    'totpsLimit': totpsLimit.toString(),
     if (email != null) 'email': email!,
     if (googleId != null) 'googleId': googleId!,
     if (githubId != null) 'githubId': githubId!,

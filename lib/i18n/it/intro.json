@@ -8,13 +8,11 @@
     "title": "Sincronizza i tuoi TOTP",
     "firstParagraph": "Clicca sul pulsante \"Accedi\" qui sotto per poter sincronizzare i tuoi TOTP tra i tuoi dispositivi.",
     "secondParagraph": "Questo passaggio è completamente opzionale.",
-    "thirdParagraph": "Nota che, se abiliti questa opzione, dovremo limitarti a $limit TOTP per prevenire un uso eccessivo del server.",
+    "thirdParagraph": "Nota che, se abiliti questa opzione, dovremo limitare il numero dei tuoi TOTP per prevenire un uso eccessivo del server.",
     "fourthParagraph": "Questo limite può essere rimosso in qualsiasi momento sottoscrivendo il Piano Contributore nelle impostazioni di $app.",
     "button": {
       "loggedOut": "Accedi",
-      "verifyEmail": "Conferma l'indirizzo email",
-      "loggedIn": "Accesso effettuato con successo",
-      "error": "Impossibile autenticare"
+      "loggedIn": "Accesso effettuato con successo"
     }
   },
   "password": {
