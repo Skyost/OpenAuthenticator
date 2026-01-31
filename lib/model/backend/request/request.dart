@@ -268,7 +268,7 @@ class SynchronizationPushRequest extends BackendPostRequest<SynchronizationPushR
 
   @override
   Object? get body => [
-    for (PushOperation operation in operations) operation.toJson(),
+    for (PushOperation operation in operations) operation.toJson(httpRequest: true),
   ];
 
   @override

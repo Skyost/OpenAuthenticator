@@ -7,6 +7,7 @@ import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/authentication_provider_image.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
@@ -44,7 +45,7 @@ class _SignInDialogState extends ConsumerState<SignInDialog> {
     ],
     children: [
       Padding(
-        padding: const EdgeInsets.only(bottom: kBigSpace),
+        padding: const EdgeInsets.only(bottom: kSpace),
         child: _EmailForm(
           onEmailValidated: (provider, email) {
             Navigator.pop(
@@ -57,7 +58,7 @@ class _SignInDialogState extends ConsumerState<SignInDialog> {
         ),
       ),
       Padding(
-        padding: const EdgeInsets.only(bottom: kBigSpace),
+        padding: const EdgeInsets.only(bottom: kSpace),
         child: DividerText(
           text: Text(translations.authentication.signInDialog.separator),
         ),
@@ -134,7 +135,7 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 6),
+          padding: const EdgeInsets.only(bottom: kSpace / 2),
           child: FTextFormField(
             control: .managed(controller: emailController),
             enabled: canAuthenticateByEmail,
@@ -150,14 +151,10 @@ class _EmailFormState extends ConsumerState<_EmailForm> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Align(
-            alignment: Alignment.topRight,
-            child: Text(
-              description,
-              style: context.theme.typography.sm,
-              textAlign: TextAlign.right,
-            ),
+          padding: const EdgeInsets.only(bottom: kBigSpace),
+          child: Text(
+            description,
+            style: context.theme.typography.xs,
           ),
         ),
         ClickableButton(
@@ -271,17 +268,23 @@ class _ProviderCircleButton extends ConsumerWidget {
     bool isLoggedIn = user != null && user.hasAuthenticationProvider(providerId);
     Widget button = Tooltip(
       message: translations.authentication.authenticationProvider[providerId].name,
-      child: FilledButton.tonal(
-        onPressed: isLoggedIn ? null : onTapIfLoggedOut,
-        style: FilledButton.styleFrom(
-          shape: const CircleBorder(),
-          padding: const EdgeInsets.all(20),
-          backgroundColor: Colors.white,
-        ),
-        child: AuthenticationProviderImage(
-          providerId: providerId,
-          width: size,
-          height: size,
+      child: ClickableButton.raw(
+        onPress: isLoggedIn ? null : onTapIfLoggedOut,
+        style: FButtonStyle.secondary((style) => style.copyWith(
+          decoration: style.decoration.map(
+            (decoration) => decoration.copyWith(
+              borderRadius: BorderRadius.circular(size + kBigSpace),
+              color: decoration.color?.lighten(),
+            ),
+          ),
+        )),
+        child: Padding(
+          padding: const EdgeInsets.all(kBigSpace),
+          child: AuthenticationProviderImage(
+            providerId: providerId,
+            width: size,
+            height: size,
+          ),
         ),
       ),
     );

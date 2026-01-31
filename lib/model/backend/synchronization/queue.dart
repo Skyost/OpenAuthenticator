@@ -4,11 +4,13 @@ import 'dart:math';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:open_authenticator/model/backend/backend.dart';
 import 'package:open_authenticator/model/backend/request/request.dart';
 import 'package:open_authenticator/model/backend/request/response.dart';
 import 'package:open_authenticator/model/backend/synchronization/operation.dart';
 import 'package:open_authenticator/model/backend/synchronization/status.dart';
+import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/totp/database/database.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
@@ -23,7 +25,11 @@ class PushOperationsQueue extends AsyncNotifier<List<PushOperation>> {
     return await database.listPendingBackendPushOperations();
   }
 
-  Future<void> enqueue(PushOperation operation, {bool andRun = true}) async {
+  Future<void> enqueue(
+    PushOperation operation, {
+    bool checkSettings = true,
+    bool andRun = true,
+  }) async {
     TotpDatabase database = ref.read(totpsDatabaseProvider);
     await database.addPendingBackendPushOperation(operation);
     ref.invalidateSelf();
@@ -32,13 +38,19 @@ class PushOperationsQueue extends AsyncNotifier<List<PushOperation>> {
     }
   }
 
-  Future<void> _pushAndPull() async {
-    if ((await _push()) is ResultSuccess) {
-      await _pull();
+  Future<void> _pushAndPull({ bool checkSettings = true }) async {
+    if ((await _push(checkSettings: checkSettings)) is ResultSuccess) {
+      await _pull(checkSettings: checkSettings);
     }
   }
 
-  Future<Result> _push() async {
+  Future<Result> _push({ bool checkSettings = true }) async {
+    if (checkSettings) {
+      StorageType storageType = await ref.read(storageTypeSettingsEntryProvider.future);
+      if (storageType == StorageType.localOnly) {
+        return const ResultCancelled();
+      }
+    }
     List<PushOperation> operations = await future;
     if (operations.isEmpty) {
       return const ResultSuccess();
@@ -56,23 +68,18 @@ class PushOperationsQueue extends AsyncNotifier<List<PushOperation>> {
     }
 
     TotpDatabase database = ref.read(totpsDatabaseProvider);
-    await database.transaction(() async {
-      for (PushOperationResult result in result.value.result) {
-        if (result.success) {
-          await database.deletePendingBackendPushOperation(result.operationUuid);
-        } else {
-          PushOperation? operation = await database.getPendingBackendPushOperation(result.operationUuid);
-          if (operation != null) {
-            await database.updatePendingBackendPushOperation(operation.applyResult(result));
-          }
-        }
-      }
-    });
+    await database.applyPushResponse(result.value);
     ref.invalidateSelf();
     return const ResultSuccess();
   }
 
-  Future<Result> _pull() async {
+  Future<Result> _pull({ bool checkSettings = true }) async {
+    if (checkSettings) {
+      StorageType storageType = await ref.read(storageTypeSettingsEntryProvider.future);
+      if (storageType == StorageType.localOnly) {
+        return const ResultCancelled();
+      }
+    }
     TotpList totps = await ref.read(totpRepositoryProvider.future);
     Result<SynchronizationPullResponse> result = await ref
         .read(backendProvider.notifier)
@@ -96,6 +103,10 @@ class PushOperationsQueue extends AsyncNotifier<List<PushOperation>> {
       result.value.updates,
       fromNetwork: true,
     );
+    await repository.deleteTotps(
+      result.value.deletes,
+      fromNetwork: true,
+    );
     return const ResultSuccess();
   }
 }
@@ -115,7 +126,12 @@ class SynchronizationController extends Notifier<SynchronizationStatus> with Wid
 
   @override
   SynchronizationStatus build() {
-    WidgetsBinding.instance.addObserver(this);
+    StorageType? storageType = ref.read(storageTypeSettingsEntryProvider).value;
+    if (storageType == StorageType.localOnly) {
+      return SynchronizationStatus();
+    }
+
+    // WidgetsBinding.instance.addObserver(this);
     ref.onDispose(_dispose);
 
     StreamSubscription<List<ConnectivityResult>>? subscription = _connectivity.onConnectivityChanged.listen(_onConnectivityChanged);
@@ -194,31 +210,25 @@ class SynchronizationController extends Notifier<SynchronizationStatus> with Wid
           phase: const SynchronizationPhaseOffline(),
         );
       } else {
-        List<PushOperation> pendingBefore = await ref.read(pushOperationsQueueProvider.future);
         state = state.update(
           phase: const SynchronizationPhaseSyncing(),
-          pendingOperations: pendingBefore.length,
         );
 
         await ref.read(pushOperationsQueueProvider.notifier)._pushAndPull();
 
         List<PushOperation> pendingAfter = await ref.read(pushOperationsQueueProvider.future);
+        retry = pendingAfter.isNotEmpty;
         state = state.update(
           phase: const SynchronizationPhaseUpToDate(),
-          pendingOperations: pendingAfter.length,
-          retryAttempt: 0,
+          retryAttempt: retry ? state.retryAttempt : 0,
         );
-
-        retry = pendingAfter.isNotEmpty;
       }
     } catch (ex, stackTrace) {
-      List<PushOperation> pending = await ref.read(pushOperationsQueueProvider.future);
       state = state.update(
         phase: SynchronizationPhaseError(
           exception: ex,
           stackTrace: stackTrace,
         ),
-        pendingOperations: pending.length,
       );
     }
     if (retry) {
@@ -246,4 +256,11 @@ class SynchronizationController extends Notifier<SynchronizationStatus> with Wid
   }
 }
 
-class NoConnectivityError implements Exception {}
+extension WithErrors on AsyncNotifierProvider<PushOperationsQueue, List<PushOperation>> {
+  ProviderListenable<AsyncValue<List<PushOperation>>> selectWithErrors() => select(
+    (value) => switch (value) {
+      AsyncData(:final value) => AsyncData(value.where((operation) => operation.lastError != null).toList()),
+      _ => value,
+    },
+  );
+}

@@ -1,18 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
-import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/model/totp/decrypted.dart';
-import 'package:open_authenticator/spacing.dart';
-import 'package:open_authenticator/widgets/clickable.dart';
-import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
+part of '../page.dart';
 
 /// Allows the user to choose an action to execute when a TOTP decryption has been done with success.
-class TotpDecryptDialog extends StatelessWidget {
+class _TotpDecryptDialog extends StatelessWidget {
   /// Contains all decrypted TOTPs.
   final List<DecryptedTotp> decryptedTotps;
 
   /// Creates a new TOTP key dialog instance.
-  const TotpDecryptDialog({
+  const _TotpDecryptDialog({
     super.key,
     this.decryptedTotps = const [],
   });
@@ -62,19 +56,19 @@ class TotpDecryptDialog extends StatelessWidget {
     ],
   );
 
-  /// Displays the [TotpDecryptDialog].
+  /// Displays the [_TotpDecryptDialog].
   static Future<TotpDecryptDialogResult?> show(
     BuildContext context, {
     required List<DecryptedTotp> decryptedTotps,
   }) async => await showDialog<TotpDecryptDialogResult>(
     context: context,
-    builder: (context) => TotpDecryptDialog(
+    builder: (context) => _TotpDecryptDialog(
       decryptedTotps: decryptedTotps,
     ),
   );
 }
 
-/// The [TotpDecryptDialog] result.
+/// The [_TotpDecryptDialog] result.
 enum TotpDecryptDialogResult {
   /// Allows to change the TOTP key.
   changeTotpKey,

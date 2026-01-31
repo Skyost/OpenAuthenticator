@@ -138,20 +138,23 @@ class SynchronizationPushResponse extends BackendResponse {
 
 class PushOperationResult {
   final String operationUuid;
-  final String? error;
+  final String? errorCode;
+  final String? errorDetails;
 
   const PushOperationResult({
     required this.operationUuid,
-    required this.error,
+    required this.errorCode,
+    required this.errorDetails,
   });
 
   PushOperationResult.fromJson(Map<String, dynamic> json)
     : this(
         operationUuid: json['uuid'],
-        error: json['error'],
+        errorCode: json['errorCode'],
+        errorDetails: json['errorDetails'],
       );
 
-  bool get success => error == null;
+  bool get success => errorCode == null;
 }
 
 class SynchronizationPullResponse extends BackendResponse {

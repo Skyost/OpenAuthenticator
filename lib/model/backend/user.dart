@@ -90,9 +90,9 @@ class User {
     appleId: appleId ?? this.appleId,
   );
 
-  Map<String, String> toJson() => {
+  Map<String, dynamic> toJson() => {
     'id': id,
-    'totpsLimit': totpsLimit.toString(),
+    'totpsLimit': totpsLimit,
     if (email != null) 'email': email!,
     if (googleId != null) 'googleId': googleId!,
     if (githubId != null) 'githubId': githubId!,

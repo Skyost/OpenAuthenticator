@@ -95,7 +95,7 @@
         "title": "O que você deseja fazer?",
         "confirm": {
           "title": "Confirmar sua conta",
-          "subtitle": "Cole o link que recebeu por e-mail para confirmar sua conta."
+          "subtitle": "Cole o código que você recebeu por e-mail para confirmar sua conta."
         },
         "cancelConfirmation": {
           "title": "Cancelar confirmação da conta",
@@ -106,9 +106,9 @@
           }
         }
       },
-      "linkDialog": {
-        "title": "Link de confirmação",
-        "message": "Acesse o link com este dispositivo ou cole-o abaixo para confirmar seu e-mail."
+      "codeDialog": {
+        "title": "Código de confirmação",
+        "message": "Visite o link com este dispositivo ou cole o código abaixo para confirmar seu endereço de e-mail."
       }
     },
     "synchronizeTotps": {

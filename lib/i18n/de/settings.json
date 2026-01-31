@@ -95,7 +95,7 @@
         "title": "Was möchten Sie tun?",
         "confirm": {
           "title": "Bestätigen Sie Ihr Konto",
-          "subtitle": "Fügen Sie den Link ein, den Sie per E-Mail erhalten haben, um Ihr Konto zu bestätigen."
+          "subtitle": "Fügen Sie den Code ein, den Sie per E-Mail erhalten haben, um Ihr Konto zu bestätigen."
         },
         "cancelConfirmation": {
           "title": "Kontobestätigung aufheben",
@@ -106,9 +106,9 @@
           }
         }
       },
-      "linkDialog": {
-        "title": "Bestätigungslink",
-        "message": "Rufen Sie entweder den Link mit diesem Gerät auf oder fügen Sie ihn unten ein, um Ihre E-Mail-Adresse zu bestätigen."
+      "codeDialog": {
+        "title": "Bestätigungscode",
+        "message": "Besuchen Sie entweder den Link mit diesem Gerät oder fügen Sie den Code unten ein, um Ihre E-Mail-Adresse zu bestätigen."
       }
     },
     "synchronizeTotps": {

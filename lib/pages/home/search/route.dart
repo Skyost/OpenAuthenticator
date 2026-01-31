@@ -1,19 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:forui/forui.dart';
-import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/pages/home/search/extension.dart';
-import 'package:open_authenticator/widgets/app_scaffold.dart';
-import 'package:open_authenticator/widgets/clickable.dart';
-import 'package:open_authenticator/widgets/error.dart';
-import 'package:open_authenticator/widgets/totp/widget.dart';
+part of '../page.dart';
 
 /// Shows a full screen search page and returns the search result selected by
 /// the user when the page is closed.
 /// Adapted from the Flutter library.
-Future<Totp?> showTotpSearch(
+Future<Totp?> _showTotpSearch(
   BuildContext context, {
   bool useRootNavigator = false,
   bool maintainState = false,

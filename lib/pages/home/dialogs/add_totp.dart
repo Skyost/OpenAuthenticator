@@ -1,17 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
-import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/utils/platform.dart';
-import 'package:open_authenticator/widgets/clickable.dart';
-import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
+part of '../page.dart';
 
 /// A dialog that allows to choose a method to add a TOTP.
-class AddTotpDialog extends StatelessWidget {
+class _AddTotpDialog extends StatelessWidget {
   /// Whether this dialog is supported on the current platform.
   static final bool isSupported = currentPlatform.isMobile;
 
   /// Creates a new add totp dialog instance.
-  const AddTotpDialog({
+  const _AddTotpDialog({
     super.key,
   });
 
@@ -41,14 +36,14 @@ class AddTotpDialog extends StatelessWidget {
     ],
   );
 
-  /// Displays the [AddTotpDialog].
+  /// Displays the [_AddTotpDialog].
   static Future<AddTotpDialogResult?> show(BuildContext context) async => await showDialog<AddTotpDialogResult>(
     context: context,
-    builder: (context) => const AddTotpDialog(),
+    builder: (context) => const _AddTotpDialog(),
   );
 }
 
-/// The [AddTotpDialog] result.
+/// The [_AddTotpDialog] result.
 enum AddTotpDialogResult {
   /// When the user wants to use a QR code to add a TOTP.
   qrCode,

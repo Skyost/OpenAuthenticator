@@ -61,30 +61,27 @@ class ImageTextButtonsWidget extends StatelessWidget {
        );
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: ListView(
-      shrinkWrap: true,
-      padding: const EdgeInsets.all(kBigSpace),
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: kBigSpace),
-          child: image,
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: .min,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(bottom: kBigSpace),
+        child: image,
+      ),
+      Padding(
+        padding: EdgeInsets.only(bottom: buttons.isEmpty ? 0 : kBigSpace),
+        child: Text(
+          text ?? translations.error.generic.noTryAgain,
+          textAlign: TextAlign.center,
         ),
-        Padding(
-          padding: EdgeInsets.only(bottom: buttons.isEmpty ? 0 : kBigSpace),
-          child: Text(
-            text ?? translations.error.generic.noTryAgain,
-            textAlign: TextAlign.center,
+      ),
+      for (int i = 0; i < buttons.length; i++)
+        Center(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: i == buttons.length - 1 ? 0 : kSpace),
+            child: buttons[i],
           ),
         ),
-        for (int i = 0; i < buttons.length; i++)
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: i == buttons.length - 1 ? 0 : kSpace),
-              child: buttons[i],
-            ),
-          ),
-      ],
-    ),
+    ],
   );
 }

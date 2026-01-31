@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/error.dart';
@@ -32,12 +33,14 @@ class ErrorDialog extends StatelessWidget {
     actions: [
       if (allowRetry)
         ClickableButton(
-          onPress: () => Navigator.pop(context, ErrorDialogResult.report),
-          child: const Text('Reporter'),
+          style: FButtonStyle.secondary(),
+          onPress: () => Navigator.pop(context, ErrorDialogResult.retry),
+          child: const Text('Réessayer'),
         ),
       ClickableButton(
+        style: FButtonStyle.secondary(),
         onPress: () => Navigator.pop(context, ErrorDialogResult.cancel),
-        child: const Text('Annuler'),
+        child: Text(allowRetry ? 'Annuler' : 'Fermer'),
       ),
     ], // TODO: Localize
     children: [
@@ -55,12 +58,14 @@ class ErrorDialog extends StatelessWidget {
     String? message,
     Object? error,
     StackTrace? stackTrace,
+    bool allowRetry = true,
   }) => showDialog<ErrorDialogResult>(
     context: context,
     builder: (context) => ErrorDialog(
       message: message,
       error: error,
       stackTrace: stackTrace ?? StackTrace.current,
+      allowRetry: allowRetry,
     ),
   );
 }
@@ -71,5 +76,5 @@ enum ErrorDialogResult {
   cancel,
 
   /// The user pressed report.
-  report,
+  retry,
 }

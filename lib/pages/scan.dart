@@ -46,7 +46,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           onPress: () => Navigator.pop(context),
         ),
       ],
-      title: Text('Scan'), // TODO,
+      title: Text(translations.home.addDialog.qrCode.title),
     ),
     children: [
       QrCodeScanner(

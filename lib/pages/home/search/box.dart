@@ -1,12 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:forui/forui.dart';
-import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/pages/home/search/route.dart';
-import 'package:open_authenticator/widgets/clickable.dart';
+part of '../page.dart';
 
 /// A widget that allows to search for a TOTP.
-class SearchBox extends ConsumerStatefulWidget implements PreferredSizeWidget {
+class _SearchBox extends ConsumerStatefulWidget implements PreferredSizeWidget {
   /// Triggered when a TOTP has been found by the user.
   final Function(Totp totp)? onTotpFound;
 
@@ -14,7 +9,7 @@ class SearchBox extends ConsumerStatefulWidget implements PreferredSizeWidget {
   final Widget header;
 
   /// Creates a new search box instance.
-  const SearchBox({
+  const _SearchBox({
     super.key,
     this.onTotpFound,
     required this.header,
@@ -28,7 +23,7 @@ class SearchBox extends ConsumerStatefulWidget implements PreferredSizeWidget {
 }
 
 /// The search box widget state.
-class _SearchBoxWidgetState extends ConsumerState<SearchBox> {
+class _SearchBoxWidgetState extends ConsumerState<_SearchBox> {
   /// The current focus node.
   final FocusNode focusNode = FocusNode();
 
@@ -67,7 +62,7 @@ class _SearchBoxWidgetState extends ConsumerState<SearchBox> {
     if (focusNode.hasFocus) {
       focusNode.unfocus();
       if (mounted) {
-        Totp? result = await showTotpSearch(context);
+        Totp? result = await _showTotpSearch(context);
         if (result != null) {
           widget.onTotpFound?.call(result);
         }

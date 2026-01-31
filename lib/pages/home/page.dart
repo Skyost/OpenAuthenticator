@@ -1,31 +1,64 @@
+import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
+import 'package:open_authenticator/main.dart';
+import 'package:open_authenticator/model/app_unlock/methods/method.dart';
+import 'package:open_authenticator/model/app_unlock/state.dart';
+import 'package:open_authenticator/model/backend/synchronization/operation.dart';
 import 'package:open_authenticator/model/backend/synchronization/queue.dart';
+import 'package:open_authenticator/model/backend/synchronization/status.dart';
+import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/display_copy_button.dart';
 import 'package:open_authenticator/model/settings/display_search_button.dart';
+import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/pages/home/app_bar.dart';
-import 'package:open_authenticator/pages/home/dialogs/add_totp.dart';
-import 'package:open_authenticator/pages/home/list/refresh_indicator.dart';
-import 'package:open_authenticator/pages/home/list/totps.dart';
-import 'package:open_authenticator/pages/home/scroll/fab.dart';
-import 'package:open_authenticator/pages/home/scroll/search_box.dart';
-import 'package:open_authenticator/pages/home/utils/image_text_buttons.dart';
-import 'package:open_authenticator/pages/home/utils/require_provider_value.dart';
 import 'package:open_authenticator/pages/scan.dart';
+import 'package:open_authenticator/pages/settings/page.dart';
+import 'package:open_authenticator/pages/sync_issues.dart';
 import 'package:open_authenticator/pages/totp.dart';
+import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/utils/master_password.dart';
 import 'package:open_authenticator/utils/platform.dart';
+import 'package:open_authenticator/utils/result.dart';
+import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/app_scaffold.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
+import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
+import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
+import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/error.dart';
+import 'package:open_authenticator/widgets/image_text_buttons.dart';
+import 'package:open_authenticator/widgets/rotation_animation.dart';
+import 'package:open_authenticator/widgets/sized_scalable_image.dart';
+import 'package:open_authenticator/widgets/smooth_highlight.dart';
+import 'package:open_authenticator/widgets/title.dart';
+import 'package:open_authenticator/widgets/toast.dart';
+import 'package:open_authenticator/widgets/totp/widget.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
+part 'app_bar.dart';
+part 'dialogs/add_totp.dart';
+part 'dialogs/totp_decrypt.dart';
+part 'list/refresh_indicator.dart';
+part 'list/totps.dart';
+part 'scroll/fab.dart';
+part 'scroll/search_box.dart';
+part 'search/action.dart';
+part 'search/box.dart';
+part 'search/extension.dart';
+part 'search/route.dart';
+part 'utils/require_provider_value.dart';
 
 /// The home page.
 class HomePage extends ConsumerStatefulWidget {
@@ -47,7 +80,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   late final ItemScrollController itemScrollController = ItemScrollController();
 
   /// Whether to display the floating action button.
-  bool showFloatingActionButton = RevealFloatingActionButtonWidget.hasFloatingActionButton;
+  bool showFloatingActionButton = _RevealFloatingActionButtonWidget.hasFloatingActionButton;
 
   /// Whether to display the search box.
   bool showSearchBox = false;
@@ -68,21 +101,26 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
+    StorageType? storageType = ref.watch(storageTypeSettingsEntryProvider).value;
     bool displaySearchButton = ref.read(displaySearchButtonSettingsEntryProvider).value ?? true;
     Widget body = switch (totps) {
-      AsyncData(:final value) => RequireProviderValueWidget.cryptoStore(
-        childIfAbsent: ImageTextButtonsWidget.icon(
-          icon: FIcons.lock,
-          text: translations.home.noCryptoStore.message,
-          buttons: [
-            ClickableButton(
-              onPress: () => MasterPasswordUtils.changeMasterPassword(context, ref, askForUnlock: false),
-              prefix: const Icon(FIcons.rectangleEllipsis),
-              child: Text(translations.home.noCryptoStore.resetButton),
+      AsyncData(:final value) => _RequireProviderValueWidget.cryptoStore(
+        childIfAbsent: Center(
+          child: SingleChildScrollView(
+            child: ImageTextButtonsWidget.icon(
+              icon: FIcons.lock,
+              text: translations.home.noCryptoStore.message,
+              buttons: [
+                ClickableButton(
+                  onPress: () => MasterPasswordUtils.changeMasterPassword(context, ref, askForUnlock: false),
+                  prefix: const Icon(FIcons.rectangleEllipsis),
+                  child: Text(translations.home.noCryptoStore.resetButton),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-        child: RevealFloatingActionButtonWidget(
+        child: _RevealFloatingActionButtonWidget(
           onHideFloatingActionButton: () {
             if (showFloatingActionButton) {
               setState(() => showFloatingActionButton = false);
@@ -93,7 +131,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               setState(() => showFloatingActionButton = true);
             }
           },
-          child: RevealSearchBoxWidget(
+          child: _RevealSearchBoxWidget(
             onHideSearchBox: () {
               if (showSearchBox) {
                 setState(() => showSearchBox = false);
@@ -104,8 +142,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 setState(() => showSearchBox = true);
               }
             },
-            child: (displaySearchButton || (!displaySearchButton && showSearchBox)) && (currentPlatform.isMobile || kDebugMode)
-                ? TotpsRefreshIndicatorWidget(
+            child: (displaySearchButton || (!displaySearchButton && showSearchBox)) && (currentPlatform.isMobile || kDebugMode) && storageType == StorageType.shared
+                ? _TotpsRefreshIndicatorWidget(
                     onRefresh: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
                     child: buildTotpsListWidget(value),
                   )
@@ -116,14 +154,17 @@ class _HomePageState extends ConsumerState<HomePage> {
       AsyncError(:final error, :final stackTrace) => ErrorDisplayWidget(
         error: error,
         stackTrace: stackTrace,
-        onRetryPressed: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
+        onRetryPressed: () {
+          ref.invalidate(totpRepositoryProvider);
+          ref.read(synchronizationControllerProvider.notifier).forceSync();
+        },
       ),
       _ => const CenteredCircularProgressIndicator(),
     };
 
     return AppScaffold(
-      header: HomePageHeader(
-        showAddButton: !RevealFloatingActionButtonWidget.hasFloatingActionButton,
+      header: _HomePageHeader(
+        showAddButton: !_RevealFloatingActionButtonWidget.hasFloatingActionButton,
         onAddButtonPress: () => onAddButtonPress(context),
         onTotpSelectedFollowingSearch: (index) async {
           itemScrollController.jumpTo(index: index);
@@ -138,37 +179,39 @@ class _HomePageState extends ConsumerState<HomePage> {
           if (!(await ref.read(displayCopyButtonSettingsEntryProvider.future))) {
             Totp? totp = totps.value?[index];
             if (context.mounted && totp?.isDecrypted == true) {
-              TotpsListWidget.copyCode(context, totp as DecryptedTotp);
+              _TotpsListWidget.copyCode(context, totp as DecryptedTotp);
             }
           }
         },
         showSearchBox: showSearchBox,
       ),
       children: [
-        Stack(
-          alignment: Alignment.bottomRight,
-          children: [
-            body,
-            if (RevealFloatingActionButtonWidget.hasFloatingActionButton)
-              RequireProviderValueWidget.cryptoStoreAndTotpList(
-                child: FloatingAddButton(
+        if (_RevealFloatingActionButtonWidget.hasFloatingActionButton)
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              body,
+              _RequireProviderValueWidget.cryptoStoreAndTotpList(
+                child: _FloatingAddButton(
                   showFloatingActionButton: showFloatingActionButton,
                   onAddButtonPress: onAddButtonPress,
                 ),
               ),
-          ],
-        ),
+            ],
+          )
+        else
+          body,
       ],
     );
   }
 
   /// Triggered when the "Add" button is pressed.
   void onAddButtonPress(BuildContext context) async {
-    if (!kDebugMode && !AddTotpDialog.isSupported) {
+    if (!kDebugMode && !_AddTotpDialog.isSupported) {
       Navigator.pushNamed(context, TotpPage.name);
       return;
     }
-    AddTotpDialogResult? choice = await AddTotpDialog.show(context);
+    AddTotpDialogResult? choice = await _AddTotpDialog.show(context);
     if (choice == null || !context.mounted) {
       return;
     }
@@ -176,7 +219,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   /// Builds the TOTPs list widget.
-  Widget buildTotpsListWidget(TotpList value) => TotpsListWidget(
+  Widget buildTotpsListWidget(TotpList value) => _TotpsListWidget(
     totps: value,
     itemScrollController: itemScrollController,
     emphasisIndex: emphasisIndex,

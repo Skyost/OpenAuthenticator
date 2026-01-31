@@ -73,12 +73,12 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with FTileMixin {
     }
   }
 
-  /// Tries to confirm the user. He has to enter the link manually.
+  /// Tries to confirm the user. He has to enter the code manually.
   Future<void> _tryConfirm(BuildContext context, WidgetRef ref) async {
     String? code = await TextInputDialog.prompt(
       context,
-      title: translations.settings.synchronization.confirmEmail.linkDialog.title,
-      message: translations.settings.synchronization.confirmEmail.linkDialog.message,
+      title: translations.settings.synchronization.confirmEmail.codeDialog.title,
+      message: translations.settings.synchronization.confirmEmail.codeDialog.message,
       keyboardType: TextInputType.url,
     );
     if (code == null || !context.mounted) {
@@ -86,7 +86,6 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with FTileMixin {
     }
     Result result = await ref.read(emailAuthenticationProvider).confirm(code);
     if (context.mounted) {
-      // TODO: confirmEmail.success
       AccountUtils.handleAuthenticationResult(context, ref, result);
     }
   }

@@ -15,6 +15,9 @@ class ExpandableTile extends ConsumerStatefulWidget with FTileMixin {
   /// The children padding.
   final EdgeInsets childrenPadding;
 
+  /// The children cross axis alignment.
+  final CrossAxisAlignment childrenCrossAxisAlignment;
+
   /// Whether the tile is enabled.
   final bool enabled;
 
@@ -30,6 +33,7 @@ class ExpandableTile extends ConsumerStatefulWidget with FTileMixin {
     required this.title,
     this.children = const [],
     this.childrenPadding = const EdgeInsets.only(top: kBigSpace),
+    this.childrenCrossAxisAlignment = CrossAxisAlignment.start,
     this.enabled = true,
     this.iconColor,
     this.onLongPress,
@@ -94,6 +98,7 @@ class _ExpandableTileState extends ConsumerState<ExpandableTile> with SingleTick
             child: Column(
               spacing: kSpace,
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: widget.childrenCrossAxisAlignment,
               children: widget.children,
             ),
           ),

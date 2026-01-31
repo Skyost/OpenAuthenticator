@@ -114,11 +114,15 @@ class AccountUtils {
           successMessage: successMessage ?? translations.authentication.logIn.success,
         );
         break;
-      case ResultError(:final exception):
+      case ResultError(:final exception, :final stackTrace):
         if (exception == null) {
           context.handleResult(result, retryIfError: true);
         } else {
-          ErrorDialog.openDialog(context, error: exception);
+          ErrorDialog.openDialog(
+            context,
+            error: exception,
+            stackTrace: stackTrace,
+          );
         }
         break;
       default:

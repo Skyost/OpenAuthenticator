@@ -95,7 +95,7 @@
         "title": "What do you want to do ?",
         "confirm": {
           "title": "Confirm your account",
-          "subtitle": "Paste the link you received by email to confirm your account."
+          "subtitle": "Paste the code you received by email to confirm your account."
         },
         "cancelConfirmation": {
           "title": "Cancel account confirmation",
@@ -106,9 +106,9 @@
           }
         }
       },
-      "linkDialog": {
-        "title": "Confirmation link",
-        "message": "Either visit the link with this device or paste it below to confirm your email address."
+      "codeDialog": {
+        "title": "Confirmation code",
+        "message": "Either visit the link with this device or paste the code below to confirm your email address."
       }
     },
     "synchronizeTotps": {
@@ -182,6 +182,14 @@
   },
   "dangerZone": {
     "title": "Danger zone",
+    "changeBackendUrl": {
+      "title": "Change backend URL",
+      "subtitle": "Change the URL of the backend server.",
+      "inputDialog": {
+        "title": "Backend URL",
+        "message": "Please enter the URL of the backend server. Default is \"$defaultBackendUrl\"."
+      }
+    },
     "deleteAccount": {
       "title": "Delete your account",
       "subtitle": "Delete your account and all your synchronized data."

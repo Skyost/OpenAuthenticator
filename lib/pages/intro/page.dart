@@ -10,6 +10,7 @@ import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
+import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/step_progress_indicator.dart';
 
 /// Shows an intro page, that explains what the app does to the user.
@@ -100,8 +101,8 @@ class IntroPageState extends ConsumerState<IntroPage> with BrightnessListener {
             steps: _slides.length,
             currentStep: _slideIndex + 1,
           ),
-          FilledButton.tonalIcon(
-            onPressed: canGoToNextSlide
+          ClickableButton(
+            onPress: canGoToNextSlide
                 ? () {
                     if (hasFinished) {
                       _finish();
@@ -110,8 +111,8 @@ class IntroPageState extends ConsumerState<IntroPage> with BrightnessListener {
                     }
                   }
                 : null,
-            icon: Icon(hasFinished ? FIcons.check : FIcons.chevronRight),
-            label: Text(hasFinished ? translations.intro.button.finish : translations.intro.button.next),
+            prefix: Icon(hasFinished ? FIcons.check : FIcons.chevronRight),
+            child: Text(hasFinished ? translations.intro.button.finish : translations.intro.button.next),
           ),
         ],
       ),

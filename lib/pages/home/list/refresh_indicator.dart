@@ -1,10 +1,7 @@
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
+part of '../page.dart';
 
 /// Allows to display a refresh indicator.
-class TotpsRefreshIndicatorWidget extends StatelessWidget {
+class _TotpsRefreshIndicatorWidget extends StatelessWidget {
   /// The refresh indicator callback.
   final AsyncCallback onRefresh;
 
@@ -12,7 +9,7 @@ class TotpsRefreshIndicatorWidget extends StatelessWidget {
   final Widget child;
 
   /// Creates a new refresh indicator widget instance.
-  const TotpsRefreshIndicatorWidget({
+  const _TotpsRefreshIndicatorWidget({
     super.key,
     required this.onRefresh,
     required this.child,

@@ -1,21 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:forui/forui.dart';
-import 'package:open_authenticator/model/backend/synchronization/queue.dart';
-import 'package:open_authenticator/model/settings/display_search_button.dart';
-import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/pages/home/search/action.dart';
-import 'package:open_authenticator/pages/home/search/box.dart';
-import 'package:open_authenticator/pages/home/utils/require_provider_value.dart';
-import 'package:open_authenticator/pages/settings/page.dart';
-import 'package:open_authenticator/utils/platform.dart';
-import 'package:open_authenticator/widgets/clickable.dart';
-import 'package:open_authenticator/widgets/sized_scalable_image.dart';
-import 'package:open_authenticator/widgets/title.dart';
+part of 'page.dart';
 
 /// The app bar for the home page.
-class HomePageHeader extends ConsumerWidget {
+class _HomePageHeader extends ConsumerWidget {
   /// Whether to show the add button.
   final bool showAddButton;
 
@@ -29,7 +15,7 @@ class HomePageHeader extends ConsumerWidget {
   final bool showSearchBox;
 
   /// Creates a new app bar instance.
-  const HomePageHeader({
+  const _HomePageHeader({
     super.key,
     this.showAddButton = false,
     this.onAddButtonPress,
@@ -42,7 +28,7 @@ class HomePageHeader extends ConsumerWidget {
     Widget header = FHeader.nested(
       title: const _AppBarTitle(),
       prefixes: [
-        RequireProviderValueWidget.cryptoStoreAndTotpList(
+        _RequireProviderValueWidget.cryptoStoreAndTotpList(
           child: ClickableHeaderAction(
             onPress: () => Navigator.pushNamed(context, SettingsPage.name),
             icon: const Icon(FIcons.settings),
@@ -51,30 +37,26 @@ class HomePageHeader extends ConsumerWidget {
       ],
       suffixes: [
         if (ref.watch(displaySearchButtonSettingsEntryProvider).value ?? true)
-          RequireProviderValueWidget.cryptoStoreAndTotpList(
+          _RequireProviderValueWidget.cryptoStoreAndTotpList(
             child: Builder(
-              builder: (context) => SearchAction(
+              builder: (context) => _SearchAction(
                 onTotpFound: (totp) => onTotpFound(ref, totp),
               ),
             ),
           ),
         if (showAddButton)
-          RequireProviderValueWidget.cryptoStoreAndTotpList(
+          _RequireProviderValueWidget.cryptoStoreAndTotpList(
             child: ClickableHeaderAction(
               onPress: onAddButtonPress,
               icon: const Icon(FIcons.plus),
             ),
           ),
-        if (currentPlatform.isDesktop)
-          RequireProviderValueWidget.cryptoStoreAndTotpList(
-            child: ClickableHeaderAction(
-              onPress: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
-              icon: const Icon(FIcons.refreshCcw),
-            ),
-          ),
+        _RequireProviderValueWidget.cryptoStoreAndTotpList(
+          child: _SyncHeaderAction(),
+        ),
       ],
     );
-    return showSearchBox ? SearchBox(header: header) : header;
+    return showSearchBox ? _SearchBox(header: header) : header;
   }
 
   Future<void> onTotpFound(WidgetRef ref, Totp totp) async {
@@ -111,4 +93,69 @@ class _AppBarTitle extends StatelessWidget {
       return const TitleWidget();
     },
   );
+}
+
+/// The sync header action.
+class _SyncHeaderAction extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    SynchronizationPhase phase = ref.watch(synchronizationControllerProvider.select((status) => status.phase));
+    switch (phase) {
+      case SynchronizationPhaseOffline():
+        return ClickableHeaderAction(
+          onPress: null,
+          icon: Icon(
+            FIcons.refreshCcwDot,
+            color: context.theme.colors.muted,
+          ),
+        );
+      case SynchronizationPhaseSyncing():
+        return const ClickableHeaderAction(
+          onPress: null,
+          icon: RotationAnimationWidget(
+            child: Icon(FIcons.refreshCcw),
+          ),
+        );
+      case SynchronizationPhaseError():
+        return ClickableHeaderAction(
+          onPress: () async {
+            ErrorDialogResult? result = await ErrorDialog.openDialog(
+              context,
+              message: 'An error occurred while synchronizing your TOTPs.',
+              error: phase.exception,
+              stackTrace: phase.stackTrace,
+              allowRetry: true,
+            );
+            if (result == ErrorDialogResult.retry) {
+              ref.read(synchronizationControllerProvider.notifier).forceSync();
+            }
+          },
+          icon: Icon(
+            FIcons.refreshCcw,
+            color: context.theme.colors.destructive,
+          ),
+        );
+      default:
+        AsyncValue<List<PushOperation>> withErrors = ref.watch(pushOperationsQueueProvider.selectWithErrors());
+        if (withErrors.hasValue && withErrors.value!.isNotEmpty) {
+          return ClickableHeaderAction(
+            onPress: () => Navigator.pushNamed(context, SyncIssuesPage.name),
+            icon: Icon(
+              FIcons.refreshCcwDot,
+              color: context.theme.colors.destructive,
+            ),
+          );
+        }
+        if (currentPlatform.isDesktop) {
+          StorageType? storageType = ref.watch(storageTypeSettingsEntryProvider).value;
+          if (storageType == StorageType.shared) {
+            return ClickableHeaderAction(
+              onPress: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
+              icon: const Icon(FIcons.refreshCcw),
+            );
+          }
+        }
+        return const SizedBox.shrink();
+    }
+  }
 }

@@ -7,7 +7,7 @@ import 'package:open_authenticator/model/totp/totp.dart';
 /// Gives some useful properties for serializing TOTPs.
 extension JsonTotp on Totp {
   /// Force creating a new TOTP from the specified JSON data.
-  static Totp fromJson(Map<String, dynamic> data, { String? uuid }) => tryFromJson(data)!;
+  static Totp fromJson(Map<String, dynamic> data, { String? uuid }) => tryFromJson(data, uuid: uuid)!;
 
   /// Creates a new TOTP from the specified JSON data.
   static Totp? tryFromJson(Map<String, dynamic> data, { String? uuid }) {

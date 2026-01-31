@@ -6,6 +6,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/pages/settings/entries/about.dart';
 import 'package:open_authenticator/pages/settings/entries/backup_now.dart';
 import 'package:open_authenticator/pages/settings/entries/cache_totp_pictures.dart';
+import 'package:open_authenticator/pages/settings/entries/change_backend_url.dart';
 import 'package:open_authenticator/pages/settings/entries/change_master_password.dart';
 import 'package:open_authenticator/pages/settings/entries/clear_data.dart';
 import 'package:open_authenticator/pages/settings/entries/confirm_email.dart';
@@ -131,6 +132,7 @@ class SettingsPage extends ConsumerWidget {
         ),
         label: Text(translations.settings.dangerZone.title),
         children: [
+          const ChangeBackendUrlSettingsEntryWidget(),
           const DeleteAccountSettingsEntryWidget(),
           const ClearDataSettingsEntryWidget(),
         ],

@@ -91,6 +91,7 @@ import 'package:open_authenticator/utils/utils.dart';
         textFieldStyle,
         labelTextStyle: FThemes.zinc.light.textFieldStyle.labelTextStyle,
         contentTextStyle: FThemes.zinc.light.textFieldStyle.contentTextStyle,
+        fillColor: Colors.white,
       ),
       selectStyle: (selectStyle) => _adaptSelectStyle(
         selectStyle,
@@ -120,6 +121,7 @@ import 'package:open_authenticator/utils/utils.dart';
         textFieldStyle,
         labelTextStyle: FThemes.zinc.dark.textFieldStyle.labelTextStyle,
         contentTextStyle: FThemes.zinc.dark.textFieldStyle.contentTextStyle,
+        fillColor: Colors.black,
       ),
       popoverMenuStyle: (popoverMenuStyle) => _adaptPopoverMenuStyle(
         popoverMenuStyle,
@@ -194,9 +196,12 @@ FTextFieldStyle _adaptTextFieldStyle(
   FTextFieldStyle textFieldStyle, {
   FWidgetStateMap<TextStyle>? labelTextStyle,
   FWidgetStateMap<TextStyle>? contentTextStyle,
+  Color? fillColor,
 }) => textFieldStyle.copyWith(
   labelTextStyle: labelTextStyle,
   contentTextStyle: contentTextStyle,
+  fillColor: fillColor,
+  filled: true,
 );
 
 FSelectStyle _adaptSelectStyle(

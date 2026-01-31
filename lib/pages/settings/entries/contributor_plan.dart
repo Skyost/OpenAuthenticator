@@ -81,9 +81,10 @@ class ContributorPlanEntryWidget extends ConsumerWidget with FTileMixin {
         }
       case AsyncLoading():
         return ClickableTile(
-          prefix: const CircularProgressIndicator(),
+          prefix: const FCircularProgress(),
           title: Text(translations.settings.application.contributorPlan.title),
           subtitle: Text(translations.settings.application.contributorPlan.subtitle.loading),
+          enabled: false,
         );
       case AsyncError():
       default:

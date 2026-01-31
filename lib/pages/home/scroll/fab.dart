@@ -1,14 +1,7 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:forui/forui.dart';
-import 'package:open_authenticator/utils/platform.dart';
-import 'package:open_authenticator/utils/utils.dart';
-import 'package:open_authenticator/widgets/clickable.dart';
-import 'package:open_authenticator/widgets/title.dart';
+part of '../page.dart';
 
 /// A widget that triggers a callback when the user scrolls, so that the floating action button can be hidden or shown.
-class RevealFloatingActionButtonWidget extends StatelessWidget {
+class _RevealFloatingActionButtonWidget extends StatelessWidget {
   /// Whether to display the floating action button initially.
   static final bool hasFloatingActionButton = currentPlatform == Platform.android || kDebugMode;
 
@@ -22,7 +15,7 @@ class RevealFloatingActionButtonWidget extends StatelessWidget {
   final Widget child;
 
   /// Creates a new reveal floating action button widget instance.
-  const RevealFloatingActionButtonWidget({
+  const _RevealFloatingActionButtonWidget({
     super.key,
     this.onHideFloatingActionButton,
     this.onShowFloatingActionButton,
@@ -49,7 +42,7 @@ class RevealFloatingActionButtonWidget extends StatelessWidget {
 }
 
 /// The floating add button widget.
-class FloatingAddButton extends StatelessWidget {
+class _FloatingAddButton extends StatelessWidget {
   /// Whether to display the floating action button.
   final bool showFloatingActionButton;
 
@@ -57,7 +50,7 @@ class FloatingAddButton extends StatelessWidget {
   final Function(BuildContext) onAddButtonPress;
 
   /// Creates a new floating add button instance.
-  const FloatingAddButton({
+  const _FloatingAddButton({
     super.key,
     required this.showFloatingActionButton,
     required this.onAddButtonPress,

@@ -1,18 +1,17 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_authenticator/model/backend/request/response.dart';
 import 'package:open_authenticator/model/totp/json.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:uuid/uuid.dart';
 
-enum OperationKind { set, delete }
+enum PushOperationKind { set, delete }
 
 class PushOperation<T> with EquatableMixin {
   final String uuid;
-  final OperationKind kind;
+  final PushOperationKind kind;
   final T payload;
   final DateTime createdAt;
   final int attempt;
-  final String? lastError;
+  final PushOperationError? lastError;
 
   PushOperation({
     String? uuid,
@@ -29,10 +28,10 @@ class PushOperation<T> with EquatableMixin {
     required List<Totp> totps,
     DateTime? createdAt,
     int attempt = 0,
-    String? lastError,
+    PushOperationError? lastError,
   }) => PushOperation(
     uuid: uuid,
-    kind: OperationKind.set,
+    kind: PushOperationKind.set,
     payload: {
       for (Totp totp in totps) totp.uuid: totp.toJson(includeUuid: false),
     },
@@ -46,27 +45,33 @@ class PushOperation<T> with EquatableMixin {
     required List<String> uuids,
     DateTime? createdAt,
     int attempt = 0,
-    String? lastError,
+    PushOperationError? lastError,
   }) => PushOperation(
     uuid: uuid,
-    kind: OperationKind.delete,
+    kind: PushOperationKind.delete,
     payload: uuids,
     createdAt: createdAt,
     attempt: attempt,
     lastError: lastError,
   );
 
-  PushOperation applyResult(PushOperationResult result) => copyWith(
-    attempt: attempt + 1,
-    lastError: result.error,
-  );
+  // PushOperation applyResult(PushOperationResult result) => copyWith(
+  //   attempt: attempt + 1,
+  //   lastError: (lastError ?? (result.success ? null : PushOperationError._()))?.copyWith(
+  //     error: PushOperationErrorKind.values.firstWhere(
+  //       (value) => value.name == result.errorCode,
+  //       orElse: () => PushOperationErrorKind.genericError,
+  //     ),
+  //     details: result.errorDetails,
+  //   ),
+  // );
 
   PushOperation copyWith({
-    OperationKind? kind,
+    PushOperationKind? kind,
     dynamic payload,
     DateTime? createdAt,
     int? attempt,
-    String? lastError,
+    PushOperationError? lastError,
   }) => PushOperation(
     uuid: uuid,
     kind: kind ?? this.kind,
@@ -95,7 +100,37 @@ class PushOperation<T> with EquatableMixin {
     if (!httpRequest) ...{
       'createdAt': createdAt.millisecondsSinceEpoch,
       'attempt': attempt,
-      'lastError': lastError,
+      'lastError': lastError?.toJson(),
     },
+  };
+}
+
+enum PushOperationErrorKind { invalidUuid, invalidTotp, invalidUpdateTimestamp, genericError }
+
+class PushOperationError {
+  final PushOperationErrorKind? error;
+  final String? details;
+
+  PushOperationError({
+    required this.error,
+    required this.details,
+  });
+
+  PushOperationError._({
+    this.error,
+    this.details,
+  });
+
+  PushOperationError copyWith({
+    PushOperationErrorKind? error,
+    String? details,
+  }) => PushOperationError._(
+    error: error ?? this.error,
+    details: details ?? this.details,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'error': error?.name,
+    'details': details,
   };
 }

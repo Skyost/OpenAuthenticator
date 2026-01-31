@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:forui/forui.dart';
 import 'package:open_authenticator/spacing.dart';
+import 'package:open_authenticator/utils/utils.dart';
 
 /// A divider with a text in the middle.
 class DividerText extends StatelessWidget {
@@ -21,14 +23,21 @@ class DividerText extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      Expanded(child: leftDivider),
-      Padding(
-        padding: const EdgeInsets.only(right: kSpace, bottom: kSpace / 2, left: kSpace),
-        child: text,
+  Widget build(BuildContext context) => Theme(
+    data: Theme.of(context).copyWith(
+      dividerTheme: DividerThemeData(
+        color: context.theme.colors.background.highlight(),
       ),
-      Expanded(child: rightDivider),
-    ],
+    ),
+    child: Row(
+      children: [
+        Expanded(child: leftDivider),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: kSpace),
+          child: text,
+        ),
+        Expanded(child: rightDivider),
+      ],
+    ),
   );
 }

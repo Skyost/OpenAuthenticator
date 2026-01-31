@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:open_authenticator/model/backend/request/response.dart';
 import 'package:open_authenticator/model/backend/synchronization/operation.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/totp/algorithm.dart';
@@ -113,9 +114,15 @@ class TotpDatabase extends _$TotpDatabase {
     return await (select(deletedTotps)).map((deletedTotp) => deletedTotp.uuid).get();
   }
 
-  /// Marks the given [totp] as deleted.
-  Future<void> markAsDeleted(String uuid) async {
-    await into(deletedTotps).insert(_DriftDeletedTotp(uuid: uuid), mode: InsertMode.insertOrIgnore);
+  /// Marks the given [uuids] as deleted.
+  Future<void> markAsDeleted(List<String> uuids) async {
+    await batch((batch) {
+      batch.insertAll(
+        deletedTotps,
+        uuids.map((uuid) => _DriftDeletedTotp(uuid: uuid)),
+        mode: InsertMode.insertOrIgnore,
+      );
+    });
   }
 
   /// Marks the given [totp] as not deleted.
@@ -153,12 +160,46 @@ class TotpDatabase extends _$TotpDatabase {
     await into(pendingBackendPushOperation).insert(operation.asDriftBackendPushOperation);
   }
 
-  Future<void> updatePendingBackendPushOperation(PushOperation operation) async {
-    await update(pendingBackendPushOperation).replace(operation.asDriftBackendPushOperation);
-  }
+  Future<void> applyPushResponse(SynchronizationPushResponse value) async {
+    List<String> successes = [];
+    Map<String, PushOperationResult> failures = {};
 
-  Future<void> deletePendingBackendPushOperation(String uuid) async {
-    await (delete(pendingBackendPushOperation)..where((operation) => operation.uuid.equals(uuid))).go();
+    for (PushOperationResult result in value.result) {
+      if (result.success) {
+        successes.add(result.operationUuid);
+      } else {
+        failures[result.operationUuid] = result;
+      }
+    }
+
+    _DriftBackendPushOperation applyResult(_DriftBackendPushOperation operation) {
+      PushOperationResult result = failures[operation.uuid]!;
+      return operation.copyWith(
+        attempt: operation.attempt + 1,
+        lastErrorKind: result.success
+            ? const Value(null)
+            : Value(
+                PushOperationErrorKind.values
+                    .firstWhere(
+                      (value) => value.name == result.errorCode,
+                      orElse: () => PushOperationErrorKind.genericError,
+                    )
+                    .name,
+              ),
+        lastErrorDetails: result.success ? const Value(null) : Value.absentIfNull(result.errorDetails),
+      );
+    }
+
+    List<_DriftBackendPushOperation> failedDriftOperations =
+        await (select(pendingBackendPushOperation)
+              ..where((operation) => operation.uuid.isIn(failures.keys))
+              ..map(applyResult))
+            .get();
+
+    await batch((batch) {
+      batch.deleteWhere(pendingBackendPushOperation, (operation) => operation.uuid.isIn(successes));
+      batch.replaceAll(pendingBackendPushOperation, failedDriftOperations);
+    });
   }
 
   Future<void> clear() => batch((batch) {

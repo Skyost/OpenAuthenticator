@@ -6,13 +6,11 @@ class SynchronizationStatus with EquatableMixin {
   static const Duration _kMaxBackoff = Duration(minutes: 10);
 
   final SynchronizationPhase phase;
-  final int pendingOperations;
   final DateTime timestamp;
   final int retryAttempt;
 
   SynchronizationStatus({
     this.phase = const SynchronizationPhaseIdle(),
-    this.pendingOperations = 0,
     DateTime? timestamp,
     this.retryAttempt = 0,
   }) : timestamp = timestamp ?? DateTime.now();
@@ -20,30 +18,25 @@ class SynchronizationStatus with EquatableMixin {
   @override
   List<Object?> get props => [
     phase,
-    pendingOperations,
     timestamp,
     retryAttempt,
   ];
 
   SynchronizationStatus update({
     SynchronizationPhase? phase,
-    int? pendingOperations,
     int? retryAttempt,
   }) => copyWith(
     phase: phase,
-    pendingOperations: pendingOperations,
     retryAttempt: retryAttempt,
     timestamp: DateTime.now(),
   );
 
   SynchronizationStatus copyWith({
     SynchronizationPhase? phase,
-    int? pendingOperations,
     DateTime? timestamp,
     int? retryAttempt,
   }) => SynchronizationStatus(
     phase: phase ?? this.phase,
-    pendingOperations: pendingOperations ?? this.pendingOperations,
     timestamp: timestamp ?? this.timestamp,
     retryAttempt: retryAttempt ?? this.retryAttempt,
   );

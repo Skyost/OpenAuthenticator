@@ -30,7 +30,8 @@ class Totps extends Table {
   /// Maps to [Totp.encryptedData.encryptionSalt].
   TextColumn get encryptionSalt => text().map(const Uint8ListConverter())();
 
-  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  /// Maps to [Totp.updatedAt].
+  IntColumn get updatedAt => integer()();
 
   @override
   Set<Column> get primaryKey => {uuid};
@@ -49,7 +50,7 @@ class DeletedTotps extends Table {
 class PendingBackendPushOperation extends Table {
   TextColumn get uuid => text()();
 
-  TextColumn get kind => textEnum<OperationKind>()();
+  TextColumn get kind => textEnum<PushOperationKind>()();
 
   TextColumn get jsonPayload => text()();
 
@@ -57,7 +58,9 @@ class PendingBackendPushOperation extends Table {
 
   IntColumn get attempt => integer().withDefault(const Constant(0))();
 
-  TextColumn get lastError => text().nullable()();
+  TextColumn get lastErrorKind => text().nullable()();
+
+  TextColumn get lastErrorDetails => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {uuid};

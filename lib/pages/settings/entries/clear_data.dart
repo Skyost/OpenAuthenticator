@@ -107,7 +107,7 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget with FTileMixin {
         actions: canExitWithConfirmDialog
             ? [
                 ClickableButton(
-                  style: FButtonStyle.destructive(),
+                  style: FButtonStyle.ghost(),
                   onPress: () => Navigator.pop(context),
                   child: Text(MaterialLocalizations.of(context).continueButtonLabel),
                 ),

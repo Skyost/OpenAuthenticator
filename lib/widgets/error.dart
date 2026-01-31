@@ -148,6 +148,7 @@ class _ErrorDetailsState extends State<ErrorDetails> with SingleTickerProviderSt
         child: Text(
           '${widget.error}\n${widget.stackTrace ?? StackTrace.current}',
           style: TextStyle(fontSize: context.theme.typography.xs.fontSize),
+          textAlign: TextAlign.left,
         ),
       ),
     ],

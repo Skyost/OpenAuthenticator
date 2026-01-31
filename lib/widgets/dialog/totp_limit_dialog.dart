@@ -80,6 +80,7 @@ class TotpLimitDialog extends ConsumerWidget {
     }
   }
 
+  /// Shows the totp limit dialog and blocks everything until the user has either changed its storage type or subscribed to the Contributor Plan.
   static Future<void> showAndBlock(
     BuildContext context, {
     required bool autoDialog,

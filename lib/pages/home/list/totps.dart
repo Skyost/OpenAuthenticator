@@ -1,36 +1,7 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:forui/forui.dart';
-import 'package:open_authenticator/i18n/translations.g.dart';
-import 'package:open_authenticator/main.dart';
-import 'package:open_authenticator/model/app_unlock/methods/method.dart';
-import 'package:open_authenticator/model/app_unlock/state.dart';
-import 'package:open_authenticator/model/crypto.dart';
-import 'package:open_authenticator/model/settings/display_copy_button.dart';
-import 'package:open_authenticator/model/totp/decrypted.dart';
-import 'package:open_authenticator/model/totp/repository.dart';
-import 'package:open_authenticator/model/totp/totp.dart';
-import 'package:open_authenticator/pages/home/dialogs/totp_decrypt.dart';
-import 'package:open_authenticator/pages/home/utils/image_text_buttons.dart';
-import 'package:open_authenticator/pages/totp.dart';
-import 'package:open_authenticator/spacing.dart';
-import 'package:open_authenticator/utils/master_password.dart';
-import 'package:open_authenticator/utils/platform.dart';
-import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/error.dart';
-import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
-import 'package:open_authenticator/widgets/smooth_highlight.dart';
-import 'package:open_authenticator/widgets/toast.dart';
-import 'package:open_authenticator/widgets/totp/widget.dart';
-import 'package:open_authenticator/widgets/waiting_overlay.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+part of '../page.dart';
 
 /// Allows to display the TOTPs list.
-class TotpsListWidget extends ConsumerWidget {
+class _TotpsListWidget extends ConsumerWidget {
   /// The TOTPs list.
   final TotpList totps;
 
@@ -45,7 +16,7 @@ class TotpsListWidget extends ConsumerWidget {
   final VoidCallback? onHighlightFinished;
 
   /// Creates a new TOTPs list widget instance.
-  const TotpsListWidget({
+  const _TotpsListWidget({
     super.key,
     required this.totps,
     this.itemScrollController,
@@ -58,9 +29,13 @@ class TotpsListWidget extends ConsumerWidget {
     bool isUnlocked = ref.watch(appLockStateProvider.select((state) => state.value == AppLockState.unlocked));
     bool displayCopyButton = ref.watch(displayCopyButtonSettingsEntryProvider).value ?? true;
     return totps.isEmpty
-        ? ImageTextButtonsWidget.asset(
-            asset: 'assets/images/home.si',
-            text: translations.home.empty,
+        ? Center(
+            child: SingleChildScrollView(
+              child: ImageTextButtonsWidget.asset(
+                asset: 'assets/images/home.si',
+                text: translations.home.empty,
+              ),
+            ),
           )
         : ScrollConfiguration(
             behavior: _ScrollBehavior(),
@@ -83,6 +58,7 @@ class TotpsListWidget extends ConsumerWidget {
                 );
                 return position == emphasisIndex
                     ? SmoothHighlight(
+                        // TODO: Doesn't work
                         color: context.theme.colors.secondary,
                         useInitialHighLight: true,
                         onHighlightFinished: onHighlightFinished,
@@ -197,7 +173,7 @@ class TotpsListWidget extends ConsumerWidget {
       return;
     }
 
-    TotpDecryptDialogResult? choice = await TotpDecryptDialog.show(
+    TotpDecryptDialogResult? choice = await _TotpDecryptDialog.show(
       context,
       decryptedTotps: decryptedTotps.$2,
     );

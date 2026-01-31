@@ -46,7 +46,7 @@ class TotpRepository extends AsyncNotifier<TotpList> {
   Future<Result<Totp>> addTotps(
     List<Totp> totps, {
     bool fromNetwork = false,
-  }) => _addTotp(
+  }) => _addTotps(
     totps,
     fromNetwork: fromNetwork,
   );
@@ -55,13 +55,13 @@ class TotpRepository extends AsyncNotifier<TotpList> {
   Future<Result<Totp>> addTotp(
     Totp totp, {
     bool fromNetwork = false,
-  }) => _addTotp(
+  }) => _addTotps(
     [totp],
     fromNetwork: fromNetwork,
   );
 
   /// Adds the given [totp].
-  Future<Result<Totp>> _addTotp(
+  Future<Result<Totp>> _addTotps(
     List<Totp> totps, {
     bool fromNetwork = false,
   }) async {
@@ -202,24 +202,39 @@ class TotpRepository extends AsyncNotifier<TotpList> {
   }
 
   /// Deletes the TOTP associated with the given [uuid].
-  Future<Result> deleteTotp(String uuid, {bool fromNetwork = false}) async {
+  Future<Result> deleteTotp(String uuid, {bool fromNetwork = false}) async => await _deleteTotps(
+    [uuid],
+    fromNetwork: fromNetwork,
+  );
+
+  /// Deletes the TOTPs associated with the given [uuids].
+  Future<Result> deleteTotps(List<String> uuids, {bool fromNetwork = false}) async => await _deleteTotps(
+    uuids,
+    fromNetwork: fromNetwork,
+  );
+
+  /// Deletes the TOTP associated with the given [uuid].
+  Future<Result> _deleteTotps(List<String> uuids, {bool fromNetwork = false}) async {
     try {
       TotpList totpList = await future;
       await totpList.waitBeforeNextOperation();
       TotpDatabase database = ref.read(totpsDatabaseProvider);
-      await database.deleteTotp(uuid);
-      await database.markAsDeleted(uuid);
+      await database.deleteTotps(uuids);
+      await database.markAsDeleted(uuids);
       if (totpList.storageType == StorageType.shared && !fromNetwork) {
         _enqueue(
           PushOperation.deleteTotps(
-            uuids: [uuid],
+            uuids: uuids,
           ),
         );
       }
-      ref.read(totpImageCacheManagerProvider.notifier).deleteCachedImage(uuid);
+      ref.read(totpImageCacheManagerProvider.notifier).deleteCachedImages(uuids);
       state = AsyncData(
         TotpList._fromListAndStorageType(
-          list: totpList._list..removeWhere((totp) => totp.uuid == uuid),
+          list: [
+            for (Totp totp in totpList)
+              if (!uuids.contains(totp.uuid)) totp,
+          ],
           storageType: totpList.storageType,
         ),
       );

@@ -75,14 +75,16 @@ class AppDialog extends StatelessWidget {
         ),
     ];
     return FDialog.adaptive(
-      title: Transform.translate(
-        offset: const Offset(0, -1),
-        child: _AppDialogTitle(
-          title: title!,
-          ellipsisTitleOnOverflow: ellipsisTitleOnOverflow,
-          displayCloseButton: displayCloseButton,
-        ),
-      ),
+      title: title == null
+          ? null
+          : Transform.translate(
+              offset: const Offset(0, -1),
+              child: _AppDialogTitle(
+                title: title!,
+                ellipsisTitleOnOverflow: ellipsisTitleOnOverflow,
+                displayCloseButton: displayCloseButton,
+              ),
+            ),
       body: SizedBox(
         width: MediaQuery.sizeOf(context).width,
         child: scrollable
@@ -180,37 +182,32 @@ class _AppDialogTitle extends ConsumerStatefulWidget {
 /// The app dialog title state.
 class _AppDialogTitleState extends ConsumerState<_AppDialogTitle> with BrightnessListener {
   @override
-  Widget build(BuildContext context) {
-    Widget child = widget.title;
-    if (currentPlatform.isDesktop && widget.displayCloseButton != false) {
-      child = Row(
+  Widget build(BuildContext context) => Container(
+    padding: AppDialog.kDefaultContentPadding,
+    decoration: boxDecoration,
+    child: DefaultTextStyle(
+      style: context.theme.typography.lg.copyWith(color: textColor),
+      maxLines: widget.ellipsisTitleOnOverflow != false ? null : 1,
+      overflow: widget.ellipsisTitleOnOverflow != false ? TextOverflow.clip : TextOverflow.ellipsis,
+      child: Row(
         children: [
-          Expanded(child: child),
-          Tooltip(
-            message: MaterialLocalizations.of(context).closeButtonLabel,
-            child: ClickableButton.icon(
-              style: currentBrightness == Brightness.dark ? FButtonStyle.secondary() : FButtonStyle.ghost(),
-              child: Icon(
-                FIcons.x,
-                color: textColor?.withValues(alpha: 0.75),
+          Expanded(child: widget.title),
+          if (currentPlatform.isDesktop && widget.displayCloseButton != false)
+            Tooltip(
+              message: MaterialLocalizations.of(context).closeButtonLabel,
+              child: ClickableButton.icon(
+                style: currentBrightness == Brightness.dark ? FButtonStyle.secondary() : FButtonStyle.ghost(),
+                child: Icon(
+                  FIcons.x,
+                  color: textColor?.withValues(alpha: 0.75),
+                ),
+                onPress: () => Navigator.pop(context),
               ),
-              onPress: () => Navigator.pop(context),
             ),
-          ),
         ],
-      );
-    }
-    return Container(
-      padding: AppDialog.kDefaultContentPadding,
-      decoration: boxDecoration,
-      child: DefaultTextStyle(
-        style: context.theme.typography.lg.copyWith(color: textColor),
-        maxLines: widget.ellipsisTitleOnOverflow != false ? null : 1,
-        overflow: widget.ellipsisTitleOnOverflow != false ? TextOverflow.clip : TextOverflow.ellipsis,
-        child: child,
       ),
-    );
-  }
+    ),
+  );
 
   /// Returns the text color.
   Color? get textColor => currentPlatform.isMobile ? null : Colors.white;

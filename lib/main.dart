@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
-import 'package:open_authenticator/app.dart'; // TODO
+import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_links.dart';
 import 'package:open_authenticator/model/backend/authentication/providers/provider.dart';
@@ -18,11 +18,13 @@ import 'package:open_authenticator/pages/home/page.dart';
 import 'package:open_authenticator/pages/intro/page.dart';
 import 'package:open_authenticator/pages/scan.dart';
 import 'package:open_authenticator/pages/settings/page.dart';
+import 'package:open_authenticator/pages/sync_issues.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/themes.dart';
 import 'package:open_authenticator/utils/brightness_listener.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/rate_my_app.dart';
+import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/dialog/totp_limit_dialog.dart';
@@ -176,6 +178,9 @@ class OpenAuthenticatorApp extends ConsumerWidget {
                 ),
               );
             },
+            SyncIssuesPage.name: (_) => const _RouteWidget(
+              child: SyncIssuesPage(),
+            ),
             ContributorPlanPaywallPage.name: (_) => const _RouteWidget(
               child: ContributorPlanPaywallPage(),
             ),
@@ -297,10 +302,13 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
       if (provider == null) {
         return;
       }
-      await showWaitingOverlay(
+      Result result = await showWaitingOverlay(
         context,
         future: provider.onRedirectReceived(appLink),
       );
+      if (mounted) {
+        context.handleResult(result);
+      }
     }
   }
 
