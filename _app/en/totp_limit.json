@@ -1,0 +1,19 @@
+{
+  "title": "TOTP limit reached",
+  "message": {
+    "notSubscribed": {
+      "auto": "You're currently synchronizing your TOTPs and have exceeded the limit of $count TOTPs before having to subscribe to the Contributor Plan. So you have to either store them locally (which means, no more synchronization), or to subscribe to the Contributor Plan.",
+      "manual": "You're currently synchronizing your TOTPs and have a limit of $count TOTPs before having to subscribe to the Contributor Plan. So you have to either store them locally (which means, no more synchronization), or to subscribe to the Contributor Plan in order to add another TOTP."
+    },
+    "alreadySubscribed": {
+      "auto": "You're currently synchronizing your TOTPs and have exceeded the limit of $count TOTPs. So you have to store them locally (which means, no more synchronization). To bypass this limit, you can self-host the backend server.",
+      "manual": "You're currently synchronizing your TOTPs and have a limit of $count TOTPs. So you have to store them locally (which means, no more synchronization) in order to add another TOTP. To bypass this limit, you can self-host the backend server."
+    }
+  },
+  "actions": {
+    "subscribe": "Subscribe",
+    "stopSynchronization": "Stop synchronization",
+    "selfHost": "Self-host",
+    "cancel": "Cancel"
+  }
+}

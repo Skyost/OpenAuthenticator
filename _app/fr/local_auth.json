@@ -1,0 +1,7 @@
+{
+  "android": {
+    "signInTitle": "Authentification requise",
+    "signInHint": "Vérifier votre identité"
+  },
+  "fallbackMessage": "Une erreur est survenue pendant la vérification de l'authentification locale. Veuillez entrer votre mot de passe maître ci-dessous pour continuer et pour désactiver l'authentification locale."
+}

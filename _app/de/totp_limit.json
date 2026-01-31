@@ -1,0 +1,19 @@
+{
+  "title": "TOTP-Limit erreicht",
+  "message": {
+    "notSubscribed": {
+      "auto": "Sie synchronisieren gerade Ihre TOTPs und haben das Limit von $count TOTPs überschritten, bevor Sie den Contributor-Plan abonnieren müssen. Sie müssen sie also entweder lokal speichern (was bedeutet, keine Synchronisierung mehr) oder den Contributor-Plan abonnieren.",
+      "manual": "Sie synchronisieren gerade Ihre TOTPs und haben ein Limit von $count TOTPs, bevor Sie den Contributor-Plan abonnieren müssen. Sie müssen sie also entweder lokal speichern (was bedeutet, keine Synchronisierung mehr) oder den Contributor-Plan abonnieren, um ein weiteres TOTP hinzuzufügen."
+    },
+    "alreadySubscribed": {
+      "auto": "Sie synchronisieren gerade Ihre TOTPs und haben das Limit von $count TOTPs überschritten. Sie müssen sie also lokal speichern (was bedeutet, keine Synchronisierung mehr). Um dieses Limit zu umgehen, können Sie den Backend-Server selbst hosten.",
+      "manual": "Sie synchronisieren gerade Ihre TOTPs und haben ein Limit von $count TOTPs. Sie müssen sie also lokal speichern (was bedeutet, keine Synchronisierung mehr), um ein weiteres TOTP hinzuzufügen. Um dieses Limit zu umgehen, können Sie den Backend-Server selbst hosten."
+    }
+  },
+  "actions": {
+    "subscribe": "Abonnieren",
+    "stopSynchronization": "Synchronisierung stoppen",
+    "selfHost": "Selbst hosten",
+    "cancel": "Abbrechen"
+  }
+}

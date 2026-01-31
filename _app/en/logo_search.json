@@ -1,0 +1,9 @@
+{
+  "dialogTitle": "Pick a logo",
+  "keywords": {
+    "text": "Keywords",
+    "hint": "microsoft.com"
+  },
+  "credits": "Search results provided by $sources",
+  "noLogoFound": "No logo found. Please try other keywords !"
+}

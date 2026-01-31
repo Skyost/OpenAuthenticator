@@ -1,0 +1,7 @@
+{
+  "android": {
+    "signInTitle": "Autenticazione richiesta",
+    "signInHint": "Verifica l'identità"
+  },
+  "fallbackMessage": "Si è verificato un errore durante il controllo dell'autenticazione locale sul tuo dispositivo. Inserisci la tua password principale qui sotto per procedere e disabilitare anche l'autenticazione locale."
+}

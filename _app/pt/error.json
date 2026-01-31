@@ -1,0 +1,31 @@
+{
+  "noError": "Sucesso!",
+  "validation": {
+    "number": "Você deve inserir um número válido",
+    "empty": "Este campo é obrigatório",
+    "email": "E-mail inválido",
+    "secret": "Segredo inválido inserido",
+    "totpDigits": "Este número deve ser maior ou igual a 6",
+    "masterPassword": "Senha inválida inserida",
+    "confirmation": "A confirmação não corresponde"
+  },
+  "appUnlock": "Falha ao desbloquear o aplicativo. Tente novamente.",
+  "generic": {
+    "noTryAgain": "Ops, algo deu errado.",
+    "tryAgain": "Algo deu errado. Tente novamente mais tarde.",
+    "withException": "Ocorreu um erro (exceção: $exception). Tente novamente mais tarde."
+  },
+  "scan": {
+    "noUri": "Falha ao ler este código QR. Certifique-se de que é um código QR TOTP válido.",
+    "accessDenied": "Falha ao acessar sua câmera (acesso negado: $exception).",
+    "controllerUninitialized": "Controlador não inicializado (código: $exception).",
+    "unsupported": "A digitalização não é suportada neste dispositivo (código: $exception)."
+  },
+  "storageMigration(map)": {
+    "backupError": "Ocorreu um erro ao fazer o backup. Tente novamente.",
+    "currentStoragePasswordMismatch": "Senha mestra inválida inserida.",
+    "encryptionKeyChangeFailed": "Ocorreu um erro ao criptografar seus dados. Tente novamente mais tarde.",
+    "genericError": "Ocorreu um erro ao migrar seus dados. Tente novamente mais tarde."
+  },
+  "totpDecrypt": "Falha ao descriptografar este TOTP. Certifique-se de que inseriu a senha correta."
+}

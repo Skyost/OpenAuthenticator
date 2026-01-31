@@ -1,0 +1,31 @@
+{
+  "noError": "Succès !",
+  "validation": {
+    "number": "Vous devez entrer un nombre valide",
+    "empty": "Ce champ est requis",
+    "email": "Adresse mail invalide",
+    "secret": "Secret invalide",
+    "totpDigits": "Le nombre entré doit être supérieur ou égal à 6",
+    "masterPassword": "Mot de passe invalide",
+    "confirmation": "La confirmation ne correspond pas"
+  },
+  "appUnlock": "Impossible de déverrouiller l'application. Veuillez réessayer.",
+  "generic": {
+    "noTryAgain": "Oops, quelque chose s'est mal passé.",
+    "tryAgain": "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
+    "withException": "Une erreur est survenue ($exception). Veuillez réessayer plus tard."
+  },
+  "scan": {
+    "noUri": "Impossible de lire ce QR code. Assurez-vous qu'il s'agit d'un QR code de TOTP valide.",
+    "accessDenied": "Impossible d'accéder à votre caméra (accès refusé : $exception).",
+    "controllerUninitialized": "Controlleur non initialisé (code : $exception).",
+    "unsupported": "Le scan n'est pas supporté par cet appareil (code : $exception)."
+  },
+  "storageMigration(map)": {
+    "backupError": "Une erreur est survenue durant la sauvegarde. Veuillez réessayer.",
+    "currentStoragePasswordMismatch": "Mot de passe maître invalide.",
+    "encryptionKeyChangeFailed": "Une erreur est survenue pendant le chiffrement de vos données. Veuillez réessayer plus tard.",
+    "genericError": "Une erreur est survenue pendant la migration de vos données. Veuillez réessayer plus tard."
+  },
+  "totpDecrypt": "Impossible de déchiffrer ce TOTP. Veuillez vous assurer d'avoir entré le bon mot de passe."
+}

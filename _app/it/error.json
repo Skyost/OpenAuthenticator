@@ -1,0 +1,31 @@
+{
+  "noError": "Fatto!",
+  "validation": {
+    "number": "Devi inserire un numero valido",
+    "empty": "Questo campo è obbligatorio",
+    "email": "Email non valida",
+    "secret": "Secret inserita non valido",
+    "totpDigits": "Il numero inserito deve essere uguale o maggiore di 6",
+    "masterPassword": "Password inserita non valida",
+    "confirmation": "La conferma non corrisponde"
+  },
+  "appUnlock": "Impossibile sbloccare l'app. Riprova.",
+  "generic": {
+    "noTryAgain": "Ops, qualcosa è andato storto.",
+    "tryAgain": "Qualcosa è andato storto. Riprova più tardi.",
+    "withException": "Si è verificato un errore (eccezione: $exception). Riprova più tardi."
+  },
+  "scan": {
+    "noUri": "Impossibile leggere questo codice QR. Assicurati che sia un codice QR TOTP valido.",
+    "accessDenied": "Impossibile accedere alla tua fotocamera (accesso negato: $exception).",
+    "controllerUninitialized": "Controller non inizializzato (codice: $exception).",
+    "unsupported": "La scansione non è supportata su questo dispositivo (codice: $exception)."
+  },
+  "storageMigration(map)": {
+    "backupError": "Si è verificato un errore durante l'esecuzione del backup. Riprova.",
+    "currentStoragePasswordMismatch": "Password principale inserita non valida.",
+    "encryptionKeyChangeFailed": "Si è verificato un errore durante la cifratura dei tuoi dati. Riprova più tardi.",
+    "genericError": "Si è verificato un errore durante la migrazione dei tuoi dati. Riprova più tardi."
+  },
+  "totpDecrypt": "Impossibile decifrare questo TOTP. Assicurati di aver inserito la password corretta."
+}

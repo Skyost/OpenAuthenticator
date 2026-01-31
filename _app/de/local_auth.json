@@ -1,0 +1,7 @@
+{
+  "android": {
+    "signInTitle": "Authentifizierung erforderlich",
+    "signInHint": "Identität bestätigen"
+  },
+  "fallbackMessage": "Beim Überprüfen der lokalen Authentifizierung auf Ihrem Gerät ist ein Fehler aufgetreten. Bitte geben Sie unten Ihr Master-Passwort ein, um fortzufahren und die lokale Authentifizierung zu deaktivieren."
+}
