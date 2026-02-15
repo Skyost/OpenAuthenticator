@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:open_authenticator/model/backend/authentication/providers/provider.dart';
 import 'package:open_authenticator/model/backend/request/error.dart';
 import 'package:open_authenticator/model/backend/request/response.dart';
-import 'package:open_authenticator/model/backend/synchronization/operation.dart';
+import 'package:open_authenticator/model/backend/synchronization/push/operation.dart';
 
 sealed class BackendRequest<T extends BackendResponse> {
   final String route;

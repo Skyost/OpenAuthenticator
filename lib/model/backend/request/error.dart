@@ -2,6 +2,7 @@ class BackendRequestError implements Exception {
   static const String kExpiredSessionError = 'expiredSession';
   static const String kInvalidPayloadError = 'invalidPayload';
   static const String kInvalidTokenError = 'invalidToken';
+  static const String kInvalidSessionError = 'invalidSession';
 
   final String route;
   final int statusCode;

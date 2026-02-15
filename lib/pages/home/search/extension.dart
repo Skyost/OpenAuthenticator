@@ -1,7 +1,7 @@
 part of '../page.dart';
 
 /// Allows to search through the TOTP list.
-extension _Search on TotpList {
+extension _Search on List<Totp> {
   /// Searches through the TOTP list.
   List<Totp> search(String query) {
     String lowercaseQuery = query.toLowerCase();

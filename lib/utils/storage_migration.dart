@@ -10,7 +10,7 @@ import 'package:open_authenticator/utils/form_label.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/dialog/error_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/form/password_form_field.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
@@ -95,7 +95,7 @@ class StorageMigrationUtils {
             future: ref.read(userProvider.notifier).logoutUser(),
           );
           if (context.mounted) {
-            context.handleResult(logoutResult, retryIfError: true);
+            context.handleResult(logoutResult);
           }
           return logoutResult is ResultSuccess;
         } else {
@@ -106,7 +106,7 @@ class StorageMigrationUtils {
         }
       case ResultError(:final exception):
         if (exception is! StorageMigrationException) {
-          context.handleResult(result, retryIfError: true);
+          context.handleResult(result);
           return false;
         }
         switch (exception) {
@@ -192,7 +192,7 @@ class _ConfirmationDialogState extends State<_ConfirmationDialog> {
         child: Text(MaterialLocalizations.of(context).continueButtonLabel),
       ),
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context, const _ConfirmationResult()),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
@@ -265,7 +265,7 @@ class _StorageMigrationDeletedTotpPolicyPickerDialog extends StatelessWidget {
     title: Text(translations.storageMigration.deletedTotpPolicyPickerDialog.title),
     actions: [
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),

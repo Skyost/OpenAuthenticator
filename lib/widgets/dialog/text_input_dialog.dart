@@ -106,7 +106,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
         child: Text(MaterialLocalizations.of(context).okButtonLabel),
       ),
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
@@ -192,10 +192,7 @@ class MasterPasswordInputDialog extends ConsumerStatefulWidget {
         }
         return translations.error.validation.masterPassword;
       case ResultError<bool>(:final exception):
-        if (exception != null) {
-          return translations.error.generic.withException(exception: exception);
-        }
-        break;
+        return translations.error.generic.withException(exception: exception);
       default:
         break;
     }
@@ -231,7 +228,7 @@ class _MasterPasswordInputDialogState extends ConsumerState<MasterPasswordInputD
         child: Text(MaterialLocalizations.of(context).okButtonLabel),
       ),
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),

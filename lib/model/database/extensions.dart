@@ -27,16 +27,18 @@ extension _ToOpenAuthenticatorBackendPushOperation on _DriftBackendPushOperation
     kind: kind,
     payload: jsonDecode(jsonPayload),
     createdAt: createdAt,
-    attempt: attempt,
-    lastError: lastErrorKind == null
-        ? null
-        : PushOperationError(
-            error: PushOperationErrorKind.values.firstWhere(
-              (value) => value.name == lastErrorKind,
-              orElse: () => PushOperationErrorKind.genericError,
-            ),
-            details: lastErrorDetails,
-          ),
+  );
+}
+
+/// Contains some useful methods for the generated [_DriftBackendPushOperationError] class.
+extension _ToOpenAuthenticatorBackendPushOperationError on _DriftBackendPushOperationError {
+  /// Converts this instance to a [PushOperationResult].
+  PushOperationResult get asBackendPushOperationResult => PushOperationResult(
+    operationUuid: operationUuid,
+    totpUuid: totpUuid,
+    errorCode: errorKind.name,
+    errorDetails: errorDetails,
+    createdAt: DateTime.fromMillisecondsSinceEpoch(createdAt),
   );
 }
 
@@ -65,8 +67,20 @@ extension _ToDriftBackendPushOperation on PushOperation {
     kind: kind,
     jsonPayload: jsonEncode(payload),
     createdAt: createdAt,
-    attempt: attempt,
-    lastErrorKind: lastError?.error?.name,
-    lastErrorDetails: lastError?.details,
   );
+}
+
+/// Contains some useful methods to use [PushOperationResult] with Drift.
+extension _ToDriftBackendPushOperationError on PushOperationResult {
+  /// Converts this instance to a Drift generated [_DriftBackendPushOperationError].
+  _DriftBackendPushOperationError get asDriftBackendPushOperationError {
+    assert(errorKind != null, '`errorKind` must not be null.');
+    return _DriftBackendPushOperationError(
+      operationUuid: operationUuid,
+      totpUuid: totpUuid,
+      errorKind: errorKind!,
+      errorDetails: errorDetails,
+      createdAt: createdAt.millisecondsSinceEpoch,
+    );
+  }
 }

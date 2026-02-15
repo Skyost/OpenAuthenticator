@@ -113,42 +113,48 @@ class SettingsPage extends ConsumerWidget {
           ],
         ),
       ),
-      FTileGroup(
-        style: (tileGroupStyle) => tileGroupStyle.copyWith(
-          labelTextStyle: tileGroupStyle.labelTextStyle.map(
-            (labelTextStyle) => labelTextStyle.copyWith(
-              color: context.theme.colors.destructive,
-            ),
-          ),
-          tileStyle: (tileStyle) => tileStyle.copyWith(
-            contentStyle: (contentStyle) => contentStyle.copyWith(
-              prefixIconStyle: contentStyle.prefixIconStyle.map(
-                (prefixIconStyle) => prefixIconStyle.copyWith(
-                  color: context.theme.colors.destructive,
+      Padding(
+        padding: const EdgeInsets.only(bottom: kDebugMode ? kSpace : 0),
+        child: FTileGroup(
+          style: .delta(
+            labelTextStyle: .delta([
+              .all(
+                .delta(color: context.theme.colors.destructive),
+              ),
+            ]),
+            tileStyles: .delta([
+              .all(
+                .delta(
+                  contentStyle: .delta(
+                    prefixIconStyle: .delta(
+                      [
+                        .all(
+                          .delta(color: context.theme.colors.destructive),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ]),
           ),
+          label: Text(translations.settings.dangerZone.title),
+          children: [
+            const ChangeBackendUrlSettingsEntryWidget(),
+            const DeleteAccountSettingsEntryWidget(),
+            const ClearDataSettingsEntryWidget(),
+          ],
         ),
-        label: Text(translations.settings.dangerZone.title),
-        children: [
-          const ChangeBackendUrlSettingsEntryWidget(),
-          const DeleteAccountSettingsEntryWidget(),
-          const ClearDataSettingsEntryWidget(),
-        ],
       ),
       if (kDebugMode)
-        Padding(
-          padding: const EdgeInsets.only(top: kSpace),
-          child: FTileGroup(
-            label: const Text('Debug'),
-            children: [
-              const ShowIntroPageSettingsEntryWidget(),
-              const ContributorPlanStateEntryWidget(),
-              const LocaleEntryWidget(),
-              const LinkInputSettingsEntryWidget(),
-            ],
-          ),
+        FTileGroup(
+          label: const Text('Debug'),
+          children: [
+            const ShowIntroPageSettingsEntryWidget(),
+            const ContributorPlanStateEntryWidget(),
+            const LocaleEntryWidget(),
+            const LinkInputSettingsEntryWidget(),
+          ],
         ),
     ],
   );

@@ -5,6 +5,7 @@ import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
+import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/intro/slides/slide.dart';
 import 'package:open_authenticator/pages/settings/entries/synchronize.dart';
 import 'package:open_authenticator/utils/account.dart';
@@ -43,7 +44,7 @@ class LogInIntroPageSlide extends IntroPageSlide {
 
   @override
   Future<bool> shouldSkip(WidgetRef ref) async {
-    TotpList totps = await ref.read(totpRepositoryProvider.future);
+    List<Totp> totps = await ref.read(totpRepositoryProvider.future);
     return totps.isNotEmpty;
   }
 }
@@ -55,7 +56,7 @@ class _LogInButton extends ConsumerWidget {
     User? user = ref.watch(userProvider).value;
     return user == null
         ? ClickableButton(
-            onPress: () => AccountUtils.trySignIn(context, ref),
+            onPress: () => AccountUtils.trySignIn(context),
             prefix: const Icon(FIcons.logIn),
             child: Text(translations.intro.logIn.button.loggedOut),
           )

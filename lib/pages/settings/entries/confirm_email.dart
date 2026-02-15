@@ -69,7 +69,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with FTileMixin {
       future: ref.read(emailAuthenticationProvider).cancelConfirmation(),
     );
     if (context.mounted) {
-      context.handleResult(result, retryIfError: true);
+      context.handleResult(result);
     }
   }
 
@@ -86,7 +86,7 @@ class ConfirmEmailSettingsEntryWidget extends ConsumerWidget with FTileMixin {
     }
     Result result = await ref.read(emailAuthenticationProvider).confirm(code);
     if (context.mounted) {
-      AccountUtils.handleAuthenticationResult(context, ref, result);
+      AccountUtils.handleAuthenticationResult(context, result);
     }
   }
 }
@@ -98,7 +98,7 @@ class _ConfirmActionPickerDialog extends StatelessWidget {
     title: Text(translations.settings.synchronization.confirmEmail.confirmActionPickerDialog.title),
     actions: [
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),

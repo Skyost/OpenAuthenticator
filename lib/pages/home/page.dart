@@ -10,7 +10,9 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/main.dart';
 import 'package:open_authenticator/model/app_unlock/methods/method.dart';
 import 'package:open_authenticator/model/app_unlock/state.dart';
-import 'package:open_authenticator/model/backend/synchronization/operation.dart';
+import 'package:open_authenticator/model/backend/authentication/session.dart';
+import 'package:open_authenticator/model/backend/backend.dart';
+import 'package:open_authenticator/model/backend/synchronization/push/result.dart';
 import 'package:open_authenticator/model/backend/synchronization/queue.dart';
 import 'package:open_authenticator/model/backend/synchronization/status.dart';
 import 'package:open_authenticator/model/crypto.dart';
@@ -34,7 +36,8 @@ import 'package:open_authenticator/widgets/centered_circular_progress_indicator.
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/dialog/error_dialog.dart';
+import 'package:open_authenticator/widgets/dialog/invalid_session_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/text_input_dialog.dart';
 import 'package:open_authenticator/widgets/error.dart';
 import 'package:open_authenticator/widgets/image_text_buttons.dart';
@@ -100,7 +103,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
+    AsyncValue<List<Totp>> totps = ref.watch(totpRepositoryProvider);
     StorageType? storageType = ref.watch(storageTypeSettingsEntryProvider).value;
     bool displaySearchButton = ref.read(displaySearchButtonSettingsEntryProvider).value ?? true;
     Widget body = switch (totps) {
@@ -219,7 +222,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   /// Builds the TOTPs list widget.
-  Widget buildTotpsListWidget(TotpList value) => _TotpsListWidget(
+  Widget buildTotpsListWidget(List<Totp> value) => _TotpsListWidget(
     totps: value,
     itemScrollController: itemScrollController,
     emphasisIndex: emphasisIndex,

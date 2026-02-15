@@ -42,13 +42,16 @@ class _SearchBoxWidgetState extends ConsumerState<_SearchBox> {
         color: context.theme.colors.secondary,
         child: FTextField(
           suffixBuilder: (_, _, _) => ClickableButton.icon(
-            style: FButtonStyle.ghost(),
+            variant: .ghost,
             onPress: null,
             child: const Icon(FIcons.search),
           ),
-          style: (style) => style.copyWith(
-            filled: true,
-            fillColor: context.theme.tileStyle.decoration.resolve({})?.color,
+          style: .delta(
+            color: .delta(
+              [
+                .base(context.theme.tileStyles.base.decoration.base.color),
+              ],
+            ),
           ),
           hint: MaterialLocalizations.of(context).searchFieldLabel,
           focusNode: focusNode,

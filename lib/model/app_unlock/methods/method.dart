@@ -8,6 +8,7 @@ import 'package:open_authenticator/model/password_verification/methods/method.da
 import 'package:open_authenticator/model/password_verification/methods/password_signature.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
+import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/local_authentication/local_authentication.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';

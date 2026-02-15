@@ -23,6 +23,7 @@ class SynchronizationStatus with EquatableMixin {
   ];
 
   SynchronizationStatus update({
+    DateTime? timestamp,
     SynchronizationPhase? phase,
     int? retryAttempt,
   }) => copyWith(
@@ -41,8 +42,20 @@ class SynchronizationStatus with EquatableMixin {
     retryAttempt: retryAttempt ?? this.retryAttempt,
   );
 
+  /// The next possible operation time.
+  DateTime get nextPossibleOperationTime => timestamp.add(phase._threshold);
+
+  /// Waits before the next operation.
+  Future<void> waitBeforeNextOperation() {
+    DateTime now = DateTime.now();
+    if (now.isAfter(nextPossibleOperationTime)) {
+      return Future.value();
+    }
+    return Future.delayed(nextPossibleOperationTime.difference(now));
+  }
+
   int calculateRetrySeconds() {
-    int retryAttempt = math.min(this.retryAttempt + 1, 10);
+    int retryAttempt = math.min(this.retryAttempt <= 0 ? 1 : this.retryAttempt, 10);
     int baseSeconds = math.pow(2, retryAttempt).toInt();
     int capSeconds = _kMaxBackoff.inSeconds;
     int seconds = math.min(baseSeconds, capSeconds);
@@ -51,15 +64,24 @@ class SynchronizationStatus with EquatableMixin {
 }
 
 sealed class SynchronizationPhase {
+
   const SynchronizationPhase();
+
+  Duration get _threshold => const Duration(seconds: 5);
 }
 
 class SynchronizationPhaseIdle extends SynchronizationPhase {
   const SynchronizationPhaseIdle();
+
+  @override
+  Duration get _threshold => Duration.zero;
 }
 
 class SynchronizationPhaseOffline extends SynchronizationPhase {
   const SynchronizationPhaseOffline();
+
+  @override
+  Duration get _threshold => Duration.zero;
 }
 
 class SynchronizationPhaseSyncing extends SynchronizationPhase {

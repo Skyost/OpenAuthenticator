@@ -32,17 +32,17 @@ FToasterEntry _showToast(
   required IconData icon,
 }) => showFToast(
   context: context,
-  style: (style) => style.copyWith(
-    decoration: style.decoration.copyWith(
+  style: .delta(
+    decoration: .delta(
       color: background,
     ),
-    titleTextStyle: style.titleTextStyle.copyWith(
+    titleTextStyle: .delta(
       color: foreground,
     ),
-    descriptionTextStyle: style.descriptionTextStyle.copyWith(
+    descriptionTextStyle: .delta(
       color: foreground,
     ),
-    iconStyle: style.iconStyle.copyWith(
+    iconStyle: .delta(
       color: foreground,
     ),
   ),
@@ -50,13 +50,14 @@ FToasterEntry _showToast(
   description: Text(text),
   icon: Icon(icon),
   suffixBuilder: (context, entry) => ClickableButton.icon(
-    style: FButtonStyle.ghost(
-      (style) => style.copyWith(
-        decoration: style.decoration.map(
-          (decoration) => decoration.copyWith(
-            color: background,
+    variant: .ghost,
+    style: .delta(
+      decoration: .delta(
+        [
+          .all(
+            .delta(color: background),
           ),
-        ),
+        ],
       ),
     ),
     onPress: entry.dismiss,

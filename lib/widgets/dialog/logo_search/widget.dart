@@ -71,9 +71,12 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
     children: [
       FTextFormField(
         control: .managed(controller: searchKeywordsController),
-        style: (style) => style.copyWith(
-          filled: true,
-          fillColor: context.theme.tileStyle.decoration.resolve({})?.color,
+        style: .delta(
+          color: .delta(
+            [
+              .base(context.theme.tileStyles.base.decoration.base.color),
+            ],
+          ),
         ),
         label: FormLabelWithIcon(
           icon: FIcons.search,
@@ -173,7 +176,7 @@ class _LogoSearchWidgetState extends State<LogoSearchWidget> {
         : FTappable(
             builder: (context, states, child) => Container(
               decoration: BoxDecoration(
-                color: (states.contains(WidgetState.hovered) || states.contains(WidgetState.pressed)) ? context.theme.colors.secondary : context.theme.colors.background,
+                color: (states.contains(FTappableVariant.hovered) || states.contains(FTappableVariant.pressed)) ? context.theme.colors.secondary : context.theme.colors.background,
                 borderRadius: context.theme.style.borderRadius,
               ),
               padding: const EdgeInsets.all(kSpace),

@@ -3,7 +3,7 @@ part of '../page.dart';
 /// Allows to display the TOTPs list.
 class _TotpsListWidget extends ConsumerWidget {
   /// The TOTPs list.
-  final TotpList totps;
+  final List<Totp> totps;
 
   /// The item scroll controller.
   final ItemScrollController? itemScrollController;
@@ -212,7 +212,7 @@ class _TotpsListWidget extends ConsumerWidget {
           future: changeTotpsKey(decryptedTotps.$1, [decryptedTotps.$2.first]),
         );
         if (context.mounted) {
-          context.handleResult(result, retryIfError: true);
+          context.handleResult(result);
         }
         break;
       case TotpDecryptDialogResult.changeAllTotpsKey:
@@ -221,7 +221,7 @@ class _TotpsListWidget extends ConsumerWidget {
           future: changeTotpsKey(decryptedTotps.$1, decryptedTotps.$2),
         );
         if (context.mounted) {
-          context.handleResult(result, retryIfError: true);
+          context.handleResult(result);
         }
         break;
       case TotpDecryptDialogResult.changeMasterPassword:

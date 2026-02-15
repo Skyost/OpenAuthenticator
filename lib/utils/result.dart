@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/utils/utils.dart';
-import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/dialog/error_dialog.dart';
 import 'package:open_authenticator/widgets/toast.dart';
 
 /// Used all around the project to either return a success, a failure or a cancellation.
@@ -36,14 +36,14 @@ class ResultSuccess<T> extends Result<T> {
 /// When an error occurred.
 class ResultError<T> extends Result<T> {
   /// The exception instance.
-  final Object? exception;
+  final Object exception;
 
   /// The current stacktrace.
   final StackTrace stackTrace;
 
   /// Creates a new result error instance.
   ResultError({
-    this.exception,
+    required this.exception,
     StackTrace? stackTrace,
   }) : stackTrace = stackTrace ?? StackTrace.current {
     handleException(exception, stackTrace);
@@ -78,7 +78,6 @@ extension DisplayResult on BuildContext {
   void handleResult(
     Result result, {
     bool showDialogIfError = true,
-    bool retryIfError = false,
     String? successMessage,
   }) {
     switch (result) {
@@ -94,11 +93,7 @@ extension DisplayResult on BuildContext {
           );
           break;
         }
-        if (exception == null) {
-          showErrorToast(this, text: retryIfError ? translations.error.generic.tryAgain : translations.error.generic.noTryAgain);
-        } else {
-          showErrorToast(this, text: translations.error.generic.withException(exception: exception));
-        }
+        showErrorToast(this, text: translations.error.generic.withException(exception: exception));
         break;
       default:
         break;

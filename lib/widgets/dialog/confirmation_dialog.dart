@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 
@@ -27,7 +26,7 @@ class ConfirmationDialog extends StatelessWidget {
         child: Text(MaterialLocalizations.of(context).okButtonLabel),
       ),
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context, false),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),

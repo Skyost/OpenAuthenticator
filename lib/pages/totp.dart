@@ -207,11 +207,14 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
       ],
     ),
     footer: ClickableButton(
-      style: (style) => style.copyWith(
-        decoration: style.decoration.map(
-          (decoration) => decoration.copyWith(
-            borderRadius: BorderRadius.zero,
-          ),
+      style: .delta(
+        contentStyle: const .delta(padding: EdgeInsets.all(kBigSpace)),
+        decoration: .delta(
+          [
+            .all(
+              const .delta(borderRadius: BorderRadius.zero),
+            ),
+          ],
         ),
       ),
       onPress: isValidTotp && enabled
@@ -245,7 +248,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
               FTappable(
                 builder: (context, states, child) => Container(
                   decoration: BoxDecoration(
-                    color: (states.contains(WidgetState.hovered) || states.contains(WidgetState.pressed)) ? context.theme.colors.secondary : context.theme.colors.background,
+                    color: (states.contains(FTappableVariant.hovered) || states.contains(FTappableVariant.pressed)) ? context.theme.colors.secondary : context.theme.colors.background,
                     shape: BoxShape.circle,
                     border: Border.all(color: context.theme.colors.border),
                   ),
@@ -490,7 +493,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
 
     DecryptedTotp? totp = await _createTotp();
     if (totp == null) {
-      return ResultError();
+      return ResultError(exception: const _TotpCreationFailed());
     }
     return await ref.read(totpRepositoryProvider.notifier).addTotp(totp);
   }
@@ -499,7 +502,7 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
   Future<Result> updateTotp() async {
     DecryptedTotp? totp = await _createTotp();
     if (totp == null) {
-      return ResultError();
+      return ResultError(exception: const _TotpCreationFailed());
     }
     return await ref.read(totpRepositoryProvider.notifier).updateTotp(totp);
   }
@@ -516,4 +519,12 @@ class _TotpPageState extends ConsumerState<TotpPage> with BrightnessListener {
     validity: validity,
     imageUrl: imageUrl,
   );
+}
+
+/// Triggered when TOTP creation has failed.
+class _TotpCreationFailed implements Exception {
+  const _TotpCreationFailed();
+
+  @override
+  String toString() => 'The TOTP could not be created';
 }

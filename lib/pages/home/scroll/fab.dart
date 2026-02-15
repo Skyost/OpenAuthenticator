@@ -79,16 +79,17 @@ class _FloatingAddButton extends StatelessWidget {
         child: Padding(
           padding: context.theme.style.pagePadding,
           child: ClickableButton(
-            style: (style) => style.copyWith(
-              decoration: FWidgetStateMap({
-                WidgetState.hovered: createGradient(0.05),
-                WidgetState.any: createGradient(0),
-              }),
+            style: .delta(
+              decoration: .delta([
+                .match({.hovered}, .value(createGradient(0.05))),
+                .base(.value(createGradient(0))),
+              ]),
             ),
             mainAxisSize: .min,
             child: const Icon(
               FIcons.plus,
               size: 40,
+              color: Colors.white,
             ),
             onPress: () => onAddButtonPress(context),
           ),

@@ -34,10 +34,10 @@ class User {
     : this._(
         id: json['id'],
         totpsLimit: json['totpsLimit'],
-        email: json['email'],
-        googleId: json['googleId'],
-        githubId: json['githubId'],
-        microsoftId: json['microsoftId'],
+        email: json['providers']?['email'],
+        googleId: json['providers']?['googleId'],
+        githubId: json['providers']?['githubId'],
+        microsoftId: json['providers']?['microsoftId'],
       );
 
   bool hasAuthenticationProvider(String providerId) => switch (providerId) {
@@ -93,11 +93,11 @@ class User {
   Map<String, dynamic> toJson() => {
     'id': id,
     'totpsLimit': totpsLimit,
-    if (email != null) 'email': email!,
-    if (googleId != null) 'googleId': googleId!,
-    if (githubId != null) 'githubId': githubId!,
-    if (microsoftId != null) 'microsoftId': microsoftId!,
-    if (appleId != null) 'appleId': appleId!,
+    'email': ?email,
+    'googleId': ?googleId,
+    'githubId': ?githubId,
+    'microsoftId': ?microsoftId,
+    'appleId': ?appleId,
   };
 }
 
@@ -120,7 +120,6 @@ class UserNotifier extends AsyncNotifier<User?> {
         .read(backendProvider.notifier)
         .sendHttpRequest(
           const GetUserInfoRequest(),
-          retries: 1,
         );
     if (result is! ResultSuccess<GetUserInfoResponse>) {
       return result;
@@ -165,8 +164,8 @@ class UserNotifier extends AsyncNotifier<User?> {
       Result<DeleteUserResponse> result = await ref
           .read(backendProvider.notifier)
           .sendHttpRequest(
-        const DeleteUserRequest(),
-      );
+            const DeleteUserRequest(),
+          );
       await ref.read(storedSessionProvider.notifier).clear();
       return result;
     } catch (ex, stackTrace) {

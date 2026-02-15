@@ -47,7 +47,7 @@ class _SearchPageRoute extends PageRoute<Totp> {
     Animation<double> secondaryAnimation,
   ) => Consumer(
     builder: (context, ref, child) {
-      AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
+      AsyncValue<List<Totp>> totps = ref.watch(totpRepositoryProvider);
       return switch (totps) {
         AsyncValue(:final value?) => _SearchPage(
           totps: value,
@@ -64,7 +64,7 @@ class _SearchPageRoute extends PageRoute<Totp> {
 }
 
 class _SearchPage extends StatefulWidget {
-  final TotpList totps;
+  final List<Totp> totps;
   final Animation<double> animation;
 
   const _SearchPage({
@@ -113,13 +113,16 @@ class _SearchPageState extends State<_SearchPage> {
       ],
       title: FTextField(
         suffixBuilder: (_, _, _) => ClickableButton.icon(
-          style: FButtonStyle.ghost(),
+          variant: .ghost,
           onPress: null,
           child: const Icon(FIcons.search),
         ),
-        style: (style) => style.copyWith(
-          filled: true,
-          fillColor: context.theme.tileStyle.decoration.resolve({})?.color,
+        style: .delta(
+          color: .delta(
+            [
+              .base(context.theme.tileStyles.base.decoration.base.color),
+            ],
+          ),
         ),
         control: .managed(controller: queryController),
         focusNode: queryFocusNode,

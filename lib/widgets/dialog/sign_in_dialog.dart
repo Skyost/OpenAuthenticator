@@ -38,7 +38,7 @@ class _SignInDialogState extends ConsumerState<SignInDialog> {
     title: Text(translations.authentication.signInDialog.title),
     actions: [
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
@@ -266,18 +266,30 @@ class _ProviderCircleButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     User? user = ref.watch(userProvider).value;
     bool isLoggedIn = user != null && user.hasAuthenticationProvider(providerId);
+    Color? buttonColor = context.theme.buttonStyles.resolve({FButtonVariant.secondary}).base.decoration.base.color;
     Widget button = Tooltip(
       message: translations.authentication.authenticationProvider[providerId].name,
       child: ClickableButton.raw(
         onPress: isLoggedIn ? null : onTapIfLoggedOut,
-        style: FButtonStyle.secondary((style) => style.copyWith(
-          decoration: style.decoration.map(
-            (decoration) => decoration.copyWith(
-              borderRadius: BorderRadius.circular(size + kBigSpace),
-              color: decoration.color?.lighten(),
-            ),
+        variant: .secondary,
+        style: .delta(
+          decoration: .delta(
+            [
+              .match(
+                {.hovered},
+                .delta(color: buttonColor),
+              ),
+              .base(
+                .delta(color: buttonColor?.lighten(amount: 0.075)),
+              ),
+              .all(
+                .delta(
+                  borderRadius: BorderRadius.circular(size + kBigSpace),
+                ),
+              ),
+            ],
           ),
-        )),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(kBigSpace),
           child: AuthenticationProviderImage(
@@ -323,7 +335,7 @@ class _ProviderButton extends ConsumerWidget {
       );
     }
     return ClickableButton(
-      style: FButtonStyle.secondary(),
+      variant: .secondary,
       onPress: onPressIfLoggedOut,
       prefix: AuthenticationProviderImage(
         providerId: providerId,

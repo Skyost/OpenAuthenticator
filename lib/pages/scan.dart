@@ -6,7 +6,7 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/pages/totp.dart';
 import 'package:open_authenticator/widgets/app_scaffold.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
-import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/dialog/error_dialog.dart';
 import 'package:open_authenticator/widgets/scan/scanner.dart';
 import 'package:open_authenticator/widgets/toast.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:forui/forui.dart';
-import 'package:open_authenticator/model/backend/synchronization/operation.dart';
+import 'package:open_authenticator/model/backend/synchronization/push/result.dart';
 import 'package:open_authenticator/model/backend/synchronization/queue.dart';
+import 'package:open_authenticator/model/database/database.dart';
 import 'package:open_authenticator/spacing.dart';
 import 'package:open_authenticator/widgets/app_scaffold.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
@@ -10,6 +11,7 @@ import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/error.dart';
 import 'package:open_authenticator/widgets/expandable_tile.dart';
 import 'package:open_authenticator/widgets/image_text_buttons.dart';
+import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// The sync issues page.
 class SyncIssuesPage extends ConsumerWidget {
@@ -23,7 +25,7 @@ class SyncIssuesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<List<PushOperation>> withErrors = ref.watch(pushOperationsQueueProvider.selectWithErrors());
+    AsyncValue<List<PushOperationResult>> errors = ref.watch(pushOperationsErrorsProvider);
     return AppScaffold.scrollable(
       header: FHeader.nested(
         prefixes: [
@@ -31,10 +33,21 @@ class SyncIssuesPage extends ConsumerWidget {
             onPress: () => Navigator.pop(context),
           ),
         ],
+        suffixes: [
+          ClickableHeaderAction(
+            icon: const Icon(FIcons.trash),
+            onPress: () async {
+              await showWaitingOverlay(
+                context,
+                future: ref.read(appDatabaseProvider).clearBackendPushOperationErrors(),
+              );
+            },
+          ),
+        ],
         title: const Text('Synchronization issues'), // TODO
       ),
-      center: !withErrors.hasValue || withErrors.value!.isEmpty,
-      children: switch (withErrors) {
+      center: !errors.hasValue || errors.value!.isEmpty,
+      children: switch (errors) {
         AsyncData(:final value) => [
           if (value.isEmpty)
             ImageTextButtonsWidget.icon(
@@ -45,8 +58,14 @@ class SyncIssuesPage extends ConsumerWidget {
             for (int i = 0; i < value.length; i++)
               Padding(
                 padding: EdgeInsets.only(bottom: i < value.length - 1 ? kBigSpace : 0),
-                child: _PushOperationWidget(
-                  operation: value[i],
+                child: _PushOperationErrorWidget(
+                  error: value[i],
+                  onDeletePress: () async {
+                    await showWaitingOverlay(
+                      context,
+                      future: ref.read(appDatabaseProvider).deleteBackendPushOperationError(value[i]),
+                    );
+                  },
                 ),
               ),
         ],
@@ -64,54 +83,54 @@ class SyncIssuesPage extends ConsumerWidget {
   }
 }
 
-class _PushOperationWidget extends StatelessWidget {
-  final PushOperation operation;
+class _PushOperationErrorWidget extends ConsumerWidget {
+  final PushOperationResult error;
+  final VoidCallback? onDeletePress;
 
-  const _PushOperationWidget({
-    required this.operation,
+  const _PushOperationErrorWidget({
+    required this.error,
+    this.onDeletePress,
   });
 
   @override
-  Widget build(BuildContext context) => ExpandableTile(
-    title: Text(
-      switch (operation.kind) {
-        PushOperationKind.set => 'An error occurred while editing a TOTP',
-        PushOperationKind.delete => 'An error occurred while deleting a TOTP',
-      },
-    ),
+  Widget build(BuildContext context, WidgetRef ref) => ExpandableTile(
+    title: Text('Error ${error.errorCode}'),
     children: [
+      if (error.errorKind!.isPermanent)
+        Text(
+          'This error is permanent and the operation will not be retried.',
+          style: TextStyle(
+            fontSize: context.theme.typography.xs.fontSize,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       Text(
-        'JSON payload :',
+        'Date : ${error.createdAt}',
         style: TextStyle(
           fontSize: context.theme.typography.xs.fontSize,
           fontWeight: FontWeight.bold,
         ),
       ),
       Text(
-        operation.payload.toString(),
+        'Details :',
+        style: TextStyle(
+          fontSize: context.theme.typography.xs.fontSize,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      Text(
+        error.errorDetails.toString(),
         maxLines: null,
         overflow: TextOverflow.visible,
         style: TextStyle(fontSize: context.theme.typography.xs.fontSize),
       ),
-      Text(
-        'Error : ${operation.lastError?.error?.name}',
-        style: TextStyle(
-          fontSize: context.theme.typography.xs.fontSize,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      Text(
-        'Details : ${operation.lastError?.details}',
-        style: TextStyle(
-          fontSize: context.theme.typography.xs.fontSize,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      Text(
-        'Attempt : #${operation.attempt}',
-        style: TextStyle(
-          fontSize: context.theme.typography.xs.fontSize,
-          fontWeight: FontWeight.bold,
+      Align(
+        alignment: Alignment.centerRight,
+        child: ClickableButton(
+          variant: .destructive,
+          mainAxisSize: .min,
+          onPress: onDeletePress,
+          child: const Text('Delete'),
         ),
       ),
     ],

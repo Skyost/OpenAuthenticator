@@ -6,7 +6,7 @@ import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
-import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/dialog/error_dialog.dart';
 import 'package:open_authenticator/widgets/toast.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
@@ -55,10 +55,7 @@ class ContributorPlanPaywall extends ConsumerWidget {
               return;
             }
             if (result is! ResultSuccess<ContributorPlanState>) {
-              context.handleResult(
-                result,
-                retryIfError: true,
-              );
+              context.handleResult(result);
               return;
             }
             if (result.value == ContributorPlanState.active) {

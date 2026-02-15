@@ -29,12 +29,12 @@ class AboutDialog extends StatelessWidget {
     actions: [
       if (applicationLegalese != null)
         ClickableButton(
-          style: FButtonStyle.secondary(),
+          variant: .secondary,
           onPress: () => _LicensesDialog.show(context),
           child: Text(MaterialLocalizations.of(context).licensesPageTitle),
         ),
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).closeButtonLabel),
       ),
@@ -44,13 +44,23 @@ class AboutDialog extends StatelessWidget {
         Center(
           child: applicationIcon!,
         ),
-      if (applicationVersion != null)
-        Center(
-          child: Text(
-            applicationVersion!,
-            style: context.theme.typography.lg,
+      Center(
+        child: Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: applicationName,
+                style: const TextStyle(fontWeight: .bold),
+              ),
+              if (applicationVersion != null)
+                TextSpan(
+                  text: ' $applicationVersion',
+                ),
+            ],
           ),
+          style: context.theme.typography.lg,
         ),
+      ),
       if (applicationLegalese != null)
         Center(
           child: Text(applicationLegalese!),
@@ -97,7 +107,7 @@ class _LicensesDialogState extends State<_LicensesDialog> {
       title: Text(MaterialLocalizations.of(context).licensesPageTitle),
       actions: [
         ClickableButton(
-          style: FButtonStyle.secondary(),
+          variant: .secondary,
           onPress: () => Navigator.of(context).pop(),
           child: Text(MaterialLocalizations.of(context).closeButtonLabel),
         ),
@@ -151,7 +161,7 @@ class _LicensesDialogState extends State<_LicensesDialog> {
       title: Text(package.package),
       actions: [
         ClickableButton(
-          style: FButtonStyle.secondary(),
+          variant: .secondary,
           onPress: () => Navigator.of(context).pop(),
           child: Text(MaterialLocalizations.of(context).closeButtonLabel),
         ),

@@ -30,7 +30,7 @@ class ErrorDisplayWidget extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.only(bottom: kSpace),
         child: FAlert(
-          style: FAlertStyle.destructive(),
+          variant: .destructive,
           title: const Text('Erreur'),
           subtitle: ErrorDetails(error: error, stackTrace: stackTrace),
         ),
@@ -41,7 +41,7 @@ class ErrorDisplayWidget extends StatelessWidget {
           future: canLaunchUrl(reportIssueUrl),
           builder: (context, asyncSnapshot) => ClickableButton(
             onPress: asyncSnapshot.data == true ? () => launchUrl(reportIssueUrl) : null,
-            style: FButtonStyle.outline(),
+            variant: .outline,
             prefix: const Icon(FIcons.bug),
             child: const Text('Signaler'),
           ),
@@ -130,13 +130,13 @@ class _ErrorDetailsState extends State<ErrorDetails> with SingleTickerProviderSt
         label: Text(expanded ? 'Masquer la trace' : 'Afficher la trace'),
         value: expanded,
         onChange: toggleStackTrace,
-        style: (style) => style.copyWith(
-          childPadding: EdgeInsets.only(right: style.childPadding.horizontal / 2),
-          trackColor: FWidgetStateMap<Color>({
-            WidgetState.selected: context.theme.colors.error,
-            WidgetState.any: context.theme.colors.error.withValues(alpha: 0.25),
-          }),
-          labelTextStyle: FWidgetStateMap<TextStyle>.all(style.errorTextStyle),
+        style: .delta(
+          childPadding: EdgeInsets.only(right: context.theme.switchStyle.childPadding.horizontal / 2),
+          trackColor: .delta(
+            [
+              .match({.selected}, context.theme.colors.error),
+            ],
+          ),
         ),
       ),
       AnimatedBuilder(

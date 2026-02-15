@@ -1,3 +1,4 @@
+import 'package:open_authenticator/model/backend/synchronization/push/result.dart';
 import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/totp/json.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
@@ -134,27 +135,6 @@ class SynchronizationPushResponse extends BackendResponse {
     : this(
         result: json.map((json) => PushOperationResult.fromJson(json)).toList(),
       );
-}
-
-class PushOperationResult {
-  final String operationUuid;
-  final String? errorCode;
-  final String? errorDetails;
-
-  const PushOperationResult({
-    required this.operationUuid,
-    required this.errorCode,
-    required this.errorDetails,
-  });
-
-  PushOperationResult.fromJson(Map<String, dynamic> json)
-    : this(
-        operationUuid: json['uuid'],
-        errorCode: json['errorCode'],
-        errorDetails: json['errorDetails'],
-      );
-
-  bool get success => errorCode == null;
 }
 
 class SynchronizationPullResponse extends BackendResponse {

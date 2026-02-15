@@ -7,6 +7,7 @@ import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/model/settings/storage_type.dart';
 import 'package:open_authenticator/model/totp/limit.dart';
 import 'package:open_authenticator/model/totp/repository.dart';
+import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/pages/settings/entries/widgets.dart';
 import 'package:open_authenticator/utils/storage_migration.dart';
 
@@ -95,8 +96,8 @@ class SynchronizeSettingsEntryWidget extends CheckboxSettingsEntryWidget<Storage
       );
     }
     User user = ref.watch(userProvider).value!;
-    AsyncValue<TotpList> totps = ref.watch(totpRepositoryProvider);
-    if (totps is! AsyncData<TotpList>) {
+    AsyncValue<List<Totp>> totps = ref.watch(totpRepositoryProvider);
+    if (totps is! AsyncData<List<Totp>>) {
       return Text(translations.settings.synchronization.synchronizeTotps.subtitle.description);
     }
     return Text.rich(

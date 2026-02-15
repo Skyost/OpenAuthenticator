@@ -60,7 +60,7 @@ class AuthenticationProviderPickerDialog extends ConsumerWidget {
       title: Text(translations.authentication.providerPickerDialogTitle),
       actions: [
         ClickableButton(
-          style: FButtonStyle.secondary(),
+          variant: .secondary,
           onPress: () => Navigator.pop(context),
           child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
         ),

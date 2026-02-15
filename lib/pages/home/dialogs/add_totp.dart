@@ -15,7 +15,7 @@ class _AddTotpDialog extends StatelessWidget {
     title: Text(translations.home.addDialog.title),
     actions: [
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),

@@ -60,7 +60,7 @@ class _HomePageHeader extends ConsumerWidget {
   }
 
   Future<void> onTotpFound(WidgetRef ref, Totp totp) async {
-    TotpList totps = await ref.read(totpRepositoryProvider.future);
+    List<Totp> totps = await ref.read(totpRepositoryProvider.future);
     int index = totps.indexOf(totp);
     if (index >= 0) {
       onTotpSelectedFollowingSearch?.call(index);
@@ -99,6 +99,10 @@ class _AppBarTitle extends StatelessWidget {
 class _SyncHeaderAction extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    StorageType? storageType = ref.watch(storageTypeSettingsEntryProvider).value;
+    if (storageType != StorageType.shared) {
+      return const SizedBox.shrink();
+    }
     SynchronizationPhase phase = ref.watch(synchronizationControllerProvider.select((status) => status.phase));
     switch (phase) {
       case SynchronizationPhaseOffline():
@@ -116,18 +120,22 @@ class _SyncHeaderAction extends ConsumerWidget {
             child: Icon(FIcons.refreshCcw),
           ),
         );
-      case SynchronizationPhaseError():
+      case SynchronizationPhaseError(:final exception, :final stackTrace):
         return ClickableHeaderAction(
           onPress: () async {
-            ErrorDialogResult? result = await ErrorDialog.openDialog(
-              context,
-              message: 'An error occurred while synchronizing your TOTPs.',
-              error: phase.exception,
-              stackTrace: phase.stackTrace,
-              allowRetry: true,
-            );
-            if (result == ErrorDialogResult.retry) {
-              ref.read(synchronizationControllerProvider.notifier).forceSync();
+            if (exception is InvalidSessionException || exception is NoSessionException) {
+              InvalidSessionDialog.openDialogAndHandleChoice(context);
+            } else {
+              ErrorDialogResult? result = await ErrorDialog.openDialog(
+                context,
+                message: 'An error occurred while synchronizing your TOTPs.',
+                error: exception,
+                stackTrace: stackTrace,
+                allowRetry: true,
+              );
+              if (result == ErrorDialogResult.retry) {
+                ref.read(synchronizationControllerProvider.notifier).forceSync();
+              }
             }
           },
           icon: Icon(
@@ -136,8 +144,8 @@ class _SyncHeaderAction extends ConsumerWidget {
           ),
         );
       default:
-        AsyncValue<List<PushOperation>> withErrors = ref.watch(pushOperationsQueueProvider.selectWithErrors());
-        if (withErrors.hasValue && withErrors.value!.isNotEmpty) {
+        AsyncValue<List<PushOperationResult>> errors = ref.watch(pushOperationsErrorsProvider);
+        if (errors.hasValue && errors.value!.isNotEmpty) {
           return ClickableHeaderAction(
             onPress: () => Navigator.pushNamed(context, SyncIssuesPage.name),
             icon: Icon(
@@ -147,13 +155,10 @@ class _SyncHeaderAction extends ConsumerWidget {
           );
         }
         if (currentPlatform.isDesktop) {
-          StorageType? storageType = ref.watch(storageTypeSettingsEntryProvider).value;
-          if (storageType == StorageType.shared) {
-            return ClickableHeaderAction(
-              onPress: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
-              icon: const Icon(FIcons.refreshCcw),
-            );
-          }
+          return ClickableHeaderAction(
+            onPress: () => ref.read(synchronizationControllerProvider.notifier).forceSync(),
+            icon: const Icon(FIcons.refreshCcw),
+          );
         }
         return const SizedBox.shrink();
     }

@@ -70,14 +70,16 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    FBaseButtonStyle Function(FButtonStyle) bottomButtonsStyle = FButtonStyle.ghost(
-      (buttonStyle) => buttonStyle.copyWith(
-        contentStyle: (contentStyle) => contentStyle.copyWith(
-          textStyle: contentStyle.textStyle.map(
-            (textStyle) => textStyle.copyWith(
-              fontSize: context.theme.typography.sm.fontSize,
+    FButtonStyleDelta bottomButtonsStyle = .delta(
+      contentStyle: .delta(
+        textStyle: .delta(
+          [
+            .all(
+              .delta(
+                fontSize: context.theme.typography.sm.fontSize,
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -169,7 +171,6 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
       context.handleResult(
         result,
         successMessage: translations.contributorPlan.subscribeSuccess,
-        retryIfError: true,
       );
       if (result is ResultSuccess) {
         onPurchaseCompleted();
@@ -188,7 +189,6 @@ class ContributorPlanFallbackPaywall extends ConsumerWidget {
       context.handleResult(
         result,
         successMessage: translations.contributorPlan.fallbackPaywall.restorePurchasesSuccess,
-        retryIfError: true,
       );
       if (result is ResultSuccess) {
         onPurchaseCompleted();
@@ -240,7 +240,7 @@ class _ContributorPlanBillingPlanPickerState extends ConsumerState<_ContributorP
             if (snapshot.hasData) {
               Result<Prices> result = snapshot.requireData;
               if (result is! ResultSuccess) {
-                Object? exception = result is! ResultError || (result as ResultError).exception == null ? null : (result as ResultError).exception;
+                Object? exception = result is! ResultError ? null : (result as ResultError).exception;
                 return Text(
                   exception == null ? translations.error.generic.tryAgain : translations.error.generic.withException(exception: exception),
                   textAlign: TextAlign.center,
@@ -295,100 +295,91 @@ class _ContributorPlanBillingPlanPickerState extends ConsumerState<_ContributorP
     String? name = translations.contributorPlan.fallbackPaywall.packageType.name[packageType.name];
     String? interval = translations.contributorPlan.fallbackPaywall.packageType.interval[packageType.name];
     String? subtitle = translations.contributorPlan.fallbackPaywall.packageType.subtitle[packageType.name];
-    if (name == null || interval == null || subtitle == null) {
-      return const SizedBox.shrink();
-    }
-    Widget tile = FTile.raw(
-      style: (tileStyle) => tileStyle.copyWith(
-        contentStyle: (contentStyle) => contentStyle.copyWith(
-          padding: const EdgeInsets.symmetric(vertical: kSpace, horizontal: kBigSpace),
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: kSpace / 2),
-            child: Text(
-              name,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Text.rich(
-            translations.contributorPlan.fallbackPaywall.packageType.priceSubtitle(
-              subtitle: TextSpan(text: subtitle),
-              price: TextSpan(
-                text: price.formattedAmount,
-                style: const TextStyle(fontStyle: FontStyle.italic),
-              ),
-              interval: TextSpan(
-                text: interval.toLowerCase(),
-                style: const TextStyle(fontStyle: FontStyle.italic),
-              ),
-            ),
-            style: TextStyle(color: context.theme.colors.primaryForeground),
-          ),
-        ],
-      ),
-      onPress: () {
-        setState(() => this.packageType = this.packageType == packageType ? null : packageType);
-      },
-    );
-    return Stack(
-      fit: StackFit.expand,
-      clipBehavior: Clip.none,
-      children: [
-        if (this.packageType == packageType)
-          FTheme(
-            data: context.theme.copyWith(
-              tileStyle: (tileStyle) => tileStyle.copyWith(
-                decoration: tileStyle.decoration.map(
-                  (decoration) => decoration?.copyWith(
-                    color: decoration.color?.highlight(),
+    return name == null || interval == null || subtitle == null
+        ? const SizedBox.shrink()
+        : Stack(
+            fit: StackFit.expand,
+            clipBehavior: Clip.none,
+            children: [
+              FTile.raw(
+                style: .delta(
+                  decoration: .delta(
+                    this.packageType == packageType
+                        ? [
+                            .base(.delta(color: context.theme.tileStyles.base.decoration.base.color?.highlight())),
+                          ]
+                        : [],
+                  ),
+                  contentStyle: const .delta(
+                    padding: EdgeInsets.symmetric(vertical: kSpace, horizontal: kBigSpace),
                   ),
                 ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: kSpace / 2),
+                      child: Text(
+                        name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Text.rich(
+                      translations.contributorPlan.fallbackPaywall.packageType.priceSubtitle(
+                        subtitle: TextSpan(text: subtitle),
+                        price: TextSpan(
+                          text: price.formattedAmount,
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        interval: TextSpan(
+                          text: interval.toLowerCase(),
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                      style: TextStyle(color: context.theme.colors.primaryForeground),
+                    ),
+                  ],
+                ),
+                onPress: () {
+                  setState(() => this.packageType = this.packageType == packageType ? null : packageType);
+                },
               ),
-            ),
-            child: tile,
-          )
-        else
-          tile,
-        if (this.packageType == packageType)
-          Positioned(
-            top: -kSpace / 2,
-            right: -kSpace / 2,
-            child: Icon(
-              FIcons.circle,
-              color: context.theme.colors.primaryForeground,
-            ),
-          ),
-        if (this.packageType == packageType)
-          Positioned(
-            top: -kSpace / 2,
-            right: -kSpace / 2,
-            child: Icon(
-              FIcons.circleCheck,
-              color: context.theme.colors.primaryForeground,
-            ),
-          ),
-        if (off != null)
-          Positioned(
-            top: -kSpace,
-            left: -kSpace,
-            child: Transform.rotate(
-              angle: -math.pi / 16,
-              child: FBadge(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: kSpace, vertical: kSpace / 2),
-                  child: Text(
-                    '-${off.abs()}%',
-                    style: TextStyle(color: context.theme.colors.primaryForeground),
+              if (this.packageType == packageType)
+                Positioned(
+                  top: -kSpace / 2,
+                  right: -kSpace / 2,
+                  child: Icon(
+                    FIcons.circle,
+                    color: context.theme.colors.primaryForeground,
                   ),
                 ),
-              ),
-            ),
-          ),
-      ],
-    );
+              if (this.packageType == packageType)
+                Positioned(
+                  top: -kSpace / 2,
+                  right: -kSpace / 2,
+                  child: Icon(
+                    FIcons.circleCheck,
+                    color: context.theme.colors.primaryForeground,
+                  ),
+                ),
+              if (off != null)
+                Positioned(
+                  top: -kSpace,
+                  left: -kSpace,
+                  child: Transform.rotate(
+                    angle: -math.pi / 16,
+                    child: FBadge(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: kSpace, vertical: kSpace / 2),
+                        child: Text(
+                          '-${off.abs()}%',
+                          style: TextStyle(color: context.theme.colors.primaryForeground),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
   }
 }

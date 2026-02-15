@@ -77,7 +77,7 @@ class _ExpandableTileState extends ConsumerState<ExpandableTile> with SingleTick
               child: widget.title,
             ),
             ClickableButton.icon(
-              style: FButtonStyle.secondary(),
+              variant: .secondary,
               onPress: _toggle,
               child: AnimatedRotation(
                 turns: expand ? 0.25 : 0,

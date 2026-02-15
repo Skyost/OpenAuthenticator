@@ -7,7 +7,7 @@ import 'package:open_authenticator/model/purchases/contributor_plan.dart';
 import 'package:open_authenticator/utils/contributor_plan.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/dialog/error_dialog.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -44,7 +44,7 @@ class ContributorPlanEntryWidget extends ConsumerWidget with FTileMixin {
                   title: Text(translations.settings.application.contributorPlan.subscriptionDialog.title),
                   actions: [
                     ClickableButton(
-                      style: FButtonStyle.secondary(),
+                      variant: .secondary,
                       onPress: () async {
                         String? url = await showWaitingOverlay(
                           context,
@@ -67,7 +67,7 @@ class ContributorPlanEntryWidget extends ConsumerWidget with FTileMixin {
                       child: Text(translations.settings.application.contributorPlan.subscriptionDialog.manageSubscription.button),
                     ),
                     ClickableButton(
-                      style: FButtonStyle.secondary(),
+                      variant: .secondary,
                       onPress: () => Navigator.pop(context),
                       child: Text(MaterialLocalizations.of(context).closeButtonLabel),
                     ),

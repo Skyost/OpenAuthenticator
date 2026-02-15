@@ -42,7 +42,7 @@ class _ThemePickerDialog extends ConsumerWidget {
       title: Text(translations.settings.application.theme.title),
       actions: [
         ClickableButton(
-          style: FButtonStyle.secondary(),
+          variant: .secondary,
           onPress: () => Navigator.pop(context),
           child: Text(MaterialLocalizations.of(context).closeButtonLabel),
         ),

@@ -95,7 +95,8 @@ sealed class AuthenticationProvider {
         return const ResultCancelled();
       }
       User? user = await _ref.read(userProvider.future);
-      if (user == null) {
+      SessionRefreshState sessionRefreshState = _ref.read(sessionRefreshRequestsQueueProvider);
+      if (user == null || sessionRefreshState == .invalidSession) {
         Result<ProviderLoginResponse> response = await _ref
             .read(backendProvider.notifier)
             .sendHttpRequest(

@@ -24,11 +24,19 @@ class ChangeBackendUrlSettingsEntryWidget extends ConsumerWidget with FTileMixin
     title: Text(translations.settings.dangerZone.changeBackendUrl.title),
     subtitle: Text(translations.settings.dangerZone.changeBackendUrl.subtitle),
     onPress: () async {
+      String currentUrl = await showWaitingOverlay(
+        context,
+        future: ref.read(backendUrlSettingsEntryProvider.future),
+      );
+      if (!context.mounted) {
+        return;
+      }
       String? url = await TextInputDialog.prompt(
         context,
         title: translations.settings.dangerZone.changeBackendUrl.inputDialog.title,
         message: translations.settings.dangerZone.changeBackendUrl.inputDialog.message(defaultBackendUrl: App.defaultBackendUrl),
         keyboardType: TextInputType.url,
+        initialValue: currentUrl,
       );
       if (url == null || !context.mounted) {
         return;

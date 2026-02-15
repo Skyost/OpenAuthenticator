@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:forui/forui.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
 import 'package:open_authenticator/widgets/error.dart';
@@ -33,12 +32,12 @@ class ErrorDialog extends StatelessWidget {
     actions: [
       if (allowRetry)
         ClickableButton(
-          style: FButtonStyle.secondary(),
+          variant: .secondary,
           onPress: () => Navigator.pop(context, ErrorDialogResult.retry),
           child: const Text('Réessayer'),
         ),
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context, ErrorDialogResult.cancel),
         child: Text(allowRetry ? 'Annuler' : 'Fermer'),
       ),

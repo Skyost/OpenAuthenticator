@@ -9,9 +9,9 @@ import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/reason.dart';
 import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/backup.dart';
+import 'package:open_authenticator/model/database/database.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
-import 'package:open_authenticator/model/totp/database/database.dart';
 import 'package:open_authenticator/model/totp/image_cache.dart';
 import 'package:open_authenticator/utils/platform.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -67,7 +67,7 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget with FTileMixin {
             return;
           }
           if (logoutResult is! ResultSuccess) {
-            context.handleResult(logoutResult, retryIfError: true);
+            context.handleResult(logoutResult);
             return;
           }
           await SimpleSecureStorage.clear();
@@ -75,7 +75,7 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget with FTileMixin {
           await totpImageCacheManager.clearCache();
           SharedPreferencesWithPrefix preferences = await ref.read(sharedPreferencesProvider.future);
           await preferences.clear();
-          TotpDatabase database = ref.read(totpsDatabaseProvider);
+          AppDatabase database = ref.read(appDatabaseProvider);
           await database.clear();
           if (deleteBackups) {
             List<Backup> backups = await ref.read(backupStoreProvider.future);
@@ -107,7 +107,7 @@ class ClearDataSettingsEntryWidget extends ConsumerWidget with FTileMixin {
         actions: canExitWithConfirmDialog
             ? [
                 ClickableButton(
-                  style: FButtonStyle.ghost(),
+                  variant: .ghost,
                   onPress: () => Navigator.pop(context),
                   child: Text(MaterialLocalizations.of(context).continueButtonLabel),
                 ),

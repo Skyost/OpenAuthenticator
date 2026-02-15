@@ -70,7 +70,7 @@ class _DragAreaState extends State<_DragArea> with WindowListener {
         runSpacing: kSpace / 2,
         children: [
           ClickableButton.icon(
-            style: FButtonStyle.secondary(),
+            variant: .secondary,
             onPress: isLoading ? null : windowManager.minimize,
             child: Transform.translate(
               offset: const Offset(0, 5),
@@ -82,7 +82,7 @@ class _DragAreaState extends State<_DragArea> with WindowListener {
           ),
           if (isMaximized == true)
             ClickableButton.icon(
-              style: FButtonStyle.secondary(),
+              variant: .secondary,
               onPress: isLoading ? null : () => doFuture(windowManager.unmaximize),
               child: Transform.flip(
                 flipX: true,
@@ -94,7 +94,7 @@ class _DragAreaState extends State<_DragArea> with WindowListener {
             )
           else
             ClickableButton.icon(
-              style: FButtonStyle.secondary(),
+              variant: .secondary,
               onPress: isLoading || isMaximized == null ? null : () => doFuture(windowManager.maximize),
               child: Icon(
                 FIcons.square,
@@ -102,7 +102,7 @@ class _DragAreaState extends State<_DragArea> with WindowListener {
               ),
             ),
           ClickableButton.icon(
-            style: FButtonStyle.destructive(),
+            variant: .destructive,
             onPress: isLoading ? null : () => doFuture(windowManager.close),
             child: Icon(
               FIcons.x,

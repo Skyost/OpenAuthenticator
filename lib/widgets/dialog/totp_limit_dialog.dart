@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:forui/forui.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/purchases/contributor_plan.dart';
@@ -10,7 +9,7 @@ import 'package:open_authenticator/utils/storage_migration.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
 import 'package:open_authenticator/widgets/clickable.dart';
 import 'package:open_authenticator/widgets/dialog/app_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/dialog/error_dialog.dart';
 
 /// A dialog that blocks everything until the user has either changed its storage type or subscribed to the Contributor Plan.
 class TotpLimitDialog extends ConsumerWidget {
@@ -58,7 +57,7 @@ class TotpLimitDialog extends ConsumerWidget {
         ),
         if (!autoDialog)
           ClickableButton(
-            style: FButtonStyle.secondary(),
+            variant: .secondary,
             onPress: () => Navigator.pop(context, false),
             child: Text(translations.totpLimit.actions.cancel),
           ),

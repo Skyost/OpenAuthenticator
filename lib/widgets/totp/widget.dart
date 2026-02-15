@@ -139,7 +139,7 @@ class TotpWidget extends StatelessWidget {
       return onCopyPress == null
           ? null
           : (context) => ClickableButton.icon(
-              style: FButtonStyle.secondary(),
+              variant: .secondary,
               onPress: onCopyPress,
               child: const Icon(FIcons.copy),
             );
@@ -147,7 +147,7 @@ class TotpWidget extends StatelessWidget {
       return onDecryptPress == null
           ? null
           : (context) => ClickableButton.icon(
-              style: FButtonStyle.secondary(),
+              variant: .secondary,
               onPress: onDecryptPress,
               child: const Icon(FIcons.lock),
             );
@@ -223,7 +223,7 @@ class _MobileActionsDialog extends StatelessWidget {
     title: Text(translations.totp.actions.mobileDialog.title),
     actions: [
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),
@@ -291,10 +291,14 @@ class _DesktopActionsWidget extends StatelessWidget {
             ),
             Clickable(
               child: FItem(
-                style: (style) => style.copyWith(
-                  contentStyle: (contentStyle) => contentStyle.copyWith(
-                    prefixIconStyle: contentStyle.prefixIconStyle.map(
-                      (prefixIconStyle) => prefixIconStyle.copyWith(color: context.theme.colors.destructive),
+                style: .delta(
+                  contentStyle: .delta(
+                    prefixIconStyle: .delta(
+                      [
+                        .all(
+                          .delta(color: context.theme.colors.destructive),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -316,7 +320,7 @@ class _DesktopActionsWidget extends StatelessWidget {
     ],
     child: const Icon(FIcons.ellipsis),
     builder: (_, controller, child) => ClickableButton.icon(
-      style: FButtonStyle.ghost(),
+      variant: .ghost,
       onPress: controller.toggle,
       child: child!,
     ),

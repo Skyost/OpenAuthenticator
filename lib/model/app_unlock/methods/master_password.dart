@@ -20,7 +20,7 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod<String> {
   @override
   Future<Result<String>> _tryUnlock(BuildContext context, UnlockReason reason) async {
     if (reason != UnlockReason.openApp && reason != UnlockReason.sensibleAction) {
-      TotpList totps = await _ref.read(totpRepositoryProvider.future);
+      List<Totp> totps = await _ref.read(totpRepositoryProvider.future);
       if (totps.isEmpty) {
         return const ResultSuccess();
       }
@@ -84,7 +84,11 @@ class MasterPasswordAppUnlockMethod extends AppUnlockMethod<String> {
 
     Result<bool> passwordCheckResult = await (await _ref.read(passwordVerificationProvider.future)).isPasswordValid(password);
     if (passwordCheckResult is! ResultSuccess || !(passwordCheckResult as ResultSuccess<bool>).value) {
-      return ResultError();
+      return passwordCheckResult is ResultError
+          ? passwordCheckResult.to<String>((_) => null)
+          : ResultError(
+              exception: MasterPasswordCheckException(),
+            );
     }
     return ResultSuccess<String>(value: password);
   }
@@ -95,3 +99,6 @@ class MasterPasswordNoSalt extends CannotUnlockException {}
 
 /// Indicates that no password verification method is available.
 class MasterPasswordNoPasswordVerificationMethodAvailable extends CannotUnlockException {}
+
+/// Indicates that the master password is invalid.
+class MasterPasswordCheckException extends CannotUnlockException {}

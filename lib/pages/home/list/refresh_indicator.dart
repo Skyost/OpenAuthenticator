@@ -30,8 +30,8 @@ class _TotpsRefreshIndicatorWidget extends StatelessWidget {
               right: context.theme.style.pagePadding.right,
               child: controller.isLoading
                   ? FCircularProgress(
-                      style: (style) => style.copyWith(
-                        iconStyle: style.iconStyle.copyWith(size: iconSize),
+                      style: .delta(
+                        iconStyle: .delta(size: iconSize),
                       ),
                     )
                   : Icon(

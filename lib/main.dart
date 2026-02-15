@@ -9,6 +9,7 @@ import 'package:open_authenticator/app.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_links.dart';
 import 'package:open_authenticator/model/backend/authentication/providers/provider.dart';
+import 'package:open_authenticator/model/backend/authentication/session.dart';
 import 'package:open_authenticator/model/crypto.dart';
 import 'package:open_authenticator/model/settings/show_intro.dart';
 import 'package:open_authenticator/model/settings/theme.dart';
@@ -27,6 +28,7 @@ import 'package:open_authenticator/utils/rate_my_app.dart';
 import 'package:open_authenticator/utils/result.dart';
 import 'package:open_authenticator/utils/utils.dart';
 import 'package:open_authenticator/widgets/centered_circular_progress_indicator.dart';
+import 'package:open_authenticator/widgets/dialog/invalid_session_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/totp_limit_dialog.dart';
 import 'package:open_authenticator/widgets/unlock_challenge.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
@@ -208,7 +210,7 @@ class _AnimatedTheme extends ConsumerStatefulWidget {
 
 class _AnimatedThemeState extends ConsumerState<_AnimatedTheme> with BrightnessListener {
   @override
-  Widget build(BuildContext context) => FAnimatedTheme(
+  Widget build(BuildContext context) => FTheme(
     data: currentBrightness == .dark ? widget.dark : widget.light,
     child: widget.child,
   );
@@ -267,6 +269,18 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
             return;
           }
           WidgetsBinding.instance.addPostFrameCallback((_) => handleTotpLimitExceeded());
+        },
+        fireImmediately: true,
+      );
+      ref.listenManual(
+        sessionRefreshRequestsQueueProvider,
+        (previous, next) {
+          if (previous == next) {
+            return;
+          }
+          if (next == .invalidSession) {
+            WidgetsBinding.instance.addPostFrameCallback((_) => handleInvalidSession());
+          }
         },
         fireImmediately: true,
       );
@@ -329,6 +343,13 @@ class _RouteWidgetState extends ConsumerState<_RouteWidget> {
         context,
         autoDialog: true,
       );
+    }
+  }
+
+  /// Handles an invalid session.
+  Future<void> handleInvalidSession() async {
+    if (mounted) {
+      await InvalidSessionDialog.openDialogAndHandleChoice(context);
     }
   }
 }

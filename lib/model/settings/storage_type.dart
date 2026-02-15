@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/model/backend/backend.dart';
 import 'package:open_authenticator/model/backend/request/request.dart';
 import 'package:open_authenticator/model/backend/request/response.dart';
-import 'package:open_authenticator/model/backend/synchronization/operation.dart';
+import 'package:open_authenticator/model/backend/synchronization/push/operation.dart';
 import 'package:open_authenticator/model/backend/synchronization/queue.dart';
 import 'package:open_authenticator/model/backup.dart';
 import 'package:open_authenticator/model/crypto.dart';
+import 'package:open_authenticator/model/database/database.dart';
 import 'package:open_authenticator/model/password_verification/password_verification.dart';
 import 'package:open_authenticator/model/settings/entry.dart';
-import 'package:open_authenticator/model/totp/database/database.dart';
 import 'package:open_authenticator/model/totp/decrypted.dart';
 import 'package:open_authenticator/model/totp/totp.dart';
 import 'package:open_authenticator/utils/result.dart';
@@ -41,7 +41,7 @@ class StorageTypeSettingsEntry extends EnumSettingsEntry<StorageType> {
       if (masterPassword != null) {
         Result<bool> passwordCheckResult = await (await ref.read(passwordVerificationProvider.future)).isPasswordValid(masterPassword);
         if (passwordCheckResult is! ResultSuccess || !(passwordCheckResult as ResultSuccess<bool>).value) {
-          throw (passwordCheckResult as ResultError).exception ?? CurrentStoragePasswordMismatchException();
+          throw (passwordCheckResult as ResultError).exception;
         }
       }
 
@@ -57,7 +57,7 @@ class StorageTypeSettingsEntry extends EnumSettingsEntry<StorageType> {
         }
       }
 
-      TotpDatabase database = ref.read(totpsDatabaseProvider);
+      AppDatabase database = ref.read(appDatabaseProvider);
       List<String> toDelete = [];
       Result<GetUserTotpsResponse> result = await ref
           .read(backendProvider.notifier)
@@ -149,16 +149,7 @@ enum StorageType {
   localOnly,
 
   /// Local storage and online storage.
-  shared(operationThreshold: Duration(seconds: 5))
-  ;
-
-  /// The time to wait between two operations.
-  final Duration operationThreshold;
-
-  /// Creates a new storage type instance.
-  const StorageType({
-    this.operationThreshold = Duration.zero,
-  });
+  shared,
 }
 
 /// Allows to return various results from the storage migration.

@@ -22,6 +22,7 @@ import 'package:open_authenticator/utils/utils.dart';
       destructiveForeground: const Color(0xFFFAFAFA),
       error: const Color(0xFFEF4444),
       errorForeground: const Color(0xFFFAFAFA),
+      card: const Color(0xFFFFFFFF),
       border: const Color(0xFFE3E3E6),
     ),
   );
@@ -42,6 +43,7 @@ import 'package:open_authenticator/utils/utils.dart';
       destructiveForeground: Color(0xFFFEF2F2),
       error: Color(0xFF7F1D1D),
       errorForeground: Color(0xFFFEF2F2),
+      card: Color(0xFF18181B),
       border: Color(0xFF27272A),
     ),
   );
@@ -53,187 +55,241 @@ import 'package:open_authenticator/utils/utils.dart';
   );
   return (
     light: light.copyWith(
-      headerStyles: (style) => _adaptHeaderStyles(
-        style,
+      headerStyles: _adaptHeaderStyles(
+        originalPadding: light.headerStyles.base.padding,
         actionHoverColor: Colors.black54,
         bottomBorderColor: const Color(0xFFE3E3E6),
       ),
-      tileGroupStyle: (tileGroupStyle) => tileGroupStyle.copyWith(
-        decoration: tileGroupStyle.decoration.copyWith(
+      tileGroupStyle: .delta(
+        decoration: .delta(
           boxShadow: [tileShadow],
         ),
-        tileStyle: (tileStyle) => _adaptTileStyle(
-          tileStyle,
+        tileStyles: _adaptTileStyles(
           backgroundColor: Colors.white,
           hoveredBackgroundColor: const Color(0xFF71717A),
         ),
       ),
-      tileStyle: (tileStyle) {
-        FTileStyle adaptedStyle = _adaptTileStyle(
-          tileStyle,
-          backgroundColor: Colors.white,
-          hoveredBackgroundColor: const Color(0xFF71717A),
-        );
-        return adaptedStyle.copyWith(
-          decoration:
-              FWidgetStateMap({
-                WidgetState.hovered: adaptedStyle.decoration.resolve({WidgetState.hovered})?.copyWith(color: const Color(0xFFF5F5F5)),
-                WidgetState.any: adaptedStyle.decoration.resolve({}),
-              }).map(
-                (decoration) => decoration?.copyWith(
-                  boxShadow: [tileShadow],
-                ),
-              ),
-        );
-      },
-      buttonStyles: _adaptButtonStyles,
-      textFieldStyle: (textFieldStyle) => _adaptTextFieldStyle(
-        textFieldStyle,
+      tileStyles: _adaptTileStyles(
+        backgroundColor: Colors.white,
+        hoveredBackgroundColor: const Color(0xFFF5F5F5),
+        boxShadow: [tileShadow],
+      ),
+      buttonStyles: _adaptButtonStyles(
+        secondaryColor: light.buttonStyles.resolve({FButtonVariant.secondary}).base.decoration.base.color,
+      ),
+      textFieldStyle: _adaptTextFieldStyle(
         labelTextStyle: FThemes.zinc.light.textFieldStyle.labelTextStyle,
         contentTextStyle: FThemes.zinc.light.textFieldStyle.contentTextStyle,
         fillColor: Colors.white,
       ),
-      selectStyle: (selectStyle) => _adaptSelectStyle(
-        selectStyle,
+      selectStyle: _adaptSelectStyle(
         labelTextStyle: FThemes.zinc.light.textFieldStyle.labelTextStyle,
       ),
-      popoverMenuStyle: (popoverMenuStyle) => _adaptPopoverMenuStyle(
-        popoverMenuStyle,
+      popoverMenuStyle: _adaptPopoverMenuStyle(
         hoveredBackgroundColor: Colors.black12,
         boxShadow: [tileShadow],
       ),
-      style: (style) => _adaptGeneralStyle(
-        style,
+      style: _adaptGeneralStyle(
         shadow: [tileShadow],
       ),
     ),
     dark: dark.copyWith(
-      headerStyles: (style) => _adaptHeaderStyles(
-        style,
+      headerStyles: _adaptHeaderStyles(
+        originalPadding: dark.headerStyles.base.padding,
         actionHoverColor: Colors.white60,
       ),
-      tileGroupStyle: (tileGroupStyle) => tileGroupStyle.copyWith(
-        tileStyle: _adaptTileStyle,
+      tileGroupStyle: .delta(
+        tileStyles: _adaptTileStyles(),
       ),
-      tileStyle: _adaptTileStyle,
-      buttonStyles: _adaptButtonStyles,
-      textFieldStyle: (textFieldStyle) => _adaptTextFieldStyle(
-        textFieldStyle,
+      tileStyles: _adaptTileStyles(),
+      buttonStyles: _adaptButtonStyles(
+        secondaryColor: dark.buttonStyles.resolve({FButtonVariant.secondary}).base.decoration.base.color,
+        highlightAmount: 0.025,
+      ),
+      textFieldStyle: _adaptTextFieldStyle(
         labelTextStyle: FThemes.zinc.dark.textFieldStyle.labelTextStyle,
         contentTextStyle: FThemes.zinc.dark.textFieldStyle.contentTextStyle,
         fillColor: Colors.black,
       ),
-      popoverMenuStyle: (popoverMenuStyle) => _adaptPopoverMenuStyle(
-        popoverMenuStyle,
+      popoverMenuStyle: _adaptPopoverMenuStyle(
         hoveredBackgroundColor: Colors.white12,
       ),
-      style: _adaptGeneralStyle,
+      style: _adaptGeneralStyle(),
     ),
   );
 }
 
-FHeaderStyles _adaptHeaderStyles(
-  FHeaderStyles headerStyles, {
+FVariantsDelta<FHeaderVariantConstraint, FHeaderVariant, FHeaderStyle, FHeaderStyleDelta> _adaptHeaderStyles({
+  required EdgeInsetsGeometry originalPadding,
   Color? actionHoverColor,
   Color bottomBorderColor = Colors.transparent,
-}) => headerStyles.copyWith(
-  nestedStyle: (nestedStyle) => nestedStyle.copyWith(
-    actionStyle: (actionStyle) => actionStyle.copyWith(
-      iconStyle: FWidgetStateMap({
-        WidgetState.hovered: actionStyle.iconStyle.resolve({WidgetState.hovered}).copyWith(color: actionHoverColor),
-        WidgetState.any: actionStyle.iconStyle.resolve({}),
-      }),
-    ),
-    padding: EdgeInsets.symmetric(
-      vertical: nestedStyle.padding.vertical / 2,
-      horizontal: nestedStyle.padding.horizontal / 2,
-    ),
-    decoration: nestedStyle.decoration.copyWith(
-      border: BoxBorder.fromLTRB(
-        bottom: BorderSide(color: bottomBorderColor),
+}) => .delta(
+  [
+    .match(
+      {.nested},
+      .delta(
+        actionStyle: .delta(
+          iconStyle: .delta(
+            [
+              .match({.hovered}, .delta(color: actionHoverColor)),
+            ],
+          ),
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: originalPadding.vertical / 2,
+          horizontal: originalPadding.horizontal / 2,
+        ),
+        decoration: .delta(
+          border: BoxBorder.fromLTRB(
+            bottom: BorderSide(color: bottomBorderColor),
+          ),
+        ),
       ),
     ),
-  ),
+  ],
 );
 
-FTileStyle _adaptTileStyle(
-  FTileStyle tileStyle, {
+FVariantsDelta<FItemVariantConstraint, FItemVariant, FTileStyle, FTileStyleDelta> _adaptTileStyles({
   Color? backgroundColor,
   Color? hoveredBackgroundColor,
-}) => tileStyle.copyWith(
-  decoration: tileStyle.decoration.replaceFirstWhere(
-    {},
-    (decoration) => decoration?.copyWith(
-      color: backgroundColor,
-    ),
-  ),
-  contentStyle: (contentStyle) => contentStyle.copyWith(
-    padding: const EdgeInsets.all(kBigSpace),
-    titleTextStyle: contentStyle.titleTextStyle.replaceFirstWhere(
-      {WidgetState.disabled},
-      (titleTextStyle) => titleTextStyle.copyWith(color: hoveredBackgroundColor),
-    ),
-  ),
-);
-
-FButtonStyles _adaptButtonStyles(FButtonStyles buttonStyles) => buttonStyles.copyWith(
-  secondary: (secondaryStyle) => secondaryStyle.copyWith(
-    decoration: secondaryStyle.decoration.map(
-      (decoration) => decoration.copyWith(
-        color: decoration.color?.darken(amount: 0.07),
+  List<BoxShadow>? boxShadow,
+}) => .delta(
+  [
+    .base(
+      .delta(
+        focusedOutlineStyle: () => null,
+        backgroundColor: .delta(
+          [
+            .base(null),
+          ],
+        ),
+        decoration: .delta(
+          [
+            .base(
+              .delta(
+                color: backgroundColor,
+              ),
+            ),
+            if (boxShadow != null)
+              .all(
+                .delta(
+                  boxShadow: boxShadow,
+                ),
+              ),
+          ],
+        ),
+        contentStyle: .delta(
+          titleTextStyle: .delta(
+            [
+              .match(
+                {.disabled},
+                .delta(color: hoveredBackgroundColor),
+              ),
+            ],
+          ),
+        ),
       ),
     ),
-  ),
-  ghost: (ghostStyle) => ghostStyle.copyWith(
-    decoration: FWidgetStateMap({
-      WidgetState.hovered: ghostStyle.decoration.resolve({WidgetState.hovered}).copyWith(color: Colors.black12),
-      WidgetState.any: ghostStyle.decoration.resolve({}),
-    }),
-  ),
+  ],
 );
 
-FTextFieldStyle _adaptTextFieldStyle(
-  FTextFieldStyle textFieldStyle, {
-  FWidgetStateMap<TextStyle>? labelTextStyle,
-  FWidgetStateMap<TextStyle>? contentTextStyle,
+FVariantsDelta<FButtonVariantConstraint, FButtonVariant, FButtonSizes, FButtonSizesDelta> _adaptButtonStyles({
+  Color? secondaryColor,
+  double highlightAmount = 0.075,
+}) => .delta(
+  [
+    .match(
+      {.secondary},
+      .delta(
+        [
+          .base(
+            .delta(
+              decoration: .delta(
+                [
+                  .base(
+                    .delta(color: secondaryColor?.highlight(amount: highlightAmount)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+    .match(
+      {.ghost},
+      .delta(
+        [
+          .all(
+            .delta(
+              decoration: .delta(
+                [
+                  .match(
+                    {.hovered},
+                    const .delta(color: Colors.black12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ],
+);
+
+FTextFieldStyleDelta _adaptTextFieldStyle({
+  FVariantsDelta<FFormFieldVariantConstraint, FFormFieldVariant, TextStyle, TextStyleDelta>? labelTextStyle,
+  FVariantsDelta<FTextFieldVariantConstraint, FTextFieldVariant, TextStyle, TextStyleDelta>? contentTextStyle,
   Color? fillColor,
-}) => textFieldStyle.copyWith(
+}) => .delta(
   labelTextStyle: labelTextStyle,
   contentTextStyle: contentTextStyle,
-  fillColor: fillColor,
-  filled: true,
+  color: .delta(
+    [
+      .base(fillColor),
+    ],
+  ),
 );
 
-FSelectStyle _adaptSelectStyle(
-  FSelectStyle selectStyle, {
-  FWidgetStateMap<TextStyle>? labelTextStyle,
-}) => selectStyle.copyWith(
-  selectFieldStyle: (selectFieldStyle) => selectFieldStyle.copyWith(
+FSelectStyleDelta _adaptSelectStyle({
+  FVariantsDelta<FFormFieldVariantConstraint, FFormFieldVariant, TextStyle, TextStyleDelta>? labelTextStyle,
+}) => .delta(
+  fieldStyle: .delta(
     labelTextStyle: labelTextStyle,
   ),
 );
 
-FPopoverMenuStyle _adaptPopoverMenuStyle(
-  FPopoverMenuStyle popoverMenuStyle, {
+FPopoverMenuStyleDelta _adaptPopoverMenuStyle({
   Color? hoveredBackgroundColor,
   List<BoxShadow>? boxShadow,
-}) => popoverMenuStyle.copyWith(
-  decoration: popoverMenuStyle.decoration.copyWith(
+}) => .delta(
+  decoration: .delta(
     boxShadow: boxShadow,
   ),
-  itemGroupStyle: (itemGroupStyle) => itemGroupStyle.copyWith(
-    itemStyle: (itemStyle) => itemStyle.copyWith(
-      decoration: FWidgetStateMap({
-        WidgetState.hovered: itemStyle.decoration.resolve({WidgetState.hovered})?.copyWith(color: hoveredBackgroundColor),
-      }),
+  itemGroupStyle: .delta(
+    itemStyles: .delta(
+      [
+        .all(
+          .delta(
+            decoration: .delta(
+              [
+                .match(
+                  {.hovered},
+                  .delta(color: hoveredBackgroundColor),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     ),
   ),
 );
 
-FStyle _adaptGeneralStyle(
-  FStyle style, {
+FStyleDelta _adaptGeneralStyle({
   List<BoxShadow>? shadow,
-}) => style.copyWith(
+}) => .delta(
   pagePadding: const EdgeInsets.all(kBigSpace),
   shadow: shadow,
 );

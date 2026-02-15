@@ -16,7 +16,7 @@ class _TotpDecryptDialog extends StatelessWidget {
     title: Text(translations.totp.totpKeyDialog.title),
     actions: [
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),

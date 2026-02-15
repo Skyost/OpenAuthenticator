@@ -47,7 +47,7 @@ class DeletedTotps extends Table {
 }
 
 @DataClassName('_DriftBackendPushOperation')
-class PendingBackendPushOperation extends Table {
+class PendingBackendPushOperations extends Table {
   TextColumn get uuid => text()();
 
   TextColumn get kind => textEnum<PushOperationKind>()();
@@ -56,12 +56,19 @@ class PendingBackendPushOperation extends Table {
 
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
-  IntColumn get attempt => integer().withDefault(const Constant(0))();
-
-  TextColumn get lastErrorKind => text().nullable()();
-
-  TextColumn get lastErrorDetails => text().nullable()();
-
   @override
   Set<Column> get primaryKey => {uuid};
+}
+
+@DataClassName('_DriftBackendPushOperationError')
+class BackendPushOperationErrors extends Table {
+  TextColumn get operationUuid => text()();
+
+  TextColumn get totpUuid => text()();
+
+  TextColumn get errorKind => textEnum<PushOperationErrorKind>()();
+
+  TextColumn get errorDetails => text().nullable()();
+
+  IntColumn get createdAt => integer()();
 }

@@ -106,7 +106,7 @@ class _ChangeMasterPasswordDialogState extends ConsumerState<_ChangeMasterPasswo
         child: Text(MaterialLocalizations.of(context).continueButtonLabel),
       ),
       ClickableButton(
-        style: FButtonStyle.secondary(),
+        variant: .secondary,
         onPress: () => Navigator.pop(context),
         child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
       ),

@@ -19,7 +19,7 @@ class AppScaffold extends StatelessWidget {
   final Widget Function(List<Widget> children) widgetBuilder;
 
   /// The scaffold style.
-  final FScaffoldStyle Function(FScaffoldStyle style)? scaffoldStyle;
+  final FScaffoldStyleDelta scaffoldStyle;
 
   /// Creates a new app scaffold instance.
   const AppScaffold({
@@ -29,7 +29,7 @@ class AppScaffold extends StatelessWidget {
     this.footer,
     this.center = false,
     this.widgetBuilder = defaultWidgetBuilder,
-    this.scaffoldStyle,
+    this.scaffoldStyle = const .context(),
   });
 
   /// Creates a new scrollable app scaffold instance.
@@ -40,7 +40,7 @@ class AppScaffold extends StatelessWidget {
     this.footer,
     this.center = false,
     this.widgetBuilder = defaultScrollableWidgetBuilder,
-    this.scaffoldStyle,
+    this.scaffoldStyle = const .context(),
   });
 
   @override

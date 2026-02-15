@@ -106,12 +106,12 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
       title: Text(translations.settings.backups.manageBackups.backupsDialogTitle),
       actions: [
         ClickableButton(
-          style: FButtonStyle.secondary(),
+          variant: .secondary,
           onPress: importBackup,
           child: Text(translations.settings.backups.manageBackups.button.import),
         ),
         ClickableButton(
-          style: FButtonStyle.secondary(),
+          variant: .secondary,
           onPress: () => Navigator.pop(context),
           child: Text(MaterialLocalizations.of(context).closeButtonLabel),
         ),
@@ -123,25 +123,25 @@ class _RestoreBackupDialogState extends ConsumerState<_RestoreBackupDialog> {
   /// Creates the buttons to interact with a given [backup].
   List<Widget> createBackupActions(Backup backup) => [
     ClickableButton(
-      style: FButtonStyle.secondary(),
+      variant: .secondary,
       onPress: () => restoreBackup(backup),
       prefix: const Icon(FIcons.upload),
       child: Text(translations.settings.backups.manageBackups.button.restore),
     ),
     ClickableButton(
-      style: FButtonStyle.secondary(),
+      variant: .secondary,
       onPress: () => shareBackup(backup),
       prefix: const Icon(FIcons.share),
       child: Text(translations.settings.backups.manageBackups.button.share),
     ),
     ClickableButton(
-      style: FButtonStyle.secondary(),
+      variant: .secondary,
       onPress: () => exportBackup(backup),
       prefix: const Icon(FIcons.arrowUpDown),
       child: Text(translations.settings.backups.manageBackups.button.export),
     ),
     ClickableButton(
-      style: FButtonStyle.secondary(),
+      variant: .secondary,
       onPress: () => deleteBackup(backup),
       prefix: const Icon(FIcons.trash),
       child: Text(translations.settings.backups.manageBackups.button.delete),

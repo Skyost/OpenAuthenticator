@@ -2,24 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_authenticator/i18n/translations.g.dart';
 import 'package:open_authenticator/model/app_unlock/reason.dart';
+import 'package:open_authenticator/model/backend/request/error.dart';
 import 'package:open_authenticator/model/backend/user.dart';
 import 'package:open_authenticator/model/settings/app_unlock_method.dart';
 import 'package:open_authenticator/utils/result.dart';
-import 'package:open_authenticator/widgets/dialog/authentication_provider_picker.dart';
+import 'package:open_authenticator/widgets/dialog/authentication_provider_picker_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/confirmation_dialog.dart';
-import 'package:open_authenticator/widgets/dialog/error.dart';
+import 'package:open_authenticator/widgets/dialog/error_dialog.dart';
 import 'package:open_authenticator/widgets/dialog/sign_in_dialog.dart';
+import 'package:open_authenticator/widgets/toast.dart';
 import 'package:open_authenticator/widgets/waiting_overlay.dart';
 
 /// Contains some useful methods for logging and linking the user's current account.
 class AccountUtils {
   /// Prompts the user to choose an authentication provider, and use it to login.
-  static Future<void> trySignIn(BuildContext context, WidgetRef ref) async {
+  static Future<Result> trySignIn(BuildContext context) async {
     SignInDialogResult? result = await SignInDialog.openDialog(context);
     if (result == null || !context.mounted) {
-      return;
+      return const ResultCancelled();
     }
-    await _tryTo(
+    return await _tryTo(
       context,
       waitingDialogMessage: translations.authentication.logIn.waitingLoginMessage,
       action: result.action,
@@ -27,10 +29,10 @@ class AccountUtils {
   }
 
   /// Prompts the user to choose an authentication provider, and use it to link or unlink its current account.
-  static Future<void> tryToggleLink(BuildContext context, WidgetRef ref) async {
+  static Future<Result> tryToggleLink(BuildContext context) async {
     AuthenticationProviderToggleLinkResult? result = await AuthenticationProviderPickerDialog.openDialog(context);
     if (result == null || !context.mounted) {
-      return;
+      return const ResultCancelled();
     }
     bool unlink = !result.link;
     if (unlink &&
@@ -39,12 +41,12 @@ class AccountUtils {
           title: translations.authentication.link.unlinkConfirmationDialog.title,
           message: translations.authentication.link.unlinkConfirmationDialog.message,
         ))) {
-      return;
+      return const ResultCancelled();
     }
     if (!context.mounted) {
-      return;
+      return const ResultCancelled();
     }
-    await _tryTo(
+    return await _tryTo(
       context,
       successMessage: unlink ? translations.authentication.link.unlinkSuccess : translations.authentication.link.linkSuccess,
       waitingDialogMessage: unlink ? null : translations.authentication.logIn.waitingLoginMessage,
@@ -53,20 +55,20 @@ class AccountUtils {
   }
 
   /// Prompts the user to choose an authentication provider, use it to re-authenticate and delete its account.
-  static Future<void> tryDeleteAccount(BuildContext context, WidgetRef ref) async {
+  static Future<Result> tryDeleteAccount(BuildContext context, WidgetRef ref) async {
     bool confirm = await ConfirmationDialog.ask(
       context,
       title: translations.authentication.deleteConfirmationDialog.title,
       message: translations.authentication.deleteConfirmationDialog.message,
     );
     if (!confirm || !context.mounted) {
-      return;
+      return const ResultCancelled();
     }
 
     AppUnlockMethodSettingsEntry appUnlockerMethodsSettingsEntry = ref.read(appUnlockMethodSettingsEntryProvider.notifier);
     Result unlockResult = await appUnlockerMethodsSettingsEntry.unlockWithCurrentMethod(context, UnlockReason.sensibleAction);
     if (unlockResult is! ResultSuccess || !context.mounted) {
-      return;
+      return unlockResult;
     }
 
     Result deleteResult = await showWaitingOverlay(
@@ -74,8 +76,9 @@ class AccountUtils {
       future: ref.read(userProvider.notifier).deleteUser(),
     );
     if (context.mounted) {
-      context.handleResult(deleteResult, retryIfError: true);
+      context.handleResult(deleteResult);
     }
+    return deleteResult;
   }
 
   /// Tries to do the specified [action].
@@ -91,7 +94,8 @@ class AccountUtils {
       message: waitingDialogMessage,
     );
     if (context.mounted) {
-      context.handleResult(
+      handleAuthenticationResult(
+        context,
         result,
         successMessage: successMessage,
       );
@@ -102,10 +106,9 @@ class AccountUtils {
   /// Handles the [result].
   static Future<void> handleAuthenticationResult(
     BuildContext context,
-    WidgetRef ref,
     Result result, {
     String? successMessage,
-    bool handleDifferentCredentialError = false,
+    bool handleEmailInvalidCodeError = true,
   }) async {
     switch (result) {
       case ResultSuccess():
@@ -115,15 +118,18 @@ class AccountUtils {
         );
         break;
       case ResultError(:final exception, :final stackTrace):
-        if (exception == null) {
-          context.handleResult(result, retryIfError: true);
-        } else {
-          ErrorDialog.openDialog(
+        if (handleEmailInvalidCodeError && exception is BackendRequestError && exception.errorCode == 'invalidCode') {
+          showErrorToast(
             context,
-            error: exception,
-            stackTrace: stackTrace,
+            text: 'Invalid code.', // TODO
           );
+          return;
         }
+        ErrorDialog.openDialog(
+          context,
+          error: exception,
+          stackTrace: stackTrace,
+        );
         break;
       default:
         break;

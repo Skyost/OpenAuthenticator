@@ -41,7 +41,7 @@ class SaveDerivedKeySettingsEntryWidget extends CheckboxSettingsEntryWidget<AppU
     String newMethod = newValue ? NoneAppUnlockMethod.kMethodId : MasterPasswordAppUnlockMethod.kMethodId;
     Result result = await ref.read(appUnlockMethodSettingsEntryProvider.notifier).changeValueIfUnlockSucceed(newMethod, context);
     if (context.mounted && result is! ResultSuccess) {
-      context.handleResult(result, retryIfError: true);
+      context.handleResult(result);
     }
   }
 

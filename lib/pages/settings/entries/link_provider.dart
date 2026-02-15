@@ -58,7 +58,7 @@ class AccountLinkSettingsEntryWidget extends ConsumerWidget with FTileMixin {
           ],
         ),
       ),
-      onPress: () => AccountUtils.tryToggleLink(context, ref),
+      onPress: () => AccountUtils.tryToggleLink(context),
     );
   }
 }
